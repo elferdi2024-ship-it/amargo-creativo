@@ -1,28 +1,33 @@
 ---
 // filepath: src/components/Hero.astro
 ---
-<div class="hero-scroll-wrapper" id="heroScrollWrapper">
-  <div class="hero-sticky-stage" id="heroStickyStage">
-    <div class="hero-video-container">
-      <video 
-        id="heroVideo" 
-        class="hero-video" 
-        src="/hero-scroll.mp4" 
-        preload="auto" 
-        muted 
-        playsinline 
-        webkit-playsinline
-        aria-hidden="true"
-      ></video>
-      <div class="hero-video-overlay"></div>
-      <div class="hero-gradient"></div>
-      <div class="hero-grid-overlay"></div>
-    </div>
+<div class="hero-sticky" id="heroSticky">
+  <div class="hero-stage" id="heroStage">
+    <!-- Canvas de Renderizado de Alta Precisión (Apple-grade) -->
+    <canvas id="heroCanvas" class="hero-canvas"></canvas>
     
-    <header class="hero" id="top">
+    <!-- Video Fuente Precargado (Oculto, usado como decodificador de frames) -->
+    <video 
+      id="heroVideo" 
+      class="hero-video-source" 
+      src="/hero-scroll.mp4" 
+      preload="auto" 
+      muted 
+      playsinline 
+      webkit-playsinline
+      aria-hidden="true"
+    ></video>
+    
+    <!-- Capas de Contraste, Tinte Brutalista y Gradiente -->
+    <div class="hero-overlay"></div>
+    <div class="hero-gradient"></div>
+    <div class="hero-grid-overlay"></div>
+
+    <!-- Interfaz y Contenido del Hero -->
+    <header class="hero-ui" id="top">
       <div class="hero-top">
         <div><span>● EN VIVO</span><span>ESTUDIO CREATIVO DIGITAL</span></div>
-        <div><span>ATLÁNTIDA, UY</span><span>v26.0</span></div>
+        <div><span>ATLÁNTIDA, UY</span><span>v30.0</span></div>
       </div>
 
       <div class="hero-content" id="heroContent">
@@ -77,65 +82,117 @@
 </div>
 
 <script>
-  // High-performance Lerped Video Scrubbing Engine (60/120fps)
-  const wrapper = document.getElementById('heroScrollWrapper');
+  // =========================================================================
+  // APPLE-GRADE SCROLL SCRUBBING ENGINE VIA HTML5 CANVAS & LERP
+  // =========================================================================
+  const heroSticky = document.getElementById('heroSticky');
+  const canvas = document.getElementById('heroCanvas') as HTMLCanvasElement | null;
   const video = document.getElementById('heroVideo') as HTMLVideoElement | null;
   const heroContent = document.getElementById('heroContent');
   const heroBottom = document.getElementById('heroBottom');
 
-  if (wrapper && video) {
+  if (heroSticky && canvas && video) {
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const isMobileOrReduced = window.matchMedia('(max-width: 768px), (prefers-reduced-motion: reduce)').matches;
+
     let targetTime = 0;
     let currentTime = 0;
+    let isSeeking = false;
     let isVideoReady = false;
-    let maxScroll = 0;
+    let animationFrameId: number;
 
-    function initVideo() {
-      if (video) {
-        video.pause();
-        video.currentTime = 0;
-        isVideoReady = true;
+    // 1. Redimensionar Canvas con soporte para pantallas Retina (HiDPI)
+    function resizeCanvas() {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+      drawFrame();
+    }
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    // 2. Renderizado de Frame con ajuste 'object-fit: cover' en Canvas
+    function drawFrame() {
+      if (!ctx || !canvas || !video || video.readyState < 2) return;
+      const vW = video.videoWidth;
+      const vH = video.videoHeight;
+      if (!vW || !vH) return;
+
+      const cW = canvas.width;
+      const cH = canvas.height;
+      const videoRatio = vW / vH;
+      const canvasRatio = cW / cH;
+
+      let dW: number, dH: number, oX: number, oY: number;
+
+      if (canvasRatio > videoRatio) {
+        dW = cW;
+        dH = cW / videoRatio;
+        oX = 0;
+        oY = (cH - dH) / 2;
+      } else {
+        dW = cH * videoRatio;
+        dH = cH;
+        oX = (cW - dW) / 2;
+        oY = 0;
       }
+
+      ctx.drawImage(video, oX, oY, dW, dH);
+    }
+
+    // 3. Inicialización & Precarga del Video
+    function onVideoLoaded() {
+      video.pause();
+      video.currentTime = 0;
+      isVideoReady = true;
+      drawFrame();
     }
 
     if (video.readyState >= 2) {
-      initVideo();
+      onVideoLoaded();
     } else {
-      video.addEventListener('loadeddata', initVideo, { once: true });
-      video.addEventListener('canplay', initVideo, { once: true });
+      video.addEventListener('loadeddata', onVideoLoaded, { once: true });
+      video.addEventListener('canplay', onVideoLoaded, { once: true });
     }
 
-    function calculateBounds() {
-      if (wrapper) {
-        maxScroll = wrapper.offsetHeight - window.innerHeight;
+    video.addEventListener('seeked', () => {
+      isSeeking = false;
+      drawFrame();
+    });
+
+    // 4. Modo Móvil / Reduced Motion: Reproducción automática en loop sin bloqueo
+    if (isMobileOrReduced) {
+      video.autoplay = true;
+      video.loop = true;
+      video.play().catch(() => {});
+
+      function loopRender() {
+        drawFrame();
+        requestAnimationFrame(loopRender);
       }
-    }
-    calculateBounds();
-    window.addEventListener('resize', calculateBounds, { passive: true });
+      requestAnimationFrame(loopRender);
+    } else {
+      // 5. Modo Desktop: Scrubbing de Scroll Cuadro por Cuadro con Lerp
+      function updateScrubProgress() {
+        if (!heroSticky || !video || !video.duration) return;
+        const rect = heroSticky.getBoundingClientRect();
+        const maxScroll = heroSticky.offsetHeight - window.innerHeight;
+        const currentScroll = -rect.top;
+        const progress = Math.min(Math.max(currentScroll / maxScroll, 0), 1);
 
-    function renderScrub() {
-      const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      
-      if (maxScroll > 0 && isVideoReady && video && video.duration) {
-        const progress = Math.max(0, Math.min(1, scrollY / maxScroll));
         targetTime = progress * video.duration;
-        
-        // Silky smooth inertia interpolation
-        currentTime += (targetTime - currentTime) * 0.18;
-        
-        if (Math.abs(video.currentTime - currentTime) > 0.005) {
-          video.currentTime = currentTime;
-        }
 
-        // Fluid UI Morphing during scrub
+        // Transición de la UI (Titular & CTAs se desvanecen suavemente tras el 25% de scroll)
         if (heroContent && heroBottom) {
-          const fadeAmount = Math.min(1, progress * 2.2);
-          const translateY = progress * -50;
-          const opacity = Math.max(0, 1 - fadeAmount * 1.1);
+          const fadeProgress = Math.max(0, Math.min(1, (progress - 0.2) / 0.5));
+          const translateY = fadeProgress * -60;
+          const opacity = 1 - fadeProgress;
 
           heroContent.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0)`;
           heroContent.style.opacity = opacity.toFixed(2);
           heroBottom.style.opacity = opacity.toFixed(2);
-          
+
           if (opacity <= 0.02) {
             heroContent.style.pointerEvents = 'none';
             heroBottom.style.pointerEvents = 'none';
@@ -145,22 +202,47 @@
           }
         }
       }
-      
-      requestAnimationFrame(renderScrub);
+
+      window.addEventListener('scroll', updateScrubProgress, { passive: true });
+      if ((window as any).lenis?.on) {
+        (window as any).lenis.on('scroll', updateScrubProgress);
+      }
+
+      // Loop de renderizado continuo a 60/120fps con inercia suave
+      function renderLoop() {
+        if (isVideoReady && video && video.duration) {
+          currentTime += (targetTime - currentTime) * 0.14; // Lerp suave
+
+          if (!isSeeking && Math.abs(video.currentTime - currentTime) > 0.008) {
+            isSeeking = true;
+            video.currentTime = currentTime;
+          }
+        }
+
+        drawFrame();
+        animationFrameId = requestAnimationFrame(renderLoop);
+      }
+      animationFrameId = requestAnimationFrame(renderLoop);
     }
-    
-    requestAnimationFrame(renderScrub);
   }
 </script>
 
 <style>
-  .hero-scroll-wrapper {
+  /* Pista de Scroll: 240vh (~2.5 giros de rueda para completar el video fluidamente) */
+  .hero-sticky {
     position: relative;
-    height: 220vh; /* 2.2 viewport heights: exactly 2 to 3 natural wheel turns */
+    height: 240vh;
     width: 100%;
   }
 
-  .hero-sticky-stage {
+  @media (max-width: 768px) {
+    .hero-sticky {
+      height: 100vh;
+      height: 100svh;
+    }
+  }
+
+  .hero-stage {
     position: sticky;
     top: 0;
     left: 0;
@@ -171,39 +253,39 @@
     background: var(--hero-bg);
   }
 
-  .hero-video-container {
+  /* Canvas de Dibujo de Frames */
+  .hero-canvas {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    display: block;
     z-index: 1;
-  }
-
-  .hero-video {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    filter: contrast(1.12) brightness(0.8);
+    filter: contrast(1.12) brightness(0.82);
     transition: filter 0.5s var(--ease);
-    will-change: transform;
   }
 
-  :global(body.theme-electric) .hero-video {
+  :global(body.theme-electric) .hero-canvas {
     filter: grayscale(60%) contrast(1.3) brightness(0.65) sepia(1) hue-rotate(40deg) saturate(1.8);
   }
 
-  :global(body.theme-mate) .hero-video {
+  :global(body.theme-mate) .hero-canvas {
     filter: grayscale(15%) contrast(1.15) brightness(0.72) sepia(0.25) hue-rotate(85deg);
   }
 
-  .hero-video-overlay {
+  .hero-video-source {
+    display: none;
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hero-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(10, 10, 10, 0.35);
+    background: rgba(10, 10, 10, 0.32);
     mix-blend-mode: multiply;
     z-index: 2;
     pointer-events: none;
@@ -215,7 +297,7 @@
     left: 0;
     width: 100%;
     height: 45%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.75), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     z-index: 3;
     pointer-events: none;
   }
@@ -229,7 +311,7 @@
     pointer-events: none;
   }
 
-  .hero {
+  .hero-ui {
     position: relative;
     height: 100%;
     color: var(--hero-text);
@@ -270,7 +352,6 @@
     justify-content: center;
     padding: 0 var(--gut);
     will-change: transform, opacity;
-    transition: opacity 0.1s linear;
   }
 
   .hero-title {
@@ -332,7 +413,6 @@
     border-top: 1px solid rgba(255, 255, 255, 0.15);
     flex-wrap: wrap;
     will-change: opacity;
-    transition: opacity 0.1s linear;
   }
 
   :global(body.theme-electric) .hero-bottom {
@@ -516,10 +596,6 @@
   }
 
   @media (max-width: 900px) {
-    .hero-scroll-wrapper {
-      height: 180vh; /* Shorter track on mobile for quick and effortless thumb scroll */
-    }
-
     .hero-title {
       font-size: clamp(32px, 10.5vw, 70px);
       letter-spacing: -0.02em;
