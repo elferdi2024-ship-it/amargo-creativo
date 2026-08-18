@@ -76,19 +76,22 @@
   .hero-bg {
     position: absolute;
     inset: 0;
-    background-image: url('https://picsum.photos/seed/amargo-uy-growth/1600/900');
+    background-image: url('/amargo-hero-pc.webp'), url('/amargo%20hero%20pc.jpg');
     background-size: cover;
     background-position: center;
     background-color: var(--hero-bg);
     background-blend-mode: multiply;
-    filter: grayscale(40%) contrast(1.1) brightness(0.65);
+    filter: grayscale(12%) contrast(1.1) brightness(0.72);
     z-index: 1;
     transition: opacity 0.8s var(--ease);
     will-change: transform;
     opacity: 0;
   }
   :global(body.theme-electric) .hero-bg {
-    filter: grayscale(100%) contrast(1.4) brightness(0.5) sepia(1) hue-rotate(40deg) saturate(2);
+    filter: grayscale(70%) contrast(1.3) brightness(0.55) sepia(1) hue-rotate(40deg) saturate(1.8);
+  }
+  :global(body.theme-mate) .hero-bg {
+    filter: grayscale(20%) contrast(1.15) brightness(0.68) sepia(0.25) hue-rotate(85deg);
   }
   :global(body.loaded) .hero-bg {
     opacity: 1;
@@ -349,6 +352,10 @@
     to { transform: rotate(360deg); }
   }
   @media (max-width: 900px) {
+    .hero-bg {
+      background-image: url('/amargo-hero-mobile.webp'), url('/amargo%20hero%20mobile.jpg');
+      background-position: center top;
+    }
     .hero-title {
       font-size: clamp(32px, 10.5vw, 70px);
       letter-spacing: -0.02em;
