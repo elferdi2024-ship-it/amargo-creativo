@@ -51,11 +51,12 @@
   .contact {
     background: var(--contact-bg);
     color: var(--contact-text);
-    padding: clamp(80px, 15vh, 160px) var(--gut);
+    padding: clamp(60px, 12vh, 160px) var(--gut);
     text-align: center;
     position: relative;
     overflow: hidden;
     width: 100%;
+    box-sizing: border-box;
   }
   .contact-bg {
     position: absolute;
@@ -75,33 +76,36 @@
     z-index: 2;
     max-width: var(--max);
     margin: 0 auto;
+    width: 100%;
   }
   .contact-label {
-    font-size: 11px;
+    font-size: clamp(9px, 2.5vw, 11px);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--electric);
     margin-bottom: 24px;
     display: inline-block;
     border: 1px solid var(--electric);
-    padding: 8px 16px;
+    padding: 8px 14px;
+    max-width: 90%;
+    line-height: 1.4;
   }
   .contact-title {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(40px, 10vw, 140px);
-    line-height: 0.9;
+    font-size: clamp(32px, 8.5vw, 130px);
+    line-height: 0.92;
     letter-spacing: -0.04em;
     text-transform: uppercase;
     margin-bottom: 40px;
-    word-break: normal;
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 100%;
   }
   .contact-title .word-nowrap {
-    white-space: nowrap;
     display: block;
+    max-width: 100%;
   }
   .contact-title em {
     font-family: 'Instrument Serif', serif;
@@ -110,35 +114,34 @@
     font-weight: 400;
     color: var(--electric);
     display: block;
-  }
-  @media (max-width: 768px) {
-    .contact-title {
-      font-size: clamp(28px, 9vw, 64px);
-      letter-spacing: -0.05em;
-    }
+    margin-top: 4px;
   }
   .contact-actions-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 28px;
+    gap: 24px;
     margin: 20px 0 40px;
+    width: 100%;
   }
   .magnetic-wrap {
     display: inline-block;
+    max-width: 100%;
     will-change: transform;
   }
   .contact-email {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(24px, 4vw, 56px);
+    font-size: clamp(15px, 4.4vw, 54px);
     color: var(--contact-text);
     text-decoration: none;
-    border-bottom: 4px solid var(--electric);
-    padding-bottom: 8px;
+    border-bottom: 3px solid var(--electric);
+    padding-bottom: 6px;
     transition: color 0.3s var(--ease), border-color 0.3s;
     display: inline-block;
     cursor: pointer;
+    max-width: 100%;
+    word-break: break-word;
   }
   .contact-email:hover {
     color: var(--electric);
@@ -149,14 +152,15 @@
   .contact-wa {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(22px, 3.5vw, 48px);
+    font-size: clamp(16px, 3.8vw, 44px);
     color: var(--contact-text);
     text-decoration: none;
-    border-bottom: 4px solid var(--mate-light);
-    padding-bottom: 8px;
+    border-bottom: 3px solid var(--mate-light);
+    padding-bottom: 6px;
     transition: color 0.3s var(--ease), border-color 0.3s;
     display: inline-block;
     cursor: pointer;
+    max-width: 100%;
   }
   .contact-wa:hover {
     color: var(--mate-light);
@@ -165,7 +169,7 @@
     transform: scale(0.98);
   }
   .contact-info {
-    margin-top: 80px;
+    margin-top: 60px;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
@@ -197,5 +201,24 @@
     font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
     line-height: 1.6;
+  }
+
+  @media (max-width: 768px) {
+    .contact-title {
+      font-size: clamp(24px, 7.8vw, 56px);
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+    }
+    .contact-email {
+      font-size: clamp(14px, 4.4vw, 24px);
+    }
+    .contact-wa {
+      font-size: clamp(14px, 4.0vw, 22px);
+    }
+    .contact-info {
+      flex-direction: column;
+      gap: 24px;
+      margin-top: 48px;
+    }
   }
 </style>
