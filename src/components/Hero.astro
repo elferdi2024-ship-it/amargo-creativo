@@ -2,7 +2,7 @@
 // filepath: src/components/Hero.astro
 ---
 <header class="hero" id="top">
-  <!-- Video de Fondo 100% Borde a Borde -->
+  <!-- Video de Fondo a Máxima Nitidez y Calidad Original (Sin Filtros Oscuros) -->
   <div class="hero-media-container">
     <video 
       id="heroVideo" 
@@ -16,9 +16,7 @@
       webkit-playsinline
       aria-hidden="true"
     ></video>
-    <div class="hero-overlay"></div>
     <div class="hero-gradient" id="heroGradient"></div>
-    <div class="hero-grid-overlay"></div>
   </div>
 
   <!-- Barra Superior del Hero -->
@@ -27,7 +25,7 @@
     <div class="hero-location-badge"><span>ATLÁNTIDA, CANELONES</span><span>v30.0</span></div>
   </div>
 
-  <!-- Barra Inferior de Acción, Métricas y Badge Alineados (Sin Colisiones) -->
+  <!-- Barra Inferior de Acción, Métricas y Badge Alineados -->
   <div class="hero-bottom" id="heroBottom">
     <div class="hero-sub-wrap">
       <p class="hero-sub">Diseñamos páginas web y activos digitales de alto rendimiento que transforman visitas en clientes reales.</p>
@@ -57,7 +55,7 @@
         </div>
       </div>
 
-      <!-- Badge Giratorio Brutalista Integrado con Margen Limpio -->
+      <!-- Badge Giratorio Brutalista Integrado -->
       <div class="hero-badge" id="heroBadge" aria-hidden="true">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" id="badgeSvg">
           <defs><path id="circle" d="M 50, 50 m -38, 0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" /></defs>
@@ -143,7 +141,7 @@
         }
 
         if (heroGradient) {
-          heroGradient.style.opacity = (0.8 + currentProgress * 0.2).toFixed(2);
+          heroGradient.style.opacity = (0.5 + currentProgress * 0.5).toFixed(2);
         }
 
         if (badgeSvg) {
@@ -190,6 +188,7 @@
     background: #0a0a0a;
   }
 
+  /* Video 100% Nitidez, Brillo y Color Original */
   .hero-video {
     position: absolute;
     inset: 0;
@@ -197,48 +196,22 @@
     height: 100%;
     object-fit: cover;
     object-position: center center;
-    filter: contrast(1.08) brightness(0.9);
-    transition: filter 0.5s var(--ease);
+    filter: none; /* Cero filtros oscurecedores */
     will-change: transform;
     pointer-events: none;
   }
 
-  :global(body.theme-electric) .hero-video {
-    filter: grayscale(40%) contrast(1.25) brightness(0.75) sepia(1) hue-rotate(40deg) saturate(1.8);
-  }
-
-  :global(body.theme-mate) .hero-video {
-    filter: grayscale(10%) contrast(1.15) brightness(0.85) sepia(0.2) hue-rotate(85deg);
-  }
-
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0.15);
-    mix-blend-mode: multiply;
-    z-index: 2;
-    pointer-events: none;
-  }
-
+  /* Sutil degradado solo en la base para proteger legibilidad de botones */
   .hero-gradient {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 50%;
-    background: linear-gradient(to top, rgba(10, 10, 10, 0.95) 0%, rgba(10, 10, 10, 0.4) 50%, transparent 100%);
+    height: 35%;
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.2) 60%, transparent 100%);
     z-index: 3;
     pointer-events: none;
     transition: opacity 0.2s ease-out;
-  }
-
-  .hero-grid-overlay {
-    position: absolute;
-    inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 80px 80px;
-    z-index: 3;
-    pointer-events: none;
   }
 
   .hero-top {
@@ -251,7 +224,7 @@
     text-transform: uppercase;
     flex-wrap: wrap;
     gap: 8px;
-    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.7) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.5) 0%, transparent 100%);
   }
 
   .hero-top > div {
@@ -274,9 +247,9 @@
     padding: 32px var(--gut);
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     flex-wrap: wrap;
-    background: rgba(10, 10, 10, 0.5);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(10, 10, 10, 0.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   :global(body.theme-electric) .hero-bottom {
@@ -299,8 +272,8 @@
     font-size: 14px;
     line-height: 1.5;
     color: #f4f1ea;
-    opacity: 0.9;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    opacity: 0.95;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
   }
 
   .hero-cta-wrap {
@@ -351,7 +324,7 @@
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-size: 11px;
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     padding: 12px 18px;
     height: 42px;
     box-sizing: border-box;
@@ -367,7 +340,6 @@
     transform: scale(0.96);
   }
 
-  /* Contenedor derecho: Métricas + Badge sin solapamiento */
   .hero-right-wrap {
     display: flex;
     align-items: center;
@@ -384,7 +356,7 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
   }
 
   .hero-meta strong {
@@ -453,7 +425,7 @@
       align-items: flex-start;
       gap: 20px;
       padding: 20px var(--gut) calc(20px + env(safe-area-inset-bottom));
-      background: rgba(10, 10, 10, 0.75);
+      background: rgba(10, 10, 10, 0.65);
     }
 
     .hero-sub {

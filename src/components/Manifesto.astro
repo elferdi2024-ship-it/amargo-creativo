@@ -2,12 +2,15 @@
 // filepath: src/components/Manifesto.astro
 ---
 <section class="manifesto" id="manifesto">
+  <!-- Marca de Agua Ambiental Decorativa -->
+  <div class="manifesto-ambient-bg" aria-hidden="true"></div>
   <div class="manifesto-bg-text">AMARGO</div>
-  <div class="graphic-mark">+</div>
+
   <div class="manifesto-head">
     <div class="section-label"><span class="num">01</span> MANIFIESTO</div>
     <h2>No diseñamos para ganar premios. <em>Diseñamos para que tu negocio crezca.</em></h2>
   </div>
+
   <div class="manifesto-body" id="manifestoBody">
     <div class="line"><span>Tu web no es un folleto digital.</span></div>
     <div class="line"><span>Es tu mejor vendedor, <em>trabajando 24/7</em>,</span></div>
@@ -26,6 +29,36 @@
     overflow: hidden;
     width: 100%;
   }
+
+  /* Fondo Ambiental Texturizado con Presencia Visual Clara */
+  .manifesto-ambient-bg {
+    position: absolute;
+    top: 5%;
+    right: -2%;
+    width: clamp(320px, 50vw, 750px);
+    height: 90%;
+    background-image: url('/backgrounds/bg-ambient-1.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center right;
+    opacity: 0.24;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+    filter: contrast(1.15) brightness(0.95);
+    transition: opacity 0.5s var(--ease);
+  }
+
+  :global(body.theme-electric) .manifesto-ambient-bg {
+    opacity: 0.28;
+    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+  }
+
+  :global(body.theme-mate) .manifesto-ambient-bg {
+    opacity: 0.26;
+    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
+  }
+
   .manifesto-head {
     display: grid;
     grid-template-columns: 1fr 3fr;
@@ -34,6 +67,8 @@
     align-items: start;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--line);
+    position: relative;
+    z-index: 2;
   }
   .section-label {
     font-size: 11px;
@@ -122,7 +157,7 @@
     font-weight: 800;
     font-size: 20vw;
     color: var(--mate);
-    opacity: 0.05;
+    opacity: 0.04;
     pointer-events: none;
     z-index: 1;
     text-transform: uppercase;
@@ -130,16 +165,8 @@
     white-space: nowrap;
   }
   :global(body.theme-electric) .manifesto-bg-text {
-    opacity: 0.08;
+    opacity: 0.06;
     color: var(--rust);
-  }
-  .manifesto .graphic-mark {
-    top: 10%;
-    right: 5%;
-    font-size: 15vw;
-    transform: rotate(0deg);
-    color: var(--mate);
-    opacity: 0.12;
   }
   @media (max-width: 768px) {
     .manifesto-head {
@@ -148,6 +175,11 @@
     }
     .manifesto-body {
       font-size: 20px;
+    }
+    .manifesto-ambient-bg {
+      width: 75vw;
+      right: -10%;
+      opacity: 0.18;
     }
   }
 </style>

@@ -41,6 +41,8 @@ const services: Service[] = [
 ];
 ---
 <section class="capabilities" id="capabilities">
+  <!-- Marca de Agua Ambiental Decorativa -->
+  <div class="capabilities-ambient-bg" aria-hidden="true"></div>
   <div class="cap-head">
     <div class="section-label"><span class="num">02</span> SERVICIOS</div>
     <h2>Lo que <em>hacemos</em> por ti</h2>
@@ -94,6 +96,33 @@ const services: Service[] = [
     padding: clamp(60px, 10vh, 120px) var(--gut);
     border-bottom: 1px solid var(--line);
     width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .capabilities-ambient-bg {
+    position: absolute;
+    bottom: -5%;
+    left: -5%;
+    width: clamp(320px, 50vw, 750px);
+    height: 85%;
+    background-image: url('/backgrounds/bg-ambient-2.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 0;
+    filter: contrast(1.15) brightness(0.95);
+    transition: opacity 0.5s var(--ease);
+  }
+  :global(body.theme-electric) .capabilities-ambient-bg {
+    opacity: 0.26;
+    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+  }
+  :global(body.theme-mate) .capabilities-ambient-bg {
+    opacity: 0.24;
+    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   .cap-head {
     display: grid;
