@@ -1,0 +1,334 @@
+---
+// filepath: src/components/Showcase.astro
+
+export interface Project {
+  id: string;
+  category: 'all' | 'marketplace' | 'saas';
+  title: string;
+  yearCategory: string;
+  desc: string;
+  url: string;
+  img: string;
+  aspectWidth: number;
+  aspectHeight: number;
+  tags: string[];
+}
+
+const projects: Project[] = [
+  {
+    id: "barrio-uy",
+    category: "marketplace",
+    title: "Barrio.uy",
+    yearCategory: "2024 — Real Estate & Marketplace",
+    desc: "Plataforma inmobiliaria de élite en Uruguay. Búsqueda instantánea con Algolia SSR (<45ms), filtros reactivos en URL y catálogo geoespacial de alta retención que redujo la tasa de rebote en 45%.",
+    url: "https://www.barrio.uy/",
+    img: "/projects/barrio-uy.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["MARKETPLACE", "ALGOLIA SSR", "NEXT.JS 15"]
+  },
+  {
+    id: "driveprime",
+    category: "saas",
+    title: "DrivePrime",
+    yearCategory: "2024 — Car Rental & Fleet SaaS",
+    desc: "Motor integral de cotizaciones inteligentes y gestión de flotas vehiculares. Flujo automatizado de reservas con validación inmediata que redujo el tiempo de cierre de 4 horas a 2 minutos.",
+    url: "https://driveprime-eta.vercel.app/",
+    img: "/projects/driveprime.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["SAAS", "AUTOMATIZACIÓN", "BOOKING ENGINE"]
+  },
+  {
+    id: "remate",
+    category: "saas",
+    title: "Remate",
+    yearCategory: "2024 — Live Auction Platform",
+    desc: "Ecosistema de subastas y pujas en tiempo real con WebSockets a latencia cero. Experiencia inmersiva de alta tensión diseñada para disparar la urgencia y maximizar el ticket de compra.",
+    url: "https://remate-psi.vercel.app/",
+    img: "/projects/remate.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["WEBSOCKETS", "REAL-TIME", "FINTECH"]
+  },
+  {
+    id: "faconeros-hub",
+    category: "saas",
+    title: "Faconeros Hub",
+    yearCategory: "2024 — Private Club & Growth Hub",
+    desc: "Centro de comando y panel de analítica estratégica para emprendedores y creadores de élite. Espacio privado con métricas en vivo, networking exclusivo y herramientas de aceleración.",
+    url: "https://faconeros-app.vercel.app/hub",
+    img: "/projects/faconeros-hub.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["GROWTH HUB", "DASHBOARD", "COMMUNITY"]
+  }
+];
+---
+<section class="showcase" id="showcase">
+  <div class="showcase-head">
+    <div>
+      <h2>NUESTRO <em>trabajo</em></h2>
+      <div class="showcase-filters" role="tablist" aria-label="Filtrar proyectos">
+        <button class="filter-btn active" data-filter="all">TODOS ({projects.length})</button>
+        <button class="filter-btn" data-filter="marketplace">MARKETPLACE</button>
+        <button class="filter-btn" data-filter="saas">SAAS & APPS</button>
+      </div>
+    </div>
+    <div class="info">Selección de proyectos activos construidos con tecnología de élite. Arrastra para explorar.</div>
+  </div>
+  <div class="projects-drag" id="projectsDrag">
+    {projects.map(project => (
+      <div 
+        class="project-card" 
+        data-cursor="VER" 
+        data-category={project.category}
+        data-title={project.title} 
+        data-desc={project.desc} 
+        data-url={project.url} 
+        data-img={project.img}
+      >
+        <div class="pc-img-wrap">
+          <img 
+            src={project.img} 
+            class="pc-img" 
+            alt={project.title} 
+            width={project.aspectWidth} 
+            height={project.aspectHeight} 
+            loading="lazy" 
+          />
+          <div class="pc-arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17L17 7M7 7h10v10"/>
+            </svg>
+          </div>
+        </div>
+        <div class="pc-meta">
+          <div>
+            <div class="pc-title">{project.title}</div>
+            <span class="pc-year">{project.yearCategory}</span>
+          </div>
+          <div class="pc-tags">
+            {project.tags.map(tag => (
+              <span class="pc-tag">{tag}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .showcase {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gut) clamp(60px, 10vh, 120px);
+    width: 100%;
+    overflow: hidden;
+  }
+  .showcase-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    padding: 80px 0 40px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .showcase-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 8vw, 120px);
+    line-height: 0.85;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .showcase-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .showcase-filters {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: none;
+    border: 1px solid var(--line);
+    padding: 6px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.3s var(--ease);
+  }
+  .filter-btn:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+  .filter-btn.active {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+    font-weight: 700;
+  }
+  .showcase-head .info {
+    text-align: right;
+    font-size: 11px;
+    text-transform: uppercase;
+    max-width: 300px;
+  }
+  .projects-drag {
+    display: flex;
+    gap: 24px;
+    cursor: grab;
+    user-select: none;
+    padding-bottom: 40px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y pan-x;
+  }
+  .projects-drag::-webkit-scrollbar {
+    display: none;
+  }
+  .projects-drag.active {
+    cursor: grabbing;
+    scroll-snap-type: none !important;
+  }
+  .project-card {
+    position: relative;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    transform: translateY(60px);
+    transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+    flex: 0 0 auto;
+    width: clamp(300px, 50vw, 600px);
+    scroll-snap-align: start;
+    will-change: transform, opacity;
+  }
+  .project-card.hidden {
+    display: none !important;
+  }
+  .projects-drag.is-in .project-card,
+  :global(.projects-drag.is-in) .project-card {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .projects-drag.is-in .project-card:nth-child(2),
+  :global(.projects-drag.is-in) .project-card:nth-child(2) { transition-delay: 0.1s; }
+  .projects-drag.is-in .project-card:nth-child(3),
+  :global(.projects-drag.is-in) .project-card:nth-child(3) { transition-delay: 0.2s; }
+  .projects-drag.is-in .project-card:nth-child(4),
+  :global(.projects-drag.is-in) .project-card:nth-child(4) { transition-delay: 0.3s; }
+  .pc-img-wrap {
+    position: relative;
+    overflow: hidden;
+    background: var(--hover-bg);
+    width: 100%;
+    border: 1px solid var(--line);
+    aspect-ratio: 4/3;
+  }
+  .pc-img-wrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--hover-bg);
+    opacity: 0.2;
+    transition: opacity 0.5s var(--ease);
+    z-index: 1;
+  }
+  .project-card:hover .pc-img-wrap::after {
+    opacity: 0;
+  }
+  .pc-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease), filter 0.6s var(--ease), opacity 0.6s var(--ease);
+    display: block;
+    pointer-events: none;
+    filter: blur(10px);
+    opacity: 0;
+    will-change: transform, filter, opacity;
+  }
+  .pc-img.loaded,
+  :global(.pc-img.loaded) {
+    filter: blur(0);
+    opacity: 1;
+  }
+  .project-card:hover .pc-img {
+    transform: scale(1.05);
+  }
+  .project-card:active {
+    transform: scale(0.99);
+  }
+  .pc-arrow {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 48px;
+    height: 48px;
+    background: var(--electric);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    transform: translate(60px, -60px);
+    transition: transform 0.5s var(--ease-emphasis);
+  }
+  .pc-arrow svg {
+    width: 20px;
+    height: 20px;
+  }
+  .project-card:hover .pc-arrow {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  .pc-meta {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 0 0;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .pc-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+  .pc-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .pc-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    border: 1px solid var(--line);
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+  .pc-year {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--mute);
+    margin-top: 8px;
+    display: block;
+  }
+</style>

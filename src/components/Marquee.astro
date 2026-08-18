@@ -1,0 +1,76 @@
+---
+// filepath: src/components/Marquee.astro
+---
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track" id="marqueeTrack">
+    <span class="bone-block">STARTUPS<span class="star">/</span></span>
+    <span class="italic">crecimiento</span>
+    <span class="mate-block">PYMES<span class="star">/</span></span>
+    <span>APLICACIONES</span>
+    <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
+    <span class="italic">ventas</span>
+    <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
+    <span>RESULTADOS</span>
+    <span class="bone-block">STARTUPS<span class="star">/</span></span>
+    <span class="italic">crecimiento</span>
+    <span class="mate-block">PYMES<span class="star">/</span></span>
+    <span>APLICACIONES</span>
+    <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
+    <span class="italic">ventas</span>
+    <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
+    <span>RESULTADOS</span>
+  </div>
+</div>
+
+<style>
+  .marquee {
+    background: var(--marquee-bg);
+    color: var(--marquee-text);
+    border-bottom: 1px solid var(--marquee-bg);
+    padding: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    display: flex;
+    width: 100%;
+    contain: paint;
+  }
+  .marquee-track {
+    display: inline-flex;
+    align-items: stretch;
+    will-change: transform;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 52px);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .marquee-track span {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+  }
+  .marquee-track .italic {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    color: #0a0a0a;
+    background: var(--electric);
+  }
+  .marquee-track .bone-block {
+    background: var(--bone);
+    color: #0a0a0a;
+  }
+  .marquee-track .mate-block {
+    background: var(--mate);
+    color: var(--bone);
+  }
+  .marquee-track .rust-block {
+    background: var(--rust);
+    color: var(--bone);
+  }
+  .marquee-track .star {
+    font-size: 0.8em;
+    padding: 0 0 0 8px;
+    opacity: 0.5;
+  }
+</style>

@@ -1,0 +1,714 @@
+---
+// filepath: src/layouts/Layout.astro
+import '../styles/global.css';
+import Preloader from '../components/Preloader.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+import ThemeSwitcher from '../components/ThemeSwitcher.astro';
+import ProjectModal from '../components/ProjectModal.astro';
+import FloatingContact from '../components/FloatingContact.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "Amargo Creativo | Creadores de Páginas Web y Apps en Uruguay",
+  description = "Agencia creativa digital en Atlántida, Canelones. Especialistas en diseño web de alto rendimiento, aplicaciones a medida y estrategias de crecimiento digital en todo Uruguay."
+} = Astro.props;
+---
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <meta name="keywords" content="creadores de páginas web uruguay, diseño web uruguay, desarrollo de aplicaciones uruguay, agencia digital canelones, atlántida, amargo creativo, páginas web montevideo">
+  <meta name="author" content="Amargo Creativo">
+  <meta name="theme-color" content="#3a7d44">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="canonical" href="https://www.amargocreativo.com/">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Open Graph / Facebook / WhatsApp -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.amargocreativo.com/">
+  <meta property="og:locale" content="es_UY">
+  <meta property="og:site_name" content="Amargo Creativo">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content="https://www.amargocreativo.com/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content={title}>
+  <meta property="twitter:description" content={description}>
+  <meta property="twitter:image" content="https://www.amargocreativo.com/og-image.jpg">
+
+  <!-- Rich Schema JSON-LD LocalBusiness -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Amargo Creativo",
+    "image": "https://www.amargocreativo.com/og-image.jpg",
+    "description": "Estudio creativo digital en Uruguay. Creadores de páginas web, aplicaciones a medida y motores de crecimiento comercial.",
+    "url": "https://www.amargocreativo.com",
+    "telephone": "+59898300491",
+    "email": "amargo.creativo@gmail.com",
+    "priceRange": "$$",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Atlántida",
+      "addressLocality": "Atlántida",
+      "addressRegion": "Canelones",
+      "postalCode": "16000",
+      "addressCountry": "UY"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": -34.7719,
+      "longitude": -55.7594
+    },
+    "areaServed": [
+      { "@type": "AdministrativeArea", "name": "Canelones" },
+      { "@type": "AdministrativeArea", "name": "Montevideo" },
+      { "@type": "AdministrativeArea", "name": "Maldonado" },
+      { "@type": "Country", "name": "Uruguay" }
+    ]
+  }
+  </script>
+
+  <!-- Typography Optimization -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <script is:inline src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+</head>
+<body class="theme-default">
+  <Preloader />
+  <CustomCursor />
+  <div class="grain" aria-hidden="true"></div>
+
+  <slot />
+
+  <ProjectModal />
+  <ThemeSwitcher />
+  <FloatingContact />
+
+  <script>
+    // --- 1. PRELOADER ---
+    const preloader = document.getElementById('preloader');
+    const preCounter = document.getElementById('preCounter');
+    let loadProgress = 0;
+    let isWindowLoaded = false;
+
+    const preloaderTimer = setInterval(() => {
+      if (isWindowLoaded) {
+        loadProgress += 15;
+      } else {
+        loadProgress += Math.floor(Math.random() * 12) + 4;
+      }
+
+      if (loadProgress >= 100) {
+        loadProgress = 100;
+        clearInterval(preloaderTimer);
+        if (preCounter) preCounter.textContent = '100';
+        setTimeout(() => {
+          if (preloader) preloader.classList.add('done');
+          document.body.classList.add('loaded');
+          checkAllReveals();
+        }, 250);
+      } else {
+        if (preCounter) preCounter.textContent = String(loadProgress).padStart(2, '0');
+      }
+    }, 50);
+
+    window.addEventListener('load', () => {
+      isWindowLoaded = true;
+    });
+
+    // --- 2. SMOOTH SCROLL (LENIS) ---
+    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let lenis: any;
+
+    const win = window as any;
+    if (isDesktop && typeof win.Lenis !== 'undefined') {
+      lenis = new win.Lenis({
+        duration: 1.15,
+        easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        smoothWheel: true,
+        wheelMultiplier: 0.9
+      });
+
+      function lenisRaf(time: number) {
+        lenis.raf(time);
+        requestAnimationFrame(lenisRaf);
+      }
+      requestAnimationFrame(lenisRaf);
+
+      if (prefersReducedMotion) lenis.stop();
+    } else {
+      lenis = {
+        scrollTo: (target: any, opts: any = {}) => {
+          const offset = opts.offset || 0;
+          if (target === 0 || target === '#top') {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          } else if (typeof target === 'number') {
+            window.scrollTo({ top: target + offset, behavior: 'smooth' });
+          } else if (target instanceof HTMLElement) {
+            const top = target.getBoundingClientRect().top + window.scrollY + offset;
+            window.scrollTo({ top, behavior: 'smooth' });
+          } else if (typeof target === 'string') {
+            const el = document.querySelector(target);
+            if (el) {
+              const top = el.getBoundingClientRect().top + window.scrollY + offset;
+              window.scrollTo({ top, behavior: 'smooth' });
+            }
+          }
+        },
+        stop: () => document.body.classList.add('no-scroll'),
+        start: () => document.body.classList.remove('no-scroll'),
+        on: (event: string, cb: any) => {
+          if (event === 'scroll') {
+            window.addEventListener('scroll', () => {
+              cb({ actualScroll: window.scrollY, velocity: 0 });
+            }, { passive: true });
+          }
+        }
+      };
+    }
+    win.lenis = lenis;
+
+    // Anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', (e) => {
+        const href = anchor.getAttribute('href');
+        if (!href || href === '#' || href === '#!') return;
+        e.preventDefault();
+        if (href === '#top') {
+          lenis.scrollTo(0, { duration: 1.2 });
+        } else {
+          const target = document.querySelector(href);
+          if (target) {
+            lenis.scrollTo(target, { offset: -60, duration: 1.2 });
+          }
+        }
+      });
+    });
+
+    // --- 3. HIGH PERFORMANCE LERPER CURSOR (EXACTO DEL ORIGINAL) ---
+    const cursor = document.getElementById('cursor');
+    const cursorDot = document.getElementById('cursorDot');
+    const cursorText = document.getElementById('cursorText');
+
+    if (isDesktop && cursor && cursorDot && cursorText) {
+      let mouseX = -100, mouseY = -100;
+      let cursorX = -100, cursorY = -100;
+
+      window.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+      }, { passive: true });
+
+      function renderCursor() {
+        cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
+        cursorX += (mouseX - cursorX) * 0.18;
+        cursorY += (mouseY - cursorY) * 0.18;
+        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+        requestAnimationFrame(renderCursor);
+      }
+      requestAnimationFrame(renderCursor);
+
+      function attachCursorHover(el: Element) {
+        el.addEventListener('mouseenter', () => {
+          cursor.classList.add('hover');
+          const txt = el.getAttribute('data-cursor');
+          cursorText.textContent = txt || 'VER';
+        });
+        el.addEventListener('mouseleave', () => {
+          cursor.classList.remove('hover');
+          cursorText.textContent = 'VER';
+        });
+      }
+
+      document.querySelectorAll('a, button, .cap-item, .project-card, .mi-card, .faq-trigger, .hero-badge, .theme-dot, .contact-email, .contact-wa').forEach(attachCursorHover);
+    }
+
+    // --- 4. THEME SWITCHER ---
+    const themeDots = document.querySelectorAll('.theme-dot');
+    themeDots.forEach(dot => {
+      dot.addEventListener('click', () => {
+        const theme = dot.getAttribute('data-theme');
+        document.body.className = `theme-${theme}`;
+        themeDots.forEach(d => d.classList.remove('active'));
+        dot.classList.add('active');
+      });
+    });
+
+    // --- 5. TEXT SCRAMBLE ---
+    class TextScramble {
+      el: HTMLElement;
+      chars: string;
+      queue: any[];
+      frame: number;
+      frameRequest?: number;
+      resolve?: () => void;
+
+      constructor(el: HTMLElement) {
+        this.el = el;
+        this.chars = '!<>-_\\/[]{}—=+*^?#________';
+        this.queue = [];
+        this.frame = 0;
+        this.update = this.update.bind(this);
+      }
+      setText(newText: string) {
+        const oldText = this.el.innerText;
+        const length = Math.max(oldText.length, newText.length);
+        const promise = new Promise<void>((resolve) => this.resolve = resolve);
+        this.queue = [];
+        for (let i = 0; i < length; i++) {
+          const from = oldText[i] || '';
+          const to = newText[i] || '';
+          const start = Math.floor(Math.random() * 25);
+          const end = start + Math.floor(Math.random() * 25);
+          this.queue.push({ from, to, start, end });
+        }
+        if (this.frameRequest) cancelAnimationFrame(this.frameRequest);
+        this.frame = 0;
+        this.update();
+        return promise;
+      }
+      update() {
+        let output = '';
+        let complete = 0;
+        for (let i = 0, n = this.queue.length; i < n; i++) {
+          let { from, to, start, end, char } = this.queue[i];
+          if (this.frame >= end) {
+            complete++;
+            output += to;
+          } else if (this.frame >= start) {
+            if (!char || Math.random() < 0.28) {
+              char = this.chars[Math.floor(Math.random() * this.chars.length)];
+              this.queue[i].char = char;
+            }
+            output += `<span style="color:var(--electric)">${char}</span>`;
+          } else {
+            output += from;
+          }
+        }
+        this.el.innerHTML = output;
+        if (complete === this.queue.length) {
+          if (this.resolve) this.resolve();
+        } else {
+          this.frameRequest = requestAnimationFrame(this.update);
+          this.frame++;
+        }
+      }
+    }
+
+    document.querySelectorAll('nav .nav-links a').forEach(el => {
+      const htmlEl = el as HTMLElement;
+      const originalText = htmlEl.getAttribute('data-text') || htmlEl.textContent || '';
+      const fx = new TextScramble(htmlEl);
+      htmlEl.addEventListener('mouseenter', () => {
+        if (!isDesktop) return;
+        fx.setText(originalText);
+      });
+    });
+
+    // --- 6. BUTTERY MAGNETIC BUTTONS (PHYSICS BASED) ---
+    if (isDesktop && !prefersReducedMotion) {
+      const magnetics = document.querySelectorAll('.magnetic-btn, #magneticEmailWrap, #magneticWaWrap');
+      magnetics.forEach(magnetic => {
+        const magEl = magnetic as HTMLElement;
+        let mX = 0, mY = 0;
+        let targetX = 0, targetY = 0;
+        let isHovered = false;
+        let magRaf: number | null = null;
+
+        function renderMagnetic() {
+          if (!isHovered && Math.abs(mX) < 0.01 && Math.abs(mY) < 0.01) {
+            magEl.style.transform = 'translate3d(0,0,0)';
+            if (magRaf) cancelAnimationFrame(magRaf);
+            magRaf = null;
+            return;
+          }
+          mX += (targetX - mX) * 0.2;
+          mY += (targetY - mY) * 0.2;
+          magEl.style.transform = `translate3d(${mX.toFixed(2)}px, ${mY.toFixed(2)}px, 0)`;
+          magRaf = requestAnimationFrame(renderMagnetic);
+        }
+
+        magEl.addEventListener('mousemove', (e) => {
+          isHovered = true;
+          const rect = magEl.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          const strength = magEl.classList.contains('magnetic-btn') ? 0.35 : 0.5;
+          targetX = x * strength;
+          targetY = y * strength;
+          if (!magRaf) magRaf = requestAnimationFrame(renderMagnetic);
+        }, { passive: true });
+
+        magEl.addEventListener('mouseleave', () => {
+          isHovered = false;
+          targetX = 0;
+          targetY = 0;
+        });
+      });
+    }
+
+    // --- 7. NAV SCROLL & MENU ---
+    const navEl = document.getElementById('nav');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const menuBtn = document.getElementById('menuBtn');
+    const menuCloseBtn = document.getElementById('menuCloseBtn');
+    let lastScroll = 0;
+
+    function handleNavScroll(scrollY: number) {
+      if (!navEl) return;
+      if (scrollY <= 100) {
+        navEl.classList.remove('hide-nav');
+        return;
+      }
+      if (scrollY > lastScroll && (!menuOverlay || !menuOverlay.classList.contains('active'))) {
+        navEl.classList.add('hide-nav');
+      } else {
+        navEl.classList.remove('hide-nav');
+      }
+      lastScroll = scrollY;
+    }
+
+    if (isDesktop && lenis.on) {
+      lenis.on('scroll', (e: any) => handleNavScroll(e.actualScroll));
+    } else {
+      window.addEventListener('scroll', () => handleNavScroll(window.scrollY), { passive: true });
+    }
+
+    function openMenu() {
+      if (menuOverlay && menuCloseBtn && menuBtn) {
+        menuOverlay.classList.add('active');
+        menuOverlay.setAttribute('aria-hidden', 'false');
+        menuCloseBtn.classList.add('active');
+        menuBtn.setAttribute('aria-expanded', 'true');
+        lenis.stop();
+      }
+    }
+
+    function closeMenu() {
+      if (menuOverlay && menuCloseBtn && menuBtn) {
+        menuOverlay.classList.remove('active');
+        menuOverlay.setAttribute('aria-hidden', 'true');
+        menuCloseBtn.classList.remove('active');
+        menuBtn.setAttribute('aria-expanded', 'false');
+        lenis.start();
+      }
+    }
+
+    if (menuBtn) menuBtn.addEventListener('click', openMenu);
+    if (menuCloseBtn) menuCloseBtn.addEventListener('click', closeMenu);
+
+    if (menuOverlay) {
+      menuOverlay.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute('href');
+          closeMenu();
+          setTimeout(() => {
+            if (targetId) {
+              const targetEl = document.querySelector(targetId);
+              if (targetEl) {
+                lenis.scrollTo(targetEl, { offset: -60, duration: 1.2 });
+              }
+            }
+          }, 400);
+        });
+      });
+    }
+
+    // --- 8. REVEAL OBSERVER ---
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-in');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.05, rootMargin: '0px 0px -20px 0px' });
+
+    function checkAllReveals() {
+      document.querySelectorAll('.manifesto-body, .manifesto-body .line, .projects-drag, .process-item').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          el.classList.add('is-in');
+        } else {
+          revealObserver.observe(el);
+        }
+      });
+    }
+    checkAllReveals();
+
+    // --- 9. SHOWCASE FILTERS & DRAG ---
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const projectCards = document.querySelectorAll('.project-card');
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filter = btn.getAttribute('data-filter');
+        filterButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        projectCards.forEach(card => {
+          const category = card.getAttribute('data-category');
+          if (filter === 'all' || category === filter) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
+      });
+    });
+
+    const drag = document.getElementById('projectsDrag');
+    let isDown = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    let dragMoved = false;
+
+    if (drag) {
+      drag.addEventListener('mousedown', (e) => {
+        isDown = true;
+        dragMoved = false;
+        drag.classList.add('active');
+        startX = e.pageX - drag.offsetLeft;
+        scrollLeft = drag.scrollLeft;
+      });
+
+      const stopDrag = () => {
+        if (!isDown) return;
+        isDown = false;
+        drag.classList.remove('active');
+      };
+
+      drag.addEventListener('mouseleave', stopDrag);
+      drag.addEventListener('mouseup', stopDrag);
+
+      drag.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - drag.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(x - startX) > 6) dragMoved = true;
+        drag.scrollLeft = scrollLeft - walk;
+      });
+    }
+
+    // --- 10. PROJECT MODAL ---
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modalClose = document.getElementById('modalClose');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDesc');
+    const modalLink = document.getElementById('modalLink') as HTMLAnchorElement;
+    const modalImg = document.getElementById('modalImg') as HTMLImageElement;
+
+    document.querySelectorAll('.project-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (dragMoved) {
+          e.preventDefault();
+          dragMoved = false;
+          return;
+        }
+        e.preventDefault();
+        if (modalTitle) modalTitle.textContent = card.getAttribute('data-title') || '';
+        if (modalDesc) modalDesc.textContent = card.getAttribute('data-desc') || '';
+        if (modalLink) modalLink.href = card.getAttribute('data-url') || '#';
+        if (modalImg) modalImg.src = card.getAttribute('data-img') || '';
+        if (modalOverlay) modalOverlay.classList.add('active');
+        lenis.stop();
+      });
+    });
+
+    function closeModal() {
+      if (modalOverlay) modalOverlay.classList.remove('active');
+      lenis.start();
+    }
+
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalOverlay) {
+      modalOverlay.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) closeModal();
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (modalOverlay && modalOverlay.classList.contains('active')) closeModal();
+        if (menuOverlay && menuOverlay.classList.contains('active')) closeMenu();
+      }
+    });
+
+    // --- 11. FAQ ACCORDION ---
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const trigger = item.querySelector('.faq-trigger');
+      if (trigger) {
+        trigger.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          faqItems.forEach(other => {
+            other.classList.remove('active');
+            other.querySelector('.faq-trigger')?.setAttribute('aria-expanded', 'false');
+          });
+          if (!isActive) {
+            item.classList.add('active');
+            trigger.setAttribute('aria-expanded', 'true');
+          }
+        });
+      }
+    });
+
+    // --- 12. MARQUEE ---
+    const marqueeTrack = document.getElementById('marqueeTrack');
+    if (marqueeTrack) {
+      let marqueeX = 0;
+      const marqueeBaseSpeed = 1.2;
+      let marqueeCurrentSpeed = 1.2;
+      let marqueeTargetSpeed = 1.2;
+      let halfWidth = 0;
+
+      function measureMarquee() {
+        if (marqueeTrack) halfWidth = marqueeTrack.scrollWidth / 2;
+      }
+      measureMarquee();
+      window.addEventListener('resize', measureMarquee, { passive: true });
+
+      if (isDesktop && !prefersReducedMotion) {
+        function animateMarquee() {
+          marqueeCurrentSpeed += (marqueeTargetSpeed - marqueeCurrentSpeed) * 0.1;
+          marqueeX -= marqueeCurrentSpeed;
+
+          if (halfWidth > 0) {
+            if (marqueeX < -halfWidth) {
+              marqueeX += halfWidth;
+            } else if (marqueeX > 0) {
+              marqueeX -= halfWidth;
+            }
+          }
+          if (marqueeTrack) {
+            marqueeTrack.style.transform = `translate3d(${marqueeX.toFixed(2)}px, 0, 0)`;
+          }
+          requestAnimationFrame(animateMarquee);
+        }
+        requestAnimationFrame(animateMarquee);
+
+        let scrollTimeout: any;
+        const handleVelocity = (velocity: number) => {
+          marqueeTargetSpeed = marqueeBaseSpeed - (velocity * 0.4);
+          marqueeTargetSpeed = Math.max(-12, Math.min(12, marqueeTargetSpeed));
+          clearTimeout(scrollTimeout);
+          scrollTimeout = setTimeout(() => {
+            marqueeTargetSpeed = marqueeBaseSpeed;
+          }, 120);
+        };
+
+        if (lenis.on) {
+          lenis.on('scroll', (e: any) => handleVelocity(e.velocity || 0));
+        }
+      } else {
+        marqueeTrack.style.animation = 'preMarquee 35s linear infinite';
+      }
+    }
+
+    // --- 13. HERO PARALLAX ---
+    const heroBg = document.getElementById('heroBg');
+    if (heroBg && !prefersReducedMotion) {
+      let heroScroll = 0;
+      let ticking = false;
+
+      function updateHero() {
+        if (heroScroll < window.innerHeight && heroBg) {
+          const offset = (heroScroll * 0.35).toFixed(1);
+          heroBg.style.transform = `translate3d(0, ${offset}px, 0) scale(1.08)`;
+        }
+        ticking = false;
+      }
+
+      if (isDesktop && lenis.on) {
+        lenis.on('scroll', (e: any) => {
+          heroScroll = e.actualScroll;
+          if (!ticking) {
+            requestAnimationFrame(updateHero);
+            ticking = true;
+          }
+        });
+      } else {
+        window.addEventListener('scroll', () => {
+          heroScroll = window.scrollY;
+          if (!ticking) {
+            requestAnimationFrame(updateHero);
+            ticking = true;
+          }
+        }, { passive: true });
+      }
+    }
+
+    // --- 14. PROCESS SPOTLIGHT ---
+    const processList = document.getElementById('processList');
+    const spotlight = document.getElementById('spotlight');
+    if (processList && spotlight && isDesktop && !prefersReducedMotion) {
+      let pRect: DOMRect | null = null;
+
+      processList.addEventListener('mouseenter', () => {
+        pRect = processList.getBoundingClientRect();
+        spotlight.style.opacity = '1';
+      });
+
+      processList.addEventListener('mousemove', (e) => {
+        if (!pRect) pRect = processList.getBoundingClientRect();
+        const y = e.clientY - pRect.top;
+        spotlight.style.transform = `translate3d(0, ${(y - 100).toFixed(1)}px, 0)`;
+      }, { passive: true });
+
+      processList.addEventListener('mouseleave', () => {
+        spotlight.style.opacity = '0';
+        pRect = null;
+      });
+    }
+
+    // --- 15. IMAGE FADE-IN ---
+    document.querySelectorAll('.pc-img').forEach(img => {
+      const imageEl = img as HTMLImageElement;
+      if (imageEl.complete) {
+        imageEl.classList.add('loaded');
+      } else {
+        imageEl.addEventListener('load', () => {
+          imageEl.classList.add('loaded');
+        }, { once: true });
+      }
+    });
+
+    // --- 16. REALTIME CLOCK ---
+    const clockUY = document.getElementById('clockUY');
+    if (clockUY) {
+      const uyFormatter = new Intl.DateTimeFormat('es-UY', {
+        timeZone: 'America/Montevideo',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+
+      function updateClocks() {
+        if (clockUY) clockUY.textContent = uyFormatter.format(new Date());
+      }
+      setInterval(updateClocks, 1000);
+      updateClocks();
+    }
+  </script>
+</body>
+</html>

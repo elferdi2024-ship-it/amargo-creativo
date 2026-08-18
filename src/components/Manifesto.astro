@@ -1,0 +1,153 @@
+---
+// filepath: src/components/Manifesto.astro
+---
+<section class="manifesto" id="manifesto">
+  <div class="manifesto-bg-text">AMARGO</div>
+  <div class="graphic-mark">+</div>
+  <div class="manifesto-head">
+    <div class="section-label"><span class="num">01</span> MANIFIESTO</div>
+    <h2>No diseñamos para ganar premios. <em>Diseñamos para que tu negocio crezca.</em></h2>
+  </div>
+  <div class="manifesto-body" id="manifestoBody">
+    <div class="line"><span>Tu web no es un folleto digital.</span></div>
+    <div class="line"><span>Es tu mejor vendedor, <em>trabajando 24/7</em>,</span></div>
+    <div class="line"><span>sin pedir aumentos ni comisiones.</span></div>
+    <div class="line"><span>Construimos <mark class="mate-mark">motores de crecimiento</mark> digitales.</span></div>
+  </div>
+</section>
+
+<style>
+  .manifesto {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .manifesto-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+    border-radius: 0;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .manifesto-head h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: clamp(24px, 4.5vw, 64px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+  }
+  .manifesto-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .manifesto-body {
+    max-width: 1000px;
+    margin: 0 auto;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 300;
+    font-size: clamp(20px, 3vw, 40px);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    position: relative;
+    z-index: 2;
+  }
+  .manifesto-body .line {
+    display: block;
+    overflow: hidden;
+  }
+  .manifesto-body .line span {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 1s var(--ease-emphasis);
+    will-change: transform;
+  }
+  .manifesto-body .line.is-in span,
+  .manifesto-body.is-in .line span {
+    transform: translateY(0);
+  }
+  .manifesto-body .line:nth-child(2) span { transition-delay: 0.08s; }
+  .manifesto-body .line:nth-child(3) span { transition-delay: 0.16s; }
+  .manifesto-body .line:nth-child(4) span { transition-delay: 0.24s; }
+  .manifesto-body .line em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .manifesto-body .line mark.mate-mark {
+    background: var(--mate);
+    color: var(--bone);
+    padding: 0 8px;
+    font-weight: 500;
+  }
+  :global(body.theme-electric) .manifesto-body .line mark.mate-mark {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .manifesto-bg-text {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 20vw;
+    color: var(--mate);
+    opacity: 0.05;
+    pointer-events: none;
+    z-index: 1;
+    text-transform: uppercase;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  :global(body.theme-electric) .manifesto-bg-text {
+    opacity: 0.08;
+    color: var(--rust);
+  }
+  .manifesto .graphic-mark {
+    top: 10%;
+    right: 5%;
+    font-size: 15vw;
+    transform: rotate(0deg);
+    color: var(--mate);
+    opacity: 0.12;
+  }
+  @media (max-width: 768px) {
+    .manifesto-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .manifesto-body {
+      font-size: 20px;
+    }
+  }
+</style>

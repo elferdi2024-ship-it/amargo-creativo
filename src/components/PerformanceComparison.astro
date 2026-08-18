@@ -1,0 +1,272 @@
+---
+// filepath: src/components/PerformanceComparison.astro
+---
+<section class="performance" id="performance">
+  <div class="perf-head">
+    <div class="section-label"><span class="num">03</span> COMPARATIVA TÉCNICA</div>
+    <h2>Tu web actual vs. <em>un motor amargo</em></h2>
+  </div>
+
+  <div class="perf-grid">
+    <!-- Web Tradicional -->
+    <div class="perf-card traditional">
+      <div class="card-top">
+        <span class="badge-status bad">✖ WEB TRADICIONAL / PLANTILLA</span>
+        <div class="card-speed">4.8s</div>
+        <div class="card-speed-label">TIEMPO DE CARGA PROMEDIO</div>
+      </div>
+      <ul class="perf-specs">
+        <li>
+          <span class="spec-label">Puntaje Google PageSpeed</span>
+          <strong class="spec-value bad-val">38 / 100</strong>
+        </li>
+        <li>
+          <span class="spec-label">Retención en Móviles</span>
+          <strong class="spec-value bad-val">35% (65% de rebote)</strong>
+        </li>
+        <li>
+          <span class="spec-label">Tecnología</span>
+          <span class="spec-value">Plantillas genéricas y código inflado</span>
+        </li>
+        <li>
+          <span class="spec-label">Enfoque</span>
+          <span class="spec-value">Diseño estático que no convierte</span>
+        </li>
+      </ul>
+      <div class="card-footer bad-foot">
+        Pérdida continua de clientes por lentitud y frustración visual.
+      </div>
+    </div>
+
+    <!-- Motor Amargo -->
+    <div class="perf-card amargo">
+      <div class="card-top">
+        <span class="badge-status good">✔ MOTOR AMARGO CREATIVO</span>
+        <div class="card-speed good-speed">&lt; 0.8s</div>
+        <div class="card-speed-label">CARGA INSTANTÁNEA EN URUGUAY</div>
+      </div>
+      <ul class="perf-specs">
+        <li>
+          <span class="spec-label">Puntaje Google PageSpeed</span>
+          <strong class="spec-value good-val">99 / 100 (Core Web Vitals)</strong>
+        </li>
+        <li>
+          <span class="spec-label">Retención en Móviles</span>
+          <strong class="spec-value good-val">92% (Fricción Cero)</strong>
+        </li>
+        <li>
+          <span class="spec-label">Tecnología</span>
+          <span class="spec-value highlight">Stack Moderno a Medida (Cero Bloat)</span>
+        </li>
+        <li>
+          <span class="spec-label">Enfoque</span>
+          <span class="spec-value highlight">Embudos directos a WhatsApp & Ventas</span>
+        </li>
+      </ul>
+      <div class="card-footer good-foot">
+        Tu activo digital más veloz, captando clientes las 24 horas del día.
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .performance {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+    position: relative;
+  }
+  .perf-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .perf-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .perf-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .perf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  .perf-card {
+    border: 1px solid var(--line);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    transition: transform 0.3s var(--ease), border-color 0.3s;
+  }
+  .perf-card.traditional {
+    background: rgba(10, 10, 10, 0.03);
+    opacity: 0.85;
+  }
+  :global(body.theme-dark) .perf-card.traditional {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .perf-card.amargo {
+    background: var(--charcoal);
+    color: var(--bone);
+    border-color: var(--mate-light);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  }
+  :global(body.theme-electric) .perf-card.amargo {
+    border-color: var(--electric);
+  }
+  .perf-card:hover {
+    transform: translateY(-4px);
+  }
+  .badge-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 6px 12px;
+    display: inline-block;
+    margin-bottom: 24px;
+  }
+  .badge-status.bad {
+    background: rgba(185, 72, 33, 0.15);
+    color: var(--rust);
+    border: 1px solid var(--rust);
+  }
+  .badge-status.good {
+    background: var(--mate);
+    color: var(--bone);
+    font-weight: 700;
+  }
+  :global(body.theme-electric) .badge-status.good {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .card-speed {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(48px, 6vw, 76px);
+    line-height: 0.9;
+    margin-bottom: 8px;
+  }
+  .card-speed.good-speed {
+    color: var(--electric);
+  }
+  .card-speed-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    margin-bottom: 32px;
+  }
+  .perf-card.amargo .card-speed-label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .perf-specs {
+    list-style: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 32px;
+  }
+  .perf-card.amargo .perf-specs {
+    border-top-color: rgba(255, 255, 255, 0.15);
+  }
+  .perf-specs li {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 13px;
+    align-items: center;
+    gap: 16px;
+  }
+  .perf-card.amargo .perf-specs li {
+    border-bottom-color: rgba(255, 255, 255, 0.15);
+  }
+  .spec-label {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--mute);
+  }
+  .perf-card.amargo .spec-label {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .spec-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    text-align: right;
+  }
+  .bad-val {
+    color: var(--rust);
+  }
+  .good-val {
+    color: var(--mate-light);
+  }
+  :global(body.theme-electric) .good-val {
+    color: var(--electric);
+  }
+  .highlight {
+    color: var(--electric);
+    font-weight: 700;
+  }
+  .card-footer {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding-top: 16px;
+  }
+  .bad-foot {
+    color: var(--mute);
+    font-style: italic;
+  }
+  .good-foot {
+    color: var(--bone);
+    font-weight: 500;
+  }
+  @media (max-width: 900px) {
+    .perf-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .perf-grid {
+      grid-template-columns: 1fr;
+    }
+    .perf-card {
+      padding: 24px;
+    }
+  }
+</style>

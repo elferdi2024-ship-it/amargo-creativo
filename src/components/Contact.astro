@@ -1,0 +1,201 @@
+---
+// filepath: src/components/Contact.astro
+---
+<section class="contact" id="contact">
+  <div class="contact-bg"></div>
+  <div class="contact-content">
+    <span class="contact-label">DISPONIBLE PARA NUEVOS PROYECTOS EN TODO URUGUAY</span>
+    <h2 class="contact-title">
+      <span class="word-nowrap">EMPECEMOS</span>
+      <em>tu proyecto</em>
+    </h2>
+
+    <div class="contact-actions-wrap">
+      <div class="magnetic-wrap" id="magneticEmailWrap">
+        <a href="mailto:amargo.creativo@gmail.com" class="contact-email" data-cursor="EMAIL">
+          amargo.creativo@gmail.com
+        </a>
+      </div>
+
+      <div class="magnetic-wrap" id="magneticWaWrap">
+        <a 
+          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="contact-wa" 
+          data-cursor="WHATSAPP"
+        >
+          098 300 491 (WhatsApp)
+        </a>
+      </div>
+    </div>
+
+    <div class="contact-info">
+      <div class="info-block">
+        <h4>ESTUDIO</h4>
+        <p>AMARGO CREATIVO™<br>Atlántida, Canelones, UY</p>
+      </div>
+      <div class="info-block">
+        <h4>RESPUESTA</h4>
+        <p>En 24 horas hábiles<br>Sin formularios aburridos</p>
+      </div>
+      <div class="info-block">
+        <h4>SIGUIENTES PASOS</h4>
+        <p>1. Llamada de 15 min<br>2. Propuesta en 48h<br>3. Proyecto en 2-3 semanas</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact {
+    background: var(--contact-bg);
+    color: var(--contact-text);
+    padding: clamp(80px, 15vh, 160px) var(--gut);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+  .contact-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    z-index: 1;
+    pointer-events: none;
+  }
+  :global(body.theme-electric) .contact-bg {
+    background-image: radial-gradient(circle at 50% 50%, rgba(212, 255, 0, 0.1) 0%, transparent 60%);
+  }
+  :global(body.theme-mate) .contact-bg {
+    background-image: radial-gradient(circle at 50% 50%, rgba(151, 188, 98, 0.1) 0%, transparent 60%);
+  }
+  .contact-content {
+    position: relative;
+    z-index: 2;
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+  .contact-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--electric);
+    margin-bottom: 24px;
+    display: inline-block;
+    border: 1px solid var(--electric);
+    padding: 8px 16px;
+  }
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 10vw, 140px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    word-break: normal;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .contact-title .word-nowrap {
+    white-space: nowrap;
+    display: block;
+  }
+  .contact-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--electric);
+    display: block;
+  }
+  @media (max-width: 768px) {
+    .contact-title {
+      font-size: clamp(28px, 9vw, 64px);
+      letter-spacing: -0.05em;
+    }
+  }
+  .contact-actions-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    margin: 20px 0 40px;
+  }
+  .magnetic-wrap {
+    display: inline-block;
+    will-change: transform;
+  }
+  .contact-email {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 4vw, 56px);
+    color: var(--contact-text);
+    text-decoration: none;
+    border-bottom: 4px solid var(--electric);
+    padding-bottom: 8px;
+    transition: color 0.3s var(--ease), border-color 0.3s;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .contact-email:hover {
+    color: var(--electric);
+  }
+  .contact-email:active {
+    transform: scale(0.98);
+  }
+  .contact-wa {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 3.5vw, 48px);
+    color: var(--contact-text);
+    text-decoration: none;
+    border-bottom: 4px solid var(--mate-light);
+    padding-bottom: 8px;
+    transition: color 0.3s var(--ease), border-color 0.3s;
+    display: inline-block;
+    cursor: pointer;
+  }
+  .contact-wa:hover {
+    color: var(--mate-light);
+  }
+  .contact-wa:active {
+    transform: scale(0.98);
+  }
+  .contact-info {
+    margin-top: 80px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 32px;
+    text-align: left;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 40px;
+  }
+  :global(body.theme-electric) .contact-info {
+    border-top: 1px solid rgba(241, 255, 90, 0.1);
+  }
+  :global(body.theme-mate) .contact-info {
+    border-top: 1px solid rgba(151, 188, 98, 0.15);
+  }
+  .info-block h4 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 12px;
+  }
+  :global(body.theme-electric) .info-block h4 {
+    color: rgba(241, 255, 90, 0.6);
+  }
+  :global(body.theme-mate) .info-block h4 {
+    color: rgba(151, 188, 98, 0.8);
+  }
+  .info-block p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+</style>

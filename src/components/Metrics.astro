@@ -1,0 +1,196 @@
+---
+// filepath: src/components/Metrics.astro
+
+interface Metric {
+  num: string;
+  label: string;
+  desc: string;
+}
+
+const metrics: Metric[] = [
+  {
+    num: "VENTAS",
+    label: "Pensada para Vender",
+    desc: "Cada botón y sección está ubicado para que el cliente te consulte rápido y sin complicaciones."
+  },
+  {
+    num: "< 1s",
+    label: "Carga al Instante",
+    desc: "Si una web demora más de 3 segundos, la gente la cierra. Las nuestras abren de inmediato en cualquier celular."
+  },
+  {
+    num: "GOOGLE",
+    label: "Visibilidad en tu Zona",
+    desc: "Optimizada para que cuando busquen tu servicio en Uruguay, te encuentren primero a vos."
+  },
+  {
+    num: "100%",
+    label: "Activo Tuyo",
+    desc: "Sin alquileres ocultos ni plataformas que te atan. El sitio, el dominio y todo el contenido te pertenecen."
+  }
+];
+---
+<section class="metrics-impact">
+  <div class="graphic-mark">+</div>
+  <div class="mi-inner">
+    <div class="mi-head">
+      <h2>Estrategia. <em>Sin vueltas.</em></h2>
+      <p>No te prometemos fórmulas mágicas. Construimos tu web sobre bases sólidas: rapidez absoluta, diseño claro y un camino directo para que tus clientes te contacten.</p>
+    </div>
+    <div class="mi-cards">
+      {metrics.map(metric => (
+        <div class="mi-card">
+          <div>
+            <div class="mi-num">{metric.num}</div>
+            <div class="mi-label">{metric.label}</div>
+          </div>
+          <div class="mi-desc">{metric.desc}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .metrics-impact {
+    background: var(--marquee-bg);
+    color: var(--marquee-text);
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--marquee-bg);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .metrics-impact::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+    opacity: 0.2;
+    mask-image: linear-gradient(to right, black, transparent 70%);
+    -webkit-mask-image: linear-gradient(to right, black, transparent 70%);
+    pointer-events: none;
+  }
+  :global(body.theme-electric) .metrics-impact::before {
+    background-image: radial-gradient(rgba(241, 255, 90, 0.2) 1px, transparent 1px);
+  }
+  :global(body.theme-mate) .metrics-impact::before {
+    background-image: radial-gradient(rgba(151, 188, 98, 0.2) 1px, transparent 1px);
+  }
+  .mi-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 64px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .mi-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(32px, 5vw, 64px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .mi-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--electric);
+  }
+  .mi-head p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+    max-width: 400px;
+  }
+  :global(body.theme-electric) .mi-head p {
+    color: rgba(241, 255, 90, 0.7);
+  }
+  :global(body.theme-mate) .mi-head p {
+    color: rgba(232, 230, 224, 0.8);
+  }
+  .mi-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  :global(body.theme-electric) .mi-cards {
+    background: rgba(241, 255, 90, 0.1);
+    border: 1px solid rgba(241, 255, 90, 0.2);
+  }
+  :global(body.theme-mate) .mi-cards {
+    background: rgba(151, 188, 98, 0.1);
+    border: 1px solid rgba(151, 188, 98, 0.2);
+  }
+  .mi-card {
+    background: var(--marquee-bg);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+    transition: background 0.3s var(--ease), color 0.3s var(--ease);
+    cursor: default;
+    position: relative;
+  }
+  .mi-card:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .mi-card:hover .mi-num {
+    color: #0a0a0a;
+  }
+  .mi-card:hover .mi-desc {
+    color: rgba(10, 10, 10, 0.7);
+  }
+  .mi-num {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(32px, 4vw, 52px);
+    line-height: 1;
+    color: var(--electric);
+    transition: color 0.3s;
+  }
+  .mi-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+  }
+  .mi-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    color: var(--mute);
+    transition: color 0.3s;
+  }
+  @media (min-width: 600px) {
+    .mi-cards {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 900px) {
+    .mi-inner {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+  }
+  .metrics-impact .graphic-mark {
+    bottom: -10%;
+    left: -5%;
+    font-size: 35vw;
+    transform: rotate(0deg);
+  }
+</style>

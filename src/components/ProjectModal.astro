@@ -1,0 +1,123 @@
+---
+// filepath: src/components/ProjectModal.astro
+---
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <button class="modal-close" id="modalClose" aria-label="Cerrar modal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  </button>
+  <div class="modal-content">
+    <div class="modal-left">
+      <h3 id="modalTitle">Proyecto</h3>
+      <p id="modalDesc">Descripción del proyecto aquí.</p>
+      <a href="#" id="modalLink" target="_blank" rel="noopener noreferrer" class="modal-link">Ver sitio en vivo →</a>
+    </div>
+    <div class="modal-right">
+      <img src="" id="modalImg" alt="Proyecto" width="400" height="300">
+    </div>
+  </div>
+</div>
+
+<style>
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    background: var(--overlay-bg);
+    color: var(--overlay-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(var(--gut) + env(safe-area-inset-top)) var(--gut) calc(var(--gut) + env(safe-area-inset-bottom));
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease);
+  }
+  .modal-overlay:global(.active) {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .modal-content {
+    max-width: 1000px;
+    width: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    transform: translateY(40px);
+    transition: transform 0.5s var(--ease-emphasis);
+  }
+  .modal-overlay:global(.active) .modal-content {
+    transform: translateY(0);
+  }
+  .modal-left h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: 0.9;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+  .modal-left p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 24px;
+  }
+  :global(body.theme-electric) .modal-left p {
+    color: rgba(241, 255, 90, 0.8);
+  }
+  .modal-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--electric);
+    text-decoration: none;
+    border-bottom: 2px solid var(--electric);
+    padding-bottom: 4px;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  .modal-link:active {
+    transform: scale(0.98);
+  }
+  .modal-right img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 4/3;
+    display: block;
+  }
+  .modal-close {
+    position: absolute;
+    top: env(safe-area-inset-top);
+    right: 0;
+    background: var(--electric);
+    color: #0a0a0a;
+    border: none;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+  }
+  .modal-close:hover {
+    transform: rotate(90deg);
+  }
+  .modal-close:active {
+    transform: scale(0.95);
+  }
+  @media (max-width: 768px) {
+    .modal-content {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .modal-right {
+      display: none;
+    }
+  }
+</style>

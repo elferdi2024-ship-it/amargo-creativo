@@ -1,0 +1,275 @@
+---
+// filepath: src/components/Capabilities.astro
+
+interface Service {
+  num: string;
+  title: string;
+  desc: string;
+  tags: string[];
+  iconType: number;
+}
+
+const services: Service[] = [
+  {
+    num: "01",
+    title: "Diseño y Creación Web",
+    desc: "Páginas rápidas, modernas y fáciles de usar en cualquier celular. Hacemos que tu marca se vea profesional desde el primer segundo.",
+    tags: ["DISEÑO MODERNO", "TIENDAS ONLINE", "RÁPIDO"],
+    iconType: 1
+  },
+  {
+    num: "02",
+    title: "Estrategia para Vender Más",
+    desc: "Ayudamos a que las personas que visitan tu web te escriban por WhatsApp o compren directo. Menos vueltas, más clientes reales.",
+    tags: ["MÁS CLIENTES", "WHATSAPP DIRECTO", "VENTAS"],
+    iconType: 2
+  },
+  {
+    num: "03",
+    title: "Marcas con Personalidad",
+    desc: "Colores, logos y detalles que conectan con tus clientes y hacen que te recuerden frente a la competencia.",
+    tags: ["IDENTIDAD", "ESTILO", "IMAGEN"],
+    iconType: 3
+  },
+  {
+    num: "04",
+    title: "Que te Encuentren en Google",
+    desc: "De nada sirve tener una web hermosa si nadie la encuentra. Te posicionamos para que aparezcas cuando busquen lo que vendes en Uruguay.",
+    tags: ["GOOGLE", "BÚSQUEDA LOCAL", "VISIBILIDAD"],
+    iconType: 4
+  }
+];
+---
+<section class="capabilities" id="capabilities">
+  <div class="cap-head">
+    <div class="section-label"><span class="num">02</span> SERVICIOS</div>
+    <h2>Lo que <em>hacemos</em> por ti</h2>
+  </div>
+  <div class="cap-list">
+    {services.map(service => (
+      <div class="cap-item">
+        <div class="cap-num">{service.num}</div>
+        <div class="cap-title">{service.title}</div>
+        <div class="cap-desc">{service.desc}</div>
+        <div class="cap-tags">
+          {service.tags.map(tag => (
+            <span class="cap-tag">{tag}</span>
+          ))}
+        </div>
+        <div class="cap-icon">
+          {service.iconType === 1 && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="3" y="3" width="18" height="18" rx="0"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+          )}
+          {service.iconType === 2 && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 3v18h18"/>
+              <path d="M7 14l4-4 4 4 5-5"/>
+            </svg>
+          )}
+          {service.iconType === 3 && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 3a9 9 0 0 0 0 18M3 12h18"/>
+            </svg>
+          )}
+          {service.iconType === 4 && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="M21 21l-4.35-4.35"/>
+            </svg>
+          )}
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .capabilities {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+  }
+  .cap-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+    border-radius: 0;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .cap-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .cap-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .cap-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .cap-item {
+    display: grid;
+    grid-template-columns: 80px 1fr 2fr auto 40px;
+    gap: 32px;
+    padding: 48px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+    transition: background 0.4s var(--ease), padding 0.4s var(--ease);
+    cursor: pointer;
+  }
+  .cap-item:last-child {
+    border-bottom: none;
+  }
+  .cap-item:hover {
+    background: var(--hover-bg);
+    color: var(--hover-text);
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+  .cap-item:hover .cap-num {
+    color: var(--mate-light);
+  }
+  .cap-item:hover .cap-desc {
+    color: rgba(255, 255, 255, 0.7);
+  }
+  .cap-item:hover .cap-icon svg {
+    color: var(--mate-light);
+    transform: rotate(45deg);
+  }
+  .cap-item:hover .cap-tag {
+    border-color: var(--mate-light);
+    color: var(--mate-light);
+  }
+  :global(body.theme-electric) .cap-item:hover .cap-desc {
+    color: rgba(10, 10, 10, 0.7);
+  }
+  :global(body.theme-electric) .cap-item:hover .cap-num {
+    color: var(--electric);
+  }
+  :global(body.theme-electric) .cap-item:hover .cap-icon svg {
+    color: var(--electric);
+  }
+  .cap-item:active {
+    transform: scale(0.99);
+  }
+  .cap-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 48px;
+    color: var(--mute);
+    line-height: 1;
+    transition: color 0.3s var(--ease);
+  }
+  .cap-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(24px, 3vw, 36px);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .cap-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--mute);
+    max-width: 400px;
+    transition: color 0.3s var(--ease);
+  }
+  .cap-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .cap-tag {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 8px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+    transition: all 0.3s var(--ease);
+  }
+  .cap-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .cap-icon svg {
+    width: 32px;
+    height: 32px;
+    color: var(--mute);
+    transition: color 0.3s var(--ease), transform 0.4s var(--ease);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  @media (max-width: 900px) {
+    .cap-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .cap-item {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 32px 0;
+    }
+    .cap-item:hover {
+      padding-left: 0;
+      padding-right: 0;
+      background: transparent;
+      color: var(--ink);
+    }
+    .cap-item:hover .cap-num {
+      color: var(--mate);
+    }
+    .cap-item:hover .cap-desc {
+      color: var(--mute);
+    }
+    .cap-item:hover .cap-icon svg {
+      color: var(--mate);
+      transform: rotate(0deg);
+    }
+    .cap-tags {
+      justify-content: flex-start;
+    }
+    .cap-icon {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,204 @@
+---
+// filepath: src/components/Testimonials.astro
+
+interface Testimonial {
+  num: string;
+  project: string;
+  role: string;
+  quote: string;
+  metric: string;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    num: "01",
+    project: "Barrio.uy",
+    role: "Plataforma Inmobiliaria • Montevideo, UY",
+    quote: "Buscábamos salir del molde de los sitios inmobiliarios lentos y pesados. Amargo construyó una plataforma instantánea con búsqueda ultra rápida que multiplicó las consultas desde el primer mes.",
+    metric: "-45% Tasa de Rebote"
+  },
+  {
+    num: "02",
+    project: "DrivePrime",
+    role: "Sistema de Alquileres • Canelones, UY",
+    quote: "Pasamos de responder cotizaciones manuales durante horas a tener un sistema automatizado que gestiona reservas en 2 minutos. La velocidad de carga y el diseño marcaron una diferencia total en ventas.",
+    metric: "Cero Fricción Comercial"
+  },
+  {
+    num: "03",
+    project: "Remate",
+    role: "Subastas en Vivo • Uruguay",
+    quote: "En pujas en tiempo real, cada milisegundo de retraso arruina la subasta. La arquitectura técnica que desarrolló Amargo soporta cientos de usuarios simultáneos sin ninguna latencia.",
+    metric: "WebSockets & Cero Latencia"
+  }
+];
+---
+<section class="testimonials" id="testimonials">
+  <div class="test-head">
+    <div class="section-label"><span class="num">06</span> PRUEBA SOCIAL</div>
+    <h2>Resultados <em>reales.</em> Voces directas.</h2>
+  </div>
+
+  <div class="test-grid">
+    {testimonials.map(item => (
+      <div class="test-card">
+        <div class="test-card-top">
+          <span class="test-num">{item.num}</span>
+          <span class="test-metric">{item.metric}</span>
+        </div>
+        <p class="test-quote">"{item.quote}"</p>
+        <div class="test-author">
+          <div class="test-project">{item.project}</div>
+          <div class="test-role">{item.role}</div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .testimonials {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+    position: relative;
+  }
+  .test-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .test-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .test-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .test-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .test-card {
+    border: 1px solid var(--line);
+    padding: 36px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 28px;
+    transition: background 0.3s var(--ease), transform 0.3s var(--ease);
+    background: rgba(10, 10, 10, 0.02);
+  }
+  :global(body.theme-dark) .test-card {
+    background: rgba(255, 255, 255, 0.02);
+  }
+  .test-card:hover {
+    background: var(--hover-bg);
+    color: var(--hover-text);
+    transform: translateY(-4px);
+  }
+  .test-card:hover .test-num {
+    color: var(--mate-light);
+  }
+  .test-card:hover .test-metric {
+    border-color: var(--electric);
+    color: var(--electric);
+  }
+  .test-card:hover .test-role {
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .test-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .test-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 28px;
+    color: var(--mute);
+    line-height: 1;
+    transition: color 0.3s;
+  }
+  .test-metric {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    transition: all 0.3s;
+  }
+  .test-quote {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .test-author {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+  }
+  .test-project {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+  .test-role {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--mute);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  @media (max-width: 1024px) {
+    .test-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 768px) {
+    .test-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .test-card {
+      padding: 24px;
+    }
+  }
+</style>

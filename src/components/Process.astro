@@ -1,0 +1,48 @@
+---
+// filepath: src/components/Process.astro
+
+interface Step {
+  num: string;
+  title: string;
+  desc: string;
+}
+
+const steps: Step[] = [
+  {
+    num: "01",
+    title: "Charla de 15 Minutos",
+    desc: "Nos tomamos un momento para entender tu negocio, qué problemas tenés y qué querés lograr con tu nueva web. Sin vueltas ni tecnicismos raros."
+  },
+  {
+    num: "02",
+    title: "Estructura y Diseño Visual",
+    desc: "Diseñamos las pantallas completas para que veas exactamente cómo va a quedar tu sitio, cómo se va a navegar en celulares y cómo va a recibir a tus clientes."
+  },
+  {
+    num: "03",
+    title: "Desarrollo y Velocidad",
+    desc: "Construimos el sitio con código limpio y ultra veloz. Integramos WhatsApp directo, mapas, formularios y todo lo necesario para que funcione como un reloj."
+  },
+  {
+    num: "04",
+    title: "Lanzamiento y a Rodar",
+    desc: "Probamos todo a fondo, conectamos tu dominio y publicamos tu web en internet. Te entregamos el acceso total y te enseñamos a usarla."
+  }
+];
+---
+<section class="process" id="process">
+  <div class="process-head">
+    <div class="section-label"><span class="num">04</span> PROCESO</div>
+    <h2>Del primer mate <em>al lanzamiento</em></h2>
+  </div>
+  <div class="process-list" id="processList">
+    <div class="spotlight" id="spotlight"></div>
+    {steps.map(step => (
+      <div class="process-item">
+        <div class="process-num">{step.num}</div>
+        <div class="process-title">{step.title}</div>
+        <div class="process-desc">{step.desc}</div>
+      </div>
+    ))}
+  </div>
+</section>

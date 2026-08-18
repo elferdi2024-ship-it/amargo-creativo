@@ -1,0 +1,124 @@
+---
+// filepath: src/components/Footer.astro
+---
+<footer>
+  <div class="footer-inner">
+    <div class="footer-left">
+      <div class="clock-block">
+        <span>HORA EN URUGUAY</span>
+        <strong id="clockUY">--:--:--</strong>
+      </div>
+      <div class="footer-phrase">
+        <em>"Siempre es una buena hora para compartir un amargo"</em>
+      </div>
+    </div>
+    <div class="footer-copy">© 2026 AMARGO CREATIVO™ — ATLÁNTIDA, CANELONES, URUGUAY</div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: var(--footer-bg);
+    color: var(--footer-text);
+    padding: 48px var(--gut);
+    padding-bottom: calc(48px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  :global(body.theme-electric) footer {
+    border-top: 1px solid rgba(241, 255, 90, 0.1);
+  }
+  :global(body.theme-mate) footer {
+    border-top: 1px solid rgba(151, 188, 98, 0.15);
+  }
+  footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+    z-index: 0;
+    opacity: 0.08;
+    mask-image: linear-gradient(to top, black, transparent 80%);
+    -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
+    pointer-events: none;
+  }
+  .footer-inner {
+    max-width: var(--max);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 28px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    position: relative;
+    z-index: 1;
+  }
+  .footer-left {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+  .clock-block {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .clock-block span {
+    color: var(--mute);
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+  .clock-block strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0;
+    color: var(--footer-text);
+  }
+  .footer-phrase {
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    padding-left: 24px;
+  }
+  :global(body.theme-mate) .footer-phrase {
+    border-left-color: rgba(151, 188, 98, 0.3);
+  }
+  .footer-phrase em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: none;
+    font-size: 18px;
+    color: var(--mate-light);
+    letter-spacing: 0.01em;
+    font-weight: 400;
+  }
+  :global(body.theme-electric) .footer-phrase em {
+    color: var(--electric);
+  }
+  .footer-copy {
+    color: var(--mute);
+    font-size: 10px;
+  }
+  @media (max-width: 768px) {
+    .footer-left {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .footer-phrase {
+      border-left: none;
+      padding-left: 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 12px;
+    }
+  }
+</style>

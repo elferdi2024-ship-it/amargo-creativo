@@ -1,0 +1,186 @@
+---
+// filepath: src/components/FAQ.astro
+
+interface FAQItem {
+  num: string;
+  question: string;
+  answer: string;
+}
+
+const faqs: FAQItem[] = [
+  {
+    num: "01",
+    question: "¿Cuánto tiempo toma el desarrollo de mi web o app?",
+    answer: "Dependiendo del alcance, una Landing Page de alta conversión o sitio corporativo toma entre 10 y 14 días hábiles. Proyectos complejos con paneles SaaS o e-commerce avanzados toman entre 3 y 5 semanas. Te entregamos un cronograma exacto antes de empezar."
+  },
+  {
+    num: "02",
+    question: "¿El sitio web y el código serán 100% de mi propiedad?",
+    answer: "Sí, absolutamente. Todo el código fuente, diseño, dominio y cuentas quedan a tu nombre sin dependencias cautivas ni costos ocultos de plataformas cerradas. Eres el dueño absoluto de tu activo digital."
+  },
+  {
+    num: "03",
+    question: "¿Cómo optimizan la web para posicionar en Google en Uruguay?",
+    answer: "Aplicamos SEO técnico nativo: tiempos de carga por debajo de 1 segundo (Core Web Vitals verdes), marcado semántico Schema.org para negocios locales en Uruguay, arquitectura limpia y optimización de palabras clave para que te encuentren clientes con intención real de compra."
+  },
+  {
+    num: "04",
+    question: "¿Qué formas de pago y opciones de financiación aceptan?",
+    answer: "Trabajamos con esquema 50% al inicio y 50% contra entrega final una vez aprobado el proyecto. Aceptamos transferencias bancarias en Uruguay (BROU, Santander, Itaú), pagos internacionales vía Stripe/Wise y cripto."
+  }
+];
+---
+<section class="faq" id="faq">
+  <div class="faq-head">
+    <div class="section-label"><span class="num">04</span> PREGUNTAS FRECUENTES</div>
+    <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
+  </div>
+  <div class="faq-list">
+    {faqs.map((faq, index) => (
+      <div class="faq-item" data-index={index}>
+        <button class="faq-trigger" aria-expanded="false">
+          <span class="faq-num">{faq.num}</span>
+          <span class="faq-title">{faq.question}</span>
+          <span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-content">
+          <p>{faq.answer}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .faq {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+    position: relative;
+  }
+  .faq-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+  .faq-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+    transition: background 0.3s var(--ease);
+  }
+  .faq-item:last-child {
+    border-bottom: none;
+  }
+  .faq-trigger {
+    width: 100%;
+    background: none;
+    border: none;
+    display: grid;
+    grid-template-columns: 80px 1fr 40px;
+    gap: 32px;
+    padding: 32px 0;
+    align-items: center;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    font-family: inherit;
+    transition: padding 0.3s var(--ease), color 0.3s var(--ease);
+  }
+  .faq-item:hover .faq-trigger {
+    color: var(--rust);
+  }
+  .faq-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px;
+    color: var(--mute);
+    line-height: 1;
+    transition: color 0.3s var(--ease);
+  }
+  .faq-item:hover .faq-num {
+    color: var(--electric);
+  }
+  .faq-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px, 2.2vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  .faq-icon {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 28px;
+    color: var(--mute);
+    transition: transform 0.4s var(--ease), color 0.3s var(--ease);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .faq-item.active .faq-icon {
+    transform: rotate(45deg);
+    color: var(--electric);
+  }
+  .faq-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-emphasis), padding 0.4s var(--ease);
+    padding-left: 112px;
+    padding-right: 40px;
+  }
+  .faq-item.active .faq-content {
+    max-height: 300px;
+    padding-bottom: 32px;
+  }
+  .faq-content p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--mute);
+  }
+  :global(body.theme-dark) .faq-content p {
+    color: rgba(232, 230, 224, 0.8);
+  }
+  :global(body.theme-electric) .faq-content p {
+    color: rgba(241, 255, 90, 0.8);
+  }
+  @media (max-width: 900px) {
+    .faq-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    .faq-trigger {
+      grid-template-columns: 50px 1fr 30px;
+      gap: 16px;
+      padding: 24px 0;
+    }
+    .faq-content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+</style>
