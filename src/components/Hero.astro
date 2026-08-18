@@ -1,12 +1,12 @@
 ---
 // filepath: src/components/Hero.astro
 ---
-<div class="hero-sticky" id="heroSticky">
-  <div class="hero-stage" id="heroStage">
-    <!-- Canvas de Renderizado de Alta Precisión (Apple-grade) -->
+<div class="hero-scroll-wrapper" id="heroScrollWrapper">
+  <div class="hero-sticky-stage" id="heroStickyStage">
+    <!-- Canvas de Renderizado de Ultra Precisión a 60/120fps -->
     <canvas id="heroCanvas" class="hero-canvas"></canvas>
     
-    <!-- Video Fuente Precargado (Oculto, usado como decodificador de frames) -->
+    <!-- Video Fuente (Decodificador de Frames en Memoria) -->
     <video 
       id="heroVideo" 
       class="hero-video-source" 
@@ -18,29 +18,29 @@
       aria-hidden="true"
     ></video>
     
-    <!-- Capas de Contraste, Tinte Brutalista y Gradiente -->
-    <div class="hero-overlay"></div>
+    <!-- Capa de Tinte Sutil Brutalista & Vignette -->
     <div class="hero-gradient"></div>
     <div class="hero-grid-overlay"></div>
 
-    <!-- Interfaz y Contenido del Hero -->
+    <!-- UI Perimetral Limpia (Sin textos centrales que tapen el video) -->
     <header class="hero-ui" id="top">
       <div class="hero-top">
-        <div><span>● EN VIVO</span><span>ESTUDIO CREATIVO DIGITAL</span></div>
-        <div><span>ATLÁNTIDA, UY</span><span>v30.0</span></div>
+        <div class="hero-live-badge"><span>● EN VIVO</span><span>ESTUDIO CREATIVO DIGITAL</span></div>
+        <div class="hero-location-badge"><span>ATLÁNTIDA, CANELONES</span><span>v30.0</span></div>
       </div>
 
-      <div class="hero-content" id="heroContent">
-        <h1 class="hero-title">
-          <span class="line"><span>MOTORES</span></span>
-          <span class="line line-2"><span><em>de crecimiento</em></span></span>
-          <span class="line line-3"><span>DIGITAL</span></span>
-        </h1>
+      <!-- Indicador Central de Scroll Sutil (Se desvanece en el primer giro) -->
+      <div class="hero-scroll-hint" id="heroScrollHint">
+        <div class="hint-bar">
+          <span class="hint-dot"></span>
+        </div>
+        <span class="hint-text">GIRA LA RUEDA PARA EXPLORAR</span>
       </div>
 
+      <!-- Barra Inferior de Acción y Métricas -->
       <div class="hero-bottom" id="heroBottom">
         <div class="hero-sub-wrap">
-          <p class="hero-sub">Tu web no es un folleto. Es tu mejor vendedor. Creamos páginas y aplicaciones que tus clientes disfrutan usar y que ayudan a que tu negocio crezca de verdad.</p>
+          <p class="hero-sub">Diseñamos páginas web y activos digitales de alto rendimiento que transforman visitas en clientes reales.</p>
           <div class="hero-cta-wrap">
             <a 
               href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
@@ -51,8 +51,7 @@
             >
               HABLAR POR WHATSAPP ↗
             </a>
-            <a href="#contact" class="hero-cta-secondary">COTIZAR ONLINE ↓</a>
-            <a href="#showcase" class="hero-cta-link">VER TRABAJOS →</a>
+            <a href="#showcase" class="hero-cta-secondary">VER TRABAJOS →</a>
           </div>
         </div>
 
@@ -68,6 +67,7 @@
         </div>
       </div>
 
+      <!-- Badge Giratorio Brutalista -->
       <div class="hero-badge" aria-hidden="true">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs><path id="circle" d="M 50, 50 m -38, 0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" /></defs>
@@ -83,37 +83,34 @@
 
 <script>
   // =========================================================================
-  // APPLE-GRADE SCROLL SCRUBBING ENGINE VIA HTML5 CANVAS & LERP
+  // MOTOR DE VIDEO SCRUBBING INSTANTÁNEO (CERO DELAY & RESPUESTA INMEDIATA)
   // =========================================================================
-  const heroSticky = document.getElementById('heroSticky');
+  const wrapper = document.getElementById('heroScrollWrapper');
   const canvas = document.getElementById('heroCanvas') as HTMLCanvasElement | null;
   const video = document.getElementById('heroVideo') as HTMLVideoElement | null;
-  const heroContent = document.getElementById('heroContent');
-  const heroBottom = document.getElementById('heroBottom');
+  const scrollHint = document.getElementById('heroScrollHint');
 
-  if (heroSticky && canvas && video) {
+  if (wrapper && canvas && video) {
     const ctx = canvas.getContext('2d', { alpha: false });
-    const isMobileOrReduced = window.matchMedia('(max-width: 768px), (prefers-reduced-motion: reduce)').matches;
+    const isMobileOrTouch = window.matchMedia('(max-width: 768px), (hover: none)').matches;
 
     let targetTime = 0;
     let currentTime = 0;
-    let isSeeking = false;
     let isVideoReady = false;
-    let animationFrameId: number;
 
-    // 1. Redimensionar Canvas con soporte para pantallas Retina (HiDPI)
+    // 1. Ajuste de Resolución Retina en Canvas
     function resizeCanvas() {
       if (!canvas) return;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = window.innerWidth * dpr;
       canvas.height = window.innerHeight * dpr;
-      drawFrame();
+      drawCanvasFrame();
     }
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas, { passive: true });
 
-    // 2. Renderizado de Frame con ajuste 'object-fit: cover' en Canvas
-    function drawFrame() {
+    // 2. Renderizado de Frame con Cobertura Completa (object-fit: cover)
+    function drawCanvasFrame() {
       if (!ctx || !canvas || !video || video.readyState < 2) return;
       const vW = video.videoWidth;
       const vH = video.videoHeight;
@@ -141,108 +138,93 @@
       ctx.drawImage(video, oX, oY, dW, dH);
     }
 
-    // 3. Inicialización & Precarga del Video
-    function onVideoLoaded() {
+    // 3. Inicialización Inmediata del Video
+    function readyVideo() {
       video.pause();
       video.currentTime = 0;
       isVideoReady = true;
-      drawFrame();
+      drawCanvasFrame();
     }
 
     if (video.readyState >= 2) {
-      onVideoLoaded();
+      readyVideo();
     } else {
-      video.addEventListener('loadeddata', onVideoLoaded, { once: true });
-      video.addEventListener('canplay', onVideoLoaded, { once: true });
+      video.addEventListener('loadedmetadata', readyVideo, { once: true });
+      video.addEventListener('loadeddata', readyVideo, { once: true });
+      video.addEventListener('canplay', readyVideo, { once: true });
     }
 
-    video.addEventListener('seeked', () => {
-      isSeeking = false;
-      drawFrame();
-    });
-
-    // 4. Modo Móvil / Reduced Motion: Reproducción automática en loop sin bloqueo
-    if (isMobileOrReduced) {
+    // 4. Modo Móvil: Reproducción fluida en loop sin fricción de scroll
+    if (isMobileOrTouch) {
       video.autoplay = true;
       video.loop = true;
       video.play().catch(() => {});
 
-      function loopRender() {
-        drawFrame();
-        requestAnimationFrame(loopRender);
+      function mobileLoop() {
+        drawCanvasFrame();
+        requestAnimationFrame(mobileLoop);
       }
-      requestAnimationFrame(loopRender);
+      requestAnimationFrame(mobileLoop);
     } else {
-      // 5. Modo Desktop: Scrubbing de Scroll Cuadro por Cuadro con Lerp
-      function updateScrubProgress() {
-        if (!heroSticky || !video || !video.duration) return;
-        const rect = heroSticky.getBoundingClientRect();
-        const maxScroll = heroSticky.offsetHeight - window.innerHeight;
-        const currentScroll = -rect.top;
+      // 5. Modo Desktop: Cálculo Directo desde el Primer Píxel (Sin Delays)
+      function updateScrub() {
+        if (!wrapper || !video || !video.duration) return;
+        const rect = wrapper.getBoundingClientRect();
+        const maxScroll = wrapper.offsetHeight - window.innerHeight;
+        
+        // currentScroll empieza exactamente en 0 desde el top
+        const currentScroll = Math.max(0, -rect.top);
         const progress = Math.min(Math.max(currentScroll / maxScroll, 0), 1);
 
+        // Mapeo directo y ultra-responsivo
         targetTime = progress * video.duration;
 
-        // Transición de la UI (Titular & CTAs se desvanecen suavemente tras el 25% de scroll)
-        if (heroContent && heroBottom) {
-          const fadeProgress = Math.max(0, Math.min(1, (progress - 0.2) / 0.5));
-          const translateY = fadeProgress * -60;
-          const opacity = 1 - fadeProgress;
-
-          heroContent.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0)`;
-          heroContent.style.opacity = opacity.toFixed(2);
-          heroBottom.style.opacity = opacity.toFixed(2);
-
-          if (opacity <= 0.02) {
-            heroContent.style.pointerEvents = 'none';
-            heroBottom.style.pointerEvents = 'none';
-          } else {
-            heroContent.style.pointerEvents = 'auto';
-            heroBottom.style.pointerEvents = 'auto';
-          }
+        // Ocultar hint de scroll en cuanto se mueve
+        if (scrollHint) {
+          scrollHint.style.opacity = progress > 0.04 ? '0' : '1';
         }
       }
 
-      window.addEventListener('scroll', updateScrubProgress, { passive: true });
+      window.addEventListener('scroll', updateScrub, { passive: true });
       if ((window as any).lenis?.on) {
-        (window as any).lenis.on('scroll', updateScrubProgress);
+        (window as any).lenis.on('scroll', updateScrub);
       }
 
-      // Loop de renderizado continuo a 60/120fps con inercia suave
-      function renderLoop() {
+      // Loop de Renderizado con Interpolación Alta (0.28 = Máxima reactividad y cero delay)
+      function render() {
         if (isVideoReady && video && video.duration) {
-          currentTime += (targetTime - currentTime) * 0.14; // Lerp suave
+          const diff = targetTime - currentTime;
+          currentTime += diff * 0.28;
 
-          if (!isSeeking && Math.abs(video.currentTime - currentTime) > 0.008) {
-            isSeeking = true;
+          if (Math.abs(video.currentTime - currentTime) > 0.003) {
             video.currentTime = currentTime;
           }
         }
 
-        drawFrame();
-        animationFrameId = requestAnimationFrame(renderLoop);
+        drawCanvasFrame();
+        requestAnimationFrame(render);
       }
-      animationFrameId = requestAnimationFrame(renderLoop);
+      requestAnimationFrame(render);
     }
   }
 </script>
 
 <style>
-  /* Pista de Scroll: 240vh (~2.5 giros de rueda para completar el video fluidamente) */
-  .hero-sticky {
+  /* Pista de Scroll Calibrada: 180vh (Exactamente 1.5 a 2 giros rápidos de rueda) */
+  .hero-scroll-wrapper {
     position: relative;
-    height: 240vh;
+    height: 180vh;
     width: 100%;
   }
 
   @media (max-width: 768px) {
-    .hero-sticky {
+    .hero-scroll-wrapper {
       height: 100vh;
       height: 100svh;
     }
   }
 
-  .hero-stage {
+  .hero-sticky-stage {
     position: sticky;
     top: 0;
     left: 0;
@@ -250,10 +232,9 @@
     height: 100vh;
     height: 100svh;
     overflow: hidden;
-    background: var(--hero-bg);
+    background: #0a0a0a;
   }
 
-  /* Canvas de Dibujo de Frames */
   .hero-canvas {
     position: absolute;
     inset: 0;
@@ -261,16 +242,16 @@
     height: 100%;
     display: block;
     z-index: 1;
-    filter: contrast(1.12) brightness(0.82);
+    filter: contrast(1.08) brightness(0.9);
     transition: filter 0.5s var(--ease);
   }
 
   :global(body.theme-electric) .hero-canvas {
-    filter: grayscale(60%) contrast(1.3) brightness(0.65) sepia(1) hue-rotate(40deg) saturate(1.8);
+    filter: grayscale(40%) contrast(1.25) brightness(0.75) sepia(1) hue-rotate(40deg) saturate(1.8);
   }
 
   :global(body.theme-mate) .hero-canvas {
-    filter: grayscale(15%) contrast(1.15) brightness(0.72) sepia(0.25) hue-rotate(85deg);
+    filter: grayscale(10%) contrast(1.15) brightness(0.85) sepia(0.2) hue-rotate(85deg);
   }
 
   .hero-video-source {
@@ -282,41 +263,33 @@
     pointer-events: none;
   }
 
-  .hero-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 10, 10, 0.32);
-    mix-blend-mode: multiply;
-    z-index: 2;
-    pointer-events: none;
-  }
-
   .hero-gradient {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 45%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    z-index: 3;
+    height: 50%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, transparent 100%);
+    z-index: 2;
     pointer-events: none;
   }
 
   .hero-grid-overlay {
     position: absolute;
     inset: 0;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
     background-size: 80px 80px;
-    z-index: 3;
+    z-index: 2;
     pointer-events: none;
   }
 
   .hero-ui {
     position: relative;
     height: 100%;
-    color: var(--hero-text);
+    color: #f4f1ea;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     z-index: 10;
     width: 100%;
   }
@@ -329,8 +302,8 @@
     text-transform: uppercase;
     flex-wrap: wrap;
     gap: 8px;
-    z-index: 10;
     position: relative;
+    z-index: 10;
   }
 
   .hero-top > div {
@@ -343,63 +316,49 @@
     font-weight: 700;
   }
 
-  .hero-content {
-    flex: 1;
-    position: relative;
-    z-index: 10;
+  /* Indicador de Scroll Central */
+  .hero-scroll-hint {
+    align-self: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    margin-top: auto;
+    margin-bottom: 20px;
+  }
+
+  .hint-bar {
+    width: 20px;
+    height: 36px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    display: flex;
     justify-content: center;
-    padding: 0 var(--gut);
-    will-change: transform, opacity;
+    padding-top: 6px;
   }
 
-  .hero-title {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: clamp(48px, 8.5vw, 140px);
-    line-height: 0.9;
-    letter-spacing: -0.04em;
+  .hint-dot {
+    width: 4px;
+    height: 8px;
+    background: var(--electric);
+    border-radius: 2px;
+    animation: hintScroll 2s infinite ease-in-out;
+  }
+
+  @keyframes hintScroll {
+    0% { transform: translateY(0); opacity: 1; }
+    60% { transform: translateY(12px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 0; }
+  }
+
+  .hint-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.7);
     text-transform: uppercase;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    word-break: keep-all;
-    hyphens: none;
-    text-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
-  }
-
-  .hero-title .line {
-    display: block;
-    overflow: hidden;
-    padding-bottom: 4px;
-  }
-
-  .hero-title .line span {
-    display: inline-block;
-    transform: translateY(110%);
-    animation: lineUp 1s var(--ease-emphasis) forwards;
-    white-space: nowrap;
-    will-change: transform;
-  }
-
-  .hero-title .line:nth-child(2) span { animation-delay: 0.15s; }
-  .hero-title .line:nth-child(3) span { animation-delay: 0.30s; }
-
-  @keyframes lineUp {
-    to { transform: translateY(0); }
-  }
-
-  .hero-title .line-2 { align-self: center; }
-  .hero-title .line-3 { align-self: flex-end; }
-
-  .hero-title em {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic;
-    text-transform: lowercase;
-    font-weight: 400;
-    color: var(--electric);
-    text-shadow: none;
   }
 
   .hero-bottom {
@@ -409,10 +368,12 @@
     justify-content: space-between;
     align-items: flex-end;
     gap: 48px;
-    padding: 32px var(--gut);
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 28px var(--gut);
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
     flex-wrap: wrap;
-    will-change: opacity;
+    background: rgba(10, 10, 10, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 
   :global(body.theme-electric) .hero-bottom {
@@ -427,16 +388,16 @@
     max-width: 520px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
   }
 
   .hero-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    line-height: 1.55;
-    color: var(--hero-text);
+    font-size: 14px;
+    line-height: 1.5;
+    color: #f4f1ea;
     opacity: 0.9;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
   }
 
   .hero-cta-wrap {
@@ -452,22 +413,23 @@
     justify-content: center;
     background: var(--electric);
     color: #0a0a0a;
-    padding: 14px 24px;
+    padding: 12px 22px;
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 12px;
+    font-size: 11px;
     transition: transform 0.2s var(--ease), background 0.2s;
     will-change: transform;
-    height: 44px;
+    height: 42px;
     box-sizing: border-box;
   }
 
   .hero-cta:hover {
     background: var(--bone);
     color: var(--ink);
+    transform: translate(-1px, -1px);
   }
 
   .hero-cta:active {
@@ -479,51 +441,32 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: var(--hero-text);
+    color: #f4f1ea;
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 12px;
+    font-size: 11px;
     border: 1px solid rgba(255, 255, 255, 0.3);
-    padding: 14px 20px;
-    height: 44px;
+    padding: 12px 18px;
+    height: 42px;
     box-sizing: border-box;
     transition: background 0.2s, border-color 0.2s;
   }
 
   .hero-cta-secondary:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--hero-text);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
   }
 
   .hero-cta-secondary:active {
     transform: scale(0.96);
   }
 
-  .hero-cta-link {
-    display: inline-flex;
-    align-items: center;
-    color: var(--hero-text);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    opacity: 0.8;
-    padding: 8px 12px;
-    transition: opacity 0.2s, color 0.2s;
-  }
-
-  .hero-cta-link:hover {
-    opacity: 1;
-    color: var(--electric);
-  }
-
   .hero-stats {
     display: flex;
-    gap: 48px;
+    gap: 40px;
     align-items: flex-end;
   }
 
@@ -531,30 +474,28 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--hero-text);
-    opacity: 0.85;
+    color: rgba(255, 255, 255, 0.8);
   }
 
   .hero-meta strong {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(28px, 3.5vw, 44px);
+    font-size: clamp(24px, 3vw, 36px);
     display: block;
     text-transform: none;
     letter-spacing: -0.02em;
-    margin-bottom: 4px;
-    color: var(--hero-text);
-    opacity: 1;
+    margin-bottom: 2px;
+    color: #f4f1ea;
     line-height: 1;
-    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
   }
 
   .hero-badge {
     position: absolute;
-    bottom: calc(32px + env(safe-area-inset-bottom));
+    bottom: calc(28px + env(safe-area-inset-bottom));
     right: var(--gut);
-    width: 120px;
-    height: 120px;
+    width: 110px;
+    height: 110px;
     z-index: 10;
     display: flex;
     align-items: center;
@@ -575,8 +516,8 @@
 
   .hero-badge .badge-inner {
     position: absolute;
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
     background: var(--electric);
     border: 2px dashed var(--ink);
     border-radius: 50%;
@@ -586,7 +527,7 @@
     color: var(--ink);
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 20px;
+    font-size: 18px;
     pointer-events: auto;
   }
 
@@ -596,26 +537,17 @@
   }
 
   @media (max-width: 900px) {
-    .hero-title {
-      font-size: clamp(32px, 10.5vw, 70px);
-      letter-spacing: -0.02em;
-    }
-
-    .hero-title .line-2, .hero-title .line-3 {
-      align-self: flex-start;
-    }
-
     .hero-bottom {
       flex-direction: column;
       align-items: flex-start;
-      gap: 28px;
-      padding-bottom: calc(32px + env(safe-area-inset-bottom));
+      gap: 20px;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 
     .hero-stats {
       width: 100%;
       justify-content: flex-start;
-      gap: 36px;
+      gap: 28px;
     }
 
     .hero-cta-wrap {
@@ -630,17 +562,7 @@
     }
 
     .hero-badge {
-      width: 80px;
-      height: 80px;
-      bottom: 20px;
-      right: 20px;
-    }
-
-    .hero-badge .badge-inner {
-      width: 32px;
-      height: 32px;
-      font-size: 14px;
-      border-width: 1px;
+      display: none;
     }
   }
 </style>
