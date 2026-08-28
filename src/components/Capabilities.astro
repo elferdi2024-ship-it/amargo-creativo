@@ -220,9 +220,10 @@ const services: Service[] = [
   .cap-num {
     font-family: 'Anton', sans-serif;
     font-size: 48px;
-    color: var(--mute);
+    color: var(--ink);
+    opacity: 0.55;
     line-height: 1;
-    transition: color 0.3s var(--ease);
+    transition: color 0.3s var(--ease), opacity 0.3s;
   }
   .cap-title {
     font-family: 'Syne', sans-serif;
@@ -231,14 +232,16 @@ const services: Service[] = [
     text-transform: uppercase;
     letter-spacing: -0.02em;
     line-height: 1;
+    color: var(--ink);
   }
   .cap-desc {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    font-size: 14.5px;
     line-height: 1.6;
-    color: var(--mute);
-    max-width: 400px;
-    transition: color 0.3s var(--ease);
+    color: var(--ink);
+    opacity: 0.85;
+    max-width: 420px;
+    transition: color 0.3s var(--ease), opacity 0.3s;
   }
   .cap-tags {
     display: flex;
@@ -251,8 +254,9 @@ const services: Service[] = [
     text-transform: uppercase;
     letter-spacing: 0.1em;
     padding: 4px 8px;
-    border: 1px solid currentColor;
-    opacity: 0.7;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    opacity: 0.85;
     transition: all 0.3s var(--ease);
   }
   .cap-icon {
@@ -263,8 +267,9 @@ const services: Service[] = [
   .cap-icon svg {
     width: 32px;
     height: 32px;
-    color: var(--mute);
-    transition: color 0.3s var(--ease), transform 0.4s var(--ease);
+    color: var(--ink);
+    opacity: 0.6;
+    transition: color 0.3s var(--ease), transform 0.4s var(--ease), opacity 0.3s;
     stroke-linecap: round;
     stroke-linejoin: round;
   }

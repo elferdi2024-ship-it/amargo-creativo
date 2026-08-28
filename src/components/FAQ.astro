@@ -34,7 +34,7 @@ const faqs: FAQItem[] = [
   <!-- Marca de Agua Ambiental Decorativa -->
   <div class="faq-ambient-bg" aria-hidden="true"></div>
   <div class="faq-head">
-    <div class="section-label"><span class="num">04</span> PREGUNTAS FRECUENTES</div>
+    <div class="section-label"><span class="num">08</span> PREGUNTAS FRECUENTES</div>
     <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
   </div>
   <div class="faq-list">
@@ -148,6 +148,9 @@ const faqs: FAQItem[] = [
   .faq-item:hover .faq-trigger {
     color: var(--rust);
   }
+  :global(body.theme-electric) .faq-item:hover .faq-trigger {
+    color: var(--electric);
+  }
   .faq-num {
     font-family: 'Anton', sans-serif;
     font-size: 36px;
@@ -156,6 +159,11 @@ const faqs: FAQItem[] = [
     transition: color 0.3s var(--ease);
   }
   .faq-item:hover .faq-num {
+    color: var(--mate);
+  }
+  :global(body.theme-dark) .faq-item:hover .faq-num,
+  :global(body.theme-electric) .faq-item:hover .faq-num,
+  :global(body.theme-mate) .faq-item:hover .faq-num {
     color: var(--electric);
   }
   .faq-title {
@@ -165,19 +173,27 @@ const faqs: FAQItem[] = [
     text-transform: uppercase;
     letter-spacing: -0.01em;
     line-height: 1.2;
+    color: var(--ink);
   }
   .faq-icon {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
     font-size: 28px;
-    color: var(--mute);
-    transition: transform 0.4s var(--ease), color 0.3s var(--ease);
+    color: var(--ink);
+    opacity: 0.6;
+    transition: transform 0.4s var(--ease), color 0.3s var(--ease), opacity 0.3s;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .faq-item.active .faq-icon {
     transform: rotate(45deg);
+    color: var(--rust);
+    opacity: 1;
+  }
+  :global(body.theme-dark) .faq-item.active .faq-icon,
+  :global(body.theme-electric) .faq-item.active .faq-icon,
+  :global(body.theme-mate) .faq-item.active .faq-icon {
     color: var(--electric);
   }
   .faq-content {
@@ -194,14 +210,21 @@ const faqs: FAQItem[] = [
   .faq-content p {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
-    line-height: 1.6;
-    color: var(--mute);
+    line-height: 1.65;
+    color: var(--ink);
+    opacity: 0.85;
   }
   :global(body.theme-dark) .faq-content p {
-    color: rgba(232, 230, 224, 0.8);
+    color: rgba(232, 230, 224, 0.9);
+    opacity: 1;
   }
   :global(body.theme-electric) .faq-content p {
-    color: rgba(241, 255, 90, 0.8);
+    color: rgba(241, 255, 90, 0.9);
+    opacity: 1;
+  }
+  :global(body.theme-mate) .faq-content p {
+    color: rgba(232, 230, 224, 0.9);
+    opacity: 1;
   }
   @media (max-width: 900px) {
     .faq-head {

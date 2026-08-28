@@ -74,9 +74,15 @@
     gap: 4px;
   }
   .clock-block span {
-    color: var(--mute);
+    color: rgba(244, 241, 234, 0.7);
     font-size: 9px;
     letter-spacing: 0.12em;
+  }
+  :global(body.theme-electric) .clock-block span {
+    color: rgba(241, 255, 90, 0.75);
+  }
+  :global(body.theme-mate) .clock-block span {
+    color: rgba(232, 230, 224, 0.75);
   }
   .clock-block strong {
     font-family: 'JetBrains Mono', monospace;
@@ -105,8 +111,14 @@
     color: var(--electric);
   }
   .footer-copy {
-    color: var(--mute);
+    color: rgba(244, 241, 234, 0.7);
     font-size: 10px;
+  }
+  :global(body.theme-electric) .footer-copy {
+    color: rgba(241, 255, 90, 0.75);
+  }
+  :global(body.theme-mate) .footer-copy {
+    color: rgba(232, 230, 224, 0.75);
   }
   @media (max-width: 768px) {
     .footer-left {

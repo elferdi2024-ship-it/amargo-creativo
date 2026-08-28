@@ -1,7 +1,7 @@
 ---
 // filepath: src/components/FloatingContact.astro
 ---
-<div class="floating-contact" id="floatingContact">
+<div class="floating-contact" id="floatingContact" aria-hidden="true">
   <a 
     href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
     target="_blank" 
@@ -20,25 +20,61 @@
   </a>
 </div>
 
+<script>
+  function initFloatingContact() {
+    const fc = document.getElementById('floatingContact');
+    if (!fc) return;
+
+    let isVisible = false;
+
+    function checkVisibility() {
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      if (scrollY > 260) {
+        if (!isVisible) {
+          fc.classList.add('visible');
+          fc.setAttribute('aria-hidden', 'false');
+          isVisible = true;
+        }
+      } else {
+        if (isVisible) {
+          fc.classList.remove('visible');
+          fc.setAttribute('aria-hidden', 'true');
+          isVisible = false;
+        }
+      }
+    }
+
+    window.addEventListener('scroll', checkVisibility, { passive: true });
+    if ((window as any).lenis?.on) {
+      (window as any).lenis.on('scroll', checkVisibility);
+    }
+    checkVisibility();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFloatingContact);
+  } else {
+    initFloatingContact();
+  }
+</script>
+
 <style>
   .floating-contact {
     position: fixed;
     bottom: calc(24px + env(safe-area-inset-bottom));
     right: clamp(16px, 3vw, 32px);
     z-index: 95;
-    pointer-events: auto;
-    animation: floatIn 0.8s var(--ease-emphasis) 0.5s both;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: opacity 0.35s var(--ease), transform 0.35s var(--ease);
+    will-change: transform, opacity;
   }
 
-  @keyframes floatIn {
-    from {
-      opacity: 0;
-      transform: translateY(30px) scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0) scale(1);
-    }
+  .floating-contact.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
   }
 
   .fc-btn {
@@ -150,8 +186,9 @@
       display: none;
     }
     .fc-btn {
-      padding: 10px 14px;
-      font-size: 11px;
+      padding: 9px 13px;
+      font-size: 10.5px;
+      gap: 8px;
     }
   }
 </style>

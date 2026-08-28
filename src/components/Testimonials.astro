@@ -1,60 +1,234 @@
 ---
 // filepath: src/components/Testimonials.astro
 
-interface Testimonial {
+interface ClientCase {
+  id: string;
   num: string;
-  project: string;
-  role: string;
+  name: string;
+  category: string;
+  location: string;
   quote: string;
-  metric: string;
+  stat1Num: string;
+  stat1Label: string;
+  stat1Desc: string;
+  stat2Num: string;
+  stat2Label: string;
+  stat2Desc: string;
+  tag: string;
+  initials: string;
 }
 
-const testimonials: Testimonial[] = [
+const clientCases: ClientCase[] = [
   {
+    id: "barrio",
     num: "01",
-    project: "Barrio.uy",
-    role: "Plataforma Inmobiliaria • Montevideo, UY",
-    quote: "Buscábamos salir del molde de los sitios inmobiliarios lentos y pesados. Amargo construyó una plataforma instantánea con búsqueda ultra rápida que multiplicó las consultas desde el primer mes.",
-    metric: "-45% Tasa de Rebote"
+    name: "Barrio.uy",
+    category: "Plataforma Inmobiliaria & Marketplace",
+    location: "Montevideo, Uruguay",
+    quote: "Buscábamos salir del molde de los sitios inmobiliarios lentos y pesados. Amargo construyó una plataforma instantánea con búsqueda ultra rápida que multiplicó las consultas comerciales desde el primer mes.",
+    stat1Num: "-45%",
+    stat1Label: "Tasa de Rebote",
+    stat1Desc: "Retención récord en tráfico móvil",
+    stat2Num: "<45ms",
+    stat2Label: "Búsqueda SSR",
+    stat2Desc: "Indexación reactiva con Algolia",
+    tag: "MARKETPLACE",
+    initials: "BU"
   },
   {
+    id: "driveprime",
     num: "02",
-    project: "DrivePrime",
-    role: "Sistema de Alquileres • Canelones, UY",
+    name: "DrivePrime",
+    category: "Alquiler de Vehículos & Gestión de Flotas",
+    location: "Canelones, Uruguay",
     quote: "Pasamos de responder cotizaciones manuales durante horas a tener un sistema automatizado que gestiona reservas en 2 minutos. La velocidad de carga y el diseño marcaron una diferencia total en ventas.",
-    metric: "Cero Fricción Comercial"
+    stat1Num: "2 min",
+    stat1Label: "Cierre de Reserva",
+    stat1Desc: "Flujo automatizado sin fricción",
+    stat2Num: "100%",
+    stat2Label: "Autogestión",
+    stat2Desc: "Validación inmediata de flotas",
+    tag: "SAAS VEHICULAR",
+    initials: "DP"
   },
   {
+    id: "remate",
     num: "03",
-    project: "Remate",
-    role: "Subastas en Vivo • Uruguay",
-    quote: "En pujas en tiempo real, cada milisegundo de retraso arruina la subasta. La arquitectura técnica que desarrolló Amargo soporta cientos de usuarios simultáneos sin ninguna latencia.",
-    metric: "WebSockets & Cero Latencia"
+    name: "Remate",
+    category: "Subastas y Pujas en Tiempo Real",
+    location: "Todo Uruguay",
+    quote: "En subastas en vivo, cada milisegundo de retraso arruina la operación. La arquitectura técnica desarrollada por Amargo soporta cientos de postores simultáneos con latencia prácticamente cero.",
+    stat1Num: "<50ms",
+    stat1Label: "Latencia Real",
+    stat1Desc: "Pujas en vivo con WebSockets",
+    stat2Num: "99.9%",
+    stat2Label: "Disponibilidad",
+    stat2Desc: "Cero caídas en picos de tráfico",
+    tag: "FINTECH EN VIVO",
+    initials: "RM"
   }
 ];
 ---
 <section class="testimonials" id="testimonials">
-  <div class="test-head">
-    <div class="section-label"><span class="num">06</span> PRUEBA SOCIAL</div>
-    <h2>Resultados <em>reales.</em> Voces directas.</h2>
+  <!-- Cabecera de Sección -->
+  <div class="test-header">
+    <div class="section-label"><span class="num">06</span> CASOS DE ÉXITO</div>
+    <h2>Resultados <em>reales.</em> Negocios que crecen.</h2>
   </div>
 
-  <div class="test-grid">
-    {testimonials.map(item => (
-      <div class="test-card">
-        <div class="test-card-top">
-          <span class="test-num">{item.num}</span>
-          <span class="test-metric">{item.metric}</span>
+  <!-- Selector de Pestañas Interactivo -->
+  <div class="client-tabs-bar" role="tablist" aria-label="Seleccionar caso de éxito">
+    {clientCases.map((client, i) => (
+      <button 
+        class={`client-tab-btn ${i === 0 ? 'active' : ''}`}
+        role="tab"
+        aria-selected={i === 0 ? "true" : "false"}
+        aria-controls={`panel-${client.id}`}
+        id={`tab-${client.id}`}
+        data-target={client.id}
+        data-index={i}
+      >
+        <span class="tab-num">{client.num}</span>
+        <span class="tab-name">{client.name}</span>
+        <span class="tab-metric-pill">{client.stat1Num}</span>
+      </button>
+    ))}
+  </div>
+
+  <!-- Contenedor del Showcase Activo -->
+  <div class="spotlight-container">
+    {clientCases.map((client, i) => (
+      <div 
+        class={`spotlight-panel ${i === 0 ? 'active' : ''}`}
+        id={`panel-${client.id}`}
+        role="tabpanel"
+        aria-labelledby={`tab-${client.id}`}
+        data-id={client.id}
+      >
+        <!-- Columna Izquierda: Cita y Autor -->
+        <div class="spotlight-left">
+          <div class="spotlight-badge-row">
+            <span class="verified-dot">● CASO DE ÉXITO VERIFICADO</span>
+            <span class="category-tag">{client.tag}</span>
+          </div>
+
+          <div class="quote-wrapper">
+            <span class="quote-symbol">“</span>
+            <p class="quote-text">{client.quote}</p>
+          </div>
+
+          <div class="client-author-info">
+            <div class="client-avatar-badge">{client.initials}</div>
+            <div class="client-name-details">
+              <strong class="client-title">{client.name}</strong>
+              <span class="client-subtitle">{client.category} • {client.location}</span>
+            </div>
+          </div>
         </div>
-        <p class="test-quote">"{item.quote}"</p>
-        <div class="test-author">
-          <div class="test-project">{item.project}</div>
-          <div class="test-role">{item.role}</div>
+
+        <!-- Columna Derecha: Bloque de Métricas Destacadas -->
+        <div class="spotlight-right">
+          <div class="metric-impact-box">
+            <div class="mib-num">{client.stat1Num}</div>
+            <div class="mib-label">{client.stat1Label}</div>
+            <div class="mib-desc">{client.stat1Desc}</div>
+          </div>
+
+          <div class="metric-impact-box">
+            <div class="mib-num">{client.stat2Num}</div>
+            <div class="mib-label">{client.stat2Label}</div>
+            <div class="mib-desc">{client.stat2Desc}</div>
+          </div>
         </div>
       </div>
     ))}
   </div>
 </section>
+
+<script>
+  function initExecutiveTestimonials() {
+    const section = document.getElementById('testimonials');
+    if (!section) return;
+
+    const tabBtns = section.querySelectorAll<HTMLButtonElement>('.client-tab-btn');
+    const panels = section.querySelectorAll<HTMLElement>('.spotlight-panel');
+    let activeIndex = 0;
+    let autoPlayTimer: any = null;
+
+    function switchTab(index: number) {
+      if (index < 0 || index >= tabBtns.length) return;
+      activeIndex = index;
+
+      tabBtns.forEach((btn, i) => {
+        const isActive = i === index;
+        btn.classList.toggle('active', isActive);
+        btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+      });
+
+      panels.forEach((panel, i) => {
+        const isActive = i === index;
+        panel.classList.toggle('active', isActive);
+      });
+    }
+
+    tabBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        switchTab(index);
+        stopAutoPlay();
+      });
+    });
+
+    // Auto-rotación suave (opcional, pausada con hover)
+    function startAutoPlay() {
+      stopAutoPlay();
+      autoPlayTimer = setInterval(() => {
+        const next = (activeIndex + 1) % tabBtns.length;
+        switchTab(next);
+      }, 8000);
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) {
+        clearInterval(autoPlayTimer);
+        autoPlayTimer = null;
+      }
+    }
+
+    section.addEventListener('mouseenter', stopAutoPlay);
+    section.addEventListener('mouseleave', startAutoPlay);
+    section.addEventListener('touchstart', stopAutoPlay, { passive: true });
+
+    startAutoPlay();
+
+    // Soporte para gestos táctiles Swipe
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    section.addEventListener('touchstart', (e: TouchEvent) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    section.addEventListener('touchend', (e: TouchEvent) => {
+      touchEndX = e.changedTouches[0].screenX;
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 45) {
+        if (diff > 0) {
+          // Swipe izquierda -> Siguiente
+          switchTab((activeIndex + 1) % tabBtns.length);
+        } else {
+          // Swipe derecha -> Anterior
+          switchTab(activeIndex > 0 ? activeIndex - 1 : tabBtns.length - 1);
+        }
+      }
+    }, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initExecutiveTestimonials);
+  } else {
+    initExecutiveTestimonials();
+  }
+</script>
 
 <style>
   .testimonials {
@@ -64,16 +238,15 @@ const testimonials: Testimonial[] = [
     border-bottom: 1px solid var(--line);
     width: 100%;
     position: relative;
+    box-sizing: border-box;
   }
-  .test-head {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 48px;
-    margin-bottom: 64px;
-    align-items: start;
+
+  .test-header {
+    margin-bottom: 36px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--line);
   }
+
   .section-label {
     font-size: 11px;
     text-transform: uppercase;
@@ -82,123 +255,422 @@ const testimonials: Testimonial[] = [
     display: flex;
     gap: 12px;
     align-items: center;
+    margin-bottom: 14px;
   }
+
   .section-label .num {
     color: var(--bone);
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
   }
+
   :global(body.theme-electric) .section-label .num {
     background: var(--electric);
     color: #0a0a0a;
   }
-  .test-head h2 {
+
+  .test-header h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(36px, 6vw, 96px);
-    line-height: 0.9;
+    font-size: clamp(32px, 5.5vw, 84px);
+    line-height: 0.92;
     letter-spacing: -0.02em;
     text-transform: uppercase;
   }
-  .test-head h2 em {
+
+  .test-header h2 em {
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
     color: var(--rust);
   }
-  .test-grid {
+
+  /* BARRA DE PESTAÑAS (SELECTOR) */
+  .client-tabs-bar {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 24px;
+    gap: 12px;
+    margin-bottom: 32px;
+    width: 100%;
   }
-  .test-card {
+
+  .client-tab-btn {
+    background: rgba(10, 10, 10, 0.03);
     border: 1px solid var(--line);
-    padding: 36px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.25s var(--ease);
+    border-radius: 0;
+  }
+
+  :global(body.theme-dark) .client-tab-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .client-tab-btn:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  .client-tab-btn:hover .tab-metric-pill {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .client-tab-btn.active {
+    background: var(--ink);
+    color: var(--bone);
+    border-color: var(--ink);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+
+  :global(body.theme-electric) .client-tab-btn.active {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+
+  .tab-num {
+    font-weight: 700;
+    opacity: 0.6;
+  }
+
+  .tab-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+  }
+
+  .tab-metric-pill {
+    font-size: 10px;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.08);
+    padding: 3px 8px;
+    border: 1px solid currentColor;
+    transition: all 0.25s;
+  }
+
+  .client-tab-btn.active .tab-metric-pill {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: transparent;
+  }
+
+  :global(body.theme-electric) .client-tab-btn.active .tab-metric-pill {
+    background: #0a0a0a;
+    color: var(--electric);
+  }
+
+  /* CONTENEDOR SPOTLIGHT */
+  .spotlight-container {
+    position: relative;
+    width: 100%;
+    min-height: 280px;
+  }
+
+  .spotlight-panel {
+    display: none;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 40px;
+    border: 1px solid var(--line);
+    padding: clamp(24px, 4vw, 48px);
+    background: rgba(10, 10, 10, 0.02);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+  }
+
+  :global(body.theme-dark) .spotlight-panel {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .spotlight-panel.active {
+    display: grid;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* COLUMNA IZQUIERDA */
+  .spotlight-left {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 28px;
-    transition: background 0.3s var(--ease), transform 0.3s var(--ease);
-    background: rgba(10, 10, 10, 0.02);
+    gap: 24px;
   }
-  :global(body.theme-dark) .test-card {
-    background: rgba(255, 255, 255, 0.02);
-  }
-  .test-card:hover {
-    background: var(--hover-bg);
-    color: var(--hover-text);
-    transform: translateY(-4px);
-  }
-  .test-card:hover .test-num {
-    color: var(--mate-light);
-  }
-  .test-card:hover .test-metric {
-    border-color: var(--electric);
-    color: var(--electric);
-  }
-  .test-card:hover .test-role {
-    color: rgba(255, 255, 255, 0.6);
-  }
-  .test-card-top {
+
+  .spotlight-badge-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
   }
-  .test-num {
-    font-family: 'Anton', sans-serif;
-    font-size: 28px;
-    color: var(--mute);
-    line-height: 1;
-    transition: color 0.3s;
-  }
-  .test-metric {
+
+  .verified-dot {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 4px 8px;
-    border: 1px solid var(--line);
-    transition: all 0.3s;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--mate);
   }
-  .test-quote {
+
+  :global(body.theme-dark) .verified-dot,
+  :global(body.theme-electric) .verified-dot,
+  :global(body.theme-mate) .verified-dot {
+    color: var(--electric);
+  }
+
+  .category-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border: 1px solid var(--line);
+    opacity: 0.75;
+  }
+
+  .quote-wrapper {
+    position: relative;
+    padding-left: 24px;
+    border-left: 3px solid var(--mate);
+  }
+
+  :global(body.theme-electric) .quote-wrapper {
+    border-left-color: var(--electric);
+  }
+
+  .quote-symbol {
+    position: absolute;
+    top: -14px;
+    left: -6px;
+    font-family: 'Instrument Serif', serif;
+    font-size: 38px;
+    color: var(--rust);
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .quote-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: clamp(15px, 1.6vw, 18px);
+    line-height: 1.55;
+    color: var(--ink);
     font-weight: 400;
   }
-  .test-author {
-    border-top: 1px solid var(--line);
-    padding-top: 16px;
+
+  .client-author-info {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
   }
-  .test-project {
+
+  :global(body.theme-dark) .client-author-info,
+  :global(body.theme-electric) .client-author-info,
+  :global(body.theme-mate) .client-author-info {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .client-avatar-badge {
+    width: 42px;
+    height: 42px;
+    background: var(--ink);
+    color: var(--bone);
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+
+  :global(body.theme-electric) .client-avatar-badge {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .client-name-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .client-title {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
     font-size: 16px;
     text-transform: uppercase;
     letter-spacing: -0.01em;
+    color: var(--ink);
   }
-  .test-role {
+
+  .client-subtitle {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--mute);
-    margin-top: 4px;
+    font-size: 10.5px;
+    color: var(--ink);
+    opacity: 0.75;
+  }
+
+  /* COLUMNA DERECHA: CAJAS DE MÉTRICAS */
+  .spotlight-right {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-content: center;
+  }
+
+  .metric-impact-box {
+    border: 1px solid var(--line);
+    padding: 24px;
+    background: rgba(10, 10, 10, 0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.25s var(--ease), background 0.25s;
+  }
+
+  :global(body.theme-dark) .metric-impact-box {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .metric-impact-box:hover {
+    transform: translateX(4px);
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  .metric-impact-box:hover .mib-num {
+    color: var(--electric);
+  }
+
+  .metric-impact-box:hover .mib-desc {
+    color: rgba(244, 241, 234, 0.8);
+  }
+
+  .mib-num {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(32px, 3.5vw, 46px);
+    line-height: 1;
+    color: var(--mate);
+    transition: color 0.25s;
+  }
+
+  :global(body.theme-dark) .mib-num,
+  :global(body.theme-electric) .mib-num,
+  :global(body.theme-mate) .mib-num {
+    color: var(--electric);
+  }
+
+  .mib-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    color: var(--ink);
   }
-  @media (max-width: 1024px) {
-    .test-grid {
+
+  .metric-impact-box:hover .mib-label {
+    color: var(--bone);
+  }
+
+  .mib-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    color: var(--ink);
+    opacity: 0.75;
+    transition: color 0.25s;
+  }
+
+  /* RESPONSIVE & MOBILE */
+  @media (max-width: 900px) {
+    .client-tabs-bar {
+      display: flex;
+      overflow-x: auto;
+      gap: 8px;
+      margin-bottom: 20px;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 4px;
+    }
+
+    .client-tabs-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .client-tab-btn {
+      flex: 1 0 auto;
+      padding: 10px 14px;
+      font-size: 10.5px;
+      gap: 8px;
+    }
+
+    .tab-metric-pill {
+      font-size: 9px;
+      padding: 2px 6px;
+    }
+
+    .spotlight-panel {
       grid-template-columns: 1fr;
+      gap: 24px;
+      padding: 20px 16px;
+    }
+
+    .quote-wrapper {
+      padding-left: 16px;
+    }
+
+    .quote-text {
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .spotlight-right {
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .metric-impact-box {
+      padding: 16px 12px;
+    }
+
+    .mib-num {
+      font-size: 28px;
+    }
+
+    .mib-desc {
+      display: none;
     }
   }
-  @media (max-width: 768px) {
-    .test-head {
-      grid-template-columns: 1fr;
-      gap: 16px;
+
+  @media (max-width: 480px) {
+    .spotlight-right {
+      grid-template-columns: 1fr 1fr;
     }
-    .test-card {
-      padding: 24px;
+
+    .mib-label {
+      font-size: 9.5px;
     }
   }
 </style>
+

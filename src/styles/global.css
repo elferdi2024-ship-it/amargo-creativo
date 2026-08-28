@@ -3,51 +3,53 @@
   --paper: #f4f2ec;
   --ink: #0a0a0a;
   --charcoal: #1a1a18;
-  --mate: #3a7d44;
-  --mate-light: #97bc62;
+  --mate: #2d6335;
+  --mate-light: #82a850;
   --electric: #d4ff00;
   --rust: #b94821;
-  --mute: #4a4a45;
+  --mute: #585750;
+  --mute-on-dark: #a8a69e;
   --line: #0a0a0a;
   --max: 1600px;
   --gut: clamp(16px, 4vw, 64px);
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-emphasis: cubic-bezier(0.16, 1, 0.3, 1);
-  --hero-bg: #3a7d44;
-  --hero-text: #e8e6e0;
-  --marquee-bg: #1a1a18;
-  --marquee-text: #e8e6e0;
-  --contact-bg: #b94821;
-  --contact-text: #e8e6e0;
-  --footer-bg: #1a1a18;
-  --footer-text: #e8e6e0;
+  --hero-bg: #2d6335;
+  --hero-text: #f4f1ea;
+  --marquee-bg: #111110;
+  --marquee-text: #f4f1ea;
+  --contact-bg: #a63d1a;
+  --contact-text: #f4f1ea;
+  --footer-bg: #111110;
+  --footer-text: #f4f1ea;
   --hover-bg: #0a0a0a;
-  --hover-text: #e8e6e0;
-  --overlay-bg: #1a1a18;
-  --overlay-text: #e8e6e0;
+  --hover-text: #f4f1ea;
+  --overlay-bg: #111110;
+  --overlay-text: #f4f1ea;
 }
 
 body.theme-dark {
-  --bone: #1a1a18;
-  --paper: #111110;
-  --ink: #e8e6e0;
-  --charcoal: #0a0a0a;
+  --bone: #141413;
+  --paper: #0c0c0b;
+  --ink: #f4f1ea;
+  --charcoal: #080807;
   --electric: #d4ff00;
-  --rust: #ff5a36;
-  --mute: #9a9a95;
-  --line: #333333;
-  --hero-bg: #0a0a0a;
-  --hero-text: #e8e6e0;
-  --marquee-bg: #1a1a18;
-  --marquee-text: #e8e6e0;
-  --contact-bg: #0a0a0a;
-  --contact-text: #e8e6e0;
-  --footer-bg: #0a0a0a;
-  --footer-text: #e8e6e0;
-  --hover-bg: #000;
+  --rust: #ff6844;
+  --mute: #a0a098;
+  --mute-on-dark: #b8b8b0;
+  --line: #333330;
+  --hero-bg: #080807;
+  --hero-text: #f4f1ea;
+  --marquee-bg: #141413;
+  --marquee-text: #f4f1ea;
+  --contact-bg: #080807;
+  --contact-text: #f4f1ea;
+  --footer-bg: #080807;
+  --footer-text: #f4f1ea;
+  --hover-bg: #000000;
   --hover-text: #d4ff00;
-  --overlay-bg: #0a0a0a;
-  --overlay-text: #e8e6e0;
+  --overlay-bg: #080807;
+  --overlay-text: #f4f1ea;
 }
 
 body.theme-electric {
@@ -56,16 +58,17 @@ body.theme-electric {
   --ink: #f1ff5a;
   --charcoal: #000000;
   --electric: #d4ff00;
-  --rust: #ff4d00;
-  --mute: #888880;
-  --line: #2a2a24;
-  --hero-bg: #000;
+  --rust: #ff5214;
+  --mute: #b8c44f;
+  --mute-on-dark: #ccd866;
+  --line: #2e3010;
+  --hero-bg: #000000;
   --hero-text: #f1ff5a;
   --marquee-bg: #0a0a0a;
   --marquee-text: #f1ff5a;
-  --contact-bg: #000;
+  --contact-bg: #000000;
   --contact-text: #f1ff5a;
-  --footer-bg: #000;
+  --footer-bg: #000000;
   --footer-text: #f1ff5a;
   --hover-bg: #d4ff00;
   --hover-text: #0a0a0a;
@@ -74,28 +77,29 @@ body.theme-electric {
 }
 
 body.theme-mate {
-  --bone: #142217;
-  --paper: #0c180f;
-  --ink: #e8e6e0;
-  --charcoal: #08110a;
-  --electric: #97bc62;
-  --rust: #d4a373;
+  --bone: #121e15;
+  --paper: #0b140e;
+  --ink: #f4f1ea;
+  --charcoal: #070d09;
+  --electric: #a4c970;
+  --rust: #e2b082;
   --mate: #3a7d44;
-  --mate-light: #97bc62;
-  --mute: #7d9d85;
-  --line: #263d2c;
-  --hero-bg: #142217;
-  --hero-text: #e8e6e0;
-  --marquee-bg: #0c180f;
-  --marquee-text: #e8e6e0;
-  --contact-bg: #142217;
-  --contact-text: #e8e6e0;
-  --footer-bg: #08110a;
-  --footer-text: #e8e6e0;
-  --hover-bg: #3a7d44;
-  --hover-text: #e8e6e0;
-  --overlay-bg: #0c180f;
-  --overlay-text: #e8e6e0;
+  --mate-light: #a4c970;
+  --mute: #8fb198;
+  --mute-on-dark: #abc8b3;
+  --line: #223727;
+  --hero-bg: #121e15;
+  --hero-text: #f4f1ea;
+  --marquee-bg: #0b140e;
+  --marquee-text: #f4f1ea;
+  --contact-bg: #121e15;
+  --contact-text: #f4f1ea;
+  --footer-bg: #070d09;
+  --footer-text: #f4f1ea;
+  --hover-bg: #2d5a36;
+  --hover-text: #f4f1ea;
+  --overlay-bg: #0b140e;
+  --overlay-text: #f4f1ea;
 }
 
 html.lenis, html.lenis body {
@@ -371,15 +375,18 @@ body.theme-mate .spotlight {
 .process-num {
   font-family: 'Anton', sans-serif;
   font-size: 48px;
-  color: var(--mute);
+  color: var(--ink);
+  opacity: 0.55;
   line-height: 1;
-  transition: color 0.3s;
+  transition: color 0.3s, opacity 0.3s;
 }
 .process-item:hover .process-num {
   color: var(--mate-light);
+  opacity: 1;
 }
 :global(body.theme-electric) .process-item:hover .process-num {
   color: var(--electric);
+  opacity: 1;
 }
 .process-title {
   font-family: 'Syne', sans-serif;
@@ -388,12 +395,14 @@ body.theme-mate .spotlight {
   text-transform: uppercase;
   letter-spacing: -0.02em;
   line-height: 1.1;
+  color: var(--ink);
 }
 .process-desc {
   font-family: 'Space Grotesk', sans-serif;
   font-size: 15px;
   line-height: 1.6;
-  color: var(--mute);
+  color: var(--ink);
+  opacity: 0.85;
   max-width: 500px;
 }
 @media (max-width: 900px) {

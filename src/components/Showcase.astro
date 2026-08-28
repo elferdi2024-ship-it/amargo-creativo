@@ -68,6 +68,7 @@ const projects: Project[] = [
 <section class="showcase" id="showcase">
   <div class="showcase-head">
     <div>
+      <div class="section-label"><span class="num">04</span> TRABAJOS SELECCIONADOS</div>
       <h2>NUESTRO <em>trabajo</em></h2>
       <div class="showcase-filters" role="tablist" aria-label="Filtrar proyectos">
         <button class="filter-btn active" data-filter="all">TODOS ({projects.length})</button>
@@ -137,6 +138,26 @@ const projects: Project[] = [
     flex-wrap: wrap;
     gap: 24px;
   }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
   .showcase-head h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
@@ -184,6 +205,8 @@ const projects: Project[] = [
     font-size: 11px;
     text-transform: uppercase;
     max-width: 300px;
+    color: var(--ink);
+    opacity: 0.75;
   }
   .projects-drag {
     display: flex;
@@ -323,11 +346,14 @@ const projects: Project[] = [
     border: 1px solid var(--line);
     padding: 4px 8px;
     white-space: nowrap;
+    color: var(--ink);
+    opacity: 0.85;
   }
   .pc-year {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    color: var(--mute);
+    color: var(--ink);
+    opacity: 0.7;
     margin-top: 8px;
     display: block;
   }

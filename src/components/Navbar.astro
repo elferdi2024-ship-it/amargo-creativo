@@ -2,7 +2,7 @@
 // filepath: src/components/Navbar.astro
 ---
 <nav id="nav">
-  <a href="#top" class="brand" id="brandBtn">AMARGO<span style="color:var(--electric)">.</span></a>
+  <a href="#top" class="brand" id="brandBtn">AMARGO<span class="brand-dot">.</span></a>
   <ul class="nav-links">
     <li><a href="#manifesto" data-text="Manifiesto">Manifiesto</a></li>
     <li><a href="#capabilities" data-text="Servicios">Servicios</a></li>
@@ -46,7 +46,7 @@
       <h4>ESTUDIO</h4>
       <p>Construimos activos digitales que hacen crecer tu negocio. No hacemos folletos, hacemos motores de ventas.</p>
       <h4>UBICACIÓN & DISPONIBILIDAD</h4>
-      <p>Atlántida, Canelones<br>Cobertura en todo Uruguay<br><strong style="color:var(--electric)">5 cupos disponibles este mes</strong></p>
+      <p>Atlántida, Canelones<br>Cobertura en todo Uruguay<br><strong class="highlight-cupos">5 cupos disponibles este mes</strong></p>
     </div>
   </div>
 </div>
@@ -79,13 +79,13 @@
     will-change: transform;
   }
   :global(body.theme-dark) nav {
-    background: rgba(26, 26, 24, 0.9);
+    background: rgba(20, 20, 19, 0.92);
   }
   :global(body.theme-electric) nav {
     background: rgba(10, 10, 10, 0.9);
   }
   :global(body.theme-mate) nav {
-    background: rgba(20, 34, 23, 0.92);
+    background: rgba(18, 30, 21, 0.92);
   }
   nav:global(.hide-nav) {
     transform: translateY(-100%);
@@ -101,6 +101,15 @@
     border: none;
     cursor: pointer;
     transition: color 0.2s;
+  }
+  .brand-dot {
+    color: var(--mate);
+    transition: color 0.2s;
+  }
+  :global(body.theme-dark) .brand-dot,
+  :global(body.theme-electric) .brand-dot,
+  :global(body.theme-mate) .brand-dot {
+    color: var(--electric);
   }
   nav .brand:hover {
     color: var(--rust);
@@ -304,15 +313,23 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--mute);
+    color: rgba(244, 241, 234, 0.65);
     margin-bottom: 12px;
+  }
+  :global(body.theme-electric) .menu-aside h4 {
+    color: rgba(241, 255, 90, 0.7);
   }
   .menu-aside p {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
+    font-size: 13.5px;
+    line-height: 1.55;
     color: var(--overlay-text);
     margin-bottom: 20px;
-    opacity: 0.8;
+    opacity: 0.9;
+  }
+  .highlight-cupos {
+    color: var(--electric);
+    font-weight: 700;
   }
   .menu-close-btn {
     position: fixed;

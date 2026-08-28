@@ -188,19 +188,26 @@
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(244, 241, 234, 0.75);
     margin-bottom: 12px;
   }
   :global(body.theme-electric) .info-block h4 {
-    color: rgba(241, 255, 90, 0.6);
+    color: rgba(241, 255, 90, 0.75);
   }
   :global(body.theme-mate) .info-block h4 {
-    color: rgba(151, 188, 98, 0.8);
+    color: rgba(232, 230, 224, 0.85);
   }
   .info-block p {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 15px;
     line-height: 1.6;
+    color: rgba(244, 241, 234, 0.95);
+  }
+  :global(body.theme-electric) .info-block p {
+    color: var(--ink);
+  }
+  :global(body.theme-mate) .info-block p {
+    color: rgba(232, 230, 224, 0.95);
   }
 
   @media (max-width: 768px) {
