@@ -28,47 +28,71 @@ const projects: Project[] = [
     tags: ["MARKETPLACE", "ALGOLIA SSR", "NEXT.JS 15"]
   },
   {
-    id: "driveprime",
+    id: "lomax-propiedades",
+    category: "marketplace",
+    title: "LOMAX Propiedades",
+    yearCategory: "2026 — Inmobiliaria Premium & Curaduría",
+    desc: "Inmobiliaria boutique y curaduría editorial de residencias de autor y terrenos singulares en Montevideo y Punta del Este. Catálogo exclusivo, tasaciones de alta precisión y experiencia digital inmersiva para el mercado de lujo.",
+    url: "https://lomax-propiedades.elferdi2024.workers.dev/",
+    img: "/projects/lomax-propiedades.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["REAL ESTATE", "EDITORIAL", "CLOUDFLARE"]
+  },
+  {
+    id: "legendary-burger",
     category: "saas",
-    title: "DrivePrime",
-    yearCategory: "2024 — Car Rental & Fleet SaaS",
-    desc: "Motor integral de cotizaciones inteligentes y gestión de flotas vehiculares. Flujo automatizado de reservas con validación inmediata que redujo el tiempo de cierre de 4 horas a 2 minutos.",
+    title: "Legendary Burger",
+    yearCategory: "2025 — Food Tech & Smash Burgers",
+    desc: "Web app y e-commerce interactivo para marca líder de smash burgers en Canelones. Constructor personalizado 'Armá tu burger', pedidos directos a WhatsApp y checkout ultra-rápido respaldado en Supabase.",
+    url: "https://legendary-burger.vercel.app/",
+    img: "/projects/legendary-burger.webp",
+    aspectWidth: 1200,
+    aspectHeight: 900,
+    tags: ["FOOD TECH", "BURGER BUILDER", "WHATSAPP COMMERCE"]
+  },
+  {
+    id: "deal-motors",
+    category: "saas",
+    title: "Deal Motors UY",
+    yearCategory: "2025 — Automotora Digital & Trade-In",
+    desc: "Plataforma automotriz premium y representante oficial SHACMAN en Uruguay. Catálogo de vehículos seminuevos certificados con 240 puntos de inspección, cotizador inteligente de permutas (Trade-In) y gestión de inventario en tiempo real.",
     url: "https://driveprime-eta.vercel.app/",
     img: "/projects/driveprime.webp",
     aspectWidth: 1200,
     aspectHeight: 900,
-    tags: ["SAAS", "AUTOMATIZACIÓN", "BOOKING ENGINE"]
+    tags: ["AUTOMOTRIZ", "TRADE-IN ENGINE", "NEXT.JS 15"]
   },
   {
     id: "remate",
-    category: "saas",
-    title: "Remate",
-    yearCategory: "2024 — Live Auction Platform",
-    desc: "Ecosistema de subastas y pujas en tiempo real con WebSockets a latencia cero. Experiencia inmersiva de alta tensión diseñada para disparar la urgencia y maximizar el ticket de compra.",
+    category: "marketplace",
+    title: "Distribuidora El Remate",
+    yearCategory: "2025 — Catálogo Mayorista & E-Commerce",
+    desc: "Ecosistema digital mayorista y minorista con más de 1.900 productos activos y 6 sucursales en Canelones. Buscador instantáneo de stock, selector de sucursales geolocalizado y canal de despacho express vía WhatsApp.",
     url: "https://remate-psi.vercel.app/",
     img: "/projects/remate.webp",
     aspectWidth: 1200,
     aspectHeight: 900,
-    tags: ["WEBSOCKETS", "REAL-TIME", "FINTECH"]
+    tags: ["E-COMMERCE", "MAYORISTA", "CATÁLOGO DIGITAL"]
   },
   {
-    id: "faconeros-hub",
+    id: "avicola-control",
     category: "saas",
-    title: "Faconeros Hub",
-    yearCategory: "2024 — Private Club & Growth Hub",
-    desc: "Centro de comando y panel de analítica estratégica para emprendedores y creadores de élite. Espacio privado con métricas en vivo, networking exclusivo y herramientas de aceleración.",
+    title: "Avícola Control",
+    yearCategory: "2025 — Agro SaaS & Trazabilidad",
+    desc: "Software especializado en control operativo y trazabilidad avícola para plantas y productores. Gestión integral de lotes (Cobb 500 & Ross), balance de ración, curvas de ganancia de peso, faena y sincronización de planillas en tiempo real.",
     url: "https://faconeros-app.vercel.app/hub",
-    img: "/projects/faconeros-hub.webp",
+    img: "/projects/avicola-control.webp",
     aspectWidth: 1200,
     aspectHeight: 900,
-    tags: ["GROWTH HUB", "DASHBOARD", "COMMUNITY"]
+    tags: ["AGRO SAAS", "TRAZABILIDAD", "DASHBOARD"]
   }
 ];
 ---
 <section class="showcase" id="showcase">
   <div class="showcase-head">
     <div>
-      <div class="section-label"><span class="num">04</span> TRABAJOS SELECCIONADOS</div>
+      <div class="section-label"><span class="num">06</span> TRABAJOS SELECCIONADOS</div>
       <h2>NUESTRO <em>trabajo</em></h2>
       <div class="showcase-filters" role="tablist" aria-label="Filtrar proyectos">
         <button class="filter-btn active" data-filter="all">TODOS ({projects.length})</button>
@@ -251,11 +275,15 @@ const projects: Project[] = [
     transform: translateY(0);
   }
   .projects-drag.is-in .project-card:nth-child(2),
-  :global(.projects-drag.is-in) .project-card:nth-child(2) { transition-delay: 0.1s; }
+  :global(.projects-drag.is-in) .project-card:nth-child(2) { transition-delay: 0.08s; }
   .projects-drag.is-in .project-card:nth-child(3),
-  :global(.projects-drag.is-in) .project-card:nth-child(3) { transition-delay: 0.2s; }
+  :global(.projects-drag.is-in) .project-card:nth-child(3) { transition-delay: 0.16s; }
   .projects-drag.is-in .project-card:nth-child(4),
-  :global(.projects-drag.is-in) .project-card:nth-child(4) { transition-delay: 0.3s; }
+  :global(.projects-drag.is-in) .project-card:nth-child(4) { transition-delay: 0.24s; }
+  .projects-drag.is-in .project-card:nth-child(5),
+  :global(.projects-drag.is-in) .project-card:nth-child(5) { transition-delay: 0.32s; }
+  .projects-drag.is-in .project-card:nth-child(6),
+  :global(.projects-drag.is-in) .project-card:nth-child(6) { transition-delay: 0.40s; }
   .pc-img-wrap {
     position: relative;
     overflow: hidden;
