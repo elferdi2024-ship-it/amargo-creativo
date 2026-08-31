@@ -2,12 +2,12 @@
 // filepath: src/components/Hero.astro
 ---
 <header class="hero" id="top">
-  <!-- Video de Fondo a Máxima Nitidez y Calidad Original (Sin Filtros Oscuros) -->
+  <!-- Contenedor de Video Cinemático a Máxima Nitidez y Calidad Original -->
   <div class="hero-media-container">
     <video 
       id="heroVideo" 
       class="hero-video" 
-      src="/hero-scroll.mp4" 
+      src="/new-hero.mp4" 
       poster="/amargo-hero-pc.webp"
       autoplay 
       loop 
@@ -21,30 +21,65 @@
 
   <!-- Barra Superior del Hero -->
   <div class="hero-top">
-    <div class="hero-live-badge"><span>● EN VIVO</span><span>ESTUDIO CREATIVO DIGITAL</span></div>
-    <div class="hero-location-badge"><span>ATLÁNTIDA, CANELONES</span><span>v30.0</span></div>
+    <div class="hero-live-badge"><span>● EN VIVO</span><span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span></div>
+    <div class="hero-location-badge"><span>ATLÁNTIDA, CANELONES</span><span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span></div>
   </div>
 
-  <!-- Barra Inferior de Acción, Métricas y Badge Alineados -->
+  <!-- Área Central Abierta: El arte original del mate luce al 100% sin solapamientos -->
+  <div class="hero-spacer" aria-hidden="true"></div>
+
+  <!-- Barra Inferior Editorial Equilibrada en 3 Columnas (Titular • Pilares • Métricas) -->
   <div class="hero-bottom" id="heroBottom">
+    <!-- Columna 1: Titular Semántico, Propuesta de Valor & Acciones -->
     <div class="hero-sub-wrap">
-      <p class="hero-sub">Diseñamos páginas web y activos digitales de alto rendimiento que transforman visitas en clientes reales.</p>
+      <h1 class="hero-h1">
+        <span class="h1-sub">CREACIÓN DE PÁGINAS WEB &bull; APPS &bull; SEO &bull; CONVERSIÓN</span>
+        <span class="h1-title">MOTORES DE CRECIMIENTO DIGITAL EN URUGUAY</span>
+      </h1>
+      <p class="hero-sub">Desarrollamos páginas web ultrarrápidas (&lt;0.8s), tiendas online y aplicaciones a medida que transforman visitas en clientes reales y ventas directas por WhatsApp.</p>
       <div class="hero-cta-wrap">
         <a 
-          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
+          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
           target="_blank" 
           rel="noopener noreferrer" 
           class="hero-cta magnetic-btn" 
           data-cursor="WHATSAPP"
+          aria-label="Hablar directamente por WhatsApp para cotizar proyecto"
         >
           <span>HABLAR POR WHATSAPP</span> ↗
         </a>
-        <a href="#showcase" class="hero-cta-secondary">
+        <a href="#showcase" class="hero-cta-secondary" aria-label="Ver proyectos y casos de éxito">
           <span>VER TRABAJOS</span> →
         </a>
       </div>
     </div>
 
+    <!-- Columna 2: Pilares de Alto Rendimiento (Ocupa el espacio central con valor editorial) -->
+    <div class="hero-pillars" aria-label="Pilares de Alto Rendimiento">
+      <div class="pillar-item">
+        <span class="pillar-num">01</span>
+        <div class="pillar-content">
+          <strong>CERO PLANTILLAS</strong>
+          <span>Arquitectura limpia a medida en Astro 5 y Next.js</span>
+        </div>
+      </div>
+      <div class="pillar-item">
+        <span class="pillar-num">02</span>
+        <div class="pillar-content">
+          <strong>CONVERSIÓN DIRECTA</strong>
+          <span>Embudos optimizados a WhatsApp y máxima retención</span>
+        </div>
+      </div>
+      <div class="pillar-item">
+        <span class="pillar-num">03</span>
+        <div class="pillar-content">
+          <strong>POSICIONAMIENTO IA</strong>
+          <span>SEO técnico, Schema.org y visibilidad en Google UY/AR</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna 3: Métricas de Autoridad & Badge Giratorio -->
     <div class="hero-right-wrap">
       <div class="hero-stats">
         <div class="hero-meta">
@@ -52,7 +87,7 @@
           <span>ENFOCADO EN VENTAS</span>
         </div>
         <div class="hero-meta">
-          <strong>&lt; 1.0s</strong>
+          <strong>&lt; 0.8s</strong>
           <span>CARGA INSTANTÁNEA</span>
         </div>
       </div>
@@ -62,7 +97,7 @@
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" id="badgeSvg">
           <defs><path id="circle" d="M 50, 50 m -38, 0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" /></defs>
           <text font-family="JetBrains Mono" font-size="9" font-weight="700" letter-spacing="1.5" fill="currentColor">
-            <textPath xlink:href="#circle">AMARGO CREATIVO™ • ESTUDIO CREATIVO • ATLÁNTIDA, UY • </textPath>
+            <textPath xlink:href="#circle">AMARGO CREATIVO™ • AGENCIA CREATIVA • ATLÁNTIDA, UY • </textPath>
           </text>
         </svg>
         <div class="badge-inner">A</div>
@@ -73,7 +108,7 @@
 
 <script>
   // =========================================================================
-  // CONTROLADOR CINEMATOGRÁFICO DE SCROLL HERO
+  // CONTROLADOR CINEMATOGRÁFICO DE SCROLL SUAVE (BUTTERY VIDEO SCRUBBER)
   // =========================================================================
   function initPolishedHero() {
     const hero = document.getElementById('top');
@@ -83,6 +118,14 @@
 
     if (!hero || !video) return;
 
+    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!isDesktop || prefersReducedMotion) {
+      video.play().catch(() => {});
+      return;
+    }
+
     let targetTime = 0;
     let currentTime = 0;
     let targetProgress = 0;
@@ -91,63 +134,61 @@
     let scrollTimeout: any;
     let lastScrollY = 0;
     let badgeRotation = 0;
+    let isSeeking = false;
 
     function onScrollUpdate() {
       const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
       const heroHeight = hero.offsetHeight || window.innerHeight;
 
-      if (scrollY <= heroHeight * 1.6 && video && video.duration) {
-        targetProgress = Math.min(Math.max(scrollY / (heroHeight * 1.15), 0), 1);
+      if (scrollY <= heroHeight * 1.5 && video && video.duration) {
+        // Mapeo suave y progresivo: solo scrubbea en la primera fase del scroll
+        targetProgress = Math.min(Math.max(scrollY / (heroHeight * 1.2), 0), 1);
         targetTime = targetProgress * video.duration;
 
         const delta = Math.abs(scrollY - lastScrollY);
         lastScrollY = scrollY;
 
-        if (delta > 1) {
+        if (delta > 0.5) {
           isUserScrolling = true;
-          video.pause();
+          if (!video.paused) video.pause();
 
           clearTimeout(scrollTimeout);
           scrollTimeout = setTimeout(() => {
             isUserScrolling = false;
-            if ((window.pageYOffset || document.documentElement.scrollTop || 0) < 40) {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
+            if (currentScroll < 30 && video.paused) {
               video.play().catch(() => {});
             }
-          }, 140);
+          }, 180);
         }
       }
     }
 
     window.addEventListener('scroll', onScrollUpdate, { passive: true });
-    if ((window as any).lenis?.on) {
-      (window as any).lenis.on('scroll', onScrollUpdate);
+    const win = window as any;
+    if (win.lenis?.on) {
+      win.lenis.on('scroll', onScrollUpdate);
     }
 
     function renderLoop() {
       if (video && video.duration) {
+        // Lerping ultrasuave con amortiguación sedosa (0.07)
         const diffProgress = targetProgress - currentProgress;
-        currentProgress += diffProgress * 0.18;
+        currentProgress += diffProgress * 0.07;
 
         const diffTime = targetTime - currentTime;
-        currentTime += diffTime * 0.22;
+        currentTime += diffTime * 0.09;
 
-        if (isUserScrolling && Math.abs(video.currentTime - currentTime) > 0.006) {
+        // Búsqueda amortiguada para evitar caídas de frames en el decodificador de video
+        if (isUserScrolling && Math.abs(video.currentTime - currentTime) > 0.02 && !isSeeking) {
+          isSeeking = true;
           video.currentTime = currentTime;
+          video.addEventListener('seeked', () => { isSeeking = false; }, { once: true });
         }
 
-        const isDesktop = window.innerWidth > 768;
-        if (isDesktop) {
-          const scale = 1 + currentProgress * 0.06;
-          const translateY = currentProgress * 30;
-          video.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(${scale.toFixed(3)})`;
-        }
-
-        if (heroGradient) {
-          heroGradient.style.opacity = (0.5 + currentProgress * 0.5).toFixed(2);
-        }
-
+        // Rotación continua del badge
         if (badgeSvg) {
-          badgeRotation += 0.4 + (Math.abs(diffProgress) * 20);
+          badgeRotation += 0.35 + (Math.abs(diffProgress) * 15);
           badgeSvg.style.transform = `rotate(${badgeRotation.toFixed(1)}deg)`;
         }
       }
@@ -171,8 +212,8 @@
     min-height: 100vh;
     min-height: 100svh;
     width: 100%;
-    background: #0a0a0a;
-    color: #f4f1ea;
+    background: #e4e1d8;
+    color: #0a0a0a;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -187,33 +228,40 @@
     height: 100%;
     overflow: hidden;
     z-index: 1;
-    background: #0a0a0a;
+    background: #e4e1d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  /* Video 100% Nitidez, Brillo y Color Original */
+  /* Video con renderizado nativo sin estiramientos pixelados */
   .hero-video {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center center;
-    filter: none;
+    object-position: center 38%;
+    filter: contrast(1.02);
     will-change: transform;
     pointer-events: none;
   }
 
-  /* Sutil degradado en la base para proteger legibilidad de botones */
+  /* Viñeta sutil en la base para dar contraste sin oscurecer la ilustración */
   .hero-gradient {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 35%;
-    background: linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.2) 60%, transparent 100%);
-    z-index: 3;
+    height: 40%;
+    background: linear-gradient(to top, rgba(228, 225, 216, 0.95) 0%, rgba(228, 225, 216, 0.4) 50%, transparent 100%);
+    z-index: 2;
     pointer-events: none;
-    transition: opacity 0.2s ease-out;
+  }
+
+  :global(body.theme-dark) .hero-gradient,
+  :global(body.theme-electric) .hero-gradient {
+    background: linear-gradient(to top, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0.3) 50%, transparent 100%);
   }
 
   .hero-top {
@@ -221,12 +269,17 @@
     z-index: 10;
     display: flex;
     justify-content: space-between;
-    padding: calc(80px + env(safe-area-inset-top)) var(--gut) 16px;
+    padding: calc(75px + env(safe-area-inset-top)) var(--gut) 16px;
     font-size: 11px;
     text-transform: uppercase;
     flex-wrap: wrap;
     gap: 8px;
-    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.5) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(228, 225, 216, 0.85) 0%, transparent 100%);
+  }
+
+  :global(body.theme-dark) .hero-top,
+  :global(body.theme-electric) .hero-top {
+    background: linear-gradient(to bottom, rgba(10, 10, 10, 0.85) 0%, transparent 100%);
   }
 
   .hero-top > div {
@@ -235,53 +288,108 @@
   }
 
   .hero-top span:first-child {
-    color: var(--electric);
+    color: var(--mate);
     font-weight: 700;
   }
 
+  :global(body.theme-electric) .hero-top span:first-child {
+    color: var(--electric);
+  }
+
+  .hero-spacer {
+    flex: 1;
+    min-height: 120px;
+    pointer-events: none;
+  }
+
+  /* BARRA INFERIOR EDITORIAL EQUILIBRADA EN 3 COLUMNAS */
   .hero-bottom {
     position: relative;
     z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 40px;
-    padding: 32px var(--gut);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    flex-wrap: wrap;
-    background: rgba(10, 10, 10, 0.35);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    display: grid;
+    grid-template-columns: 1.4fr 1.15fr 1fr;
+    align-items: center;
+    gap: clamp(24px, 3.2vw, 48px);
+    padding: 24px var(--gut) calc(28px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(10, 10, 10, 0.14);
+    background: rgba(244, 242, 236, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.03);
+  }
+
+  :global(body.theme-dark) .hero-bottom {
+    background: rgba(15, 15, 14, 0.9);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--bone);
   }
 
   :global(body.theme-electric) .hero-bottom {
-    border-top: 1px solid rgba(241, 255, 90, 0.2);
+    background: rgba(10, 10, 10, 0.94);
+    border-top: 1px solid rgba(241, 255, 90, 0.25);
+    color: #f1ff5a;
   }
 
   :global(body.theme-mate) .hero-bottom {
-    border-top: 1px solid rgba(151, 188, 98, 0.2);
+    background: rgba(18, 30, 21, 0.92);
+    border-top: 1px solid rgba(151, 188, 98, 0.25);
+    color: var(--bone);
   }
 
   .hero-sub-wrap {
-    max-width: 500px;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+  }
+
+  .hero-h1 {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+  }
+
+  .h1-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: clamp(9px, 1vw, 10.5px);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--rust);
+  }
+
+  :global(body.theme-electric) .h1-sub {
+    color: var(--electric);
+  }
+
+  .h1-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(19px, 2.2vw, 27px);
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
   }
 
   .hero-sub {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #f4f1ea;
-    opacity: 0.95;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.85);
+    font-size: 13px;
+    line-height: 1.48;
+    color: var(--ink);
+    opacity: 0.88;
+  }
+
+  :global(body.theme-dark) .hero-sub,
+  :global(body.theme-mate) .hero-sub {
+    color: rgba(244, 241, 234, 0.9);
   }
 
   .hero-cta-wrap {
     display: flex;
-    gap: 14px;
+    gap: 10px;
     align-items: center;
+    margin-top: 4px;
   }
 
   .hero-cta {
@@ -291,26 +399,27 @@
     gap: 6px;
     background: var(--electric);
     color: #0a0a0a;
-    padding: 0 22px;
+    padding: 0 18px;
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 11px;
-    transition: transform 0.2s var(--ease), background 0.2s, color 0.2s;
+    font-size: 10.5px;
+    transition: transform 0.2s var(--ease), background 0.2s, color 0.2s, box-shadow 0.2s;
     will-change: transform;
-    height: 42px;
+    height: 38px;
     box-sizing: border-box;
     white-space: nowrap;
-    border: 1px solid var(--electric);
+    border: 1px solid #0a0a0a;
+    box-shadow: 2px 2px 0px #0a0a0a;
   }
 
   .hero-cta:hover {
-    background: var(--bone);
-    color: var(--ink);
-    border-color: var(--bone);
+    background: #0a0a0a;
+    color: var(--electric);
     transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px var(--electric);
   }
 
   .hero-cta:active {
@@ -322,73 +431,130 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    color: #f4f1ea;
+    color: var(--ink);
     text-decoration: none;
     font-family: 'JetBrains Mono', monospace;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    font-size: 11px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    background: rgba(255, 255, 255, 0.04);
-    padding: 0 20px;
-    height: 42px;
+    font-size: 10.5px;
+    border: 1px solid var(--line);
+    background: transparent;
+    padding: 0 16px;
+    height: 38px;
     box-sizing: border-box;
     white-space: nowrap;
     transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s var(--ease);
   }
 
   .hero-cta-secondary:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: #fff;
-    color: #fff;
+    background: var(--ink);
+    color: var(--bone);
   }
 
   .hero-cta-secondary:active {
     transform: scale(0.97);
   }
 
+  /* PILARES CENTRALES DE ALTO RENDIMIENTO */
+  .hero-pillars {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-left: 1px solid var(--line);
+    border-right: 1px solid var(--line);
+    padding: 2px 28px;
+  }
+
+  .pillar-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .pillar-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--electric);
+    background: #0a0a0a;
+    padding: 2px 5px;
+    border-radius: 2px;
+    line-height: 1;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+
+  :global(body.theme-electric) .pillar-num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .pillar-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .pillar-content strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+
+  .pillar-content span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    color: var(--mute);
+    line-height: 1.35;
+  }
+
+  /* DERECHA - MÉTRICAS Y BADGE */
   .hero-right-wrap {
     display: flex;
     align-items: center;
-    gap: 40px;
+    justify-content: space-between;
+    gap: 24px;
   }
 
   .hero-stats {
     display: flex;
-    gap: 32px;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .hero-meta {
-    font-size: 11px;
+    font-size: 9.5px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.08em;
+    color: var(--mute);
   }
 
   .hero-meta strong {
     font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(24px, 2.8vw, 34px);
+    font-weight: 800;
+    font-size: clamp(20px, 2vw, 26px);
     display: block;
     text-transform: none;
     letter-spacing: -0.02em;
     margin-bottom: 2px;
-    color: #f4f1ea;
+    color: var(--ink);
     line-height: 1;
-    text-shadow: 0 4px 16px rgba(0, 0, 0, 0.7);
   }
 
   .hero-badge {
     position: relative;
-    width: 86px;
-    height: 86px;
+    width: 78px;
+    height: 78px;
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    color: var(--ink);
   }
 
   .hero-badge svg {
@@ -399,19 +565,29 @@
 
   .hero-badge .badge-inner {
     position: absolute;
-    width: 34px;
-    height: 34px;
+    width: 30px;
+    height: 30px;
     background: var(--electric);
-    border: 2px dashed var(--ink);
+    border: 1.5px dashed var(--ink);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--ink);
+    color: #0a0a0a;
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: 15px;
+    font-size: 13px;
     pointer-events: auto;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 1240px) {
+    .hero-bottom {
+      grid-template-columns: 1.25fr 1fr;
+    }
+    .hero-pillars {
+      display: none;
+    }
   }
 
   @media (max-width: 900px) {
@@ -420,39 +596,44 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center center;
-      transform: none !important;
+      object-position: center 30%;
     }
 
     .hero-top {
-      padding-top: calc(70px + env(safe-area-inset-top));
-      padding-bottom: 12px;
-      font-size: 10px;
+      padding-top: calc(65px + env(safe-area-inset-top));
+      padding-bottom: 10px;
+      font-size: 9.5px;
     }
 
     .hero-bottom {
+      display: flex;
       flex-direction: column;
       align-items: stretch;
       gap: 16px;
-      padding: 16px var(--gut) calc(20px + env(safe-area-inset-bottom));
-      background: rgba(10, 10, 10, 0.72);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      padding: 16px var(--gut) calc(18px + env(safe-area-inset-bottom));
+    }
+
+    .hero-pillars {
+      display: none;
     }
 
     .hero-sub-wrap {
       max-width: 100%;
-      gap: 12px;
+      gap: 8px;
+    }
+
+    .h1-title {
+      font-size: clamp(18px, 4.8vw, 24px);
     }
 
     .hero-sub {
-      font-size: 13px;
-      line-height: 1.42;
+      font-size: 12.5px;
+      line-height: 1.4;
     }
 
     .hero-cta-wrap {
       display: grid;
-      grid-template-columns: 1.25fr 1fr;
+      grid-template-columns: 1.2fr 1fr;
       gap: 8px;
       width: 100%;
     }
@@ -461,32 +642,25 @@
       width: 100%;
       height: 38px;
       padding: 0 8px;
-      font-size: clamp(9px, 2.6vw, 11px);
-      letter-spacing: 0.02em;
+      font-size: 10px;
     }
 
     .hero-right-wrap {
       width: 100%;
       justify-content: flex-start;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
     }
 
     .hero-stats {
+      flex-direction: row;
       width: 100%;
-      display: flex;
-      justify-content: flex-start;
-      gap: clamp(20px, 6vw, 36px);
+      justify-content: space-between;
+      gap: 16px;
     }
 
     .hero-meta strong {
-      font-size: clamp(20px, 5.5vw, 26px);
-    }
-
-    .hero-meta span {
-      font-size: 9px;
-      letter-spacing: 0.06em;
-      opacity: 0.85;
+      font-size: 20px;
     }
 
     .hero-badge {
@@ -507,3 +681,4 @@
     }
   }
 </style>
+

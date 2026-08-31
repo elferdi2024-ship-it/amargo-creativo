@@ -1,4 +1,27 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.amargocreativo.com/sitemap-index.xml
+# Motores de Búsqueda Generativa e Inteligencia Artificial (AEO / GEO)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+Sitemap: https://amargo-creativo.pages.dev/sitemap-index.xml
+

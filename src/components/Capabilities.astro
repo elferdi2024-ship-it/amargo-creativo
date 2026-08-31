@@ -12,31 +12,31 @@ interface Service {
 const services: Service[] = [
   {
     num: "01",
-    title: "Diseño y Creación Web",
-    desc: "Páginas rápidas, modernas y fáciles de usar en cualquier celular. Hacemos que tu marca se vea profesional desde el primer segundo.",
-    tags: ["DISEÑO MODERNO", "TIENDAS ONLINE", "RÁPIDO"],
+    title: "Creación y Diseño Web de Élite",
+    desc: "Páginas web y tiendas online ultrarrápidas (<0.8s), responsivas en cualquier celular y diseñadas para convertir visitas en clientes reales en Uruguay, Argentina y España.",
+    tags: ["DISEÑO WEB", "TIENDAS ONLINE", "ALTO RENDIMIENTO"],
     iconType: 1
   },
   {
     num: "02",
-    title: "Estrategia para Vender Más",
-    desc: "Ayudamos a que las personas que visitan tu web te escriban por WhatsApp o compren directo. Menos vueltas, más clientes reales.",
-    tags: ["MÁS CLIENTES", "WHATSAPP DIRECTO", "VENTAS"],
+    title: "Desarrollo de Aplicaciones & SaaS",
+    desc: "Sistemas a medida, marketplaces, cotizadores inteligentes y plataformas web con tecnologías modernas (Next.js, Astro) que automatizan tus ventas.",
+    tags: ["APPS A MEDIDA", "MARKETPLACES", "SAAS DIGITAL"],
     iconType: 2
   },
   {
     num: "03",
-    title: "Marcas con Personalidad",
-    desc: "Colores, logos y detalles que conectan con tus clientes y hacen que te recuerden frente a la competencia.",
-    tags: ["IDENTIDAD", "ESTILO", "IMAGEN"],
-    iconType: 3
+    title: "Posicionamiento SEO & Búsquedas IA",
+    desc: "Optimizamos tu sitio con SEO técnico, marcado Schema.org local y arquitectura semántica para liderar en Google y motores de inteligencia artificial.",
+    tags: ["SEO TÉCNICO", "GOOGLE URUGUAY / AR", "SCHEMA RICH SNIPPETS"],
+    iconType: 4
   },
   {
     num: "04",
-    title: "Que te Encuentren en Google",
-    desc: "De nada sirve tener una web hermosa si nadie la encuentra. Te posicionamos para que aparezcas cuando busquen lo que vendes en Uruguay.",
-    tags: ["GOOGLE", "BÚSQUEDA LOCAL", "VISIBILIDAD"],
-    iconType: 4
+    title: "Estrategia Comercial & WhatsApp Commerce",
+    desc: "Embudos directos a WhatsApp, checkout simplificado y branding de alto impacto para maximizar la tasa de conversión y cerrar ventas en minutos.",
+    tags: ["WHATSAPP DIRECTO", "VENTAS SIN FRICCIÓN", "CRO"],
+    iconType: 2
   }
 ];
 ---
@@ -45,7 +45,7 @@ const services: Service[] = [
   <div class="capabilities-ambient-bg" aria-hidden="true"></div>
   <div class="cap-head">
     <div class="section-label"><span class="num">02</span> SERVICIOS</div>
-    <h2>Lo que <em>hacemos</em> por ti</h2>
+    <h2>Lo que <em>hacemos</em> <span class="no-orphan">por ti</span></h2>
   </div>
   <div class="cap-list">
     {services.map(service => (
@@ -156,10 +156,11 @@ const services: Service[] = [
   .cap-head h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(36px, 6vw, 96px);
-    line-height: 0.9;
+    font-size: clamp(26px, 5vw, 96px);
+    line-height: 0.95;
     letter-spacing: -0.02em;
     text-transform: uppercase;
+    text-wrap: balance;
   }
   .cap-head h2 em {
     font-family: 'Instrument Serif', serif;
@@ -277,6 +278,10 @@ const services: Service[] = [
     .cap-head {
       grid-template-columns: 1fr;
       gap: 16px;
+    }
+    .cap-head h2 {
+      font-size: clamp(22px, 6.8vw, 36px);
+      line-height: 1.05;
     }
     .cap-item {
       grid-template-columns: 1fr;

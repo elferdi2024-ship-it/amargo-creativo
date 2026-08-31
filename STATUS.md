@@ -1,31 +1,34 @@
-# 🧉 AMARGO CREATIVO — ESTADO DEL PROYECTO & ARQUITECTURA (V26.0)
+# 🧉 AMARGO CREATIVO — ESTADO DEL PROYECTO & ARQUITECTURA (V30.0)
 
-Este documento representa la **Única Fuente de Verdad (SSOT)** del proyecto. Toda la migración desde el HTML original hacia **Astro 5** ha sido completada, optimizada y pulida al 100%. **Ya no es necesario consultar el HTML anterior.**
+Este documento representa la **Única Fuente de Verdad (SSOT)** del proyecto. Toda la arquitectura en **Astro 5** ha sido optimizada para máxima velocidad (<0.8s), autoridad SEO multirregional (Uruguay, Argentina y España) y despliegue en `https://amargo-creativo.pages.dev/`.
+
+### 📜 Manifiesto & Speech Oficial:
+> *"Más que una agencia creativa: una fuerza que amplifica voces y genera vínculos reales. Integramos estrategia, diseño, tecnología y datos para crear activos digitales que no solo se ven bien… se sienten y convierten. Escuchamos con atención, pensamos con claridad y ejecutamos con precisión. Como un buen mate: cercano, intenso y que deja huella."*
 
 ---
 
 ## 🏛️ 1. Estructura de Componentes (`src/components/`)
 
 1. **`Preloader.astro`**:
-   - Fondo verde mate (`--hero-bg: #3a7d44`), contador monumental en `Syne 800` (`mix-blend-mode: exclusion`) y la palabra protagonista en cursiva **`amargo`** (`Instrument Serif Italic`, opacidad `0.35`).
+   - Fondo verde mate (`--hero-bg: #2d6335`), contador monumental en `Syne 800` (`mix-blend-mode: exclusion`) y la palabra protagonista en cursiva **`amargo`** (`Instrument Serif Italic`, opacidad `0.35`).
    - Marquee inferior con origen Atlántida, Canelones, Uruguay.
 
 2. **`CustomCursor.astro`**:
    - Puntero fluido con interpolación lerp (`0.18`) en `requestAnimationFrame`.
-   - Círculo exterior con expansión a caja brutalista de 80px en hover con etiqueta interactiva (`VER`, `EMAIL`, `WHATSAPP`, etc.).
-   - Punto central `cursorDot` con `mix-blend-mode: difference`.
+   - Compatibilidad total en Windows/Chromium con colores sólidos (`rgba(212, 255, 0, 0.25)` y borde oscuro) que no se pierden sobre canvas de video acelerado.
+   - Activación condicional con clase `has-custom-cursor` para preservar cursor nativo en dispositivos táctiles.
 
 3. **`Navbar.astro`**:
-   - Enlaces de navegación rápida: `Manifiesto`, `Servicios`, `Rendimiento`, `Trabajo`, `Clientes`, `FAQ`.
+   - Enlaces de navegación rápida: `Manifiesto`, `Servicios`, `Rendimiento`, `Trabajo`, `Clientes`, `FAQ`, `Contacto`, `Instagram`.
    - Indicador de disponibilidad en tiempo real con pulso de luz: `🟢 5 CUPOS DISPONIBLES • AGOSTO 2026`.
-   - Menú lateral en pantalla completa (móvil y desktop) con efecto scramble en enlaces y botón de cierre interactivo.
+   - Menú lateral en pantalla completa con speech oficial de la **Agencia Creativa** y cobertura en Uruguay, Argentina y España.
 
 4. **`Hero.astro`**:
-   - Tipografía monumental brutalista: `MOTORES` `de crecimiento` `DIGITAL`.
-   - Subtítulo vendedor y cercano.
-   - Botones equilibrados con altura estandarizada de 44px: `EMPECEMOS TU PROYECTO` (Amarillo Eléctrico) y `VER TRABAJOS →` (Borde sutil).
-   - Métricas destacadas sin solapamientos: `100% ENFOCADO EN VENTAS` y `< 1.0s CARGA INSTANTÁNEA`.
-   - Sello circular rotatorio con física continua: `AMARGO CREATIVO™ • ATLÁNTIDA, UY`.
+   - Video cinemático nativo (`new hero.mp4`) con fondo texturizado a juego (`#e4e1d8`) y sin estiramientos pixelados.
+   - Centro visual 100% despejado para destacar el arte original del mate y la estética de autor.
+   - Scrubbing ultrasuave con amortiguación sedosa (`lerp 0.07`), protección contra saltos de frame y fallback para móviles.
+   - Barra inferior HUD con `<h1>` semántico (`CREACIÓN DE PÁGINAS WEB • APPS • SEO • CONVERSIÓN`) y métricas de alto impacto (`100% ENFOCADO EN VENTAS`, `< 0.8s CARGA INSTANTÁNEA`).
+   - Sello circular rotatorio con física continua: `AMARGO CREATIVO™ • AGENCIA CREATIVA • ATLÁNTIDA, UY`.
 
 5. **`Marquee.astro`**:
    - Cinta infinita optimizada sin layout thrashing.
@@ -33,16 +36,15 @@ Este documento representa la **Única Fuente de Verdad (SSOT)** del proyecto. To
 
 6. **`Manifesto.astro`**:
    - Insignia `[01]` en Verde Mate.
-   - Frase célebre: *"Tu web no es un folleto que junta polvo. Es tu mejor vendedor, trabajando las 24 horas, sin pedir aumentos ni comisiones. Construimos herramientas que venden todos los días."*
-   - Revelado escalonado en scroll seguro para Astro.
+   - Speech oficial completo de la Agencia Creativa con revelado escalonado en scroll.
 
 7. **`Capabilities.astro` (Servicios)**:
-   - 4 servicios explicados en lenguaje humano y cercano:
-     1. `01. Diseño y Creación Web` (Rápido, celular, tiendas online).
-     2. `02. Estrategia para Vender Más` (Enfoque en WhatsApp directo y ventas).
-     3. `03. Marcas con Personalidad` (Identidad y carácter).
-     4. `04. Que te Encuentren en Google` (SEO local en Uruguay).
-   - 4 iconos vectoriales SVG limpios e interactivos.
+    - 4 servicios de alta conversión para UY, AR y ES:
+      1. `01. Creación y Diseño Web de Élite` (Rápido, móvil, tiendas online).
+      2. `02. Desarrollo de Aplicaciones & SaaS` (Plataformas web, marketplaces, Next.js/Astro).
+      3. `03. Posicionamiento SEO & Búsquedas IA` (SEO técnico, Schema.org, Google UY/AR).
+      4. `04. Estrategia Comercial & WhatsApp Commerce` (Venta directa, CRO, cero fricción).
+    - 4 iconos vectoriales SVG limpios e interactivos.
 
 8. **`PerformanceComparison.astro` (Comparativa Técnica)**:
    - Bloque 1 (Web Tradicional / Plantilla): `4.8s`, `38/100`, `35% retención`.

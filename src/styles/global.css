@@ -146,15 +146,23 @@ body {
   font-family: 'JetBrains Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
-  cursor: none;
   width: 100%;
   transition: background 0.4s var(--ease), color 0.4s var(--ease);
   touch-action: pan-y;
 }
 
+body.has-custom-cursor,
+body.has-custom-cursor a,
+body.has-custom-cursor button,
+body.has-custom-cursor .cap-item,
+body.has-custom-cursor .project-card,
+body.has-custom-cursor .theme-dot {
+  cursor: none !important;
+}
+
 @media (pointer: coarse) {
-  body {
-    cursor: auto;
+  body, body a, body button {
+    cursor: auto !important;
     touch-action: pan-y;
   }
 }
@@ -181,45 +189,60 @@ body.no-scroll {
   position: fixed;
   top: 0;
   left: 0;
-  width: 24px;
-  height: 24px;
-  border: 1px solid #fff;
+  width: 22px;
+  height: 22px;
+  border: 1.2px solid rgba(10, 10, 10, 0.7);
+  background: rgba(212, 255, 0, 0.2);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   border-radius: 50%;
   transform: translate3d(-50%, -50%, 0);
   pointer-events: none;
-  z-index: 10000;
-  mix-blend-mode: difference;
-  transition: width 0.3s var(--ease), height 0.3s var(--ease), background 0.3s var(--ease), border-radius 0.3s var(--ease);
+  z-index: 100000;
+  transition: width 0.25s cubic-bezier(0.16, 1, 0.3, 1), height 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s, border-radius 0.25s, border-color 0.25s, box-shadow 0.25s;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: transparent;
   will-change: transform, width, height;
 }
 
+:global(body.theme-dark) .cursor,
+:global(body.theme-mate) .cursor {
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.15);
+}
+
 .cursor.hover {
-  width: 80px;
-  height: 80px;
+  width: 48px;
+  height: 48px;
   background: var(--electric) !important;
-  border-color: transparent !important;
-  mix-blend-mode: normal !important;
-  border-radius: 0 !important;
+  border: 1.5px solid #0a0a0a !important;
+  border-radius: 50% !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+:global(body.theme-dark) .cursor.hover,
+:global(body.theme-mate) .cursor.hover {
+  border-color: #ffffff !important;
 }
 
 .cursor-text {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
-  font-weight: 700;
+  font-size: 8.5px;
+  font-weight: 800;
   color: #0a0a0a !important;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
   opacity: 0;
-  transition: opacity 0.2s;
+  transform: scale(0.85);
+  transition: opacity 0.2s, transform 0.2s;
   white-space: nowrap;
 }
 
 .cursor.hover .cursor-text {
   opacity: 1;
+  transform: scale(1);
 }
 
 .cursor-dot {
@@ -228,13 +251,17 @@ body.no-scroll {
   left: 0;
   width: 4px;
   height: 4px;
-  background: #fff;
+  background: #0a0a0a;
   border-radius: 50%;
   transform: translate3d(-50%, -50%, 0);
   pointer-events: none;
-  z-index: 10000;
-  mix-blend-mode: difference;
+  z-index: 100001;
   will-change: transform;
+}
+
+:global(body.theme-dark) .cursor-dot,
+:global(body.theme-mate) .cursor-dot {
+  background: var(--electric);
 }
 
 @media (pointer: coarse) {
@@ -262,6 +289,19 @@ body.no-scroll {
   pointer-events: none;
   z-index: 1;
   user-select: none;
+}
+
+.no-orphan, .no-wrap {
+  white-space: nowrap;
+}
+
+h1, h2, h3, h4, h5, h6,
+.hero-title, .h1-title,
+.cap-head h2, .manifesto-head h2, .perf-head h2,
+.showcase-head h2, .test-header h2, .process-head h2,
+.faq-head h2, .contact-title, .insta-head h2 {
+  text-wrap: balance;
+  text-wrap: pretty;
 }
 
 /* --- REVEAL ANIMATIONS --- */

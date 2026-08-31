@@ -10,12 +10,249 @@ import FloatingContact from '../components/FloatingContact.astro';
 interface Props {
   title?: string;
   description?: string;
+  image?: string;
+  canonicalUrl?: string;
 }
 
 const { 
-  title = "Amargo Creativo | Creadores de Páginas Web y Apps en Uruguay",
-  description = "Agencia creativa digital en Atlántida, Canelones. Especialistas en diseño web de alto rendimiento, aplicaciones a medida y estrategias de crecimiento digital en todo Uruguay."
+  title = "Amargo Creativo | Creadores de Páginas Web, Apps y SEO en Uruguay, Argentina y España",
+  description = "Agencia creativa de desarrollo web de alto rendimiento (< 0.8s), creación de aplicaciones a medida, optimización SEO y marketing digital para empresas en Uruguay, Argentina y España. Activos digitales veloces enfocados en ventas.",
+  image = "https://amargo-creativo.pages.dev/og-image.jpg",
+  canonicalUrl = "https://amargo-creativo.pages.dev/"
 } = Astro.props;
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://amargo-creativo.pages.dev/#website",
+      "url": "https://amargo-creativo.pages.dev/",
+      "name": "Amargo Creativo",
+      "description": "Creadores de páginas web, aplicaciones a medida y optimización SEO en Uruguay, Argentina y España",
+      "inLanguage": "es",
+      "publisher": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      }
+    },
+    {
+      "@type": "Person",
+      "@id": "https://amargo-creativo.pages.dev/#person",
+      "name": "Ferdi",
+      "jobTitle": "Director Técnico & Software Performance Architect",
+      "worksFor": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "url": "https://amargo-creativo.pages.dev",
+      "image": "https://amargo-creativo.pages.dev/amargo-isologo.jpg",
+      "sameAs": [
+        "https://www.instagram.com/amargocreativo",
+        "https://github.com/elferdi2024"
+      ],
+      "description": "Especialista en desarrollo web de alto rendimiento (<0.8s), arquitectura de software, SEO técnico y embudos de conversión para Uruguay, Argentina y España.",
+      "knowsAbout": [
+        "Desarrollo Web",
+        "Astro 5 & Next.js 15",
+        "Algolia SSR InstantSearch",
+        "SEO Técnico & Local SEO",
+        "Core Web Vitals Optimization",
+        "Optimización de Conversiones (CRO)",
+        "Diseño Web Brutalista y Responsive",
+        "Marketing Digital & WhatsApp Commerce"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Atlántida",
+        "addressRegion": "Canelones",
+        "addressCountry": "UY"
+      }
+    },
+    {
+      "@type": ["Organization", "ProfessionalService", "LocalBusiness"],
+      "@id": "https://amargo-creativo.pages.dev/#organization",
+      "name": "Amargo Creativo",
+      "alternateName": ["Amargo Studio", "Amargo Web", "Amargo Creativo Digital"],
+      "url": "https://amargo-creativo.pages.dev",
+      "logo": "https://amargo-creativo.pages.dev/amargo-isologo.jpg",
+      "image": image,
+      "description": description,
+      "telephone": "+59898300491",
+      "email": "amargo.creativo@gmail.com",
+      "priceRange": "$$",
+      "currenciesAccepted": "UYU, ARS, USD, EUR",
+      "paymentAccepted": "Transferencia Bancaria (BROU, Santander, Itaú), Mercado Pago, Stripe, Wise, Crypto",
+      "foundingDate": "2024",
+      "founder": {
+        "@id": "https://amargo-creativo.pages.dev/#person"
+      },
+      "address": [
+        {
+          "@type": "PostalAddress",
+          "streetAddress": "Atlántida, Costa de Oro",
+          "addressLocality": "Atlántida",
+          "addressRegion": "Canelones",
+          "postalCode": "16000",
+          "addressCountry": "UY"
+        },
+        {
+          "@type": "PostalAddress",
+          "addressLocality": "Montevideo",
+          "addressRegion": "Montevideo",
+          "addressCountry": "UY"
+        },
+        {
+          "@type": "PostalAddress",
+          "addressLocality": "Buenos Aires",
+          "addressRegion": "CABA",
+          "addressCountry": "AR"
+        }
+      ],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -34.7719,
+        "longitude": -55.7594
+      },
+      "areaServed": [
+        { "@type": "Country", "name": "Uruguay" },
+        { "@type": "AdministrativeArea", "name": "Canelones" },
+        { "@type": "AdministrativeArea", "name": "Montevideo" },
+        { "@type": "AdministrativeArea", "name": "Maldonado" },
+        { "@type": "Country", "name": "Argentina" },
+        { "@type": "AdministrativeArea", "name": "Buenos Aires" },
+        { "@type": "AdministrativeArea", "name": "Córdoba" },
+        { "@type": "Country", "name": "España" }
+      ],
+      "sameAs": [
+        "https://www.instagram.com/amargocreativo"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Servicios de Creación Web, Apps y Posicionamiento SEO",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Diseño y Creación de Páginas Web de Alto Rendimiento",
+              "description": "Sitios web ultrarrápidos (<0.8s) optimizados para móviles, con integración directa a WhatsApp y diseño de alto impacto para Uruguay, Argentina y España."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Desarrollo de Aplicaciones Web y SaaS",
+              "description": "Plataformas web a medida, marketplaces inmobiliarios, cotizadores inteligentes y dashboards de gestión en la nube."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Posicionamiento SEO en Google & Motores IA",
+              "description": "SEO técnico, marcado estructurado Schema.org, indexación reactiva y optimización para búsquedas locales y AI Overviews."
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Estrategia para Vender Más y Embudos de Conversión (CRO)",
+              "description": "Diseño de flujos comerciales sin fricción que transforman el tráfico web en compras y consultas directas por WhatsApp."
+            }
+          }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://amargo-creativo.pages.dev/#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Cuánto tiempo toma el desarrollo de mi web o app?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dependiendo del alcance, una Landing Page de alta conversión o sitio corporativo toma entre 10 y 14 días hábiles. Proyectos complejos con paneles SaaS o e-commerce avanzados toman entre 3 y 5 semanas. Entregamos un cronograma exacto antes de empezar."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿El sitio web y el código serán 100% de mi propiedad?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí, absolutamente. Todo el código fuente, diseño, dominio y cuentas quedan a tu nombre sin dependencias cautivas ni costos ocultos de plataformas cerradas. Eres el dueño absoluto de tu activo digital."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cómo optimizan la web para posicionar en Google en Uruguay, Argentina y España?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Aplicamos SEO técnico nativo: tiempos de carga por debajo de 1 segundo (Core Web Vitals verdes), marcado semántico Schema.org multi-región, arquitectura limpia, meta tags geolocalizados y optimización de palabras clave con intención real de compra."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Qué formas de pago y opciones de financiación aceptan?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Trabajamos con esquema 50% al inicio y 50% contra entrega final una vez aprobado el proyecto. Aceptamos transferencias bancarias en Uruguay (BROU, Santander, Itaú), pagos en Argentina (Mercado Pago / transferencia), pagos internacionales vía Stripe/Wise y criptomonedas."
+          }
+        }
+      ]
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://amargo-creativo.pages.dev/#showcase",
+      "name": "Casos de Éxito y Proyectos Activos de Amargo Creativo",
+      "itemListElement": [
+        {
+          "@type": "CreativeWork",
+          "position": 1,
+          "name": "Barrio.uy",
+          "description": "Plataforma inmobiliaria y marketplace de élite en Uruguay con búsqueda Algolia SSR en <45ms.",
+          "url": "https://www.barrio.uy/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 2,
+          "name": "LOMAX Propiedades",
+          "description": "Inmobiliaria boutique y curaduría editorial de residencias de lujo en Montevideo y Punta del Este.",
+          "url": "https://lomax-propiedades.elferdi2024.workers.dev/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 3,
+          "name": "Legendary Burger",
+          "description": "Web app y burger builder en tiempo real con checkout directo a WhatsApp y backend en Supabase.",
+          "url": "https://legendary-burger.vercel.app/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 4,
+          "name": "Deal Motors UY",
+          "description": "Plataforma automotriz premium, representante oficial SHACMAN y cotizador inteligente de permutas.",
+          "url": "https://driveprime-eta.vercel.app/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 5,
+          "name": "Distribuidora El Remate",
+          "description": "Ecosistema digital mayorista y minorista con más de 1.900 productos activos en Canelones.",
+          "url": "https://remate-psi.vercel.app/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 6,
+          "name": "Avícola Control",
+          "description": "Software especializado en control operativo y trazabilidad avícola para plantas y productores.",
+          "url": "https://faconeros-app.vercel.app/hub"
+        }
+      ]
+    }
+  ]
+};
 ---
 <!DOCTYPE html>
 <html lang="es">
@@ -24,70 +261,59 @@ const {
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
   <title>{title}</title>
   <meta name="description" content={description}>
-  <meta name="keywords" content="creadores de páginas web uruguay, diseño web uruguay, desarrollo de aplicaciones uruguay, agencia digital canelones, atlántida, amargo creativo, páginas web montevideo">
+  <meta name="keywords" content="crear paginas web uruguay, desarrollo web uruguay, diseñador web montevideo, agencia seo uruguay, crear paginas web argentina, desarrollo web argentina, agencia seo buenos aires, desarrollo de aplicaciones uruguay, marketing digital uruguay, crear paginas web españa, amargo creativo">
   <meta name="author" content="Amargo Creativo">
-  <meta name="theme-color" content="#3a7d44">
+  <meta name="theme-color" content="#2d6335">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="canonical" href="https://www.amargocreativo.com/">
+  <link rel="canonical" href={canonicalUrl}>
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+  <!-- Geotargeting Meta Tags (Uruguay, Argentina, Global) -->
+  <meta name="geo.region" content="UY-CA">
+  <meta name="geo.placename" content="Atlántida, Canelones, Uruguay">
+  <meta name="geo.position" content="-34.7719;-55.7594">
+  <meta name="ICBM" content="-34.7719, -55.7594">
+
+  <!-- Hreflang Multi-regional -->
+  <link rel="alternate" hreflang="es-UY" href="https://amargo-creativo.pages.dev/" />
+  <link rel="alternate" hreflang="es-AR" href="https://amargo-creativo.pages.dev/" />
+  <link rel="alternate" hreflang="es-ES" href="https://amargo-creativo.pages.dev/" />
+  <link rel="alternate" hreflang="x-default" href="https://amargo-creativo.pages.dev/" />
 
   <!-- Open Graph / Facebook / WhatsApp -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.amargocreativo.com/">
+  <meta property="og:url" content={canonicalUrl}>
   <meta property="og:locale" content="es_UY">
+  <meta property="og:locale:alternate" content="es_AR">
+  <meta property="og:locale:alternate" content="es_ES">
   <meta property="og:site_name" content="Amargo Creativo">
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
-  <meta property="og:image" content="https://www.amargocreativo.com/og-image.jpg">
+  <meta property="og:image" content={image}>
+  <meta property="og:image:secure_url" content={image}>
+  <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Amargo Creativo — Creadores de Páginas Web y Apps en Uruguay, Argentina y España">
 
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:title" content={title}>
-  <meta property="twitter:description" content={description}>
-  <meta property="twitter:image" content="https://www.amargocreativo.com/og-image.jpg">
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={image}>
+  <meta name="twitter:image:alt" content="Amargo Creativo — Agencia Creativa">
 
-  <!-- Rich Schema JSON-LD LocalBusiness -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ProfessionalService",
-    "name": "Amargo Creativo",
-    "image": "https://www.amargocreativo.com/og-image.jpg",
-    "description": "Estudio creativo digital en Uruguay. Creadores de páginas web, aplicaciones a medida y motores de crecimiento comercial.",
-    "url": "https://www.amargocreativo.com",
-    "telephone": "+59898300491",
-    "email": "amargo.creativo@gmail.com",
-    "priceRange": "$$",
-    "address": {
-      "@type": "PostalAddress",
-      "streetAddress": "Atlántida",
-      "addressLocality": "Atlántida",
-      "addressRegion": "Canelones",
-      "postalCode": "16000",
-      "addressCountry": "UY"
-    },
-    "geo": {
-      "@type": "GeoCoordinates",
-      "latitude": -34.7719,
-      "longitude": -55.7594
-    },
-    "areaServed": [
-      { "@type": "AdministrativeArea", "name": "Canelones" },
-      { "@type": "AdministrativeArea", "name": "Montevideo" },
-      { "@type": "AdministrativeArea", "name": "Maldonado" },
-      { "@type": "Country", "name": "Uruguay" }
-    ]
-  }
-  </script>
+  <!-- Preload Critical LCP Hero Poster -->
+  <link rel="preload" as="image" href="/amargo-hero-pc.webp" type="image/webp" fetchpriority="high">
+
+  <!-- Rich Schema JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
   <!-- Typography Optimization -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-  <script is:inline src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
 </head>
 <body class="theme-default">
   <Preloader />
@@ -101,6 +327,8 @@ const {
   <FloatingContact />
 
   <script>
+    import Lenis from 'lenis';
+
     // --- 1. PRELOADER ---
     const preloader = document.getElementById('preloader');
     const preCounter = document.getElementById('preCounter');
@@ -132,14 +360,13 @@ const {
       isWindowLoaded = true;
     });
 
-    // --- 2. SMOOTH SCROLL (LENIS) ---
+    // --- 2. SMOOTH SCROLL (LENIS LOCAL BUNDLE) ---
     const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let lenis: any;
+    let lenis: Lenis | null = null;
 
-    const win = window as any;
-    if (isDesktop && typeof win.Lenis !== 'undefined') {
-      lenis = new win.Lenis({
+    if (isDesktop && !prefersReducedMotion) {
+      lenis = new Lenis({
         duration: 1.15,
         easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
@@ -147,43 +374,41 @@ const {
       });
 
       function lenisRaf(time: number) {
-        lenis.raf(time);
+        lenis?.raf(time);
         requestAnimationFrame(lenisRaf);
       }
       requestAnimationFrame(lenisRaf);
+    }
 
-      if (prefersReducedMotion) lenis.stop();
-    } else {
-      lenis = {
-        scrollTo: (target: any, opts: any = {}) => {
-          const offset = opts.offset || 0;
-          if (target === 0 || target === '#top') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          } else if (typeof target === 'number') {
-            window.scrollTo({ top: target + offset, behavior: 'smooth' });
-          } else if (target instanceof HTMLElement) {
-            const top = target.getBoundingClientRect().top + window.scrollY + offset;
+    const win = window as any;
+    win.lenis = lenis || {
+      scrollTo: (target: any, opts: any = {}) => {
+        const offset = opts.offset || 0;
+        if (target === 0 || target === '#top') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (typeof target === 'number') {
+          window.scrollTo({ top: target + offset, behavior: 'smooth' });
+        } else if (target instanceof HTMLElement) {
+          const top = target.getBoundingClientRect().top + window.scrollY + offset;
+          window.scrollTo({ top, behavior: 'smooth' });
+        } else if (typeof target === 'string') {
+          const el = document.querySelector(target);
+          if (el) {
+            const top = el.getBoundingClientRect().top + window.scrollY + offset;
             window.scrollTo({ top, behavior: 'smooth' });
-          } else if (typeof target === 'string') {
-            const el = document.querySelector(target);
-            if (el) {
-              const top = el.getBoundingClientRect().top + window.scrollY + offset;
-              window.scrollTo({ top, behavior: 'smooth' });
-            }
-          }
-        },
-        stop: () => document.body.classList.add('no-scroll'),
-        start: () => document.body.classList.remove('no-scroll'),
-        on: (event: string, cb: any) => {
-          if (event === 'scroll') {
-            window.addEventListener('scroll', () => {
-              cb({ actualScroll: window.scrollY, velocity: 0 });
-            }, { passive: true });
           }
         }
-      };
-    }
-    win.lenis = lenis;
+      },
+      stop: () => document.body.classList.add('no-scroll'),
+      start: () => document.body.classList.remove('no-scroll'),
+      on: (event: string, cb: any) => {
+        if (event === 'scroll') {
+          window.addEventListener('scroll', () => {
+            cb({ actualScroll: window.scrollY, velocity: 0 });
+          }, { passive: true });
+        }
+      }
+    };
 
     // Anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -208,8 +433,9 @@ const {
     const cursorText = document.getElementById('cursorText');
 
     if (isDesktop && cursor && cursorDot && cursorText) {
-      let mouseX = -100, mouseY = -100;
-      let cursorX = -100, cursorY = -100;
+      document.body.classList.add('has-custom-cursor');
+      let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+      let cursorX = mouseX, cursorY = mouseY;
 
       window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
@@ -218,8 +444,8 @@ const {
 
       function renderCursor() {
         cursorDot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-        cursorX += (mouseX - cursorX) * 0.18;
-        cursorY += (mouseY - cursorY) * 0.18;
+        cursorX += (mouseX - cursorX) * 0.28;
+        cursorY += (mouseY - cursorY) * 0.28;
         cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
         requestAnimationFrame(renderCursor);
       }
