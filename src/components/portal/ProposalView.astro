@@ -261,10 +261,10 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
                 {hasDiscount ? (
                   <div class="discount-price-container">
                     <div class="strikethrough-row">
-                      <span class="strikethrough-val font-mono">
+                      <span class="strikethrough-val">
                         {formatMoney(origPrice, inv.currency)}
                       </span>
-                      <span class="discount-chip font-mono">
+                      <span class="discount-chip">
                         {plan.discount_badge || "-7% Lanzamiento"}
                       </span>
                     </div>
@@ -1003,13 +1003,16 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   }
 
   .strikethrough-val {
-    font-size: 0.88rem;
-    color: #94A398;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.95rem;
+    color: #8C9990;
     text-decoration: line-through;
-    font-weight: 600;
+    font-weight: 500;
+    letter-spacing: -0.01em;
   }
 
   .discount-chip {
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.65rem;
     font-weight: 800;
     color: #141E18;
@@ -1027,12 +1030,15 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     gap: 0.35rem;
   }
 
+  /* NÚMEROS DE PRECIO CON 'Space Grotesk' (ELEGANTE, NO AGRESIVO) */
   .plan-price-num {
-    font-family: "Syne", sans-serif;
-    font-size: 1.65rem;
-    font-weight: 800;
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    font-size: 1.62rem;
+    font-weight: 700;
     color: var(--ink);
-    letter-spacing: -0.03em;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
   }
 
   .price-highlight {
@@ -1157,8 +1163,8 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   }
 
   .amount {
-    font-family: "Syne", sans-serif;
-    font-size: 2rem;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.85rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0;
