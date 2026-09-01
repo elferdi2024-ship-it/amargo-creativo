@@ -1,0 +1,253 @@
+---
+// filepath: src/pages/admin/documents/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import DocumentUploader from "../../../components/admin/DocumentUploader";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+
+const typeFilter = Astro.url.searchParams.get("type") || "all";
+
+// 1. Obtener listados para el uploader
+const { data: clients } = await supabaseAdmin.from("clients").select("id, name").order("name");
+const { data: projects } = await supabaseAdmin.from("projects").select("id, title, client_id").order("title");
+const { data: proposals } = await supabaseAdmin.from("proposals").select("id, project_title, client_id").order("project_title");
+
+// 2. Obtener documentos
+let docQuery = supabaseAdmin
+  .from("documents")
+  .select("*, clients(name), projects(title), proposals(project_title, slug)")
+  .order("uploaded_at", { ascending: false });
+
+if (typeFilter !== "all") {
+  docQuery = docQuery.eq("type", typeFilter);
+}
+
+const { data: documents } = await docQuery;
+const allDocs = documents || [];
+---
+
+<AdminLayout title="Centro de Documentos" activeSection="documents">
+  <div class="documents-page">
+    <!-- UPLOADER BOX -->
+    <DocumentUploader
+      client:load
+      clients={clients || []}
+      projects={projects || []}
+      proposals={proposals || []}
+    />
+
+    <!-- DOCUMENTS TABLE & FILTER -->
+    <div class="card-box">
+      <div class="table-top-bar">
+        <div class="status-tabs">
+          <a href="/admin/documents?type=all" class={`tab-pill ${typeFilter === "all" ? "active" : ""}`}>
+            Todos
+          </a>
+          <a href="/admin/documents?type=contract" class={`tab-pill ${typeFilter === "contract" ? "active" : ""}`}>
+            Contratos
+          </a>
+          <a href="/admin/documents?type=proposal" class={`tab-pill ${typeFilter === "proposal" ? "active" : ""}`}>
+            Propuestas PDF
+          </a>
+          <a href="/admin/documents?type=deliverable" class={`tab-pill ${typeFilter === "deliverable" ? "active" : ""}`}>
+            Entregables
+          </a>
+          <a href="/admin/documents?type=brief" class={`tab-pill ${typeFilter === "brief" ? "active" : ""}`}>
+            Briefs
+          </a>
+        </div>
+
+        <span class="total-count">{allDocs.length} documentos</span>
+      </div>
+
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Nombre del Archivo</th>
+              <th>Tipo</th>
+              <th>Cliente / Proyecto</th>
+              <th>Fecha de Subida</th>
+              <th>Visibilidad Cliente</th>
+              <th style="text-align: right;">Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allDocs.map((doc) => (
+              <tr>
+                <td>
+                  <div class="doc-cell">
+                    <span class="doc-icon">📄</span>
+                    <strong>{doc.name}</strong>
+                  </div>
+                </td>
+                <td>
+                  <span class="doc-type-badge">{doc.type}</span>
+                </td>
+                <td>
+                  <div class="cell-sub">
+                    {doc.clients?.name || doc.projects?.title || doc.proposals?.project_title || "General"}
+                  </div>
+                </td>
+                <td>
+                  <span class="font-mono">{formatDate(doc.uploaded_at)}</span>
+                </td>
+                <td>
+                  {doc.visible_to_client ? (
+                    <span class="badge-status status-accepted">Visible en Magic Link</span>
+                  ) : (
+                    <span class="badge-status status-draft">Solo Admin</span>
+                  )}
+                </td>
+                <td style="text-align: right;">
+                  <div class="actions-group">
+                    <a href={`/api/documents/${doc.id}/download`} target="_blank" class="btn-sm">
+                      Descargar ↗
+                    </a>
+                    <button
+                      type="button"
+                      class="btn-del-doc"
+                      data-id={doc.id}
+                      title="Eliminar documento"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+            {allDocs.length === 0 && (
+              <tr>
+                <td colspan="6" class="empty-cell">
+                  No hay documentos subidos con esta categoría.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll(".btn-del-doc").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-id");
+        if (confirm("¿Estás seguro de eliminar este documento de Supabase Storage?")) {
+          try {
+            const res = await fetch(`/api/admin/documents?id=${id}`, {
+              method: "DELETE",
+            });
+            const data = await res.json();
+            if (data.ok) {
+              window.location.reload();
+            }
+          } catch {
+            alert("Error al eliminar documento");
+          }
+        }
+      });
+    });
+  </script>
+</AdminLayout>
+
+<style>
+  .documents-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .table-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .status-tabs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-pill {
+    padding: 0.35rem 0.75rem;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 20px;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .tab-pill.active {
+    background: rgba(200, 255, 0, 0.15);
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  .total-count {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .doc-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .doc-icon {
+    font-size: 1.1rem;
+  }
+
+  .doc-type-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: var(--adm-mute);
+  }
+
+  .actions-group {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-sm {
+    padding: 0.3rem 0.6rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-lime);
+    font-size: 0.75rem;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .btn-sm:hover {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .btn-del-doc {
+    background: none;
+    border: none;
+    color: var(--adm-mute);
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.4rem;
+  }
+
+  .btn-del-doc:hover {
+    color: var(--adm-danger);
+  }
+</style>

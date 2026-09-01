@@ -1,0 +1,392 @@
+---
+// filepath: src/pages/p/[slug]/aceptada.astro
+export const prerender = false;
+
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate, whatsappHref } from "../../../lib/format";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+// 1. Obtener la propuesta
+const { data: proposal } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(*)")
+  .eq("slug", slug)
+  .single();
+
+if (!proposal || proposal.status !== "accepted") {
+  return Astro.redirect(`/p/${slug}`);
+}
+
+const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
+const waMsg = `¡Hola Amargo! Acabo de aceptar la propuesta "${proposal.project_title}". Mi nombre es ${proposal.accepted_name || clientName}. ¡Coordinemos los próximos pasos!`;
+const waUrl = whatsappHref(waMsg);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Propuesta Aceptada · {proposal.project_title} · Amargo Creativo</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="success-wrap">
+      <header class="header">
+        <a href="/" class="brand">AMARGO.</a>
+        <span class="tag">Confirmación de Proyecto</span>
+      </header>
+
+      <div class="card">
+        <div class="check-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+
+        <span class="kicker">¡Excelente decisión!</span>
+        <h1 class="title">Propuesta confirmada</h1>
+        <p class="subtitle">
+          El proyecto <strong>"{proposal.project_title}"</strong> para <strong>{clientName}</strong> ha quedado formalmente aceptado y en marcha.
+        </p>
+
+        <div class="receipt-box">
+          <div class="receipt-row">
+            <span class="label">Aceptado por:</span>
+            <strong>{proposal.accepted_name || "—"}</strong>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Contacto registrado:</span>
+            <span>{proposal.accepted_contact || "—"}</span>
+          </div>
+          <div class="receipt-row">
+            <span class="label">Fecha y hora:</span>
+            <span>{formatDate(proposal.accepted_at)}</span>
+          </div>
+          {proposal.accepted_plan && (
+            <div class="receipt-row">
+              <span class="label">Plan seleccionado:</span>
+              <strong class="highlight-plan">{proposal.accepted_plan}</strong>
+            </div>
+          )}
+        </div>
+
+        <div class="steps-section">
+          <h3>Próximos pasos:</h3>
+          <ol class="steps-list">
+            <li>
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>Contacto de bienvenida y Kick-off</strong>
+                <p>Te contactaremos en las próximas 24 horas para coordinar la reunión inicial de alineación y acceso a materiales.</p>
+              </div>
+            </li>
+            <li>
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>Anticipo y Administración</strong>
+                <p>Enviaremos los detalles de facturación y transferencia según los términos acordados.</p>
+              </div>
+            </li>
+            <li>
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <strong>Seguimiento transparente</strong>
+                <p>Podrás seguir el avance etapa por etapa en cualquier momento utilizando este mismo enlace.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="actions">
+          <a href={waUrl} target="_blank" rel="noopener" class="btn-wa">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/>
+            </svg>
+            Escribir por WhatsApp ahora
+          </a>
+
+          <a href={`/p/${proposal.slug}`} class="btn-portal">
+            Ver estado del proyecto en el portal
+          </a>
+
+          <button type="button" class="btn-ghost" onclick="window.print()">
+            Guardar comprobante en PDF
+          </button>
+        </div>
+      </div>
+
+      <footer class="footer">
+        <span>Amargo Creativo · Atlántida, Uruguay</span>
+        <span>Agencia digital de alto rendimiento</span>
+      </footer>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #F8F9F6;
+    --ink: #141E18;
+    --mute: #6B756E;
+    --mate: #2E4A3A;
+    --lime: #C8FF00;
+    --border: #E2E4DC;
+    --card: #FFFFFF;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Archivo", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  .success-wrap {
+    max-width: 42rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 5rem;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brand {
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--mate);
+    font-weight: 700;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 640px) {
+    .card { padding: 1.75rem 1.25rem; }
+  }
+
+  .check-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(200, 255, 0, 0.25);
+    color: var(--mate);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    border: 2px solid var(--mate);
+  }
+
+  .kicker {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mate);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  .title {
+    font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin: 0 0 1rem;
+    color: var(--ink);
+  }
+
+  .subtitle {
+    font-size: 1.1rem;
+    color: #3b463f;
+    line-height: 1.5;
+    margin-bottom: 2rem;
+  }
+
+  .receipt-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .receipt-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  .receipt-row .label {
+    color: var(--mute);
+  }
+
+  .highlight-plan {
+    color: var(--mate);
+    background: rgba(200, 255, 0, 0.35);
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .steps-section {
+    border-top: 1px solid var(--border);
+    padding-top: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .steps-section h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin: 0 0 1.25rem;
+    color: var(--ink);
+  }
+
+  .steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .steps-list li {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+
+  .step-content strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin-bottom: 0.2rem;
+  }
+
+  .step-content p {
+    font-size: 0.9rem;
+    color: #4a554e;
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .btn-wa {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    background: #25D366;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.95rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .btn-wa:hover {
+    background: #20bd5a;
+    transform: translateY(-1px);
+  }
+
+  .btn-portal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink);
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+
+  .btn-portal:hover {
+    background: #000;
+  }
+
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--mute);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.6rem;
+    text-decoration: underline;
+  }
+
+  .footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--mute);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  @media print {
+    .actions, .footer, .header { display: none !important; }
+    .card { border: none; box-shadow: none; padding: 0; }
+  }
+</style>

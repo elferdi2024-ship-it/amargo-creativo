@@ -1,0 +1,80 @@
+---
+// filepath: src/pages/admin/pipeline/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import PipelineBoard from "../../../components/admin/PipelineBoard";
+import { supabaseAdmin } from "../../../lib/supabase";
+
+// 1. Obtener propuestas activas y aceptadas
+const { data: proposals } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(name, company)")
+  .in("status", ["active", "accepted", "draft"])
+  .order("created_at", { ascending: false });
+
+// 2. Obtener proyectos activos y finalizados
+const { data: projects } = await supabaseAdmin
+  .from("projects")
+  .select("*, clients(name, company)")
+  .order("created_at", { ascending: false });
+---
+
+<AdminLayout title="Pipeline Comercial" activeSection="pipeline">
+  <div class="pipeline-page">
+    <div class="page-top-card">
+      <div>
+        <h2>Pipeline Comercial & Flujo de Proyectos</h2>
+        <p>
+          Visualiza de un vistazo el embudo comercial completo de Amargo Creativo: desde propuestas enviadas hasta proyectos completados y listos para generar contenido.
+        </p>
+      </div>
+      <div class="top-actions">
+        <a href="/admin/proposals/new" class="btn-primary-sm">
+          + Nueva Propuesta
+        </a>
+      </div>
+    </div>
+
+    <!-- KANBAN BOARD ISLAND -->
+    <PipelineBoard
+      client:load
+      initialProposals={proposals || []}
+      initialProjects={projects || []}
+    />
+  </div>
+</AdminLayout>
+
+<style>
+  .pipeline-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-top-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-top-card h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .page-top-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 700px;
+    line-height: 1.45;
+  }
+</style>

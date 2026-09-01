@@ -1,0 +1,125 @@
+---
+// filepath: src/pages/404.astro
+export const prerender = true;
+
+import { whatsappHref } from "../lib/format";
+
+const waUrl = whatsappHref("Hola Amargo, intenté acceder a un enlace y no lo encontré.");
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Página no encontrada · Amargo Creativo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <main class="notfound-card">
+      <a href="/" class="brand">AMARGO.</a>
+      <span class="error-code">404</span>
+      <h1>Propuesta o enlace no disponible</h1>
+      <p>
+        El enlace al que intentás acceder no existe, caducó o fue desactivado por el equipo de Amargo Creativo.
+      </p>
+      <div class="actions">
+        <a href="/" class="btn-home">Ir al inicio</a>
+        <a href={waUrl} target="_blank" rel="noopener" class="btn-wa">Consultar por WhatsApp ↗</a>
+      </div>
+    </main>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #141E18;
+    --ink: #F8F9F6;
+    --mute: #8E9C92;
+    --lime: #C8FF00;
+    --border: #2D4034;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Archivo", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .notfound-card {
+    max-width: 440px;
+    text-align: center;
+    background: #1C2B22;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 3rem 2rem;
+  }
+
+  .brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+  }
+
+  .error-code {
+    display: block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: var(--lime);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0 0 0.85rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: var(--mute);
+    line-height: 1.5;
+    margin: 0 0 2rem;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .btn-home {
+    background: var(--lime);
+    color: #141E18;
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+
+  .btn-wa {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 0.88rem;
+  }
+</style>

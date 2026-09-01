@@ -1,0 +1,5 @@
+---
+// filepath: src/pages/admin/plantillas/index.astro
+export const prerender = false;
+return Astro.redirect(`/admin/templates${Astro.url.search}`);
+---

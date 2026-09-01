@@ -1,0 +1,76 @@
+---
+// filepath: src/pages/admin/contracts/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ContractGenerator from "../../../components/admin/ContractGenerator";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { DEFAULT_TEMPLATES } from "../../../lib/contracts";
+
+const defaultProposalId = Astro.url.searchParams.get("proposal_id") || "";
+const defaultTemplateName = Astro.url.searchParams.get("template_name") || "";
+
+// 1. Obtener propuestas
+const { data: proposals } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(name, email, phone, company)")
+  .order("created_at", { ascending: false });
+
+// 2. Obtener plantillas
+const { data: dbTemplates } = await supabaseAdmin
+  .from("contract_templates")
+  .select("*")
+  .order("created_at", { ascending: true });
+
+const templates = dbTemplates && dbTemplates.length > 0 ? dbTemplates : DEFAULT_TEMPLATES;
+---
+
+<AdminLayout title="Generador de Contratos" activeSection="contracts">
+  <div class="contracts-generator-page">
+    <div class="page-intro-box">
+      <div>
+        <h2>Generador de Contratos & Órdenes de Servicio</h2>
+        <p>
+          Selecciona una propuesta comercial y una plantilla legal. El sistema reemplaza automáticamente todos los datos del cliente, alcance, montos y firmas digitales para generar el documento listo para descargar o guardar en el proyecto.
+        </p>
+      </div>
+    </div>
+
+    <ContractGenerator
+      client:load
+      proposals={proposals || []}
+      templates={templates}
+      defaultProposalId={defaultProposalId}
+      defaultTemplateName={defaultTemplateName}
+    />
+  </div>
+</AdminLayout>
+
+<style>
+  .contracts-generator-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-intro-box {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .page-intro-box h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .page-intro-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 700px;
+    line-height: 1.45;
+  }
+</style>

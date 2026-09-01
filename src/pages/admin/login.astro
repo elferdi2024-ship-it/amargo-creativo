@@ -1,0 +1,276 @@
+---
+// filepath: src/pages/admin/login.astro
+export const prerender = false;
+
+import { isAuthenticated } from "../../lib/auth";
+
+// Si ya está autenticado, redirigir al admin
+if (await isAuthenticated(Astro.cookies, Astro.request)) {
+  return Astro.redirect("/admin");
+}
+
+const redirectUrl = Astro.url.searchParams.get("redirect") || "/admin";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Acceso Admin · Amargo Creativo</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div class="login-wrapper">
+      <div class="login-card">
+        <header class="card-header">
+          <span class="brand">AMARGO.</span>
+          <span class="badge">PANEL INTERNO</span>
+        </header>
+
+        <h1>Acceso Seguro</h1>
+        <p class="desc">Ingresá la clave de administrador para gestionar propuestas, contratos y clientes.</p>
+
+        <form id="login-form">
+          <label for="password">Clave de Acceso</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="••••••••••••"
+            required
+            autocomplete="current-password"
+            autofocus
+          />
+
+          <div id="error-msg" class="error-msg" style="display: none;"></div>
+
+          <button type="submit" id="submit-btn" class="btn-submit">
+            <span>Ingresar al panel</span>
+            <span class="arrow">→</span>
+          </button>
+        </form>
+
+        <footer class="card-footer">
+          <a href="/" class="back-link">← Volver al sitio web</a>
+          <span class="version">v30.0 Secure</span>
+        </footer>
+      </div>
+    </div>
+
+    <script define:vars={{ redirectUrl }}>
+      const form = document.getElementById("login-form");
+      const passwordInput = document.getElementById("password");
+      const errorMsg = document.getElementById("error-msg");
+      const submitBtn = document.getElementById("submit-btn");
+
+      form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.style.display = "none";
+        submitBtn.disabled = true;
+        submitBtn.querySelector("span").textContent = "Verificando...";
+
+        try {
+          const res = await fetch("/api/admin/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password: passwordInput.value }),
+          });
+
+          const data = await res.json();
+
+          if (data.ok) {
+            window.location.href = redirectUrl;
+          } else {
+            errorMsg.textContent = data.message || "Clave inválida";
+            errorMsg.style.display = "block";
+            passwordInput.focus();
+            passwordInput.select();
+          }
+        } catch (err) {
+          errorMsg.textContent = "Error de red. Intenta nuevamente.";
+          errorMsg.style.display = "block";
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.querySelector("span").textContent = "Ingresar al panel";
+        }
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #141E18;
+    --card-bg: #1C2B22;
+    --ink: #F8F9F6;
+    --mute: #8E9C92;
+    --mate: #3A7D44;
+    --lime: #C8FF00;
+    --border: #2D4034;
+    --error: #FF6B6B;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Archivo", system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+
+  .login-wrapper {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .login-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 2.5rem 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  .brand {
+    font-weight: 800;
+    font-size: 1.25rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0.6rem;
+    background: rgba(200, 255, 0, 0.15);
+    color: var(--lime);
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.5rem;
+  }
+
+  .desc {
+    font-size: 0.9rem;
+    color: var(--mute);
+    line-height: 1.45;
+    margin: 0 0 2rem;
+  }
+
+  label {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    width: 100%;
+    background: #111A14;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 0.85rem 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease;
+    margin-bottom: 1.25rem;
+  }
+
+  input:focus {
+    outline: none;
+    border-color: var(--lime);
+    box-shadow: 0 0 0 2px rgba(200, 255, 0, 0.2);
+  }
+
+  .error-msg {
+    background: rgba(255, 107, 107, 0.12);
+    border: 1px solid var(--error);
+    color: var(--error);
+    font-size: 0.85rem;
+    padding: 0.65rem 0.85rem;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+  }
+
+  .btn-submit {
+    width: 100%;
+    background: var(--lime);
+    color: #141E18;
+    border: none;
+    padding: 0.95rem 1.25rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  .btn-submit:hover {
+    background: #b5e600;
+    transform: translateY(-1px);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+  }
+
+  .back-link {
+    color: var(--mute);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: var(--ink);
+  }
+
+  .version {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--mute);
+    font-size: 0.7rem;
+  }
+</style>

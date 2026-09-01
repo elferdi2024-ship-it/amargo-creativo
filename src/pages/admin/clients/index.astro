@@ -1,0 +1,288 @@
+---
+// filepath: src/pages/admin/clients/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ClientModal from "../../../components/admin/ClientModal";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+
+const query = Astro.url.searchParams.get("q") || "";
+
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("*, proposals(id, project_title, status), projects(id, title, status)")
+  .order("name", { ascending: true });
+
+const filteredClients = (clients || []).filter((c) => {
+  if (!query.trim()) return true;
+  const q = query.toLowerCase();
+  return (
+    c.name.toLowerCase().includes(q) ||
+    (c.company && c.company.toLowerCase().includes(q)) ||
+    (c.email && c.email.toLowerCase().includes(q)) ||
+    (c.phone && c.phone.toLowerCase().includes(q))
+  );
+});
+---
+
+<AdminLayout title="Directorio de Clientes" activeSection="clients">
+  <div class="clients-page">
+    <div class="top-controls">
+      <form method="GET" class="search-form">
+        <input
+          type="text"
+          name="q"
+          value={query}
+          placeholder="Buscar cliente, empresa o email..."
+          class="search-input"
+        />
+        {query && <a href="/admin/clients" class="btn-clear">✕</a>}
+      </form>
+
+      <div class="actions">
+        <ClientModal client:load buttonLabel="+ Nuevo Cliente" />
+      </div>
+    </div>
+
+    <!-- CLIENTS GRID -->
+    <div class="clients-grid">
+      {filteredClients.map((client) => {
+        const proposalsCount = client.proposals?.length || 0;
+        const projectsCount = client.projects?.length || 0;
+        const acceptedCount = client.proposals?.filter((p: any) => p.status === "accepted").length || 0;
+
+        return (
+          <div class="client-card">
+            <div class="client-card-header">
+              <div>
+                <h3 class="client-name">
+                  <a href={`/admin/clients/${client.id}`}>{client.name}</a>
+                </h3>
+                {client.company && <div class="client-company">{client.company}</div>}
+              </div>
+              <a href={`/admin/clients/${client.id}`} class="btn-view-profile">
+                Ver perfil →
+              </a>
+            </div>
+
+            <div class="client-contact-info">
+              {client.email && (
+                <div class="info-line">
+                  <span class="icon">✉️</span>
+                  <span>{client.email}</span>
+                </div>
+              )}
+              {client.phone && (
+                <div class="info-line">
+                  <span class="icon">💬</span>
+                  <a href={`https://wa.me/${client.phone.replace(/[^0-9]/g, "")}`} target="_blank" class="wa-link">
+                    {client.phone}
+                  </a>
+                </div>
+              )}
+              {client.notes && (
+                <div class="client-notes-preview">
+                  "{client.notes}"
+                </div>
+              )}
+            </div>
+
+            <div class="client-card-footer">
+              <div class="stat-badge">
+                <strong>{proposalsCount}</strong> {proposalsCount === 1 ? "Propuesta" : "Propuestas"}
+              </div>
+              <div class="stat-badge highlight">
+                <strong>{projectsCount}</strong> {projectsCount === 1 ? "Proyecto" : "Proyectos"}
+              </div>
+              {acceptedCount > 0 && (
+                <div class="stat-badge accepted">
+                  ✓ <strong>{acceptedCount}</strong> Aceptadas
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+
+      {filteredClients.length === 0 && (
+        <div class="empty-box">
+          <p>No se encontraron clientes.</p>
+          <ClientModal client:load buttonLabel="+ Crear Primer Cliente" />
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .clients-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 280px;
+    font-family: inherit;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .btn-clear {
+    position: absolute;
+    right: 0.6rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .clients-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .clients-grid {
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    }
+  }
+
+  .client-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .client-card:hover {
+    border-color: var(--adm-border-light);
+  }
+
+  .client-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .client-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .client-name a {
+    color: var(--adm-ink);
+    text-decoration: none;
+  }
+
+  .client-name a:hover {
+    color: var(--adm-lime);
+  }
+
+  .client-company {
+    font-size: 0.8rem;
+    color: var(--adm-mate-light);
+    margin-top: 0.15rem;
+    font-weight: 600;
+  }
+
+  .btn-view-profile {
+    font-size: 0.75rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .client-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: var(--adm-mute);
+  }
+
+  .info-line {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .wa-link {
+    color: #25D366;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .client-notes-preview {
+    font-style: italic;
+    color: #6C7E73;
+    font-size: 0.78rem;
+    margin-top: 0.35rem;
+    line-height: 1.4;
+  }
+
+  .client-card-footer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--adm-border);
+  }
+
+  .stat-badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    padding: 0.2rem 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    color: var(--adm-mute);
+  }
+
+  .stat-badge.highlight {
+    background: rgba(151, 188, 98, 0.15);
+    color: var(--adm-mate-light);
+  }
+
+  .stat-badge.accepted {
+    background: rgba(200, 255, 0, 0.15);
+    color: var(--adm-lime);
+  }
+
+  .empty-box {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--adm-card);
+    border: 1px dashed var(--adm-border);
+    border-radius: 12px;
+  }
+</style>

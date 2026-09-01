@@ -1,0 +1,747 @@
+---
+// filepath: src/pages/admin/proposals/[id]/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import CopyButton from "../../../../components/admin/CopyButton";
+import ProjectStageManager from "../../../../components/admin/ProjectStageManager";
+import DocumentUploader from "../../../../components/admin/DocumentUploader";
+import { supabaseAdmin } from "../../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../../lib/format";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/proposals");
+}
+
+// 1. Obtener la propuesta
+const { data: proposal, error } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(*)")
+  .eq("id", id)
+  .single();
+
+if (error || !proposal) {
+  return Astro.redirect("/admin/proposals");
+}
+
+// 2. Obtener proyecto asociado si existe
+const { data: project } = await supabaseAdmin
+  .from("projects")
+  .select("*")
+  .eq("proposal_id", proposal.id)
+  .maybeSingle();
+
+// 3. Obtener documentos asociados
+const { data: documents } = await supabaseAdmin
+  .from("documents")
+  .select("*")
+  .eq("proposal_id", proposal.id)
+  .order("uploaded_at", { ascending: false });
+
+const magicUrl = `${Astro.url.origin}/p/${proposal.slug}`;
+const inv = proposal.investment || {};
+const amountDisplay =
+  inv.type === "plans"
+    ? `Planes (${inv.plans?.length || 0})`
+    : formatMoney(inv.amount || 0, inv.currency);
+---
+
+<AdminLayout title={proposal.project_title} activeSection="proposals">
+  <div class="proposal-detail-page">
+    <!-- HEADER BAR -->
+    <div class="detail-header-card">
+      <div class="header-left">
+        <div class="header-breadcrumb">
+          <a href="/admin/proposals">← Volver a propuestas</a>
+        </div>
+        <div class="header-title-row">
+          <h1 class="proposal-title">{proposal.project_title}</h1>
+          <span class={`badge-status status-${proposal.status}`}>
+            {proposal.status === "accepted" ? "Aceptada" : proposal.status === "active" ? "Activa" : proposal.status === "draft" ? "Borrador" : proposal.status}
+          </span>
+        </div>
+        <div class="header-client-info">
+          <span>Cliente: <strong>{proposal.clients?.name || "Sin asignar"}</strong></span>
+          {proposal.clients?.company && <span>· Empresa: <strong>{proposal.clients.company}</strong></span>}
+          {proposal.clients?.email && <span>· Email: <strong>{proposal.clients.email}</strong></span>}
+          {proposal.clients?.phone && <span>· Tel: <strong>{proposal.clients.phone}</strong></span>}
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a href={`/admin/proposals/${proposal.id}/edit`} class="btn-outline-sm">
+          ✏️ Editar Propuesta
+        </a>
+        <a href={`/admin/contracts?proposal_id=${proposal.id}`} class="btn-primary-sm">
+          📄 Generar Contrato
+        </a>
+      </div>
+    </div>
+
+    <!-- MAGIC LINK BAR -->
+    <div class="magic-link-banner">
+      <div class="ml-info">
+        <span class="ml-tag">MAGIC LINK CLIENTE</span>
+        <code class="ml-url">{magicUrl}</code>
+      </div>
+      <div class="ml-actions">
+        <CopyButton client:load text={magicUrl} label="Copiar Magic Link" />
+        <a href={`/p/${proposal.slug}`} target="_blank" class="btn-visit">
+          Abrir Portal del Cliente ↗
+        </a>
+      </div>
+    </div>
+
+    <!-- MAIN 2-COLUMN LAYOUT -->
+    <div class="detail-grid">
+      <!-- LEFT COLUMN: Proposal Content & Acceptance Data -->
+      <div class="grid-left-col">
+        <!-- Acceptance Banner if Accepted -->
+        {proposal.status === "accepted" && (
+          <div class="card-box accepted-data-card">
+            <div class="acc-header">
+              <span class="acc-icon">✓</span>
+              <div>
+                <h3 class="acc-title">Propuesta Aceptada por el Cliente</h3>
+                <span class="acc-date">Confirmada el {formatDate(proposal.accepted_at)}</span>
+              </div>
+            </div>
+            <div class="acc-grid">
+              <div>
+                <span class="label">Firmante:</span>
+                <strong>{proposal.accepted_name || "—"}</strong>
+              </div>
+              <div>
+                <span class="label">Contacto:</span>
+                <strong>{proposal.accepted_contact || "—"}</strong>
+              </div>
+              {proposal.accepted_plan && (
+                <div>
+                  <span class="label">Plan Elegido:</span>
+                  <strong class="plan-tag">{proposal.accepted_plan}</strong>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <!-- Proposal Scope & Summary Card -->
+        <div class="card-box">
+          <h3 class="box-title">Resumen de la Propuesta</h3>
+
+          {proposal.value_phrase && (
+            <div class="field-preview">
+              <span class="preview-label">Frase de valor:</span>
+              <p class="preview-val-phrase">"{proposal.value_phrase}"</p>
+            </div>
+          )}
+
+          {proposal.challenge && (
+            <div class="field-preview">
+              <span class="preview-label">El Desafío:</span>
+              <p class="preview-text">{proposal.challenge}</p>
+            </div>
+          )}
+
+          {proposal.solution && (
+            <div class="field-preview">
+              <span class="preview-label">La Solución:</span>
+              <p class="preview-text">{proposal.solution}</p>
+            </div>
+          )}
+
+          <div class="scope-preview-grid">
+            {proposal.includes?.length > 0 && (
+              <div>
+                <span class="preview-label">Incluye:</span>
+                <ul class="preview-list list-check">
+                  {proposal.includes.map((i: string) => (
+                    <li>✓ {i}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {proposal.excludes?.length > 0 && (
+              <div>
+                <span class="preview-label">No Incluye:</span>
+                <ul class="preview-list list-minus">
+                  {proposal.excludes.map((e: string) => (
+                    <li>− {e}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div class="investment-summary-box">
+            <div>
+              <span class="preview-label">Inversión:</span>
+              <div class="inv-amount">{amountDisplay}</div>
+            </div>
+            {proposal.timeline && (
+              <div>
+                <span class="preview-label">Plazo estimado:</span>
+                <div class="inv-timeline">{proposal.timeline}</div>
+              </div>
+            )}
+            {inv.paymentTerms && (
+              <div class="inv-terms-full">
+                <span class="preview-label">Condiciones de pago:</span>
+                <div>{inv.paymentTerms}</div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <!-- Project Stages Tracker if Project Exists -->
+        {project && (
+          <div class="card-box">
+            <div class="box-header-row">
+              <h3 class="box-title">Proyecto Asociado: {project.title}</h3>
+              <a href={`/admin/projects/${project.id}`} class="btn-sm">
+                Ver Proyecto Completo →
+              </a>
+            </div>
+            <ProjectStageManager
+              client:load
+              projectId={project.id}
+              initialStages={project.stages || []}
+              initialCurrentStage={project.current_stage || 1}
+              initialStatus={project.status || "active"}
+            />
+          </div>
+        )}
+      </div>
+
+      <!-- RIGHT COLUMN: Documents & Actions -->
+      <div class="grid-right-col">
+        <!-- Quick Status Switcher -->
+        <div class="card-box">
+          <h3 class="box-title">Estado del Magic Link</h3>
+          <p class="box-desc">Cambia la disponibilidad de la propuesta para el cliente.</p>
+
+          <div class="status-buttons-list" id="status-controls">
+            <button
+              class={`btn-status-toggle ${proposal.status === "active" ? "active" : ""}`}
+              data-status="active"
+            >
+              🟢 Activa (Cliente puede ver y aceptar)
+            </button>
+            <button
+              class={`btn-status-toggle ${proposal.status === "accepted" ? "active" : ""}`}
+              data-status="accepted"
+            >
+              ⭐ Aceptada (Confirmada)
+            </button>
+            <button
+              class={`btn-status-toggle ${proposal.status === "draft" ? "active" : ""}`}
+              data-status="draft"
+            >
+              📝 Borrador (Oculta para el cliente)
+            </button>
+            <button
+              class={`btn-status-toggle ${proposal.status === "disabled" ? "active" : ""}`}
+              data-status="disabled"
+            >
+              🔒 Deshabilitada (No disponible)
+            </button>
+          </div>
+        </div>
+
+        <!-- Documents for this proposal -->
+        <div class="card-box">
+          <h3 class="box-title">Documentos Adjuntos</h3>
+          <p class="box-desc">Archivos y contratos asociados a esta propuesta.</p>
+
+          <ul class="prop-docs-list">
+            {(documents || []).map((doc) => (
+              <li class="prop-doc-item">
+                <div>
+                  <strong class="doc-title">{doc.name}</strong>
+                  <div class="doc-type-meta">
+                    {doc.type} · {doc.visible_to_client ? "🟢 Visible al cliente" : "🔒 Solo admin"}
+                  </div>
+                </div>
+                <div class="doc-links">
+                  <a href={`/api/documents/${doc.id}/download`} target="_blank" class="btn-doc-link">
+                    Descargar
+                  </a>
+                </div>
+              </li>
+            ))}
+            {(documents || []).length === 0 && (
+              <li class="empty-text">No hay documentos adjuntos aún.</li>
+            )}
+          </ul>
+
+          <div style="margin-top: 1rem;">
+            <DocumentUploader
+              client:load
+              defaultClientId={proposal.client_id || ""}
+              defaultProposalId={proposal.id}
+              defaultProjectId={project?.id || ""}
+            />
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="card-box danger-card">
+          <h4 class="danger-title">Zona de Peligro</h4>
+          <p class="danger-desc">Eliminar esta propuesta borrará permanentemente sus datos asociados.</p>
+          <button type="button" id="btn-delete-proposal" class="btn-danger">
+            Eliminar Propuesta
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script define:vars={{ proposalId: proposal.id }}>
+    // Status Switcher
+    const buttons = document.querySelectorAll("#status-controls .btn-status-toggle");
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const newStatus = btn.getAttribute("data-status");
+        try {
+          const res = await fetch("/api/admin/proposals", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: proposalId, status: newStatus }),
+          });
+          const data = await res.json();
+          if (data.ok) {
+            window.location.reload();
+          }
+        } catch {
+          alert("Error al actualizar estado");
+        }
+      });
+    });
+
+    // Delete Proposal
+    const deleteBtn = document.getElementById("btn-delete-proposal");
+    deleteBtn?.addEventListener("click", async () => {
+      if (confirm("¿Estás seguro de que deseas eliminar esta propuesta? Esta acción no se puede deshacer.")) {
+        try {
+          const res = await fetch(`/api/admin/proposals?id=${proposalId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (data.ok) {
+            window.location.href = "/admin/proposals";
+          }
+        } catch {
+          alert("Error al eliminar la propuesta");
+        }
+      }
+    });
+  </script>
+</AdminLayout>
+
+<style>
+  .proposal-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .detail-header-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .header-breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .header-breadcrumb a:hover {
+    color: var(--adm-ink);
+  }
+
+  .header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.5rem 0 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .proposal-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--adm-ink);
+  }
+
+  .header-client-info {
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  .header-client-info strong {
+    color: var(--adm-ink);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* Magic Link Banner */
+  .magic-link-banner {
+    background: #121E16;
+    border: 1px solid var(--adm-border);
+    border-left: 4px solid var(--adm-lime);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .ml-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .ml-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--adm-lime);
+  }
+
+  .ml-url {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.88rem;
+    color: var(--adm-ink);
+  }
+
+  .ml-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .btn-visit {
+    padding: 0.35rem 0.75rem;
+    background: transparent;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-visit:hover {
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  /* 2-Column Grid */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .detail-grid {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+
+  .grid-left-col, .grid-right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .box-title {
+    margin: 0 0 0.85rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .box-desc {
+    margin: 0 0 1rem;
+    font-size: 0.82rem;
+    color: var(--adm-mute);
+  }
+
+  .box-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  /* Accepted Card */
+  .accepted-data-card {
+    border-color: var(--adm-lime);
+    background: #142218;
+  }
+
+  .acc-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .acc-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(200, 255, 0, 0.2);
+    color: var(--adm-lime);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
+  }
+
+  .acc-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .acc-date {
+    font-size: 0.8rem;
+    color: var(--adm-mate-light);
+  }
+
+  .acc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(200, 255, 0, 0.2);
+    font-size: 0.88rem;
+  }
+
+  .acc-grid .label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--adm-mute);
+    margin-bottom: 0.15rem;
+  }
+
+  .plan-tag {
+    background: rgba(200, 255, 0, 0.2);
+    color: var(--adm-lime);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  /* Preview Fields */
+  .field-preview {
+    margin-bottom: 1.25rem;
+  }
+
+  .preview-label {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--adm-mute);
+    font-weight: 700;
+    margin-bottom: 0.35rem;
+  }
+
+  .preview-val-phrase {
+    margin: 0;
+    font-size: 1rem;
+    font-style: italic;
+    color: #97BC62;
+  }
+
+  .preview-text {
+    margin: 0;
+    font-size: 0.92rem;
+    color: #D2DDD6;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+
+  .scope-preview-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .scope-preview-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+  }
+
+  .list-check li { color: #D2DDD6; }
+  .list-minus li { color: var(--adm-mute); }
+
+  .investment-summary-box {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .inv-amount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--adm-lime);
+  }
+
+  .inv-timeline {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--adm-ink);
+  }
+
+  .inv-terms-full {
+    grid-column: 1 / -1;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+
+  /* Right Column Controls */
+  .status-buttons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .btn-status-toggle {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-mute);
+    padding: 0.6rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+
+  .btn-status-toggle:hover {
+    color: var(--adm-ink);
+    border-color: var(--adm-border-light);
+  }
+
+  .btn-status-toggle.active {
+    border-color: var(--adm-lime);
+    background: #18281D;
+    color: var(--adm-ink);
+    font-weight: 700;
+  }
+
+  .prop-docs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .prop-doc-item {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .doc-title {
+    font-size: 0.85rem;
+    color: var(--adm-ink);
+    display: block;
+  }
+
+  .doc-type-meta {
+    font-size: 0.72rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-doc-link {
+    font-size: 0.75rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* Danger Card */
+  .danger-card {
+    border-color: rgba(239, 68, 68, 0.3);
+    background: rgba(239, 68, 68, 0.04);
+  }
+
+  .danger-title {
+    margin: 0 0 0.25rem;
+    font-size: 0.95rem;
+    color: #F87171;
+  }
+
+  .danger-desc {
+    margin: 0 0 0.85rem;
+    font-size: 0.78rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-danger {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #EF4444;
+    color: #FCA5A5;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .btn-danger:hover {
+    background: #EF4444;
+    color: white;
+  }
+</style>

@@ -1,0 +1,624 @@
+---
+// filepath: src/pages/admin/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../layouts/AdminLayout.astro";
+import CopyButton from "../../components/admin/CopyButton";
+import ClientModal from "../../components/admin/ClientModal";
+import ProjectHealth from "../../components/admin/ProjectHealth";
+import { supabaseAdmin } from "../../lib/supabase";
+import { formatMoney, formatDate } from "../../lib/format";
+import { calculateHealth } from "../../lib/health";
+
+// 1. Obtener métricas y listados
+const { data: proposals } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(name, company)")
+  .order("created_at", { ascending: false });
+
+const { data: projects } = await supabaseAdmin
+  .from("projects")
+  .select("*, clients(name, company)")
+  .order("created_at", { ascending: false });
+
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("id, name, company, email, phone")
+  .order("name", { ascending: true });
+
+const { data: contentPieces } = await supabaseAdmin
+  .from("content_pieces")
+  .select("id, type, title, status, created_at, projects(title)")
+  .order("created_at", { ascending: false })
+  .limit(4);
+
+const allProposals = proposals || [];
+const allProjects = projects || [];
+const allClients = clients || [];
+
+// Métricas calculadas
+const totalProposalsCount = allProposals.length;
+const activeProposalsCount = allProposals.filter((p) => p.status === "active").length;
+const acceptedProposalsCount = allProposals.filter((p) => p.status === "accepted").length;
+const activeProjectsCount = allProjects.filter((p) => p.status === "active").length;
+
+const totalAcceptedValue = allProposals
+  .filter((p) => p.status === "accepted")
+  .reduce((acc, p) => {
+    const amt = p.investment?.amount || (p.investment?.plans?.[0]?.price) || 0;
+    return acc + Number(amt);
+  }, 0);
+
+// Proyectos que requieren atención (salud amarilla o roja)
+const attentionNeededProjects = allProjects.filter((pr) => {
+  if (pr.status !== "active") return false;
+  const h = pr.health_status || calculateHealth(pr.last_checkin_at, pr.updated_at);
+  return h === "yellow" || h === "red";
+});
+---
+
+<AdminLayout title="Dashboard General" activeSection="dashboard">
+  <!-- METRICS CARDS -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <span class="m-label">Propuestas Aceptadas</span>
+      <div class="m-value-row">
+        <span class="m-num text-lime">{acceptedProposalsCount}</span>
+        <span class="m-sub">de {totalProposalsCount} creadas</span>
+      </div>
+      <div class="m-bar">
+        <div
+          class="m-bar-fill bg-lime"
+          style={`width: ${totalProposalsCount > 0 ? (acceptedProposalsCount / totalProposalsCount) * 100 : 0}%;`}
+        ></div>
+      </div>
+    </div>
+
+    <div class="metric-card">
+      <span class="m-label">Facturación Confirmada</span>
+      <div class="m-value-row">
+        <span class="m-num">{formatMoney(totalAcceptedValue, "USD")}</span>
+      </div>
+      <span class="m-foot">Total en propuestas aprobadas</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="m-label">Magic Links Activos</span>
+      <div class="m-value-row">
+        <span class="m-num text-mate-light">{activeProposalsCount}</span>
+        <span class="m-sub">en decisión</span>
+      </div>
+      <span class="m-foot">Clientes revisando propuesta</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="m-label">Proyectos en Desarrollo</span>
+      <div class="m-value-row">
+        <span class="m-num">{activeProjectsCount}</span>
+        <span class="m-sub">activos</span>
+      </div>
+      <span class="m-foot">{allClients.length} clientes en base</span>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS BAR -->
+  <div class="quick-actions-bar">
+    <span class="qa-title">Acciones directas:</span>
+    <div class="qa-buttons">
+      <a href="/admin/proposals/new" class="btn-primary-sm">
+        + Crear Propuesta
+      </a>
+      <a href="/admin/pipeline" class="btn-outline-sm">
+        📊 Pipeline Kanban
+      </a>
+      <a href="/admin/contenido" class="btn-outline-sm">
+        ✨ Content Engine
+      </a>
+      <ClientModal client:load buttonLabel="+ Nuevo Cliente" />
+      <a href="/admin/contracts" class="btn-outline-sm">
+        Generar Contrato
+      </a>
+    </div>
+  </div>
+
+  <!-- ATTENTION NEEDED BANNER IF ANY -->
+  {attentionNeededProjects.length > 0 && (
+    <div class="attention-banner">
+      <div class="att-header">
+        <span class="att-icon">⚠️</span>
+        <strong>{attentionNeededProjects.length} proyecto(s) requieren atención o check-in:</strong>
+      </div>
+      <div class="att-list">
+        {attentionNeededProjects.map((pr) => (
+          <div class="att-item">
+            <a href={`/admin/projects/${pr.id}`} class="att-link">
+              {pr.title} ({pr.clients?.name || "Sin cliente"})
+            </a>
+            <ProjectHealth
+              client:load
+              projectId={pr.id}
+              initialHealth={pr.health_status || calculateHealth(pr.last_checkin_at, pr.updated_at)}
+              lastCheckinAt={pr.last_checkin_at}
+              updatedAt={pr.updated_at}
+              compact={true}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )}
+
+  <div class="dashboard-grid-2">
+    <!-- RECENT PROPOSALS -->
+    <div class="card-box section-box">
+      <div class="box-header">
+        <div>
+          <h2 class="box-title">Propuestas Recientes</h2>
+          <span class="box-sub">Últimos links generados para clientes</span>
+        </div>
+        <a href="/admin/proposals" class="link-more">Ver todas →</a>
+      </div>
+
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Cliente / Proyecto</th>
+              <th>Estado</th>
+              <th>Monto</th>
+              <th>Magic Link</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allProposals.slice(0, 6).map((p) => {
+              const amount = p.investment?.type === "plans"
+                ? `Planes (${p.investment.plans?.length || 0})`
+                : formatMoney(p.investment?.amount || 0, p.investment?.currency);
+              const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+
+              return (
+                <tr>
+                  <td>
+                    <strong>{p.project_title}</strong>
+                    <div class="cell-sub">{p.clients?.name || "Sin cliente"} {p.clients?.company ? `(${p.clients.company})` : ""}</div>
+                  </td>
+                  <td>
+                    <span class={`badge-status status-${p.status}`}>
+                      {p.status === "accepted" ? "Aceptada" : p.status === "active" ? "Activa" : p.status === "draft" ? "Borrador" : p.status}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="font-mono">{amount}</span>
+                  </td>
+                  <td>
+                    <CopyButton client:load text={magicUrl} label="Copiar Link" />
+                  </td>
+                  <td>
+                    <a href={`/admin/proposals/${p.id}`} class="btn-table-action">
+                      Detalle
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+            {allProposals.length === 0 && (
+              <tr>
+                <td colspan="5" class="empty-cell">
+                  No hay propuestas creadas todavía.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ACTIVE PROJECTS & CONTENT ENGINE -->
+    <div class="side-sections">
+      <!-- Active Projects -->
+      <div class="card-box section-box">
+        <div class="box-header">
+          <div>
+            <h2 class="box-title">Proyectos en Marcha</h2>
+            <span class="box-sub">Seguimiento de etapas & salud</span>
+          </div>
+          <a href="/admin/projects" class="link-more">Ver todos →</a>
+        </div>
+
+        <div class="projects-mini-list">
+          {allProjects.slice(0, 4).map((pr) => {
+            const stages = Array.isArray(pr.stages) ? pr.stages : [];
+            const currentStageObj = stages.find((s: any) => s.status === "current") || stages[pr.current_stage - 1];
+            const health = pr.health_status || calculateHealth(pr.last_checkin_at, pr.updated_at);
+
+            return (
+              <div class="project-mini-item">
+                <a href={`/admin/projects/${pr.id}`} class="pr-info">
+                  <strong>{pr.title}</strong>
+                  <span class="pr-client">{pr.clients?.name || "Cliente"}</span>
+                </a>
+                <div class="pr-stage">
+                  <span class="stage-tag">{currentStageObj ? currentStageObj.name : `Etapa ${pr.current_stage || 1}`}</span>
+                  <ProjectHealth
+                    client:load
+                    projectId={pr.id}
+                    initialHealth={health}
+                    lastCheckinAt={pr.last_checkin_at}
+                    updatedAt={pr.updated_at}
+                    compact={true}
+                  />
+                </div>
+              </div>
+            );
+          })}
+          {allProjects.length === 0 && (
+            <p class="empty-text">No hay proyectos activos aún. Se crean automáticamente al aceptar una propuesta.</p>
+          )}
+        </div>
+      </div>
+
+      <!-- Recent Marketing Content -->
+      <div class="card-box section-box">
+        <div class="box-header">
+          <div>
+            <h2 class="box-title">Content Engine Reciente</h2>
+            <span class="box-sub">Piezas listas para publicar</span>
+          </div>
+          <a href="/admin/contenido" class="link-more">Ver todas →</a>
+        </div>
+
+        <ul class="docs-mini-list">
+          {(contentPieces || []).map((cp) => (
+            <li class="doc-mini-item">
+              <span class="doc-icon">✨</span>
+              <div class="doc-meta">
+                <strong>{cp.title}</strong>
+                <span class="doc-sub">
+                  {cp.type} · {formatDate(cp.created_at)} · <span class={`badge-status status-${cp.status}`}>{cp.status}</span>
+                </span>
+              </div>
+              <a href={`/admin/contenido/${cp.id}`} class="btn-doc-down">
+                Editar →
+              </a>
+            </li>
+          ))}
+          {(contentPieces || []).length === 0 && (
+            <p class="empty-text">Genera contenidos de marketing desde el detalle de cualquier proyecto.</p>
+          )}
+        </ul>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .metric-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.35rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .m-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .m-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin: 0.5rem 0 0.4rem;
+  }
+
+  .m-num {
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--adm-ink);
+    line-height: 1;
+  }
+
+  .text-lime { color: var(--adm-lime); }
+  .text-mate-light { color: var(--adm-mate-light); }
+
+  .m-sub {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .m-foot {
+    font-size: 0.75rem;
+    color: var(--adm-mute);
+  }
+
+  .m-bar {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+
+  .m-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .bg-lime { background: var(--adm-lime); }
+
+  /* Quick Actions Bar */
+  .quick-actions-bar {
+    background: #142018;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .qa-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--adm-mute);
+  }
+
+  .qa-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* Attention Banner */
+  .attention-banner {
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .att-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.88rem;
+    color: #FBBF24;
+  }
+
+  .att-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .att-item {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .att-link {
+    font-size: 0.82rem;
+    color: var(--adm-ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .att-link:hover {
+    color: var(--adm-lime);
+  }
+
+  /* Grid 2 */
+  .dashboard-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 1024px) {
+    .dashboard-grid-2 {
+      grid-template-columns: 1.55fr 1fr;
+    }
+  }
+
+  .section-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .box-title {
+    margin: 0 0 0.15rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .box-sub {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .link-more {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--adm-lime);
+    text-decoration: none;
+  }
+
+  .cell-sub {
+    font-size: 0.78rem;
+    color: var(--adm-mute);
+    margin-top: 0.15rem;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.82rem;
+  }
+
+  .btn-table-action {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-table-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--adm-ink);
+  }
+
+  .empty-cell, .empty-text {
+    text-align: center;
+    color: var(--adm-mute);
+    font-size: 0.85rem;
+    padding: 1.5rem;
+  }
+
+  /* Side Sections */
+  .side-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .projects-mini-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .project-mini-item {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: border-color 0.15s ease;
+  }
+
+  .project-mini-item:hover {
+    border-color: var(--adm-lime);
+  }
+
+  .pr-info {
+    text-decoration: none;
+  }
+
+  .pr-info strong {
+    display: block;
+    font-size: 0.88rem;
+    color: var(--adm-ink);
+  }
+
+  .pr-client {
+    font-size: 0.75rem;
+    color: var(--adm-mute);
+  }
+
+  .pr-stage {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .stage-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    background: rgba(200, 255, 0, 0.12);
+    color: var(--adm-lime);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Docs Mini List */
+  .docs-mini-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .doc-mini-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+  }
+
+  .doc-icon {
+    font-size: 1.1rem;
+  }
+
+  .doc-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .doc-meta strong {
+    font-size: 0.85rem;
+    color: var(--adm-ink);
+  }
+
+  .doc-sub {
+    font-size: 0.72rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-doc-down {
+    font-size: 0.75rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>

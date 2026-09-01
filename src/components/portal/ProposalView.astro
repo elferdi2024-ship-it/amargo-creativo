@@ -1,0 +1,844 @@
+---
+// filepath: src/components/portal/ProposalView.astro
+import AcceptButton from "./AcceptButton";
+import { formatMoney, formatDate, whatsappHref, defaultWhatsappMessage } from "../../lib/format";
+
+interface Props {
+  proposal: any;
+  project?: any;
+  documents?: any[];
+}
+
+const { proposal, project, documents = [] } = Astro.props;
+
+const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
+const stages = project?.stages || [
+  { id: 1, name: "Propuesta y Alcance", status: "done" },
+  { id: 2, name: "Kick-off y Contenidos", status: "pending" },
+  { id: 3, name: "Diseño UI/UX", status: "pending" },
+  { id: 4, name: "Desarrollo", status: "pending" },
+  { id: 5, name: "Revisiones", status: "pending" },
+  { id: 6, name: "Lanzamiento", status: "pending" },
+  { id: 7, name: "Soporte post-lanzamiento", status: "pending" },
+];
+
+const inv = proposal.investment || {};
+const plans = inv.plans || [];
+const waMessage = proposal.whatsapp_message || defaultWhatsappMessage(clientName, proposal.project_title);
+const wa = whatsappHref(waMessage);
+---
+
+<article class="portal">
+  <header class="portal-header">
+    <a href="/" class="brand">AMARGO.</a>
+    <div class="meta">
+      <span class="label">Propuesta comercial</span>
+      {proposal.status !== "active" && (
+        <span class={`badge badge-${proposal.status}`}>
+          {proposal.status === "accepted" ? "Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
+        </span>
+      )}
+    </div>
+  </header>
+
+  <p class="client-label">Para {clientName}</p>
+  <h1 class="project-title">{proposal.project_title}</h1>
+
+  {proposal.value_phrase && (
+    <p class="value-phrase">{proposal.value_phrase}</p>
+  )}
+
+  {proposal.status === "accepted" && proposal.accepted_at && (
+    <div class="accepted-banner">
+      ✓ Aceptada el {formatDate(proposal.accepted_at)}
+      {proposal.accepted_name && ` por ${proposal.accepted_name}`}
+      {proposal.accepted_plan && ` · Plan ${proposal.accepted_plan}`}.
+    </div>
+  )}
+
+  <!-- 01 Desafío -->
+  {proposal.challenge && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">01</span>
+        <span class="line"></span>
+        <span class="title">El desafío</span>
+      </div>
+      <p class="body-text">{proposal.challenge}</p>
+    </section>
+  )}
+
+  <!-- 02 Solución -->
+  {proposal.solution && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">02</span>
+        <span class="line"></span>
+        <span class="title">La solución</span>
+      </div>
+      <p class="body-text">{proposal.solution}</p>
+    </section>
+  )}
+
+  <!-- 03 Alcance -->
+  {(proposal.includes?.length > 0 || proposal.excludes?.length > 0) && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">03</span>
+        <span class="line"></span>
+        <span class="title">Alcance</span>
+      </div>
+      <div class="scope-grid">
+        {proposal.includes?.length > 0 && (
+          <div>
+            <h3>Incluye</h3>
+            <ul>
+              {proposal.includes.map((item: string) => (
+                <li>
+                  <span class="check">✓</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+        {proposal.excludes?.length > 0 && (
+          <div>
+            <h3>No incluye</h3>
+            <ul class="excludes">
+              {proposal.excludes.map((item: string) => (
+                <li>
+                  <span class="minus">−</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </section>
+  )}
+
+  <!-- 04 Inversión -->
+  <section class="section">
+    <div class="section-kicker">
+      <span class="num">04</span>
+      <span class="line"></span>
+      <span class="title">Inversión</span>
+    </div>
+
+    {inv.type === "plans" && plans.length > 0 ? (
+      <div class="plans-grid">
+        {plans.map((plan: any) => (
+          <div class={`plan-card ${plan.recommended ? "recommended" : ""}`}>
+            <div class="plan-header">
+              <strong>{plan.name}</strong>
+              {plan.recommended && <span class="sugerido">Sugerido</span>}
+            </div>
+            <div class="plan-price">{formatMoney(plan.price, inv.currency)}</div>
+            {plan.description && <p class="plan-desc">{plan.description}</p>}
+            {plan.features?.length > 0 && (
+              <ul>
+                {plan.features.map((f: string) => (
+                  <li>✓ {f}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="fixed-price">
+        <div class="amount">{formatMoney(inv.amount || 0, inv.currency)}</div>
+        {inv.paymentTerms && <p class="terms">{inv.paymentTerms}</p>}
+      </div>
+    )}
+  </section>
+
+  <!-- 05 Tiempos -->
+  {proposal.timeline && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">05</span>
+        <span class="line"></span>
+        <span class="title">Tiempos</span>
+      </div>
+      <p class="body-text">{proposal.timeline}</p>
+    </section>
+  )}
+
+  <!-- 06 ROI -->
+  {proposal.roi_table?.headers?.length > 0 && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">06</span>
+        <span class="line"></span>
+        <span class="title">Retorno</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              {proposal.roi_table.headers.map((h: string) => (
+                <th>{h}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {proposal.roi_table.rows?.map((row: string[]) => (
+              <tr>
+                {row.map((cell: string) => (
+                  <td>{cell}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )}
+
+  <!-- Timeline -->
+  <section class="section timeline-section">
+    <div class="section-kicker">
+      <span class="num">07</span>
+      <span class="line"></span>
+      <span class="title">Estado del proyecto</span>
+    </div>
+    <div class="timeline">
+      {stages.map((stage: any) => (
+        <div class={`stage stage-${stage.status}`}>
+          <div class="dot"></div>
+          <div class="stage-info">
+            <strong>{stage.name}</strong>
+            <span class="status-label">
+              {stage.status === "done" ? "Completado" : stage.status === "current" ? "En curso" : "Pendiente"}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- Documentos -->
+  {documents.length > 0 && (
+    <section class="section">
+      <div class="section-kicker">
+        <span class="num">08</span>
+        <span class="line"></span>
+        <span class="title">Documentos adjuntos</span>
+      </div>
+      <ul class="documents-list">
+        {documents.map((doc: any) => (
+          <li>
+            <a href={doc.url || `/api/documents/${doc.id}/download`} target="_blank" rel="noopener">
+              <span class="doc-type">{doc.type}</span>
+              <span class="doc-name">{doc.name}</span>
+              <span class="doc-arrow">↗</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <!-- Acciones -->
+  <section class="actions no-print">
+    <AcceptButton
+      client:load
+      slug={proposal.slug}
+      status={proposal.status}
+      planName={inv.type === "plans" ? plans.find((p: any) => p.recommended)?.name : undefined}
+      clientName={clientName}
+    />
+
+    <div class="secondary-actions">
+      <a href={wa} target="_blank" rel="noopener" class="btn-outline">
+        Hablar por WhatsApp
+      </a>
+      <button type="button" class="btn-ghost" onclick="window.print()">
+        Guardar como PDF
+      </button>
+    </div>
+
+    <p class="note">
+      El magic link no caduca. Si esta propuesta deja de estar disponible, Amargo la desactiva a mano.
+    </p>
+  </section>
+
+  <footer class="portal-footer">
+    <span>Amargo Creativo · Atlántida, Uruguay</span>
+    <span>Agencia digital de alto rendimiento</span>
+  </footer>
+</article>
+
+<style>
+  :root {
+    --bg: #F8F9F6;
+    --ink: #141E18;
+    --mute: #6B756E;
+    --mate: #2E4A3A;
+    --lime: #C8FF00;
+    --border: #E2E4DC;
+    --card: #FFFFFF;
+  }
+
+  .portal {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 6rem;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Archivo", system-ui, -apple-system, sans-serif;
+    line-height: 1.5;
+  }
+
+  .portal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 3rem;
+  }
+
+  .brand {
+    font-weight: 800;
+    font-size: 1.35rem;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .meta {
+    text-align: right;
+  }
+
+  .label {
+    display: block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .badge {
+    display: inline-block;
+    margin-top: 0.35rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 4px;
+    background: var(--border);
+    font-weight: 600;
+  }
+
+  .badge-accepted { background: rgba(200, 255, 0, 0.3); color: var(--mate); }
+  .badge-disabled { background: #fee2e2; color: #991b1b; }
+
+  .client-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--mate);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .project-title {
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    margin: 0 0 1.5rem;
+    color: var(--ink);
+  }
+
+  .value-phrase {
+    font-size: 1.2rem;
+    color: #2e3831;
+    max-width: 38rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+  }
+
+  .accepted-banner {
+    background: rgba(200, 255, 0, 0.15);
+    border: 1px solid rgba(46, 74, 58, 0.2);
+    color: var(--mate);
+    padding: 0.85rem 1.15rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+  }
+
+  .section {
+    margin-top: 3.5rem;
+  }
+
+  .section-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-kicker .num {
+    font-family: ui-monospace, monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    color: var(--mate);
+    font-weight: 700;
+  }
+
+  .section-kicker .line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-kicker .title {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .body-text {
+    font-size: 1.05rem;
+    color: #2b332d;
+    line-height: 1.65;
+    white-space: pre-line;
+  }
+
+  .scope-grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .scope-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .scope-grid h3 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+
+  .scope-grid ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .scope-grid li {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .check { color: var(--mate); font-weight: 800; }
+  .minus { color: var(--mute); font-weight: 800; }
+
+  .excludes li { color: var(--mute); }
+
+  .plans-grid {
+    display: grid;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .plans-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+  }
+
+  .plan-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .plan-card.recommended {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: white;
+  }
+
+  .plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .sugerido {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--lime);
+    font-weight: 700;
+    background: rgba(200, 255, 0, 0.15);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .plan-price {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0.5rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .plan-desc {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .plan-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .fixed-price {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    background: var(--card);
+  }
+
+  .amount {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+
+  .terms {
+    margin-top: 0.5rem;
+    color: var(--mute);
+    font-size: 0.95rem;
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--card);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: left;
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--bg);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    color: #333;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 0.5rem;
+  }
+
+  .stage {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--border);
+    margin-top: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  .stage-done .dot {
+    background: var(--mate);
+    box-shadow: 0 0 0 3px rgba(200, 255, 0, 0.4);
+  }
+
+  .stage-current .dot {
+    background: var(--ink);
+    box-shadow: 0 0 0 4px rgba(200, 255, 0, 0.5);
+  }
+
+  .stage-info strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .status-label {
+    font-size: 0.75rem;
+    color: var(--mute);
+  }
+
+  .stage-done .status-label { color: var(--mate); font-weight: 600; }
+  .stage-current .status-label { color: var(--ink); font-weight: 700; }
+
+  /* Documents */
+  .documents-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .documents-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--ink);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+
+  .documents-list a:hover {
+    border-color: var(--ink);
+    transform: translateX(3px);
+  }
+
+  .doc-type {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: var(--border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+
+  .doc-name {
+    flex: 1;
+  }
+
+  .doc-arrow {
+    color: var(--mute);
+    font-weight: 700;
+  }
+
+  /* Actions */
+  .actions {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  :global(.btn-primary) {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--ink);
+    color: white;
+    padding: 0.95rem 1.85rem;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+
+  @media (min-width: 640px) {
+    :global(.btn-primary) { width: auto; }
+  }
+
+  :global(.btn-primary:hover) { background: #000; transform: translateY(-1px); }
+  :global(.btn-primary:disabled) { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  :global(.plan-tag) { font-weight: 400; opacity: 0.8; }
+
+  .secondary-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .btn-outline, :global(.btn-outline) {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.35rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-outline:hover, :global(.btn-outline:hover) {
+    border-color: var(--ink);
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  .btn-ghost {
+    background: none;
+    border: none;
+    color: var(--mute);
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 0.75rem 0.5rem;
+    font-weight: 500;
+    text-decoration: underline;
+  }
+
+  .btn-ghost:hover {
+    color: var(--ink);
+  }
+
+  .note {
+    margin-top: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--mute);
+    max-width: 30rem;
+    line-height: 1.5;
+  }
+
+  .portal-footer {
+    margin-top: 4.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--mute);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  /* Modal */
+  :global(.modal-overlay) {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 30, 24, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 1rem;
+  }
+
+  :global(.modal) {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
+
+  :global(.modal h3) {
+    margin: 0 0 0.5rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  :global(.modal p) {
+    color: #4a554e;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  :global(.modal label) {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+
+  :global(.modal input) {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0.4rem;
+    padding: 0.75rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+
+  :global(.modal input:focus) {
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  :global(.modal-actions) {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+  }
+
+  :global(.error) {
+    color: #b91c1c;
+    font-size: 0.85rem;
+    margin-top: -0.5rem;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    .portal { padding: 0; max-width: none; }
+  }
+</style>

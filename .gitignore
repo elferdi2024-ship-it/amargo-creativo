@@ -26,4 +26,6 @@ Thumbs.db
 
 # Legacy HTML drafts & backups
 back/
+link/
 *.html
+

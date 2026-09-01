@@ -1,0 +1,327 @@
+---
+// filepath: src/pages/admin/proposals/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import CopyButton from "../../../components/admin/CopyButton";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../lib/format";
+
+const statusFilter = Astro.url.searchParams.get("status") || "all";
+const query = Astro.url.searchParams.get("q") || "";
+
+let dbQuery = supabaseAdmin
+  .from("proposals")
+  .select("*, clients(name, company, email)")
+  .order("created_at", { ascending: false });
+
+if (statusFilter !== "all") {
+  dbQuery = dbQuery.eq("status", statusFilter);
+}
+
+const { data: proposals } = await dbQuery;
+
+const filteredProposals = (proposals || []).filter((p) => {
+  if (!query.trim()) return true;
+  const q = query.toLowerCase();
+  return (
+    p.project_title.toLowerCase().includes(q) ||
+    p.slug.toLowerCase().includes(q) ||
+    (p.clients?.name && p.clients.name.toLowerCase().includes(q)) ||
+    (p.clients?.company && p.clients.company.toLowerCase().includes(q))
+  );
+});
+
+// Conteo por estado
+const { data: allProps } = await supabaseAdmin.from("proposals").select("status");
+const counts = {
+  all: allProps?.length || 0,
+  active: allProps?.filter((p) => p.status === "active").length || 0,
+  accepted: allProps?.filter((p) => p.status === "accepted").length || 0,
+  draft: allProps?.filter((p) => p.status === "draft").length || 0,
+  disabled: allProps?.filter((p) => p.status === "disabled").length || 0,
+};
+---
+
+<AdminLayout title="Propuestas Comerciales" activeSection="proposals">
+  <!-- FILTER BAR -->
+  <div class="filters-wrap">
+    <div class="status-tabs">
+      <a href="/admin/proposals?status=all" class={`tab-pill ${statusFilter === "all" ? "active" : ""}`}>
+        Todas <span class="tab-count">{counts.all}</span>
+      </a>
+      <a href="/admin/proposals?status=active" class={`tab-pill ${statusFilter === "active" ? "active" : ""}`}>
+        Activas <span class="tab-count">{counts.active}</span>
+      </a>
+      <a href="/admin/proposals?status=accepted" class={`tab-pill ${statusFilter === "accepted" ? "active" : ""}`}>
+        Aceptadas <span class="tab-count">{counts.accepted}</span>
+      </a>
+      <a href="/admin/proposals?status=draft" class={`tab-pill ${statusFilter === "draft" ? "active" : ""}`}>
+        Borradores <span class="tab-count">{counts.draft}</span>
+      </a>
+      <a href="/admin/proposals?status=disabled" class={`tab-pill ${statusFilter === "disabled" ? "active" : ""}`}>
+        Deshabilitadas <span class="tab-count">{counts.disabled}</span>
+      </a>
+    </div>
+
+    <form method="GET" class="search-form">
+      <input type="hidden" name="status" value={statusFilter} />
+      <input
+        type="text"
+        name="q"
+        value={query}
+        placeholder="Buscar por título, cliente o slug..."
+        class="search-input"
+      />
+      {query && (
+        <a href={`/admin/proposals?status=${statusFilter}`} class="btn-clear-search">
+          ✕
+        </a>
+      )}
+    </form>
+  </div>
+
+  <!-- PROPOSALS TABLE -->
+  <div class="adm-table-wrap">
+    <table class="adm-table">
+      <thead>
+        <tr>
+          <th>Proyecto & Cliente</th>
+          <th>Estado</th>
+          <th>Inversión</th>
+          <th>Creada / Aceptada</th>
+          <th>Magic Link</th>
+          <th style="text-align: right;">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {filteredProposals.map((p) => {
+          const amount =
+            p.investment?.type === "plans"
+              ? `Planes (${p.investment.plans?.length || 0})`
+              : formatMoney(p.investment?.amount || 0, p.investment?.currency);
+          const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+
+          return (
+            <tr>
+              <td>
+                <a href={`/admin/proposals/${p.id}`} class="title-link">
+                  {p.project_title}
+                </a>
+                <div class="client-meta">
+                  {p.clients?.name || "Sin cliente asignado"}
+                  {p.clients?.company ? ` · ${p.clients.company}` : ""}
+                </div>
+              </td>
+              <td>
+                <span class={`badge-status status-${p.status}`}>
+                  {p.status === "accepted"
+                    ? "Aceptada"
+                    : p.status === "active"
+                    ? "Activa"
+                    : p.status === "draft"
+                    ? "Borrador"
+                    : p.status === "disabled"
+                    ? "Deshabilitada"
+                    : p.status}
+                </span>
+              </td>
+              <td>
+                <span class="font-mono">{amount}</span>
+              </td>
+              <td>
+                <div class="date-text">{formatDate(p.created_at)}</div>
+                {p.accepted_at && (
+                  <div class="accepted-text">Aceptada: {formatDate(p.accepted_at)}</div>
+                )}
+              </td>
+              <td>
+                <div class="magic-link-cell">
+                  <CopyButton client:load text={magicUrl} label="Copiar Link" />
+                  <a href={`/p/${p.slug}`} target="_blank" class="btn-preview-link" title="Abrir portal">
+                    ↗
+                  </a>
+                </div>
+              </td>
+              <td style="text-align: right;">
+                <div class="actions-cell">
+                  <a href={`/admin/proposals/${p.id}`} class="btn-sm">
+                    Gestionar
+                  </a>
+                  <a href={`/admin/proposals/${p.id}/edit`} class="btn-sm">
+                    Editar
+                  </a>
+                </div>
+              </td>
+            </tr>
+          );
+        })}
+        {filteredProposals.length === 0 && (
+          <tr>
+            <td colspan="6" class="empty-cell">
+              No se encontraron propuestas con los filtros seleccionados.
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</AdminLayout>
+
+<style>
+  .filters-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .status-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tab-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 20px;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .tab-pill:hover {
+    color: var(--adm-ink);
+    border-color: var(--adm-border-light);
+  }
+
+  .tab-pill.active {
+    background: rgba(200, 255, 0, 0.15);
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  .tab-count {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    opacity: 0.85;
+  }
+
+  .search-form {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .search-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.5rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 260px;
+    font-family: inherit;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .btn-clear-search {
+    position: absolute;
+    right: 0.6rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+
+  .title-link {
+    font-weight: 700;
+    color: var(--adm-ink);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.15s ease;
+  }
+
+  .title-link:hover {
+    color: var(--adm-lime);
+  }
+
+  .client-meta {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    margin-top: 0.2rem;
+  }
+
+  .date-text {
+    font-size: 0.82rem;
+    color: var(--adm-ink);
+  }
+
+  .accepted-text {
+    font-size: 0.75rem;
+    color: var(--adm-lime);
+    font-weight: 600;
+  }
+
+  .magic-link-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-preview-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .btn-preview-link:hover {
+    color: var(--adm-lime);
+    border-color: var(--adm-lime);
+  }
+
+  .actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.4rem;
+  }
+
+  .btn-sm {
+    display: inline-block;
+    padding: 0.35rem 0.65rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-sm:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--adm-ink);
+  }
+</style>

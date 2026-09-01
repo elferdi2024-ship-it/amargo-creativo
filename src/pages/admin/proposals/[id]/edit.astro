@@ -1,0 +1,93 @@
+---
+// filepath: src/pages/admin/proposals/[id]/edit.astro
+export const prerender = false;
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import ProposalForm from "../../../../components/admin/ProposalForm";
+import { supabaseAdmin } from "../../../../lib/supabase";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/proposals");
+}
+
+const { data: proposal, error } = await supabaseAdmin
+  .from("proposals")
+  .select("*")
+  .eq("id", id)
+  .single();
+
+if (error || !proposal) {
+  return Astro.redirect("/admin/proposals");
+}
+
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("id, name, company, email, phone")
+  .order("name", { ascending: true });
+---
+
+<AdminLayout title={`Editar: ${proposal.project_title}`} activeSection="proposals">
+  <div class="edit-proposal-page">
+    <div class="page-top-banner">
+      <div>
+        <div class="breadcrumb">
+          <a href={`/admin/proposals/${proposal.id}`}>← Volver a detalles de la propuesta</a>
+        </div>
+        <h2>Editar Propuesta: {proposal.project_title}</h2>
+        <p>Modifica el contenido, precios, alcances o el estado del Magic Link.</p>
+      </div>
+    </div>
+
+    <ProposalForm
+      client:load
+      clients={clients || []}
+      initial={proposal}
+      proposalId={proposal.id}
+      isEdit={true}
+    />
+  </div>
+</AdminLayout>
+
+<style>
+  .edit-proposal-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .breadcrumb {
+    margin-bottom: 0.35rem;
+  }
+
+  .breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--adm-ink);
+  }
+
+  .page-top-banner {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .page-top-banner h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .page-top-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+</style>

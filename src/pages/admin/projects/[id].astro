@@ -1,0 +1,382 @@
+---
+// filepath: src/pages/admin/projects/[id].astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ProjectStageManager from "../../../components/admin/ProjectStageManager";
+import DocumentUploader from "../../../components/admin/DocumentUploader";
+import CopyButton from "../../../components/admin/CopyButton";
+import ProjectHealth from "../../../components/admin/ProjectHealth";
+import GenerateContentButton from "../../../components/admin/GenerateContentButton";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+import { calculateHealth } from "../../../lib/health";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/projects");
+}
+
+// 1. Obtener proyecto
+const { data: project, error } = await supabaseAdmin
+  .from("projects")
+  .select("*, clients(*), proposals(*)")
+  .eq("id", id)
+  .single();
+
+if (error || !project) {
+  return Astro.redirect("/admin/projects");
+}
+
+// 2. Obtener documentos
+const { data: documents } = await supabaseAdmin
+  .from("documents")
+  .select("*")
+  .eq("project_id", project.id)
+  .order("uploaded_at", { ascending: false });
+
+// 3. Obtener piezas de contenido generadas si existen
+const { data: contentPieces } = await supabaseAdmin
+  .from("content_pieces")
+  .select("*")
+  .eq("project_id", project.id)
+  .order("created_at", { ascending: false });
+
+const magicUrl = project.proposals?.slug ? `${Astro.url.origin}/p/${project.proposals.slug}` : "";
+const health = project.health_status || calculateHealth(project.last_checkin_at, project.updated_at);
+---
+
+<AdminLayout title={`Proyecto: ${project.title}`} activeSection="projects">
+  <div class="project-detail-page">
+    <!-- HEADER CARD -->
+    <div class="project-header-card">
+      <div class="header-main">
+        <div class="breadcrumb">
+          <a href="/admin/projects">← Volver a proyectos</a>
+        </div>
+        <div class="title-row">
+          <h1 class="project-title">{project.title}</h1>
+          <span class={`badge-status status-${project.status}`}>
+            {project.status === "active" ? "Activo" : project.status === "finished" ? "Finalizado" : project.status}
+          </span>
+        </div>
+
+        <div class="meta-strip">
+          <span>Cliente: <strong>{project.clients?.name || "Sin cliente"}</strong></span>
+          {project.clients?.company && <span>· Empresa: <strong>{project.clients.company}</strong></span>}
+          {project.start_date && <span>· Fecha de inicio: <strong>{project.start_date}</strong></span>}
+          {project.estimated_end_date && <span>· Entrega estimada: <strong>{project.estimated_end_date}</strong></span>}
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <GenerateContentButton client:load projectId={project.id} projectTitle={project.title} />
+        {project.proposals && (
+          <a href={`/admin/proposals/${project.proposals.id}`} class="btn-outline-sm">
+            Ver Propuesta →
+          </a>
+        )}
+      </div>
+    </div>
+
+    <!-- HEALTH & MAGIC LINK ROW -->
+    <div class="quick-status-row">
+      <!-- Health check-in component -->
+      <div class="health-widget-wrap">
+        <ProjectHealth
+          client:load
+          projectId={project.id}
+          initialHealth={health}
+          lastCheckinAt={project.last_checkin_at}
+          updatedAt={project.updated_at}
+        />
+      </div>
+
+      <!-- Magic Link Sync banner if proposal exists -->
+      {magicUrl && (
+        <div class="portal-sync-banner">
+          <div>
+            <span class="sync-tag">PORTAL EN VIVO CLIENTE</span>
+            <p class="sync-desc">El cliente ve las etapas en su Magic Link</p>
+          </div>
+          <div class="sync-actions">
+            <CopyButton client:load text={magicUrl} label="Copiar Link" />
+            <a href={magicUrl} target="_blank" class="btn-sm">
+              Ver Portal ↗
+            </a>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- 2-COLUMN GRID: Stages & Documents -->
+    <div class="detail-grid">
+      <!-- LEFT: Stages Manager -->
+      <div class="card-box">
+        <ProjectStageManager
+          client:load
+          projectId={project.id}
+          initialStages={project.stages || []}
+          initialCurrentStage={project.current_stage || 1}
+          initialStatus={project.status || "active"}
+        />
+      </div>
+
+      <!-- RIGHT: Content Pieces & Project Documents -->
+      <div class="right-column">
+        <!-- Generated Content Pieces if exist -->
+        <div class="card-box">
+          <div class="box-header-row">
+            <div>
+              <h3 class="box-title">Content Engine ({contentPieces?.length || 0})</h3>
+              <p class="box-desc">Piezas de marketing generadas para este proyecto.</p>
+            </div>
+            <GenerateContentButton client:load projectId={project.id} />
+          </div>
+
+          <ul class="content-mini-list">
+            {(contentPieces || []).map((cp) => (
+              <li class="cp-item">
+                <div>
+                  <strong class="cp-title">{cp.title}</strong>
+                  <span class="cp-type">{cp.type} · {cp.status}</span>
+                </div>
+                <a href={`/admin/contenido/${cp.id}`} class="btn-sm">
+                  Editar →
+                </a>
+              </li>
+            ))}
+            {(contentPieces || []).length === 0 && (
+              <li class="empty-text">No has generado contenido de marketing aún.</li>
+            )}
+          </ul>
+        </div>
+
+        <!-- Project Documents -->
+        <div class="card-box">
+          <h3 class="box-title">Entregables y Documentos</h3>
+          <p class="box-desc">Sube entregables, enlaces de diseño o archivos finales para el cliente.</p>
+
+          <ul class="docs-list">
+            {(documents || []).map((doc) => (
+              <li class="doc-row">
+                <div>
+                  <strong class="doc-name">{doc.name}</strong>
+                  <div class="doc-meta">
+                    {doc.type} · {doc.visible_to_client ? "🟢 Visible al cliente" : "🔒 Privado"}
+                  </div>
+                </div>
+                <a href={`/api/documents/${doc.id}/download`} target="_blank" class="btn-doc-down">
+                  Descargar
+                </a>
+              </li>
+            ))}
+            {(documents || []).length === 0 && (
+              <li class="empty-text">No hay documentos adjuntos a este proyecto.</li>
+            )}
+          </ul>
+
+          <div style="margin-top: 1.25rem;">
+            <DocumentUploader
+              client:load
+              defaultClientId={project.client_id || ""}
+              defaultProjectId={project.id}
+              defaultProposalId={project.proposal_id || ""}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .project-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .project-header-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.4rem 0;
+  }
+
+  .project-title {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+  }
+
+  .meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+
+  .meta-strip strong {
+    color: var(--adm-ink);
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .quick-status-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .quick-status-row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .portal-sync-banner {
+    background: #111E15;
+    border: 1px solid var(--adm-border);
+    border-left: 4px solid var(--adm-lime);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .sync-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    color: var(--adm-lime);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .sync-desc {
+    margin: 0.15rem 0 0;
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .sync-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .detail-grid {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+
+  .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .box-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .box-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .box-desc {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--adm-mute);
+  }
+
+  .content-mini-list, .docs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .cp-item, .doc-row {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cp-title, .doc-name {
+    font-size: 0.85rem;
+    color: var(--adm-ink);
+    display: block;
+  }
+
+  .cp-type, .doc-meta {
+    font-size: 0.72rem;
+    color: var(--adm-mute);
+    text-transform: capitalize;
+  }
+
+  .btn-doc-down {
+    font-size: 0.78rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .btn-sm {
+    padding: 0.35rem 0.65rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.75rem;
+    text-decoration: none;
+  }
+</style>

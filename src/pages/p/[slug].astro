@@ -1,0 +1,68 @@
+---
+// filepath: src/pages/p/[slug].astro
+export const prerender = false;
+
+import ProposalView from "../../components/portal/ProposalView.astro";
+import { supabaseAdmin } from "../../lib/supabase";
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect("/");
+}
+
+// 1. Obtener la propuesta
+const { data: proposal, error: proposalError } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(*)")
+  .eq("slug", slug)
+  .single();
+
+if (proposalError || !proposal) {
+  return Astro.redirect("/404");
+}
+
+// Si la propuesta está en borrador o deshabilitada y no es admin
+if (proposal.status === "draft") {
+  return Astro.redirect("/404");
+}
+
+// 2. Proyecto asociado (si ya aceptó o si existe)
+const { data: project } = await supabaseAdmin
+  .from("projects")
+  .select("*")
+  .eq("proposal_id", proposal.id)
+  .maybeSingle();
+
+// 3. Documentos visibles para el cliente
+const { data: documents } = await supabaseAdmin
+  .from("documents")
+  .select("*")
+  .eq("proposal_id", proposal.id)
+  .eq("visible_to_client", true)
+  .order("uploaded_at", { ascending: false });
+
+const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
+const pageTitle = `${proposal.project_title} · ${clientName} · Amargo Creativo`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body style="margin:0; background:#F8F9F6; min-height: 100vh;">
+    <ProposalView
+      proposal={proposal}
+      project={project}
+      documents={documents || []}
+    />
+  </body>
+</html>

@@ -1,0 +1,245 @@
+---
+// filepath: src/pages/admin/contenido/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import CopyButton from "../../../components/admin/CopyButton";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+
+const typeFilter = Astro.url.searchParams.get("type") || "all";
+const statusFilter = Astro.url.searchParams.get("status") || "all";
+
+let dbQuery = supabaseAdmin
+  .from("content_pieces")
+  .select("*, projects(title), clients(name, company)")
+  .order("created_at", { ascending: false });
+
+if (typeFilter !== "all") {
+  dbQuery = dbQuery.eq("type", typeFilter);
+}
+
+if (statusFilter !== "all") {
+  dbQuery = dbQuery.eq("status", statusFilter);
+}
+
+const { data: pieces } = await dbQuery;
+const allPieces = pieces || [];
+---
+
+<AdminLayout title="Content Engine" activeSection="content">
+  <div class="content-page">
+    <div class="page-top-card">
+      <div>
+        <h2>Content Engine & Case Studies</h2>
+        <p>
+          Convierte cada proyecto finalizado en activos de marketing listos para publicar: Case Studies con métricas, publicaciones de LinkedIn, captions de Instagram, snippets para el sitio web y emails comerciales.
+        </p>
+      </div>
+      <a href="/admin/projects" class="btn-primary-sm">
+        → Ver Proyectos para Generar
+      </a>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+      <div class="type-pills">
+        <a href="/admin/contenido?type=all" class={`tab-pill ${typeFilter === "all" ? "active" : ""}`}>
+          Todos ({allPieces.length})
+        </a>
+        <a href="/admin/contenido?type=case_study" class={`tab-pill ${typeFilter === "case_study" ? "active" : ""}`}>
+          Case Studies
+        </a>
+        <a href="/admin/contenido?type=linkedin" class={`tab-pill ${typeFilter === "linkedin" ? "active" : ""}`}>
+          LinkedIn
+        </a>
+        <a href="/admin/contenido?type=instagram" class={`tab-pill ${typeFilter === "instagram" ? "active" : ""}`}>
+          Instagram
+        </a>
+        <a href="/admin/contenido?type=web" class={`tab-pill ${typeFilter === "web" ? "active" : ""}`}>
+          Web "Trabajos"
+        </a>
+        <a href="/admin/contenido?type=email" class={`tab-pill ${typeFilter === "email" ? "active" : ""}`}>
+          Email
+        </a>
+      </div>
+    </div>
+
+    <!-- CONTENT PIECES GRID/TABLE -->
+    <div class="adm-table-wrap">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Título de la Pieza</th>
+            <th>Proyecto / Cliente</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {allPieces.map((piece) => (
+            <tr>
+              <td>
+                <span class="type-tag">{piece.type.replace("_", " ")}</span>
+              </td>
+              <td>
+                <a href={`/admin/contenido/${piece.id}`} class="piece-title-link">
+                  {piece.title}
+                </a>
+              </td>
+              <td>
+                <div class="proj-client-meta">
+                  <strong>{piece.projects?.title || "Proyecto"}</strong>
+                  <span>{piece.clients?.name || "Sin cliente"}</span>
+                </div>
+              </td>
+              <td>
+                <span class={`badge-status status-${piece.status}`}>
+                  {piece.status === "published" ? "✓ Publicado" : piece.status === "draft" ? "Borrador" : piece.status}
+                </span>
+              </td>
+              <td>
+                <span class="font-mono">{formatDate(piece.created_at)}</span>
+              </td>
+              <td style="text-align: right;">
+                <div class="actions-row">
+                  <CopyButton client:load text={piece.content} label="Copiar" />
+                  <a href={`/admin/contenido/${piece.id}`} class="btn-sm">
+                    Editar →
+                  </a>
+                </div>
+              </td>
+            </tr>
+          ))}
+          {allPieces.length === 0 && (
+            <tr>
+              <td colspan="6" class="empty-cell">
+                No hay piezas de contenido creadas con estos filtros. Puedes generarlas desde el detalle de cualquier proyecto.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .content-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-top-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-top-card h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .page-top-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 680px;
+    line-height: 1.45;
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .type-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tab-pill {
+    padding: 0.35rem 0.75rem;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 20px;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+
+  .tab-pill.active {
+    background: rgba(200, 255, 0, 0.15);
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  .type-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: var(--adm-mute);
+  }
+
+  .piece-title-link {
+    font-weight: 700;
+    color: var(--adm-ink);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .piece-title-link:hover {
+    color: var(--adm-lime);
+  }
+
+  .proj-client-meta {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.82rem;
+  }
+
+  .proj-client-meta span {
+    color: var(--adm-mute);
+    font-size: 0.75rem;
+  }
+
+  .actions-row {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .btn-sm {
+    padding: 0.35rem 0.65rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-sm:hover {
+    border-color: var(--adm-ink);
+  }
+</style>

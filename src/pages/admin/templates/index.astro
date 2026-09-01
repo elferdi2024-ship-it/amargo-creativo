@@ -1,0 +1,218 @@
+---
+// filepath: src/pages/admin/templates/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { DEFAULT_TEMPLATES } from "../../../lib/contracts";
+
+const { data: dbTemplates } = await supabaseAdmin
+  .from("contract_templates")
+  .select("*")
+  .order("created_at", { ascending: true });
+
+const templates = dbTemplates && dbTemplates.length > 0 ? dbTemplates : DEFAULT_TEMPLATES;
+---
+
+<AdminLayout title="Plantillas de Contrato & Legales" activeSection="templates">
+  <div class="templates-page">
+    <div class="page-top-card">
+      <div>
+        <h2>Plantillas de Contrato y Órdenes de Servicio</h2>
+        <p>
+          Configura los modelos estándar. Al generar contratos, el sistema reemplazará automáticamente variables como <code>{"{{client_name}}"}</code>, <code>{"{{amount}}"}</code> o <code>{"{{includes}}"}</code> con los datos de la propuesta.
+        </p>
+      </div>
+      <a href="/admin/contracts" class="btn-primary-sm">
+        → Ir a Generador de Contratos
+      </a>
+    </div>
+
+    <!-- VARIABLES REFERENCE -->
+    <div class="card-box var-guide">
+      <h4 class="guide-title">Variables Disponibles para las Plantillas:</h4>
+      <div class="var-tags">
+        <code>{"{{client_name}}"}</code>
+        <code>{"{{project_title}}"}</code>
+        <code>{"{{amount}}"}</code>
+        <code>{"{{currency}}"}</code>
+        <code>{"{{payment_terms}}"}</code>
+        <code>{"{{timeline}}"}</code>
+        <code>{"{{solution}}"}</code>
+        <code>{"{{includes}}"}</code>
+        <code>{"{{excludes}}"}</code>
+        <code>{"{{date}}"}</code>
+        <code>{"{{accepted_at}}"}</code>
+        <code>{"{{accepted_name}}"}</code>
+        <code>{"{{accepted_contact}}"}</code>
+        <code>{"{{id}}"}</code>
+      </div>
+    </div>
+
+    <!-- TEMPLATES LIST -->
+    <div class="templates-grid">
+      {templates.map((template, idx) => (
+        <div class="template-card">
+          <div class="tmpl-header">
+            <div>
+              <span class="tmpl-num">0{idx + 1}</span>
+              <h3 class="tmpl-name">{template.name}</h3>
+            </div>
+            <a href={`/admin/contracts?template_name=${encodeURIComponent(template.name)}`} class="btn-use-tmpl">
+              Usar en Contrato →
+            </a>
+          </div>
+
+          <p class="tmpl-desc">{template.description}</p>
+
+          <div class="tmpl-preview-box">
+            <pre class="tmpl-preview-text">{template.content}</pre>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .templates-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-top-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-top-card h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .page-top-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 650px;
+    line-height: 1.45;
+  }
+
+  .page-top-card code {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--adm-lime);
+    background: rgba(200, 255, 0, 0.1);
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+  }
+
+  .var-guide {
+    background: #111C14;
+    padding: 1rem 1.25rem;
+  }
+
+  .guide-title {
+    margin: 0 0 0.5rem;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--adm-mute);
+  }
+
+  .var-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .var-tags code {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.78rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .templates-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 860px) {
+    .templates-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .template-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .tmpl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .tmpl-num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--adm-lime);
+    font-weight: 700;
+  }
+
+  .tmpl-name {
+    margin: 0.2rem 0 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .tmpl-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-use-tmpl {
+    font-size: 0.8rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  .tmpl-preview-box {
+    background: #0E1611;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .tmpl-preview-text {
+    margin: 0;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: #9FB2A6;
+    line-height: 1.5;
+    white-space: pre-wrap;
+  }
+</style>

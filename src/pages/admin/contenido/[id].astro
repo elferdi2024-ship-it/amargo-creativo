@@ -1,0 +1,300 @@
+---
+// filepath: src/pages/admin/contenido/[id].astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import CopyButton from "../../../components/admin/CopyButton";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/contenido");
+}
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const title = form.get("title") as string;
+  const content = form.get("content") as string;
+  const status = form.get("status") as string;
+
+  await supabaseAdmin
+    .from("content_pieces")
+    .update({
+      title: title?.trim(),
+      content,
+      status,
+      published_at: status === "published" ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id);
+
+  return Astro.redirect(`/admin/contenido/${id}?saved=true`);
+}
+
+const { data: piece, error } = await supabaseAdmin
+  .from("content_pieces")
+  .select("*, projects(title), clients(name, company)")
+  .eq("id", id)
+  .single();
+
+if (error || !piece) {
+  return Astro.redirect("/admin/contenido");
+}
+
+const isSaved = Astro.url.searchParams.get("saved") === "true";
+---
+
+<AdminLayout title={`Editar: ${piece.title}`} activeSection="content">
+  <div class="content-edit-page">
+    <div class="header-box">
+      <div>
+        <div class="breadcrumb">
+          <a href="/admin/contenido">← Volver a Content Engine</a>
+        </div>
+        <div class="title-row">
+          <h1 class="page-h1">{piece.title}</h1>
+          <span class={`badge-status status-${piece.status}`}>
+            {piece.status === "published" ? "✓ Publicado" : piece.status === "draft" ? "Borrador" : piece.status}
+          </span>
+        </div>
+        <div class="meta-row">
+          <span>Tipo: <strong>{piece.type}</strong></span>
+          {piece.projects && <span>· Proyecto: <strong>{piece.projects.title}</strong></span>}
+          {piece.clients && <span>· Cliente: <strong>{piece.clients.name}</strong></span>}
+          <span>· Creado: {formatDate(piece.created_at)}</span>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <CopyButton client:load text={piece.content} label="Copiar Texto Completo" />
+      </div>
+    </div>
+
+    {isSaved && (
+      <div class="save-toast">✓ Cambios guardados correctamente</div>
+    )}
+
+    <form method="POST" class="edit-form card-box">
+      <div class="form-grid-2">
+        <label class="field-block">
+          <span>Título del Contenido</span>
+          <input
+            type="text"
+            name="title"
+            value={piece.title}
+            required
+            class="adm-input"
+          />
+        </label>
+
+        <label class="field-block">
+          <span>Estado de Publicación</span>
+          <select name="status" class="adm-input">
+            <option value="draft" selected={piece.status === "draft"}>Borrador</option>
+            <option value="published" selected={piece.status === "published"}>Publicado</option>
+            <option value="archived" selected={piece.status === "archived"}>Archivado</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="field-block">
+        <span>Cuerpo del Contenido (Texto / Markdown / Hashtags)</span>
+        <textarea
+          name="content"
+          rows={16}
+          required
+          class="adm-textarea-mono"
+        >{piece.content}</textarea>
+      </label>
+
+      <div class="form-bottom-actions">
+        <button type="button" id="btn-delete-piece" class="btn-delete">
+          Eliminar Pieza
+        </button>
+
+        <div class="right-btns">
+          <a href="/admin/contenido" class="btn-cancel">Cancelar</a>
+          <button type="submit" class="btn-primary-sm">Guardar Cambios</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script define:vars={{ pieceId: piece.id }}>
+    document.getElementById("btn-delete-piece")?.addEventListener("click", async () => {
+      if (confirm("¿Estás seguro de que deseas eliminar esta pieza de contenido?")) {
+        try {
+          const res = await fetch(`/api/admin/content?id=${pieceId}`, {
+            method: "DELETE",
+          });
+          const data = await res.json();
+          if (data.ok) {
+            window.location.href = "/admin/contenido";
+          }
+        } catch {
+          alert("Error al eliminar contenido");
+        }
+      }
+    });
+  </script>
+</AdminLayout>
+
+<style>
+  .content-edit-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .header-box {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.4rem 0;
+  }
+
+  .page-h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--adm-mute);
+  }
+
+  .meta-row strong {
+    color: var(--adm-ink);
+  }
+
+  .save-toast {
+    background: rgba(200, 255, 0, 0.15);
+    border: 1px solid var(--adm-lime);
+    color: var(--adm-lime);
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .form-grid-2 { grid-template-columns: 2fr 1fr; }
+  }
+
+  .field-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field-block span {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--adm-mute);
+    font-weight: 600;
+  }
+
+  .adm-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.75rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+
+  .adm-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .adm-textarea-mono {
+    background: #0E1611;
+    border: 1px solid var(--adm-border);
+    color: #E2E8E4;
+    padding: 1rem;
+    border-radius: 8px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    resize: vertical;
+  }
+
+  .adm-textarea-mono:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .form-bottom-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--adm-border);
+  }
+
+  .btn-delete {
+    background: transparent;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #F87171;
+    padding: 0.5rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .btn-delete:hover {
+    background: rgba(239, 68, 68, 0.15);
+  }
+
+  .right-btns {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .btn-cancel {
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.88rem;
+  }
+</style>

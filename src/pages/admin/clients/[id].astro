@@ -1,0 +1,396 @@
+---
+// filepath: src/pages/admin/clients/[id].astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ClientModal from "../../../components/admin/ClientModal";
+import CopyButton from "../../../components/admin/CopyButton";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../lib/format";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/clients");
+}
+
+// 1. Obtener cliente
+const { data: client, error } = await supabaseAdmin
+  .from("clients")
+  .select("*")
+  .eq("id", id)
+  .single();
+
+if (error || !client) {
+  return Astro.redirect("/admin/clients");
+}
+
+// 2. Obtener propuestas de este cliente
+const { data: proposals } = await supabaseAdmin
+  .from("proposals")
+  .select("*")
+  .eq("client_id", client.id)
+  .order("created_at", { ascending: false });
+
+// 3. Obtener proyectos de este cliente
+const { data: projects } = await supabaseAdmin
+  .from("projects")
+  .select("*")
+  .eq("client_id", client.id)
+  .order("created_at", { ascending: false });
+
+// 4. Obtener documentos de este cliente
+const { data: documents } = await supabaseAdmin
+  .from("documents")
+  .select("*")
+  .eq("client_id", client.id)
+  .order("uploaded_at", { ascending: false });
+
+const allProposals = proposals || [];
+const allProjects = projects || [];
+const allDocs = documents || [];
+---
+
+<AdminLayout title={`Cliente: ${client.name}`} activeSection="clients">
+  <div class="client-detail-page">
+    <!-- TOP HEADER -->
+    <div class="client-header-card">
+      <div class="header-main">
+        <div class="breadcrumb">
+          <a href="/admin/clients">← Volver a clientes</a>
+        </div>
+        <h1 class="client-name">{client.name}</h1>
+        {client.company && <div class="client-company-tag">{client.company}</div>}
+
+        <div class="contact-strip">
+          {client.email && <span>✉️ {client.email}</span>}
+          {client.phone && (
+            <span>
+              💬{" "}
+              <a
+                href={`https://wa.me/${client.phone.replace(/[^0-9]/g, "")}`}
+                target="_blank"
+                class="wa-link"
+              >
+                {client.phone}
+              </a>
+            </span>
+          )}
+          <span>Cliente desde {formatDate(client.created_at)}</span>
+        </div>
+
+        {client.notes && (
+          <div class="client-notes-box">
+            <strong>Notas del cliente:</strong>
+            <p>{client.notes}</p>
+          </div>
+        )}
+      </div>
+
+      <div class="header-actions">
+        <ClientModal client:load initial={client} buttonLabel="✏️ Editar Cliente" />
+        <a href={`/admin/proposals/new?client_id=${client.id}`} class="btn-primary-sm">
+          + Nueva Propuesta
+        </a>
+      </div>
+    </div>
+
+    <!-- 3 TABS/SECTIONS: Proposals, Projects, Documents -->
+    <div class="client-sections-grid">
+      <!-- Proposals Section -->
+      <div class="card-box">
+        <div class="box-header">
+          <h3 class="box-title">Propuestas ({allProposals.length})</h3>
+          <a href="/admin/proposals/new" class="btn-sm">+ Crear</a>
+        </div>
+
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Estado</th>
+                <th>Inversión</th>
+                <th>Magic Link</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {allProposals.map((p) => {
+                const amount =
+                  p.investment?.type === "plans"
+                    ? "Planes"
+                    : formatMoney(p.investment?.amount || 0, p.investment?.currency);
+                const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+
+                return (
+                  <tr>
+                    <td>
+                      <a href={`/admin/proposals/${p.id}`} class="link-bold">
+                        {p.project_title}
+                      </a>
+                    </td>
+                    <td>
+                      <span class={`badge-status status-${p.status}`}>
+                        {p.status}
+                      </span>
+                    </td>
+                    <td>{amount}</td>
+                    <td>
+                      <CopyButton client:load text={magicUrl} label="Copiar" />
+                    </td>
+                    <td>
+                      <a href={`/admin/proposals/${p.id}`} class="btn-sm">
+                        Ver
+                      </a>
+                    </td>
+                  </tr>
+                );
+              })}
+              {allProposals.length === 0 && (
+                <tr>
+                  <td colspan="5" class="empty-cell">
+                    Sin propuestas registradas para este cliente.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Projects Section -->
+      <div class="card-box">
+        <div class="box-header">
+          <h3 class="box-title">Proyectos ({allProjects.length})</h3>
+        </div>
+
+        <div class="projects-list">
+          {allProjects.map((pr) => (
+            <div class="pr-card">
+              <div class="pr-card-main">
+                <a href={`/admin/projects/${pr.id}`} class="link-bold">
+                  {pr.title}
+                </a>
+                <div class="pr-meta">
+                  <span>Estado: <strong>{pr.status}</strong></span>
+                  <span>· Etapa actual: <strong>{pr.current_stage || 1}</strong></span>
+                  {pr.start_date && <span>· Inicio: {pr.start_date}</span>}
+                </div>
+              </div>
+              <a href={`/admin/projects/${pr.id}`} class="btn-sm">
+                Gestionar Etapas →
+              </a>
+            </div>
+          ))}
+          {allProjects.length === 0 && (
+            <p class="empty-text">No hay proyectos activos para este cliente.</p>
+          )}
+        </div>
+      </div>
+
+      <!-- Documents Section -->
+      <div class="card-box">
+        <div class="box-header">
+          <h3 class="box-title">Documentos & Contratos ({allDocs.length})</h3>
+          <a href="/admin/documents" class="btn-sm">+ Subir</a>
+        </div>
+
+        <ul class="docs-list">
+          {allDocs.map((doc) => (
+            <li class="doc-item">
+              <div class="doc-left">
+                <strong>{doc.name}</strong>
+                <span class="doc-type-badge">{doc.type}</span>
+                {doc.visible_to_client && <span class="badge-vis">Visible al cliente</span>}
+              </div>
+              <a href={`/api/documents/${doc.id}/download`} target="_blank" class="btn-doc-down">
+                Descargar ↗
+              </a>
+            </li>
+          ))}
+          {allDocs.length === 0 && (
+            <li class="empty-text">No hay documentos cargados.</li>
+          )}
+        </ul>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .client-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .client-header-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+
+  .breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .client-name {
+    margin: 0.25rem 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+  }
+
+  .client-company-tag {
+    font-size: 0.9rem;
+    color: var(--adm-mate-light);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+
+  .wa-link {
+    color: #25D366;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .client-notes-box {
+    margin-top: 1rem;
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+  }
+
+  .client-notes-box strong {
+    color: var(--adm-ink);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .client-notes-box p {
+    margin: 0;
+    color: #9FB2A6;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .client-sections-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .box-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+  }
+
+  .link-bold {
+    color: var(--adm-ink);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .link-bold:hover {
+    color: var(--adm-lime);
+  }
+
+  .projects-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .pr-card {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 0.85rem 1.15rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .pr-meta {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    margin-top: 0.2rem;
+  }
+
+  .docs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .doc-item {
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .doc-left {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .doc-type-badge {
+    font-size: 0.7rem;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+
+  .badge-vis {
+    font-size: 0.7rem;
+    background: rgba(200, 255, 0, 0.15);
+    color: var(--adm-lime);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+  }
+
+  .btn-doc-down {
+    font-size: 0.8rem;
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+</style>

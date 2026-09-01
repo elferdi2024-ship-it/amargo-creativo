@@ -1,0 +1,5 @@
+---
+// filepath: src/pages/admin/propuestas/index.astro
+export const prerender = false;
+return Astro.redirect(`/admin/proposals${Astro.url.search}`);
+---

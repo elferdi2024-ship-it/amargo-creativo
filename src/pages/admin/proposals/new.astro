@@ -1,0 +1,65 @@
+---
+// filepath: src/pages/admin/proposals/new.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ProposalForm from "../../../components/admin/ProposalForm";
+import ClientModal from "../../../components/admin/ClientModal";
+import { supabaseAdmin } from "../../../lib/supabase";
+
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("id, name, company, email, phone")
+  .order("name", { ascending: true });
+---
+
+<AdminLayout title="Nueva Propuesta Comercial" activeSection="proposals">
+  <div class="new-proposal-page">
+    <div class="page-top-banner">
+      <div>
+        <h2>Crear Propuesta & Magic Link</h2>
+        <p>
+          Completa el alcance, solución e inversión. Al guardarla en estado <strong>Activo</strong>, el cliente podrá acceder inmediatamente mediante su URL única.
+        </p>
+      </div>
+      <div class="banner-actions">
+        <ClientModal client:load buttonLabel="+ Crear Nuevo Cliente Primero" />
+      </div>
+    </div>
+
+    <ProposalForm client:load clients={clients || []} isEdit={false} />
+  </div>
+</AdminLayout>
+
+<style>
+  .new-proposal-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-top-banner {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .page-top-banner h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .page-top-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+</style>

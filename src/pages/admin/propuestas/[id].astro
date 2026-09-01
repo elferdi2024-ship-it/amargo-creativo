@@ -1,0 +1,6 @@
+---
+// filepath: src/pages/admin/propuestas/[id].astro
+export const prerender = false;
+const { id } = Astro.params;
+return Astro.redirect(`/admin/proposals/${id}`);
+---

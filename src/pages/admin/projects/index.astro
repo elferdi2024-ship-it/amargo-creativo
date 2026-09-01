@@ -1,0 +1,332 @@
+---
+// filepath: src/pages/admin/projects/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import ProjectHealth from "../../../components/admin/ProjectHealth";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+import { calculateHealth } from "../../../lib/health";
+
+const statusFilter = Astro.url.searchParams.get("status") || "all";
+
+let dbQuery = supabaseAdmin
+  .from("projects")
+  .select("*, clients(name, company), proposals(project_title, slug)")
+  .order("created_at", { ascending: false });
+
+if (statusFilter !== "all") {
+  dbQuery = dbQuery.eq("status", statusFilter);
+}
+
+const { data: projects } = await dbQuery;
+const allProjects = projects || [];
+---
+
+<AdminLayout title="Proyectos & Etapas" activeSection="projects">
+  <div class="projects-page">
+    <div class="top-bar">
+      <div class="status-tabs">
+        <a href="/admin/projects?status=all" class={`tab-pill ${statusFilter === "all" ? "active" : ""}`}>
+          Todos ({allProjects.length})
+        </a>
+        <a href="/admin/projects?status=active" class={`tab-pill ${statusFilter === "active" ? "active" : ""}`}>
+          Activos
+        </a>
+        <a href="/admin/projects?status=paused" class={`tab-pill ${statusFilter === "paused" ? "active" : ""}`}>
+          En Pausa
+        </a>
+        <a href="/admin/projects?status=finished" class={`tab-pill ${statusFilter === "finished" ? "active" : ""}`}>
+          Finalizados
+        </a>
+      </div>
+
+      <a href="/admin/pipeline" class="btn-outline-sm">
+        → Ver Pipeline Visual
+      </a>
+    </div>
+
+    <!-- PROJECTS GRID -->
+    <div class="projects-grid">
+      {allProjects.map((project) => {
+        const stages = Array.isArray(project.stages) ? project.stages : [];
+        const completedStagesCount = stages.filter((s: any) => s.status === "done").length;
+        const totalStages = stages.length || 7;
+        const progressPct = totalStages > 0 ? (completedStagesCount / totalStages) * 100 : 0;
+        const currentStageObj = stages.find((s: any) => s.status === "current") || stages[project.current_stage - 1];
+        const health = project.health_status || calculateHealth(project.last_checkin_at, project.updated_at);
+
+        return (
+          <div class="project-card">
+            <div class="card-header">
+              <div>
+                <h3 class="pr-title">
+                  <a href={`/admin/projects/${project.id}`}>{project.title}</a>
+                </h3>
+                <div class="pr-client">
+                  {project.clients?.name || "Sin cliente"}
+                  {project.clients?.company ? ` · ${project.clients.company}` : ""}
+                </div>
+              </div>
+              <span class={`badge-status status-${project.status}`}>
+                {project.status === "active" ? "Activo" : project.status === "finished" ? "Finalizado" : project.status}
+              </span>
+            </div>
+
+            <!-- Health & Check-in Widget -->
+            <div class="health-row">
+              <ProjectHealth
+                client:load
+                projectId={project.id}
+                initialHealth={health}
+                lastCheckinAt={project.last_checkin_at}
+                updatedAt={project.updated_at}
+                compact={true}
+              />
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+              <div class="progress-label-row">
+                <span class="stage-name-current">
+                  {currentStageObj ? `● ${currentStageObj.name}` : "En desarrollo"}
+                </span>
+                <span class="progress-ratio">
+                  {completedStagesCount}/{totalStages} etapas
+                </span>
+              </div>
+              <div class="progress-bar-bg">
+                <div class="progress-bar-fill" style={`width: ${progressPct}%;`}></div>
+              </div>
+            </div>
+
+            <!-- Stages Pills -->
+            <div class="stages-pills-row">
+              {stages.map((stage: any, i: number) => (
+                <div
+                  class={`stage-mini-pill ${stage.status}`}
+                  title={`${stage.name} (${stage.status})`}
+                >
+                  {i + 1}
+                </div>
+              ))}
+            </div>
+
+            <div class="card-footer">
+              <span class="date-tag">
+                Inicio: {project.start_date || formatDate(project.created_at)}
+              </span>
+              <a href={`/admin/projects/${project.id}`} class="btn-manage">
+                Gestionar Etapas →
+              </a>
+            </div>
+          </div>
+        );
+      })}
+
+      {allProjects.length === 0 && (
+        <div class="empty-box">
+          <p>No hay proyectos registrados con los filtros actuales.</p>
+          <small>Los proyectos se crean automáticamente cuando un cliente acepta una propuesta.</small>
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .projects-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .status-tabs {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .tab-pill {
+    padding: 0.4rem 0.85rem;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 20px;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+
+  .tab-pill.active {
+    background: rgba(200, 255, 0, 0.15);
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .projects-grid {
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    }
+  }
+
+  .project-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.35rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: border-color 0.15s ease;
+  }
+
+  .project-card:hover {
+    border-color: var(--adm-border-light);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .pr-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+  }
+
+  .pr-title a {
+    color: var(--adm-ink);
+    text-decoration: none;
+  }
+
+  .pr-title a:hover {
+    color: var(--adm-lime);
+  }
+
+  .pr-client {
+    font-size: 0.82rem;
+    color: var(--adm-mute);
+    margin-top: 0.2rem;
+  }
+
+  .health-row {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+  }
+
+  .progress-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .progress-label-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+  }
+
+  .stage-name-current {
+    color: var(--adm-lime);
+    font-weight: 600;
+  }
+
+  .progress-ratio {
+    color: var(--adm-mute);
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .progress-bar-bg {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--adm-lime);
+    border-radius: 3px;
+  }
+
+  .stages-pills-row {
+    display: flex;
+    gap: 0.35rem;
+  }
+
+  .stage-mini-pill {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--adm-mute);
+    border: 1px solid var(--adm-border);
+  }
+
+  .stage-mini-pill.done {
+    background: rgba(151, 188, 98, 0.2);
+    border-color: #97BC62;
+    color: #97BC62;
+  }
+
+  .stage-mini-pill.current {
+    background: var(--adm-lime);
+    color: #141E18;
+    border-color: var(--adm-lime);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--adm-border);
+    font-size: 0.8rem;
+  }
+
+  .date-tag {
+    color: var(--adm-mute);
+  }
+
+  .btn-manage {
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .empty-box {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--adm-card);
+    border: 1px dashed var(--adm-border);
+    border-radius: 12px;
+    color: var(--adm-mute);
+  }
+</style>
