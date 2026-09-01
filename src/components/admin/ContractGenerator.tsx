@@ -8,7 +8,7 @@ interface ProposalOption {
   slug: string;
   status: string;
   client_id?: string;
-  clients?: { name: string; email?: string; phone?: string };
+  clients?: { name: string; email?: string; phone?: string; company?: string };
   investment?: any;
   timeline?: string;
   solution?: string;
@@ -92,7 +92,7 @@ export default function ContractGenerator({
     setDocFeedback(null);
 
     const clientName = prop.clients?.name || "Cliente";
-    const filename = `Contrato - ${prop.project_title} (${selectedTemplateName}).txt`;
+    const filename = `Contrato Oficial - ${prop.project_title}.txt`;
     const blob = new Blob([renderedContent], { type: "text/plain;charset=utf-8" });
     const file = new File([blob], filename, { type: "text/plain" });
 
@@ -112,8 +112,8 @@ export default function ContractGenerator({
 
       const data = await res.json();
       if (data.ok) {
-        setDocFeedback("✓ Contrato guardado en Documentos y vinculado a la propuesta.");
-        setTimeout(() => setDocFeedback(null), 4000);
+        setDocFeedback("✓ Contrato guardado en el archivo de Documentos y vinculado a la propuesta.");
+        setTimeout(() => setDocFeedback(null), 5000);
       } else {
         setDocFeedback("Error al guardar: " + (data.message || ""));
       }
@@ -126,12 +126,13 @@ export default function ContractGenerator({
 
   const currentProposal = proposals.find((p) => p.id === selectedProposalId);
   const currentTemplate = allTemplates.find((t) => t.name === selectedTemplateName);
+  const previewUrl = `/admin/contracts/preview?proposal_id=${selectedProposalId}&template_name=${encodeURIComponent(selectedTemplateName)}`;
 
   return (
     <div className="contract-gen-wrap">
       <div className="gen-controls-grid">
         <div className="control-box">
-          <label>1. Seleccionar Propuesta / Proyecto</label>
+          <label>1. Propuesta / Proyecto del Cliente</label>
           <select
             value={selectedProposalId}
             onChange={(e) => setSelectedProposalId(e.target.value)}
@@ -139,20 +140,20 @@ export default function ContractGenerator({
           >
             {proposals.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.project_title} · {p.clients?.name || "Sin cliente"} ({p.status})
+                {p.clients?.name || "Sin cliente"} · {p.project_title} ({p.status})
               </option>
             ))}
           </select>
           {currentProposal && (
             <div className="meta-hint">
               Estado: <span className="highlight">{currentProposal.status}</span> · Aceptado por:{" "}
-              {currentProposal.accepted_name || "Pendiente"}
+              {currentProposal.accepted_name || "Pendiente de aceptación"}
             </div>
           )}
         </div>
 
         <div className="control-box">
-          <label>2. Plantilla Legal</label>
+          <label>2. Plantilla Legal (AMARGO)</label>
           <select
             value={selectedTemplateName}
             onChange={(e) => setSelectedTemplateName(e.target.value)}
@@ -172,16 +173,25 @@ export default function ContractGenerator({
 
       <div className="editor-container">
         <div className="editor-header">
-          <span className="editor-title">Vista previa del Contrato / Orden de Servicio</span>
+          <div className="editor-title-wrap">
+            <span className="editor-title">Editor de Contrato / Orden de Servicio</span>
+            <span className="editor-sub">Podés ajustar cláusulas puntuales antes de imprimir o guardar</span>
+          </div>
+
           <div className="editor-actions">
+            <a
+              href={previewUrl}
+              target="_blank"
+              rel="noopener"
+              className="btn-action btn-pdf-view"
+            >
+              📄 Ver Documento Membretado / PDF ↗
+            </a>
             <button type="button" onClick={handleCopy} className="btn-action">
               {copied ? "✓ Copiado" : "Copiar texto"}
             </button>
             <button type="button" onClick={handleDownload} className="btn-action">
               Descargar .txt
-            </button>
-            <button type="button" onClick={() => window.print()} className="btn-action">
-              Imprimir / PDF
             </button>
             <button
               type="button"
@@ -189,7 +199,7 @@ export default function ContractGenerator({
               disabled={savingDoc}
               className="btn-action-primary"
             >
-              {savingDoc ? "Guardando..." : "Guardar en Documentos"}
+              {savingDoc ? "Guardando..." : "Guardar en Documentos del Proyecto"}
             </button>
           </div>
         </div>
@@ -197,7 +207,7 @@ export default function ContractGenerator({
         <textarea
           value={renderedContent}
           onChange={(e) => setRenderedContent(e.target.value)}
-          rows={22}
+          rows={24}
           className="contract-textarea"
         />
       </div>
@@ -267,7 +277,7 @@ export default function ContractGenerator({
           background: rgba(200, 255, 0, 0.15);
           border: 1px solid var(--adm-lime);
           color: var(--adm-lime);
-          padding: 0.75rem 1.25rem;
+          padding: 0.85rem 1.25rem;
           border-radius: 8px;
           font-size: 0.9rem;
           font-weight: 600;
@@ -284,17 +294,28 @@ export default function ContractGenerator({
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 1rem 1.25rem;
+          padding: 1.25rem 1.5rem;
           border-bottom: 1px solid var(--adm-border);
           background: rgba(0, 0, 0, 0.2);
           flex-wrap: wrap;
-          gap: 0.75rem;
+          gap: 1rem;
+        }
+
+        .editor-title-wrap {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
         }
 
         .editor-title {
-          font-size: 0.9rem;
-          font-weight: 700;
+          font-size: 0.98rem;
+          font-weight: 800;
           color: var(--adm-ink);
+        }
+
+        .editor-sub {
+          font-size: 0.78rem;
+          color: var(--adm-mute);
         }
 
         .editor-actions {
@@ -307,26 +328,42 @@ export default function ContractGenerator({
           background: rgba(255, 255, 255, 0.06);
           border: 1px solid var(--adm-border);
           color: var(--adm-ink);
-          padding: 0.4rem 0.8rem;
+          padding: 0.45rem 0.85rem;
           border-radius: 6px;
           font-size: 0.8rem;
           font-weight: 600;
           cursor: pointer;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
           transition: all 0.15s ease;
         }
 
         .btn-action:hover {
-          background: rgba(255, 255, 255, 0.12);
+          background: rgba(255, 255, 255, 0.14);
           border-color: var(--adm-ink);
+        }
+
+        .btn-pdf-view {
+          background: rgba(200, 255, 0, 0.15);
+          border-color: var(--adm-lime);
+          color: var(--adm-lime);
+          font-weight: 700;
+        }
+
+        .btn-pdf-view:hover {
+          background: rgba(200, 255, 0, 0.25);
+          color: #FFFFFF;
         }
 
         .btn-action-primary {
           background: var(--adm-lime, #C8FF00);
           color: #141E18;
           border: none;
-          padding: 0.4rem 0.9rem;
+          padding: 0.45rem 1rem;
           border-radius: 6px;
-          font-size: 0.8rem;
+          font-size: 0.82rem;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.15s ease;
@@ -348,7 +385,7 @@ export default function ContractGenerator({
           color: #E2E8E4;
           font-family: "JetBrains Mono", monospace;
           font-size: 0.88rem;
-          line-height: 1.6;
+          line-height: 1.65;
           padding: 1.5rem;
           box-sizing: border-box;
           resize: vertical;
@@ -356,11 +393,6 @@ export default function ContractGenerator({
 
         .contract-textarea:focus {
           outline: none;
-        }
-
-        @media print {
-          .gen-controls-grid, .editor-header, .sidebar, .top-nav { display: none !important; }
-          .contract-textarea { background: white; color: black; font-family: serif; font-size: 12pt; }
         }
       `}</style>
     </div>

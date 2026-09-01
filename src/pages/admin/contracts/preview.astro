@@ -1,0 +1,390 @@
+---
+// filepath: src/pages/admin/contracts/preview.astro
+export const prerender = false;
+
+import { supabaseAdmin } from "../../../lib/supabase";
+import { DEFAULT_TEMPLATES, renderContract } from "../../../lib/contracts";
+
+const proposalId = Astro.url.searchParams.get("proposal_id") || "";
+const templateName = Astro.url.searchParams.get("template_name") || DEFAULT_TEMPLATES[0].name;
+
+if (!proposalId) {
+  return Astro.redirect("/admin/contracts");
+}
+
+const { data: proposal } = await supabaseAdmin
+  .from("proposals")
+  .select("*, clients(*)")
+  .eq("id", proposalId)
+  .single();
+
+if (!proposal) {
+  return Astro.redirect("/admin/contracts");
+}
+
+const { data: dbTemplates } = await supabaseAdmin
+  .from("contract_templates")
+  .select("*")
+  .eq("name", templateName)
+  .maybeSingle();
+
+const template = dbTemplates || DEFAULT_TEMPLATES.find((t) => t.name === templateName) || DEFAULT_TEMPLATES[0];
+const renderedText = renderContract(template.content, proposal);
+const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Documento Legal · {proposal.project_title} · AMARGO</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <!-- TOP TOOLBAR (NO PRINT) -->
+    <header class="preview-toolbar no-print">
+      <div class="toolbar-left">
+        <a href="/admin/contracts" class="btn-back">← Volver al Generador</a>
+        <span class="doc-label">Vista Previa para Impresión / PDF</span>
+      </div>
+      <div class="toolbar-right">
+        <button type="button" onclick="window.print()" class="btn-print">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          <span>Descargar / Imprimir PDF</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- DOCUMENT CONTAINER (A4 STYLE) -->
+    <main class="document-page">
+      <!-- MEMBRETE OFICIAL AMARGO -->
+      <div class="letterhead">
+        <div class="brand-block">
+          <span class="brand-logo">AMARGO.</span>
+          <span class="brand-tagline">AGENCIA CREATIVA & DIGITAL</span>
+        </div>
+        <div class="contact-block">
+          <span>Atlántida, Canelones, Uruguay</span>
+          <span>contacto@amargocreativo.uy</span>
+          <span>amargocreativo.uy</span>
+        </div>
+      </div>
+
+      <div class="header-divider"></div>
+
+      <!-- METADATA DEL DOCUMENTO -->
+      <div class="doc-meta-grid">
+        <div>
+          <span class="meta-label">CLIENTE / TITULAR</span>
+          <strong class="meta-val">{clientName} {proposal.clients?.company ? `(${proposal.clients.company})` : ""}</strong>
+        </div>
+        <div>
+          <span class="meta-label">PROYECTO</span>
+          <strong class="meta-val">{proposal.project_title}</strong>
+        </div>
+        <div>
+          <span class="meta-label">IDENTIFICADOR ÚNICO</span>
+          <strong class="meta-val font-mono">AM-{proposal.id.substring(0, 8).toUpperCase()}-UY</strong>
+        </div>
+        <div>
+          <span class="meta-label">ESTADO DE ACEPTACIÓN</span>
+          <strong class={`meta-val ${proposal.status === "accepted" ? "status-accepted" : ""}`}>
+            {proposal.status === "accepted" ? "✓ Aceptado Digitalmente" : "Pendiente de Firma"}
+          </strong>
+        </div>
+      </div>
+
+      <!-- CUERPO LEGAL FORMATEADO -->
+      <div class="contract-body">
+        {renderedText}
+      </div>
+
+      <!-- SELLO DE FIRMA DIGITAL -->
+      <div class="signature-section">
+        <div class="sig-box">
+          <span class="sig-title">POR AMARGO AGENCIA CREATIVA</span>
+          <div class="sig-line"></div>
+          <span class="sig-name">Dirección Comercial y Técnica</span>
+          <span class="sig-sub">AMARGO Creative Studio · Atlántida, UY</span>
+        </div>
+
+        <div class="sig-box">
+          <span class="sig-title">POR EL CLIENTE</span>
+          <div class="sig-line"></div>
+          <span class="sig-name">{proposal.accepted_name || clientName}</span>
+          <span class="sig-sub">
+            {proposal.accepted_contact || proposal.clients?.email || "Firma y Aceptación Digital"}
+          </span>
+          {proposal.accepted_at && (
+            <span class="sig-digital-badge font-mono">
+              ✓ Registrado vía Magic Link: {new Date(proposal.accepted_at).toLocaleString("es-UY")}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <!-- FOOTER LEGAL -->
+      <footer class="doc-footer">
+        <span>Documento generado a través de la plataforma segura de AMARGO Agencia Creativa.</span>
+        <span>Canelones / Montevideo, Uruguay · Validez Comercial y Técnica</span>
+      </footer>
+    </main>
+
+    <style>
+      :root {
+        --ink: #141E18;
+        --mute: #6C776E;
+        --mate: #2E5339;
+        --border: #DCDCD4;
+        --bg-preview: #EBEAE5;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg-preview);
+        font-family: "Archivo", system-ui, sans-serif;
+        color: var(--ink);
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Toolbar */
+      .preview-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #141E18;
+        color: #FFFFFF;
+        padding: 0.85rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      }
+
+      .toolbar-left {
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+      }
+
+      .btn-back {
+        color: #B5E600;
+        text-decoration: none;
+        font-size: 0.88rem;
+        font-weight: 700;
+      }
+
+      .doc-label {
+        font-size: 0.82rem;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      .btn-print {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #C8FF00;
+        color: #141E18;
+        border: none;
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        font-weight: 800;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: transform 0.1s ease;
+      }
+
+      .btn-print:hover {
+        background: #d4ff1a;
+        transform: translateY(-1px);
+      }
+
+      /* A4 Style Document */
+      .document-page {
+        max-width: 800px;
+        margin: 2.5rem auto 4rem;
+        background: #FFFFFF;
+        padding: 3.5rem 3.5rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        box-sizing: border-box;
+        border-radius: 4px;
+      }
+
+      .letterhead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+
+      .brand-logo {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        letter-spacing: -0.04em;
+        display: block;
+        line-height: 1;
+      }
+
+      .brand-tagline {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        color: var(--mate);
+        font-weight: 700;
+        margin-top: 0.35rem;
+        display: block;
+      }
+
+      .contact-block {
+        text-align: right;
+        font-size: 0.78rem;
+        color: var(--mute);
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .header-divider {
+        height: 2px;
+        background: #141E18;
+        margin: 1.5rem 0 2rem;
+      }
+
+      .doc-meta-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.25rem;
+        background: #F8F9F6;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 2.5rem;
+      }
+
+      .meta-label {
+        display: block;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--mute);
+        margin-bottom: 0.2rem;
+      }
+
+      .meta-val {
+        font-size: 0.95rem;
+        color: var(--ink);
+      }
+
+      .status-accepted {
+        color: var(--mate);
+      }
+
+      .font-mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* Body */
+      .contract-body {
+        font-size: 0.95rem;
+        line-height: 1.75;
+        color: #242E28;
+        white-space: pre-wrap;
+        margin-bottom: 3.5rem;
+        font-family: "Archivo", system-ui, sans-serif;
+      }
+
+      /* Signatures */
+      .signature-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border);
+        page-break-inside: avoid;
+      }
+
+      .sig-box {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .sig-title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        color: var(--mute);
+        margin-bottom: 3.5rem;
+      }
+
+      .sig-line {
+        height: 1px;
+        background: #141E18;
+        margin-bottom: 0.6rem;
+      }
+
+      .sig-name {
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .sig-sub {
+        font-size: 0.8rem;
+        color: var(--mute);
+      }
+
+      .sig-digital-badge {
+        display: inline-block;
+        margin-top: 0.6rem;
+        font-size: 0.72rem;
+        color: var(--mate);
+        background: rgba(46, 83, 57, 0.08);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        border: 1px solid rgba(46, 83, 57, 0.2);
+      }
+
+      .doc-footer {
+        margin-top: 3.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--border);
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        color: var(--mute);
+        display: flex;
+        justify-content: space-between;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      @media print {
+        body {
+          background: #FFFFFF;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .document-page {
+          max-width: 100%;
+          margin: 0;
+          padding: 0;
+          box-shadow: none;
+        }
+      }
+    </style>
+  </body>
+</html>
