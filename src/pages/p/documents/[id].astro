@@ -1,0 +1,429 @@
+---
+// filepath: src/pages/p/documents/[id].astro
+export const prerender = false;
+
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate, formatMoney } from "../../../lib/format";
+import { DEFAULT_TEMPLATES, renderContract } from "../../../lib/contracts";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/404");
+}
+
+// 1. Obtener el documento con propuesta y cliente
+const { data: doc, error } = await supabaseAdmin
+  .from("documents")
+  .select("*, proposals(*, clients(*)), clients(*)")
+  .eq("id", id)
+  .single();
+
+if (error || !doc) {
+  return Astro.redirect("/404");
+}
+
+const proposal = doc.proposals;
+const client = doc.clients || proposal?.clients;
+const clientName = client?.name || proposal?.client_name || "Cliente";
+const proposalSlug = proposal?.slug || "propuesta";
+
+// Obtener contenido de documento o renderizar contrato/especificación
+let docBody = "";
+if (doc.type === "contract") {
+  const template = DEFAULT_TEMPLATES[0].content;
+  docBody = renderContract(template, proposal || { client_name: clientName, project_title: doc.name });
+} else if (doc.type === "brief") {
+  docBody = `ESPECIFICACIÓN TÉCNICA Y ARQUITECTURA DE SOFTWARE\n\nPROYECTO: ${proposal?.project_title || doc.name}\nCLIENTE: ${clientName}\nFECHA DE EMISIÓN: ${formatDate(doc.uploaded_at || new Date().toISOString())}\n\n1. INFRAESTRUCTURA Y STACK DE RENDIMIENTO\n• Framework: Astro 5 (Server-Side Rendering en Cloudflare Pages)\n• Backend & Base de Datos: Supabase PostgreSQL con RLS (Row Level Security)\n• Red de Distribución (CDN): Cloudflare Edge Network con latencia < 30ms en Uruguay\n• Seguridad: Certificado SSL/TLS con encriptación de 256 bits y cabeceras HSTS\n\n2. REQUISITOS TÉCNICOS CUBIERTOS\n• Tiempo de carga (LCP) inferior a 0.8 segundos en conexiones móviles 4G.\n• Integración directa de catálogo y cotizador hacia la API de WhatsApp Business.\n• SEO Semántico estructurado con Schema.org multi-región para Uruguay.\n• Panel administrativo protegido con hash criptográfico y control de sesiones.\n\nAMARGO Agencia Creativa · Atlántida, Canelones, Uruguay`;
+} else {
+  docBody = `GUÍA DE OPERACIÓN Y GESTIÓN DIGITAL\n\nDOCUMENTO OFICIAL: ${doc.name}\nCLIENTE: ${clientName}\nFECHA: ${formatDate(doc.uploaded_at || new Date().toISOString())}\n\n1. ACCESO AL PANEL Y GESTIÓN\nEl equipo comercial puede gestionar el estado de los vehículos/productos (Disponible, Reservado, Vendido), actualizar precios y recibir cotizaciones directamente en su WhatsApp.\n\n2. SEGURIDAD Y RESPALDOS\nLas bases de datos cuentan con copias de seguridad automáticas y protección contra ataques DDoS mediante la red global de Cloudflare.\n\n3. SOPORTE Y CONTACTO TÉCNICO\nPara cualquier actualización o guardia técnica, comunicarse con soporte directo de AMARGO Agencia Creativa.\n\nAMARGO Agencia Creativa · amargocreativo.uy`;
+}
+
+const pageTitle = `${doc.name} · ${clientName} · Amargo Creativo`;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div class="doc-viewer-page">
+      <!-- Top Navigation bar -->
+      <nav class="doc-nav no-print">
+        <div class="nav-container">
+          <a href={`/p/${proposalSlug}`} class="back-link">
+            <span>← Volver a la propuesta</span>
+          </a>
+          <div class="nav-actions">
+            <button type="button" class="btn-print-doc" onclick="window.print()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                <rect x="6" y="14" width="12" height="8"></rect>
+              </svg>
+              <span>Guardar como PDF / Imprimir</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Document Sheet -->
+      <main class="sheet-container">
+        <article class="doc-sheet">
+          <!-- Sheet Header -->
+          <header class="sheet-header">
+            <div class="brand-block">
+              <span class="brand-title">AMARGO<span class="dot">.</span></span>
+              <span class="brand-sub">AGENCIA CREATIVA & DESARROLLO DIGITAL</span>
+            </div>
+            <div class="meta-block">
+              <span class="doc-badge-pill">{doc.type === "contract" ? "CONTRATO OFICIAL" : doc.type === "brief" ? "ESPECIFICACIÓN TÉCNICA" : "DOCUMENTO ADJUNTO"}</span>
+              <span class="doc-id font-mono">ID: {doc.id.substring(0, 8).toUpperCase()}</span>
+              <span class="doc-date">{formatDate(doc.uploaded_at || new Date().toISOString())}</span>
+            </div>
+          </header>
+
+          <hr class="sheet-divider" />
+
+          <!-- Sheet Meta Details -->
+          <div class="sheet-client-grid">
+            <div class="c-col">
+              <span class="c-label font-mono">CLIENTE / TITULAR</span>
+              <strong class="c-val">{clientName}</strong>
+              {client?.company && client.company !== clientName && (
+                <span class="c-sub">{client.company}</span>
+              )}
+            </div>
+            <div class="c-col">
+              <span class="c-label font-mono">PROYECTO VINCULADO</span>
+              <strong class="c-val">{proposal?.project_title || "Servicio Digital Amargo"}</strong>
+              <span class="c-sub font-mono">Atlántida · Canelones · Uruguay</span>
+            </div>
+          </div>
+
+          <hr class="sheet-divider" />
+
+          <!-- Sheet Body Text -->
+          <div class="sheet-body">
+            <pre class="content-text">{docBody}</pre>
+          </div>
+
+          <!-- Sheet Footer & Official Seal -->
+          <footer class="sheet-footer">
+            <div class="seal-block">
+              <div class="seal-icon">✦</div>
+              <div>
+                <strong>DOCUMENTO OFICIAL VERIFICADO</strong>
+                <span>Emitido por AMARGO Agencia Creativa · República Oriental del Uruguay</span>
+              </div>
+            </div>
+            <div class="page-num font-mono">PÁGINA 1 / 1</div>
+          </footer>
+        </article>
+      </main>
+    </div>
+  </body>
+</html>
+
+<style>
+  :root {
+    --bg: #EAE9E1;
+    --sheet-bg: #FFFFFF;
+    --ink: #141E18;
+    --mate: #2E5339;
+    --mute: #6A766D;
+    --line: #E2E1D8;
+    --lime: #D4FF00;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Archivo", system-ui, sans-serif;
+    min-height: 100vh;
+  }
+
+  .doc-viewer-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* Top Navigation */
+  .doc-nav {
+    background: #141E18;
+    border-bottom: 1px solid #24352A;
+    padding: 0.85rem 1.25rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-container {
+    max-width: 52rem;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .back-link {
+    color: #A3B8AC;
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    transition: color 0.15s ease;
+  }
+
+  .back-link:hover {
+    color: #FFFFFF;
+  }
+
+  .btn-print-doc {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    background: var(--mate);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.45rem 1rem;
+    border-radius: 8px;
+    font-family: "Archivo", system-ui, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-print-doc:hover {
+    background: #23422D;
+    transform: translateY(-1px);
+  }
+
+  /* Sheet Container */
+  .sheet-container {
+    max-width: 52rem;
+    margin: 2rem auto 4rem;
+    padding: 0 1rem;
+    width: 100%;
+  }
+
+  .doc-sheet {
+    background: var(--sheet-bg);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: clamp(2rem, 5vw, 3.5rem);
+    box-shadow: 0 8px 32px rgba(20, 30, 24, 0.08);
+  }
+
+  /* Sheet Header */
+  .sheet-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .brand-title {
+    font-family: "Syne", sans-serif;
+    font-weight: 800;
+    font-size: 1.6rem;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    display: block;
+  }
+
+  .brand-title .dot {
+    color: var(--mate);
+  }
+
+  .brand-sub {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+    display: block;
+    margin-top: 0.2rem;
+  }
+
+  .meta-block {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  .doc-badge-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    background: rgba(46, 83, 57, 0.1);
+    color: var(--mate);
+    border: 1px solid rgba(46, 83, 57, 0.25);
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+  }
+
+  .doc-id {
+    font-size: 0.72rem;
+    color: var(--mute);
+    font-weight: 700;
+  }
+
+  .doc-date {
+    font-size: 0.76rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .sheet-divider {
+    border: none;
+    height: 1px;
+    background: var(--line);
+    margin: 1.75rem 0;
+  }
+
+  /* Sheet Client Grid */
+  .sheet-client-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .sheet-client-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .c-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .c-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+  }
+
+  .c-val {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .c-sub {
+    font-size: 0.82rem;
+    color: var(--mute);
+  }
+
+  /* Sheet Body */
+  .sheet-body {
+    margin: 2rem 0;
+  }
+
+  .content-text {
+    font-family: "Archivo", system-ui, sans-serif;
+    font-size: 0.94rem;
+    line-height: 1.75;
+    color: #2D3730;
+    white-space: pre-wrap;
+    word-break: break-word;
+    margin: 0;
+  }
+
+  /* Sheet Footer */
+  .sheet-footer {
+    border-top: 1px solid var(--line);
+    padding-top: 1.5rem;
+    margin-top: 3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .seal-block {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .seal-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(46, 83, 57, 0.1);
+    color: var(--mate);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+
+  .seal-block strong {
+    display: block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--mate);
+  }
+
+  .seal-block span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--mute);
+  }
+
+  .page-num {
+    font-size: 0.72rem;
+    color: var(--mute);
+    font-weight: 700;
+  }
+
+  /* Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    body {
+      background: #FFFFFF !important;
+    }
+
+    .sheet-container {
+      margin: 0;
+      padding: 0;
+      max-width: none;
+    }
+
+    .doc-sheet {
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+  }
+</style>

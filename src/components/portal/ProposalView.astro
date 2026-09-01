@@ -485,7 +485,8 @@ function formatEditorial(text: string) {
           const typeLabel = doc.type === "contract" ? "CONTRATO" : doc.type === "invoice" ? "FACTURA" : doc.type === "brief" ? "ESPECIFICACIÓN" : doc.type?.toUpperCase() || "DOCUMENTO";
           const isContract = doc.type === "contract";
           const isInvoice = doc.type === "invoice";
-          const downloadUrl = doc.url || `/api/documents/${doc.id}/download`;
+          const isRealStorageFile = doc.storage_path && !doc.storage_path.startsWith("http") && (doc.storage_path.endsWith(".pdf") || doc.storage_path.endsWith(".zip") || doc.storage_path.endsWith(".png") || doc.storage_path.endsWith(".jpg"));
+          const downloadUrl = isRealStorageFile ? `/api/documents/${doc.id}/download` : `/p/documents/${doc.id}`;
 
           return (
             <a href={downloadUrl} target="_blank" rel="noopener noreferrer" class="doc-card-premium">

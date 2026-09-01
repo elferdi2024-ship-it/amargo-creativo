@@ -31,17 +31,24 @@ export const GET: APIRoute = async ({ params, cookies, request }) => {
     }
   }
 
-  // Generar URL firmada
-  const signedUrl = await getSignedDocumentUrl("documents", doc.storage_path, 600);
-
-  if (!signedUrl) {
-    return new Response("No se pudo generar el enlace de descarga", { status: 500 });
+  // Si tiene archivo en storage
+  if (doc.storage_path && !doc.storage_path.startsWith("http")) {
+    const signedUrl = await getSignedDocumentUrl("documents", doc.storage_path, 600);
+    if (signedUrl) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: signedUrl,
+        },
+      });
+    }
   }
 
+  // Fallback a visor oficial de documento web
   return new Response(null, {
     status: 302,
     headers: {
-      Location: signedUrl,
+      Location: `/p/documents/${doc.id}`,
     },
   });
 };
