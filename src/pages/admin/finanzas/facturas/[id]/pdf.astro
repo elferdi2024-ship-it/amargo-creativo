@@ -4,6 +4,13 @@ export const prerender = false;
 
 import { supabaseAdmin } from "../../../../../lib/supabase";
 import { formatMoney, formatDate } from "../../../../../lib/format";
+import { isAuthenticated } from "../../../../../lib/auth";
+
+const authed = await isAuthenticated(Astro.cookies, Astro.request);
+if (!authed) {
+  const currentPath = Astro.url.pathname + Astro.url.search;
+  return Astro.redirect(`/admin/login?redirect=${encodeURIComponent(currentPath)}`);
+}
 
 const { id } = Astro.params;
 

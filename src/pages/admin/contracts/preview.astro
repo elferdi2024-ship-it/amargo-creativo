@@ -4,6 +4,13 @@ export const prerender = false;
 
 import { supabaseAdmin } from "../../../lib/supabase";
 import { DEFAULT_TEMPLATES, renderContract } from "../../../lib/contracts";
+import { isAuthenticated } from "../../../lib/auth";
+
+const authed = await isAuthenticated(Astro.cookies, Astro.request);
+if (!authed) {
+  const currentPath = Astro.url.pathname + Astro.url.search;
+  return Astro.redirect(`/admin/login?redirect=${encodeURIComponent(currentPath)}`);
+}
 
 const proposalId = Astro.url.searchParams.get("proposal_id") || "";
 const templateName = Astro.url.searchParams.get("template_name") || DEFAULT_TEMPLATES[0].name;
