@@ -10,16 +10,16 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
 });
 
 async function main() {
-  console.log("1. Creando o buscando cliente 'Mercado Atlántida'...");
+  console.log("1. Buscando o creando cliente 'Mercado Atlántida'...");
 
-  let { data: client, error: clientErr } = await supabase
+  let { data: client } = await supabase
     .from("clients")
     .select("id")
     .eq("name", "Mercado Atlántida")
     .maybeSingle();
 
   if (!client) {
-    const { data: newClient, error: insertClientErr } = await supabase
+    const { data: newClient } = await supabase
       .from("clients")
       .insert({
         name: "Mercado Atlántida",
@@ -30,17 +30,10 @@ async function main() {
       })
       .select()
       .single();
-
-    if (insertClientErr) {
-      console.error("Error creating client:", insertClientErr);
-      process.exit(1);
-    }
     client = newClient;
   }
 
-  console.log("Cliente listo con ID:", client.id);
-
-  console.log("2. Insertando propuesta comercial...");
+  console.log("2. Insertando/Actualizando propuesta con formato exacto...");
 
   const proposalData = {
     client_id: client.id,
@@ -48,7 +41,7 @@ async function main() {
     project_title: "Sistema Integral de Pedidos Online, Catálogo & Panel Operativo",
     status: "active",
     value_phrase: "Eliminamos las comisiones del 18% al 25% de apps intermediarias con un sistema propio ultrarrápido con catálogo, fraccionamiento por kilo y panel Kanban para el local.",
-    challenge: "Las plataformas tradicionales (PedidosYa, Rappi) retienen entre 15% y 25% de cada venta, no entregan los datos de los clientes y generan fricción operativa en el local.",
+    challenge: "Las plataformas tradicionales (PedidosYa, Rappi) retienen entre 15% y 25% de cada venta, no entregan la base de datos de los clientes y generan fricción operativa en el local.",
     solution: "Diseñamos e implementamos una infraestructura digital completa orientada a maximizar las ventas directas por WhatsApp con código único AT-XXXX, catálogo de 150+ productos y panel de control operativo Kanban en tiempo real.",
     includes: [
       "Tienda Web Móvil PWA con buscador predictivo y fraccionamiento por kilo (medio/uno/dos kg)",
@@ -67,6 +60,7 @@ async function main() {
     investment: {
       type: "plans",
       currency: "UYU",
+      paymentTerms: "Tarifa plana mensual sin contratos de permanencia. Facturación a mes adelantado.",
       plans: [
         {
           name: "Plan Base",
@@ -86,6 +80,7 @@ async function main() {
           name: "Plan Crecimiento",
           price: 6900,
           period: "UYU/mes",
+          recommended: true,
           featured: true,
           description: "Operación asistida, cambio de precios, altas de productos y marketing.",
           features: [
@@ -144,46 +139,25 @@ async function main() {
       ],
     },
     whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta del sistema para Mercado Atlántida y me interesa avanzar con la implementación.",
-    notes: "Propuesta de servicio recurrente y puesta en marcha para comercio local de Atlántida.",
+    notes: "Propuesta comercial para Mercado Atlántida.",
   };
 
-  // Upsert proposal by slug
-  const { data: existingProp } = await supabase
+  // Upsert proposal
+  const { data: existing } = await supabase
     .from("proposals")
     .select("id")
     .eq("slug", "mercado-atlantida")
     .maybeSingle();
 
-  if (existingProp) {
-    const { data: updated, error: updateErr } = await supabase
-      .from("proposals")
-      .update(proposalData)
-      .eq("id", existingProp.id)
-      .select()
-      .single();
-
-    if (updateErr) {
-      console.error("Error updating proposal:", updateErr);
-    } else {
-      console.log("Propuesta actualizada con éxito. ID:", updated.id);
-    }
+  if (existing) {
+    await supabase.from("proposals").update(proposalData).eq("id", existing.id);
+    console.log("Propuesta actualizada:", existing.id);
   } else {
-    const { data: inserted, error: insertErr } = await supabase
-      .from("proposals")
-      .insert(proposalData)
-      .select()
-      .single();
-
-    if (insertErr) {
-      console.error("Error inserting proposal:", insertErr);
-    } else {
-      console.log("Propuesta creada con éxito. ID:", inserted.id);
-    }
+    const { data: created } = await supabase.from("proposals").insert(proposalData).select().single();
+    console.log("Propuesta creada:", created.id);
   }
 
-  console.log("¡Todo listo! Podés acceder en /p/mercado-atlantida");
+  console.log("Listo en https://amargo-creativo.pages.dev/p/mercado-atlantida");
 }
 
-main().catch((err) => {
-  console.error("Fatal error:", err);
-});
+main();
