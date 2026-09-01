@@ -4,12 +4,15 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { checkAdminPassword, createSessionToken, setSessionCookie, clearSessionCookie } from "../../../lib/auth";
 
-export const POST: APIRoute = async ({ request, cookies }) => {
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
   try {
     const body = await request.json();
     const { password } = body;
 
-    if (!checkAdminPassword(password)) {
+    const runtimeEnv = (locals as any)?.runtime?.env || {};
+    const runtimePass = runtimeEnv.ADMIN_PASSWORD;
+
+    if (!checkAdminPassword(password, runtimePass)) {
       return new Response(
         JSON.stringify({ ok: false, message: "Contraseña incorrecta" }),
         { status: 401, headers: { "Content-Type": "application/json" } }
