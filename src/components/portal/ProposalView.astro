@@ -879,7 +879,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   @media (min-width: 800px) {
     .plans-grid-3 {
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
+      gap: 1.15rem;
     }
   }
 
@@ -956,13 +956,14 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     gap: 0.35rem;
   }
 
+  /* NOMBRE DEL PLAN CON 'Space Grotesk' EN NEGRITA */
   .plan-pro-name {
-    font-family: "Syne", sans-serif;
-    font-size: 1.35rem;
-    font-weight: 800;
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    font-size: 1.45rem;
+    font-weight: 700;
     color: var(--ink);
     margin: 0;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
   }
 
   .plan-pro-desc {
@@ -980,20 +981,20 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     gap: 0.25rem;
     border-top: 1px solid #ECEBE4;
     padding-top: 1rem;
-    min-height: 4.2rem;
+    min-height: 4.4rem;
     justify-content: center;
   }
 
   .normal-price-row {
     display: flex;
     align-items: baseline;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
   .discount-price-container {
     display: flex;
     flex-direction: column;
-    gap: 0.2rem;
+    gap: 0.25rem;
   }
 
   .strikethrough-row {
@@ -1004,7 +1005,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 
   .strikethrough-val {
     font-family: "Space Grotesk", system-ui, sans-serif;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: #8C9990;
     text-decoration: line-through;
     font-weight: 500;
@@ -1027,18 +1028,18 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   .final-price-row {
     display: flex;
     align-items: baseline;
-    gap: 0.35rem;
+    gap: 0.4rem;
   }
 
-  /* NÚMEROS DE PRECIO CON 'Space Grotesk' (ELEGANTE, NO AGRESIVO) */
+  /* NÚMEROS DE PRECIO CON 'Space Grotesk' MÁS GRANDES Y EQUILIBRADOS */
   .plan-price-num {
     font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
-    font-size: 1.62rem;
+    font-size: 1.85rem;
     font-weight: 700;
     color: var(--ink);
-    letter-spacing: -0.02em;
+    letter-spacing: -0.03em;
     font-variant-numeric: tabular-nums;
-    line-height: 1.1;
+    line-height: 1.05;
   }
 
   .price-highlight {
@@ -1047,7 +1048,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 
   .plan-price-period {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--mute);
     font-weight: 600;
   }
@@ -1164,7 +1165,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 
   .amount {
     font-family: "Space Grotesk", system-ui, sans-serif;
-    font-size: 1.85rem;
+    font-size: 1.95rem;
     font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0;
