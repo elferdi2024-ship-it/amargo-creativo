@@ -130,10 +130,10 @@ const wa = whatsappHref(waMessage);
     {inv.type === "plans" && plans.length > 0 ? (
       <div class="plans-grid">
         {plans.map((plan: any) => (
-          <div class={`plan-card ${plan.recommended ? "recommended" : ""}`}>
+          <div class={`plan-card ${plan.recommended || plan.featured ? "recommended" : ""}`}>
             <div class="plan-header">
               <strong>{plan.name}</strong>
-              {plan.recommended && <span class="sugerido">Sugerido</span>}
+              {(plan.recommended || plan.featured) && <span class="sugerido">Recomendado</span>}
             </div>
             <div class="plan-price">{formatMoney(plan.price, inv.currency)}</div>
             {plan.description && <p class="plan-desc">{plan.description}</p>}
@@ -173,7 +173,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">06</span>
         <span class="line"></span>
-        <span class="title">Retorno</span>
+        <span class="title">Retorno de Inversión</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -248,7 +248,8 @@ const wa = whatsappHref(waMessage);
       client:load
       slug={proposal.slug}
       status={proposal.status}
-      planName={inv.type === "plans" ? plans.find((p: any) => p.recommended)?.name : undefined}
+      plans={plans}
+      planName={inv.type === "plans" ? (plans.find((p: any) => p.recommended || p.featured)?.name) : undefined}
       clientName={clientName}
     />
 
