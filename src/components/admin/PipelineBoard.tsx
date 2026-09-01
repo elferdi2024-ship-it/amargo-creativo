@@ -1,6 +1,6 @@
 // filepath: src/components/admin/PipelineBoard.tsx
 import { useState } from "react";
-import { formatMoney, formatDate } from "../../lib/format";
+import { formatMoney } from "../../lib/format";
 import { daysSince } from "../../lib/health";
 
 export interface PipelineItem {
@@ -88,7 +88,7 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
         clientName: p.clients?.name || "Sin cliente",
         clientCompany: p.clients?.company,
         status: p.status,
-        amount: p.investment?.amount,
+        amount: p.investment?.amount || (p.investment?.plans?.[0]?.price),
         currency: p.investment?.currency || "USD",
         createdAt: p.created_at,
         slug: p.slug,
@@ -106,7 +106,7 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
         clientName: p.clients?.name || "Sin cliente",
         clientCompany: p.clients?.company,
         status: p.status,
-        amount: p.investment?.amount,
+        amount: p.investment?.amount || (p.investment?.plans?.[0]?.price),
         currency: p.investment?.currency || "USD",
         createdAt: p.accepted_at || p.created_at,
         slug: p.slug,
@@ -234,16 +234,19 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
 
       <style>{`
         .pipeline-board {
-          display: grid;
-          grid-template-columns: 1fr;
+          display: flex;
           gap: 1.25rem;
           overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x mandatory;
           padding-bottom: 1rem;
         }
 
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           .pipeline-board {
-            grid-template-columns: repeat(4, minmax(260px, 1fr));
+            display: grid;
+            grid-template-columns: repeat(4, minmax(240px, 1fr));
+            overflow-x: visible;
           }
         }
 
@@ -254,6 +257,20 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
           display: flex;
           flex-direction: column;
           min-height: 480px;
+          flex: 0 0 85vw;
+          scroll-snap-align: start;
+        }
+
+        @media (min-width: 640px) {
+          .pipeline-col {
+            flex: 0 0 320px;
+          }
+        }
+
+        @media (min-width: 1024px) {
+          .pipeline-col {
+            flex: 1;
+          }
         }
 
         .col-header {

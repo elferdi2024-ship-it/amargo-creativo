@@ -29,28 +29,32 @@ const wa = whatsappHref(waMessage);
 ---
 
 <article class="portal">
+  <!-- TOP HEADER -->
   <header class="portal-header">
     <a href="/" class="brand">AMARGO.</a>
     <div class="meta">
       <span class="label">Propuesta comercial</span>
       {proposal.status !== "active" && (
         <span class={`badge badge-${proposal.status}`}>
-          {proposal.status === "accepted" ? "Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
+          {proposal.status === "accepted" ? "✓ Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
         </span>
       )}
     </div>
   </header>
 
-  <p class="client-label">Para {clientName}</p>
-  <h1 class="project-title">{proposal.project_title}</h1>
+  <!-- HERO TITLE & CLIENT -->
+  <div class="hero-section">
+    <p class="client-label">Para {clientName}</p>
+    <h1 class="project-title">{proposal.project_title}</h1>
 
-  {proposal.value_phrase && (
-    <p class="value-phrase">{proposal.value_phrase}</p>
-  )}
+    {proposal.value_phrase && (
+      <p class="value-phrase">{proposal.value_phrase}</p>
+    )}
+  </div>
 
   {proposal.status === "accepted" && proposal.accepted_at && (
     <div class="accepted-banner">
-      ✓ Aceptada el {formatDate(proposal.accepted_at)}
+      ✓ Propuesta aceptada el {formatDate(proposal.accepted_at)}
       {proposal.accepted_name && ` por ${proposal.accepted_name}`}
       {proposal.accepted_plan && ` · Plan ${proposal.accepted_plan}`}.
     </div>
@@ -90,9 +94,9 @@ const wa = whatsappHref(waMessage);
       </div>
       <div class="scope-grid">
         {proposal.includes?.length > 0 && (
-          <div>
+          <div class="scope-box">
             <h3>Incluye</h3>
-            <ul>
+            <ul class="includes-list">
               {proposal.includes.map((item: string) => (
                 <li>
                   <span class="check">✓</span>
@@ -103,9 +107,9 @@ const wa = whatsappHref(waMessage);
           </div>
         )}
         {proposal.excludes?.length > 0 && (
-          <div>
+          <div class="scope-box excludes-box">
             <h3>No incluye</h3>
-            <ul class="excludes">
+            <ul class="excludes-list">
               {proposal.excludes.map((item: string) => (
                 <li>
                   <span class="minus">−</span>
@@ -120,7 +124,7 @@ const wa = whatsappHref(waMessage);
   )}
 
   <!-- 04 Inversión -->
-  <section class="section">
+  <section class="section" id="inversion">
     <div class="section-kicker">
       <span class="num">04</span>
       <span class="line"></span>
@@ -132,13 +136,16 @@ const wa = whatsappHref(waMessage);
         {plans.map((plan: any) => (
           <div class={`plan-card ${plan.recommended || plan.featured ? "recommended" : ""}`}>
             <div class="plan-header">
-              <strong>{plan.name}</strong>
+              <strong class="plan-title">{plan.name}</strong>
               {(plan.recommended || plan.featured) && <span class="sugerido">Recomendado</span>}
             </div>
-            <div class="plan-price">{formatMoney(plan.price, inv.currency)}</div>
+            <div class="plan-price-wrap">
+              <span class="plan-price">{formatMoney(plan.price, inv.currency)}</span>
+              {plan.period && <span class="plan-period">/ {plan.period}</span>}
+            </div>
             {plan.description && <p class="plan-desc">{plan.description}</p>}
             {plan.features?.length > 0 && (
-              <ul>
+              <ul class="plan-features">
                 {plan.features.map((f: string) => (
                   <li>✓ {f}</li>
                 ))}
@@ -148,7 +155,7 @@ const wa = whatsappHref(waMessage);
         ))}
       </div>
     ) : (
-      <div class="fixed-price">
+      <div class="fixed-price-card">
         <div class="amount">{formatMoney(inv.amount || 0, inv.currency)}</div>
         {inv.paymentTerms && <p class="terms">{inv.paymentTerms}</p>}
       </div>
@@ -161,7 +168,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">05</span>
         <span class="line"></span>
-        <span class="title">Tiempos</span>
+        <span class="title">Tiempos de entrega</span>
       </div>
       <p class="body-text">{proposal.timeline}</p>
     </section>
@@ -173,7 +180,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">06</span>
         <span class="line"></span>
-        <span class="title">Retorno de Inversión</span>
+        <span class="title">Retorno de Inversión (ROI)</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -198,12 +205,12 @@ const wa = whatsappHref(waMessage);
     </section>
   )}
 
-  <!-- Timeline -->
+  <!-- 07 Timeline -->
   <section class="section timeline-section">
     <div class="section-kicker">
       <span class="num">07</span>
       <span class="line"></span>
-      <span class="title">Estado del proyecto</span>
+      <span class="title">Etapas del proyecto</span>
     </div>
     <div class="timeline">
       {stages.map((stage: any) => (
@@ -212,7 +219,7 @@ const wa = whatsappHref(waMessage);
           <div class="stage-info">
             <strong>{stage.name}</strong>
             <span class="status-label">
-              {stage.status === "done" ? "Completado" : stage.status === "current" ? "En curso" : "Pendiente"}
+              {stage.status === "done" ? "✓ Completado" : stage.status === "current" ? "● En curso" : "○ Pendiente"}
             </span>
           </div>
         </div>
@@ -220,7 +227,7 @@ const wa = whatsappHref(waMessage);
     </div>
   </section>
 
-  <!-- Documentos -->
+  <!-- 08 Documentos -->
   {documents.length > 0 && (
     <section class="section">
       <div class="section-kicker">
@@ -242,7 +249,7 @@ const wa = whatsappHref(waMessage);
     </section>
   )}
 
-  <!-- Acciones -->
+  <!-- Acciones Principales -->
   <section class="actions no-print">
     <AcceptButton
       client:load
@@ -255,7 +262,10 @@ const wa = whatsappHref(waMessage);
 
     <div class="secondary-actions">
       <a href={wa} target="_blank" rel="noopener" class="btn-outline">
-        Hablar por WhatsApp
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        <span>Hablar por WhatsApp</span>
       </a>
       <button type="button" class="btn-ghost" onclick="window.print()">
         Guardar como PDF
@@ -263,13 +273,13 @@ const wa = whatsappHref(waMessage);
     </div>
 
     <p class="note">
-      El magic link no caduca. Si esta propuesta deja de estar disponible, Amargo la desactiva a mano.
+      Este Magic Link es personal y confidencial. Ante cualquier duda podés responder directamente por WhatsApp.
     </p>
   </section>
 
   <footer class="portal-footer">
-    <span>Amargo Creativo · Atlántida, Uruguay</span>
-    <span>Agencia digital de alto rendimiento</span>
+    <span>AMARGO CREATIVO · Atlántida, Canelones, Uruguay</span>
+    <span>Arquitectura limpia · Conversión directa · Cero bloat</span>
   </footer>
 </article>
 
@@ -279,30 +289,34 @@ const wa = whatsappHref(waMessage);
     --ink: #141E18;
     --mute: #6B756E;
     --mate: #2E4A3A;
+    --mate-light: #97BC62;
     --lime: #C8FF00;
     --border: #E2E4DC;
     --card: #FFFFFF;
   }
 
   .portal {
-    max-width: 44rem;
+    max-width: 48rem;
     margin: 0 auto;
-    padding: 2.5rem 1.25rem 6rem;
+    padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem;
     background: var(--bg);
     color: var(--ink);
     font-family: "Archivo", system-ui, -apple-system, sans-serif;
-    line-height: 1.5;
+    line-height: 1.55;
+    box-sizing: border-box;
   }
 
   .portal-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 3rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
   }
 
   .brand {
-    font-weight: 800;
+    font-weight: 900;
     font-size: 1.35rem;
     letter-spacing: -0.03em;
     color: var(--ink);
@@ -315,67 +329,72 @@ const wa = whatsappHref(waMessage);
 
   .label {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--mute);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .badge {
     display: inline-block;
-    margin-top: 0.35rem;
-    padding: 0.2rem 0.6rem;
+    margin-top: 0.25rem;
+    padding: 0.2rem 0.55rem;
     font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     border-radius: 4px;
     background: var(--border);
-    font-weight: 600;
+    font-weight: 700;
   }
 
-  .badge-accepted { background: rgba(200, 255, 0, 0.3); color: var(--mate); }
+  .badge-accepted { background: rgba(31, 138, 76, 0.15); color: #166534; border: 1px solid #C4EAD0; }
   .badge-disabled { background: #fee2e2; color: #991b1b; }
 
+  .hero-section {
+    margin-bottom: 2rem;
+  }
+
   .client-label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.18em;
     color: var(--mate);
-    font-weight: 700;
-    margin-bottom: 0.5rem;
+    font-weight: 800;
+    margin-bottom: 0.6rem;
   }
 
   .project-title {
-    font-size: clamp(2rem, 6vw, 3.2rem);
-    font-weight: 800;
-    line-height: 1.02;
-    letter-spacing: -0.03em;
-    margin: 0 0 1.5rem;
+    font-size: clamp(1.85rem, 5.5vw, 3.2rem);
+    font-weight: 900;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    margin: 0 0 1.25rem;
     color: var(--ink);
+    word-break: break-word;
   }
 
   .value-phrase {
-    font-size: 1.2rem;
-    color: #2e3831;
-    max-width: 38rem;
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    color: #2E3831;
+    max-width: 42rem;
     margin-bottom: 1.5rem;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 
   .accepted-banner {
-    background: rgba(200, 255, 0, 0.15);
-    border: 1px solid rgba(46, 74, 58, 0.2);
-    color: var(--mate);
+    background: #EBF7EE;
+    border: 1.5px solid #C4EAD0;
+    color: #166534;
     padding: 0.85rem 1.15rem;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 0.95rem;
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 2rem;
   }
 
   .section {
-    margin-top: 3.5rem;
+    margin-top: clamp(2.5rem, 6vw, 3.75rem);
   }
 
   .section-kicker {
@@ -386,11 +405,11 @@ const wa = whatsappHref(waMessage);
   }
 
   .section-kicker .num {
-    font-family: ui-monospace, monospace;
+    font-family: "JetBrains Mono", monospace;
     font-size: 0.75rem;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.15em;
     color: var(--mate);
-    font-weight: 700;
+    font-weight: 800;
   }
 
   .section-kicker .line {
@@ -400,78 +419,93 @@ const wa = whatsappHref(waMessage);
   }
 
   .section-kicker .title {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.16em;
     color: var(--mute);
-    font-weight: 600;
+    font-weight: 700;
   }
 
   .body-text {
-    font-size: 1.05rem;
-    color: #2b332d;
+    font-size: clamp(0.98rem, 2.2vw, 1.08rem);
+    color: #2B332D;
     line-height: 1.65;
     white-space: pre-line;
   }
 
   .scope-grid {
     display: grid;
-    gap: 2rem;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   @media (min-width: 640px) {
     .scope-grid { grid-template-columns: 1fr 1fr; }
   }
 
-  .scope-grid h3 {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    margin-bottom: 0.75rem;
-    color: var(--ink);
+  .scope-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.35rem;
   }
 
-  .scope-grid ul {
+  .scope-box h3 {
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin: 0 0 1rem;
+    color: var(--ink);
+    font-weight: 800;
+  }
+
+  .includes-list, .excludes-list {
     list-style: none;
     padding: 0;
     margin: 0;
-  }
-
-  .scope-grid li {
     display: flex;
-    gap: 0.6rem;
-    margin-bottom: 0.6rem;
-    font-size: 0.95rem;
-    line-height: 1.4;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  .check { color: var(--mate); font-weight: 800; }
-  .minus { color: var(--mute); font-weight: 800; }
+  .includes-list li, .excludes-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    font-size: 0.92rem;
+    line-height: 1.45;
+  }
 
-  .excludes li { color: var(--mute); }
+  .check { color: #1F8A4C; font-weight: 900; flex-shrink: 0; }
+  .minus { color: #94A3B8; font-weight: 900; flex-shrink: 0; }
 
+  .excludes-list li { color: var(--mute); }
+
+  /* Plans Grid */
   .plans-grid {
     display: grid;
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
 
   @media (min-width: 640px) {
-    .plans-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .plans-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
   }
 
   .plan-card {
-    border: 1px solid var(--border);
-    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
     padding: 1.5rem;
     background: var(--card);
     display: flex;
     flex-direction: column;
+    position: relative;
   }
 
   .plan-card.recommended {
-    border-color: var(--ink);
-    background: var(--ink);
-    color: white;
+    border-color: var(--mate);
+    background: #FAFCFA;
+    box-shadow: 0 10px 25px rgba(46, 74, 58, 0.08);
   }
 
   .plan-header {
@@ -481,51 +515,77 @@ const wa = whatsappHref(waMessage);
     margin-bottom: 0.5rem;
   }
 
+  .plan-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
   .sugerido {
     font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--lime);
-    font-weight: 700;
-    background: rgba(200, 255, 0, 0.15);
-    padding: 0.15rem 0.45rem;
-    border-radius: 4px;
+    letter-spacing: 0.1em;
+    color: #1F8A4C;
+    font-weight: 800;
+    background: #EBF7EE;
+    border: 1px solid #C4EAD0;
+    padding: 0.2rem 0.5rem;
+    border-radius: 99px;
+  }
+
+  .plan-price-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0.4rem 0 0.6rem;
   }
 
   .plan-price {
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin: 0.5rem 0;
+    font-size: clamp(1.6rem, 3.5vw, 1.95rem);
+    font-weight: 900;
     letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .plan-period {
+    font-size: 0.8rem;
+    color: var(--mute);
+    font-weight: 600;
   }
 
   .plan-desc {
     font-size: 0.85rem;
-    opacity: 0.85;
-    margin-bottom: 1rem;
-    line-height: 1.4;
+    color: var(--mute);
+    margin-bottom: 1.25rem;
+    line-height: 1.45;
   }
 
-  .plan-card ul {
+  .plan-features {
     list-style: none;
     padding: 0;
     margin: 0;
     font-size: 0.85rem;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.55rem;
+    flex: 1;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
   }
 
-  .fixed-price {
+  .plan-features li {
+    line-height: 1.4;
+  }
+
+  .fixed-price-card {
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 12px;
     padding: 1.75rem;
     background: var(--card);
   }
 
   .amount {
-    font-size: 2.8rem;
-    font-weight: 800;
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 900;
     letter-spacing: -0.03em;
     color: var(--ink);
   }
@@ -539,33 +599,35 @@ const wa = whatsappHref(waMessage);
   /* Table */
   .table-wrap {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--card);
   }
 
   table {
     width: 100%;
+    min-width: 500px;
     border-collapse: collapse;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     text-align: left;
   }
 
   th {
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--border);
-    font-weight: 700;
+    font-weight: 800;
     color: var(--ink);
-    background: var(--bg);
-    font-size: 0.75rem;
+    background: #F4F6F2;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
   }
 
   td {
-    padding: 0.75rem 1rem;
+    padding: 0.85rem 1rem;
     border-bottom: 1px solid var(--border);
-    color: #333;
+    color: #2B332D;
   }
 
   tr:last-child td {
@@ -576,13 +638,16 @@ const wa = whatsappHref(waMessage);
   .timeline {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
-    margin-top: 0.5rem;
+    gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
   }
 
   .stage {
     display: flex;
-    gap: 1rem;
+    gap: 0.85rem;
     align-items: flex-start;
   }
 
@@ -591,23 +656,23 @@ const wa = whatsappHref(waMessage);
     height: 14px;
     border-radius: 50%;
     background: var(--border);
-    margin-top: 0.3rem;
+    margin-top: 0.25rem;
     flex-shrink: 0;
   }
 
   .stage-done .dot {
-    background: var(--mate);
-    box-shadow: 0 0 0 3px rgba(200, 255, 0, 0.4);
+    background: #1F8A4C;
+    box-shadow: 0 0 0 3px rgba(31, 138, 76, 0.25);
   }
 
   .stage-current .dot {
     background: var(--ink);
-    box-shadow: 0 0 0 4px rgba(200, 255, 0, 0.5);
+    box-shadow: 0 0 0 4px rgba(200, 255, 0, 0.6);
   }
 
   .stage-info strong {
     display: block;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--ink);
   }
 
@@ -616,8 +681,8 @@ const wa = whatsappHref(waMessage);
     color: var(--mute);
   }
 
-  .stage-done .status-label { color: var(--mate); font-weight: 600; }
-  .stage-current .status-label { color: var(--ink); font-weight: 700; }
+  .stage-done .status-label { color: #1F8A4C; font-weight: 700; }
+  .stage-current .status-label { color: var(--ink); font-weight: 800; }
 
   /* Documents */
   .documents-list {
@@ -636,17 +701,16 @@ const wa = whatsappHref(waMessage);
     padding: 0.85rem 1.15rem;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     text-decoration: none;
     color: var(--ink);
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    font-size: 0.92rem;
+    font-weight: 600;
+    transition: all 0.15s ease;
   }
 
   .documents-list a:hover {
     border-color: var(--ink);
-    transform: translateX(3px);
   }
 
   .doc-type {
@@ -670,26 +734,27 @@ const wa = whatsappHref(waMessage);
 
   /* Actions */
   .actions {
-    margin-top: 4rem;
-    padding-top: 2.5rem;
+    margin-top: clamp(2.5rem, 6vw, 4rem);
+    padding-top: 2rem;
     border-top: 1px solid var(--border);
   }
 
   :global(.btn-primary) {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
     background: var(--ink);
     color: white;
     padding: 0.95rem 1.85rem;
-    font-weight: 700;
+    font-weight: 800;
     font-size: 1rem;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     width: 100%;
-    justify-content: center;
     transition: background 0.15s ease, transform 0.1s ease;
+    min-height: 48px;
   }
 
   @media (min-width: 640px) {
@@ -699,43 +764,50 @@ const wa = whatsappHref(waMessage);
   :global(.btn-primary:hover) { background: #000; transform: translateY(-1px); }
   :global(.btn-primary:disabled) { opacity: 0.6; cursor: not-allowed; transform: none; }
 
-  :global(.plan-tag) { font-weight: 400; opacity: 0.8; }
+  :global(.plan-tag) { font-weight: 400; opacity: 0.85; }
 
   .secondary-actions {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.25rem;
+    margin-top: 1rem;
   }
 
   .btn-outline, :global(.btn-outline) {
     display: inline-flex;
     align-items: center;
-    padding: 0.75rem 1.35rem;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.35rem;
     border: 1px solid var(--border);
-    border-radius: 8px;
-    background: transparent;
+    border-radius: 10px;
+    background: var(--card);
     color: var(--ink);
     text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.15s ease;
+    min-height: 48px;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .btn-outline, :global(.btn-outline) { width: auto; }
   }
 
   .btn-outline:hover, :global(.btn-outline:hover) {
     border-color: var(--ink);
-    background: rgba(0, 0, 0, 0.03);
   }
 
   .btn-ghost {
     background: none;
     border: none;
     color: var(--mute);
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     cursor: pointer;
     padding: 0.75rem 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
     text-decoration: underline;
   }
 
@@ -747,29 +819,29 @@ const wa = whatsappHref(waMessage);
     margin-top: 1.5rem;
     font-size: 0.8rem;
     color: var(--mute);
-    max-width: 30rem;
+    max-width: 32rem;
     line-height: 1.5;
   }
 
   .portal-footer {
-    margin-top: 4.5rem;
+    margin-top: 4rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border);
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     color: var(--mute);
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
   }
 
-  /* Modal */
+  /* Modals */
   :global(.modal-overlay) {
     position: fixed;
     inset: 0;
-    background: rgba(20, 30, 24, 0.6);
-    backdrop-filter: blur(4px);
+    background: rgba(20, 30, 24, 0.7);
+    backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -779,11 +851,12 @@ const wa = whatsappHref(waMessage);
 
   :global(.modal) {
     background: white;
-    border-radius: 12px;
-    padding: 2rem;
+    border-radius: 14px;
+    padding: 1.75rem;
     max-width: 440px;
     width: 100%;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
   }
 
   :global(.modal h3) {
@@ -794,52 +867,14 @@ const wa = whatsappHref(waMessage);
   }
 
   :global(.modal p) {
-    color: #4a554e;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.5;
-  }
-
-  :global(.modal label) {
-    display: block;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--ink);
-  }
-
-  :global(.modal input) {
-    display: block;
-    width: 100%;
-    box-sizing: border-box;
-    margin-top: 0.4rem;
-    padding: 0.75rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: inherit;
-  }
-
-  :global(.modal input:focus) {
-    outline: none;
-    border-color: var(--ink);
-  }
-
-  :global(.modal-actions) {
-    display: flex;
-    gap: 0.75rem;
-    justify-content: flex-end;
-    margin-top: 1.5rem;
-  }
-
-  :global(.error) {
-    color: #b91c1c;
-    font-size: 0.85rem;
-    margin-top: -0.5rem;
+    color: #4A554E;
+    font-size: 0.92rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.45;
   }
 
   @media print {
+    .portal { padding: 0; }
     .no-print { display: none !important; }
-    .portal { padding: 0; max-width: none; }
   }
 </style>
