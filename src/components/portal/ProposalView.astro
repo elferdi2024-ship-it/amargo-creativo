@@ -11,7 +11,11 @@ interface Props {
 
 const { proposal, project, documents = [] } = Astro.props;
 
+// Jerarquía: Cliente como protagonista, Objetivo como subtítulo de alto impacto
 const clientName = proposal.clients?.name || proposal.client_name || proposal.clientName || "Cliente";
+const clientCompany = proposal.clients?.company;
+const projectObjective = proposal.project_title || proposal.projectTitle || "Propuesta de Desarrollo Web";
+
 const stages = project?.stages || [
   { id: 1, name: "Propuesta y Alcance", status: "done" },
   { id: 2, name: "Kick-off y Contenidos", status: "pending" },
@@ -26,31 +30,40 @@ const inv = proposal.investment || {};
 const plans = inv.plans || [];
 const recommended = plans.find((p: any) => p.recommended || p.featured)?.name ?? plans[0]?.name;
 
-const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, proposal.project_title || proposal.projectTitle);
+const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, projectObjective);
 const wa = whatsappHref(waMessage);
 ---
 
 <article class="portal">
-  <!-- HEADER -->
+  <!-- TOP BRAND & METADATA -->
   <header class="portal-header">
     <a href="/" class="brand">AMARGO.</a>
     <div class="meta">
       <span class="label">PROPUESTA<br />COMERCIAL</span>
       {proposal.status !== "active" && (
         <span class={`badge badge-${proposal.status}`}>
-          {proposal.status === "accepted" ? "Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
+          {proposal.status === "accepted" ? "✓ Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
         </span>
       )}
     </div>
   </header>
 
-  <!-- CLIENT & TITLE -->
+  <!-- HERO: CLIENTE PRINCIPAL + OBJETIVO -->
   <div class="hero-block">
-    <p class="client-label">PARA {clientName.toUpperCase()}</p>
-    <h1 class="project-title">{proposal.project_title || proposal.projectTitle}</h1>
+    <span class="hero-pretitle">PROPUESTA EXCLUSIVA PARA</span>
+    <!-- Título Principal: Nombre del Cliente / Marca -->
+    <h1 class="client-hero-title">{clientName}</h1>
+    {clientCompany && clientCompany !== clientName && (
+      <span class="client-company-tag">{clientCompany}</span>
+    )}
 
-    {(proposal.value_phrase || proposal.valuePhrase) && (
-      <p class="value-phrase">{proposal.value_phrase || proposal.valuePhrase}</p>
+    <!-- Objetivo del Proyecto: Subtítulo elegante y directo -->
+    <div class="objective-badge-wrap">
+      <h2 class="project-objective-title">{projectObjective}</h2>
+    </div>
+
+    {proposal.value_phrase && (
+      <p class="value-phrase">{proposal.value_phrase}</p>
     )}
   </div>
 
@@ -92,7 +105,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">03</span>
         <span class="line"></span>
-        <span class="title">ALCANCE</span>
+        <span class="title">ALCANCE DEL SERVICIO</span>
       </div>
       <div class="scope-container">
         {proposal.includes?.length > 0 && (
@@ -130,7 +143,7 @@ const wa = whatsappHref(waMessage);
     <div class="section-kicker">
       <span class="num">04</span>
       <span class="line"></span>
-      <span class="title">INVERSIÓN</span>
+      <span class="title">INVERSIÓN Y PLANES</span>
     </div>
 
     {inv.type === "plans" && plans.length > 0 ? (
@@ -143,14 +156,21 @@ const wa = whatsappHref(waMessage);
               data-plan={plan.name}
             >
               <div class="plan-header">
-                <span class="plan-name">{plan.name}</span>
+                <div>
+                  <span class="plan-name">{plan.name}</span>
+                  {plan.description && <p class="plan-desc">{plan.description}</p>}
+                </div>
                 {(plan.recommended || plan.featured) && <span class="sugerido">SUGERIDO</span>}
               </div>
-              <div class="plan-price">
-                {formatMoney(plan.price, inv.currency)}
-                {plan.period && <span class="plan-period"> {plan.period}</span>}
+
+              <div class="plan-price-block">
+                <span class="plan-price-label">Inversión:</span>
+                <div class="plan-price">
+                  {formatMoney(plan.price, inv.currency)}
+                  {plan.period && <span class="plan-period"> {plan.period}</span>}
+                </div>
               </div>
-              {plan.description && <p class="plan-desc">{plan.description}</p>}
+
               {plan.features?.length > 0 && (
                 <ul class="plan-features">
                   {plan.features.map((f: string) => (
@@ -166,14 +186,23 @@ const wa = whatsappHref(waMessage);
         })}
       </div>
     ) : (
-      <div class="fixed-price">
-        <p class="amount">{formatMoney(inv.amount ?? 0, inv.currency)}</p>
+      <div class="fixed-price-card">
+        <div class="fixed-price-header">
+          <div>
+            <span class="fixed-price-label">Inversión del Proyecto</span>
+            <div class="amount">{formatMoney(inv.amount ?? 0, inv.currency)}</div>
+          </div>
+          <span class="fixed-badge">Llave en mano</span>
+        </div>
         {inv.paymentTerms && <p class="terms">{inv.paymentTerms}</p>}
       </div>
     )}
 
-    {inv.paymentTerms && (
-      <p class="payment-terms">{inv.paymentTerms}</p>
+    {inv.paymentTerms && inv.type === "plans" && (
+      <div class="payment-terms-box">
+        <span class="pt-icon">ℹ️</span>
+        <p class="payment-terms">{inv.paymentTerms}</p>
+      </div>
     )}
   </section>
 
@@ -183,7 +212,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">05</span>
         <span class="line"></span>
-        <span class="title">TIEMPOS</span>
+        <span class="title">TIEMPOS Y CRONOGRAMA</span>
       </div>
       <p class="body-text">{proposal.timeline}</p>
     </section>
@@ -195,7 +224,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">06</span>
         <span class="line"></span>
-        <span class="title">RETORNO</span>
+        <span class="title">RETORNO ESTIMADO</span>
       </div>
       <div class="table-wrap">
         <table>
@@ -246,7 +275,7 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">08</span>
         <span class="line"></span>
-        <span class="title">DOCUMENTOS</span>
+        <span class="title">DOCUMENTOS ADJUNTOS</span>
       </div>
       <ul class="documents">
         {documents.map((doc: any) => (
@@ -275,7 +304,10 @@ const wa = whatsappHref(waMessage);
 
     <div class="secondary-actions">
       <a href={wa} target="_blank" rel="noopener" class="btn-outline-wa">
-        Hablar por WhatsApp
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+        <span>Hablar por WhatsApp</span>
       </a>
       <button type="button" class="btn-pdf-print" onclick="window.print()">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -312,7 +344,7 @@ const wa = whatsappHref(waMessage);
   :root {
     --bg: #F4F3EE;
     --ink: #141E18;
-    --mute: #7A847C;
+    --mute: #6C776E;
     --mate: #2E5339;
     --lime: #D4FF00;
     --border: #E5E4DC;
@@ -387,22 +419,24 @@ const wa = whatsappHref(waMessage);
 
   /* Hero */
   .hero-block {
-    margin-bottom: 2.5rem;
+    margin-bottom: 2.75rem;
   }
 
-  .client-label {
+  .hero-pretitle {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--mate);
-    margin: 0 0 1rem;
+    display: block;
+    margin-bottom: 0.6rem;
   }
 
-  .project-title {
+  /* Nombre del Cliente en Grande */
+  .client-hero-title {
     font-family: "Syne", sans-serif;
-    font-size: clamp(2.3rem, 7vw, 3.8rem);
+    font-size: clamp(2.4rem, 7vw, 4rem);
     font-weight: 800;
     line-height: 0.95;
     letter-spacing: -0.04em;
@@ -411,12 +445,37 @@ const wa = whatsappHref(waMessage);
     word-break: break-word;
   }
 
+  .client-company-tag {
+    display: inline-block;
+    font-size: 0.88rem;
+    color: var(--mute);
+    margin-top: 0.35rem;
+    font-weight: 500;
+  }
+
+  /* Objetivo del Proyecto */
+  .objective-badge-wrap {
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .project-objective-title {
+    font-family: "Syne", sans-serif;
+    font-size: clamp(1.2rem, 3.5vw, 1.65rem);
+    font-weight: 700;
+    color: #2D3D32;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin: 0;
+  }
+
   .value-phrase {
-    margin-top: 1.75rem;
-    font-size: clamp(1.05rem, 2.5vw, 1.22rem);
-    line-height: 1.55;
-    color: #2D3630;
-    max-width: 38rem;
+    margin-top: 1.5rem;
+    font-size: clamp(1.02rem, 2.3vw, 1.18rem);
+    line-height: 1.6;
+    color: #38423B;
+    max-width: 40rem;
   }
 
   .accepted-banner {
@@ -467,7 +526,7 @@ const wa = whatsappHref(waMessage);
 
   .body-text {
     font-size: clamp(0.98rem, 2.2vw, 1.05rem);
-    line-height: 1.65;
+    line-height: 1.68;
     color: #354038;
     white-space: pre-line;
     margin: 0;
@@ -526,23 +585,24 @@ const wa = whatsappHref(waMessage);
     color: var(--mute);
   }
 
-  /* Plans Grid */
+  /* Refined Pricing Cards */
   .plans-grid {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.15rem;
   }
 
   .plan-card {
     border: 1.5px solid var(--border);
-    border-radius: 20px;
-    padding: 1.6rem 1.75rem;
+    border-radius: 18px;
+    padding: 1.5rem 1.65rem;
     background: var(--card);
     text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
+    gap: 0.85rem;
   }
 
   .plan-card:hover {
@@ -554,75 +614,100 @@ const wa = whatsappHref(waMessage);
     border-color: var(--card-dark);
     background: var(--card-dark);
     color: #FFFFFF;
-    box-shadow: 0 12px 36px rgba(13, 21, 16, 0.16);
+    box-shadow: 0 12px 32px rgba(13, 21, 16, 0.15);
   }
 
   .plan-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    gap: 1rem;
   }
 
   .plan-name {
     font-family: "Syne", sans-serif;
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 700;
     margin: 0;
+    display: block;
+  }
+
+  .plan-desc {
+    margin: 0.25rem 0 0;
+    font-size: 0.88rem;
+    color: var(--mute);
+    line-height: 1.4;
+  }
+
+  .plan-card.selected .plan-desc {
+    color: rgba(255, 255, 255, 0.72);
   }
 
   .sugerido {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.16em;
     color: var(--mate);
+    flex-shrink: 0;
+    background: rgba(46, 83, 57, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
   }
 
   .plan-card.selected .sugerido {
     color: var(--lime);
+    background: rgba(212, 255, 0, 0.15);
+  }
+
+  .plan-price-block {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+  }
+
+  .plan-card.selected .plan-price-block {
+    border-top-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .plan-price-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+  }
+
+  .plan-card.selected .plan-price-label {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .plan-price {
     font-family: "Syne", sans-serif;
-    margin: 0.85rem 0 0.5rem;
-    font-size: 1.85rem;
-    font-weight: 800;
+    font-size: 1.45rem;
+    font-weight: 700;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
   }
 
   .plan-period {
     font-family: "Archivo", sans-serif;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 500;
     opacity: 0.8;
   }
 
-  .plan-desc {
-    margin: 0 0 1.25rem;
-    font-size: 0.92rem;
-    color: var(--mute);
-    line-height: 1.45;
-  }
-
-  .plan-card.selected .plan-desc {
-    color: rgba(255, 255, 255, 0.75);
-  }
-
   .plan-features {
     list-style: none;
-    padding: 1rem 0 0;
+    padding: 0.25rem 0 0;
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.55rem;
     font-size: 0.88rem;
-    border-top: 1px solid var(--border);
-  }
-
-  .plan-card.selected .plan-features {
-    border-top-color: rgba(255, 255, 255, 0.15);
   }
 
   .plan-features li {
@@ -641,31 +726,82 @@ const wa = whatsappHref(waMessage);
     color: var(--lime);
   }
 
-  .fixed-price {
+  /* Fixed Price Card */
+  .fixed-price-card {
     border: 1.5px solid var(--border);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 1.75rem;
     background: var(--card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .fixed-price-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .fixed-price-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--mute);
+    font-weight: 700;
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  .fixed-badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: rgba(46, 83, 57, 0.1);
+    color: var(--mate);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
   }
 
   .amount {
     font-family: "Syne", sans-serif;
-    font-size: 2.5rem;
-    font-weight: 800;
+    font-size: 2rem;
+    font-weight: 700;
     letter-spacing: -0.02em;
     margin: 0;
+    color: var(--ink);
   }
 
   .terms {
-    margin-top: 0.75rem;
-    font-size: 0.92rem;
+    margin: 0;
+    font-size: 0.9rem;
     color: var(--mute);
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 0.85rem;
+  }
+
+  .payment-terms-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    background: #ECEBE5;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+  }
+
+  .pt-icon {
+    font-size: 0.95rem;
   }
 
   .payment-terms {
-    margin-top: 1.25rem;
-    font-size: 0.88rem;
-    color: var(--mute);
+    margin: 0;
+    font-size: 0.85rem;
+    color: #4A544D;
     line-height: 1.5;
   }
 
@@ -848,6 +984,7 @@ const wa = whatsappHref(waMessage);
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     height: 48px;
     border: 1.5px solid #DCDCD4;
     border-radius: 12px;

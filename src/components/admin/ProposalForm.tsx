@@ -47,9 +47,9 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
 
   const [plans, setPlans] = useState<PlanItem[]>(
     initial?.investment?.plans || [
-      { name: "Esencial", price: 650, description: "Landing page de alta velocidad", features: ["1 Página", "SEO Inicial", "Analytics", "Hosting 1 año"], recommended: false },
-      { name: "Pro", price: 1200, description: "Sitio corporativo y conversiones", features: ["Hasta 5 Páginas", "SEO Avanzado", "WhatsApp CRM", "Velocidad < 0.8s"], recommended: true },
-      { name: "Custom", price: 2400, description: "Desarrollo a medida y SaaS", features: ["Panel Admin", "Base de datos", "Integraciones API", "Soporte dedicado"], recommended: false },
+      { name: "Vidriera", price: 980, description: "Presencia digital de alto impacto para abrir el canal.", features: ["Landing + 6 secciones", "WhatsApp Commerce en CTAs", "SEO local base", "Entrega en 10 días hábiles"], recommended: false },
+      { name: "Mercado", price: 1680, description: "El sitio que trabaja como un puesto más del predio.", features: ["Directorio de puestos", "Fichas de producto ilimitadas", "Panel de novedades", "SEO técnico + Schema", "Entrega en 16 días hábiles"], recommended: true },
+      { name: "Motor", price: 2480, description: "Plataforma viva: catálogo, búsqueda y operación diaria.", features: ["Todo lo de Mercado", "Búsqueda instantánea", "Horarios y stock por puesto", "Capacitación al equipo", "30 días de ajuste post-lanzamiento"], recommended: false },
     ]
   );
 
@@ -160,7 +160,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
         <h3 className="section-title">1. Cliente y Encabezado</h3>
         <div className="form-grid-2">
           <label className="form-field">
-            <span className="field-label">Cliente *</span>
+            <span className="field-label">Cliente (Aparece como Título Principal H1) *</span>
             <select
               required
               value={form.client_id}
@@ -177,12 +177,12 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
           </label>
 
           <label className="form-field">
-            <span className="field-label">Título del Proyecto *</span>
+            <span className="field-label">Objetivo del Proyecto (Subtítulo destacado) *</span>
             <input
               required
               value={form.project_title}
               onChange={(e) => update("project_title", e.target.value)}
-              placeholder="Ej: Rediseño Web & Plataforma de Ventas"
+              placeholder="Ej: Sitio web + WhatsApp Commerce"
               className="adm-input"
             />
           </label>
@@ -209,19 +209,19 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
             <input
               value={form.custom_slug}
               onChange={(e) => update("custom_slug", e.target.value)}
-              placeholder="Se genera automáticamente si se deja vacío"
+              placeholder="Ej: mercado-atlantida"
               className="adm-input font-mono"
             />
           </label>
         </div>
 
         <label className="form-field">
-          <span className="field-label">Frase de Valor / Subtítulo</span>
+          <span className="field-label">Frase de Valor / Resumen</span>
           <textarea
             rows={2}
             value={form.value_phrase}
             onChange={(e) => update("value_phrase", e.target.value)}
-            placeholder="Una frase poderosa que resuma la transformación comercial..."
+            placeholder="Tu local abre a las 8. Tu web, nunca cierra. Una vidriera que vende todos los días..."
             className="adm-textarea"
           />
         </label>
@@ -263,7 +263,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
               rows={6}
               value={form.includes}
               onChange={(e) => update("includes", e.target.value)}
-              placeholder="Diseño UI/UX en Figma&#10;Desarrollo en Astro 5 + Cloudflare&#10;Optimización Core Web Vitals <0.8s&#10;Capacitación de 1 hora"
+              placeholder="Sitio a medida en Astro 5, mobile-first&#10;Home editorial + directorio de puestos&#10;Botón de compra/consulta a WhatsApp&#10;Lanzamiento y capacitación de 60 minutos"
               className="adm-textarea"
             />
           </label>
@@ -274,7 +274,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
               rows={6}
               value={form.excludes}
               onChange={(e) => update("excludes", e.target.value)}
-              placeholder="Producción audiovisual in situ&#10;Presupuesto de pauta publicitaria en Meta/Google&#10;Integraciones con ERP legacy no documentado"
+              placeholder="Fotografía de producto (podemos coordinar sesión aparte)&#10;Gestión diaria de redes o community management&#10;Pasarela de cobro con tarjeta"
               className="adm-textarea"
             />
           </label>
@@ -293,7 +293,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
               className="adm-input"
             >
               <option value="fixed">Precio Fijo Único</option>
-              <option value="plans">Grilla de 3 Planes</option>
+              <option value="plans">Grilla de Planes (Recomendado)</option>
             </select>
           </label>
 
@@ -340,7 +340,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
                       type="text"
                       value={p.name}
                       onChange={(e) => updatePlan(idx, "name", e.target.value)}
-                      placeholder="Nombre del Plan"
+                      placeholder="Nombre del Plan (Ej: Mercado)"
                       className="adm-input-sm"
                     />
                     <div className="plan-price-group">
@@ -373,7 +373,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
                     type="text"
                     value={p.description}
                     onChange={(e) => updatePlan(idx, "description", e.target.value)}
-                    placeholder="Descripción corta del plan..."
+                    placeholder="Descripción de valor (Ej: El sitio que trabaja como un puesto más)..."
                     className="adm-input-sm"
                   />
 
@@ -396,7 +396,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
             <input
               value={form.payment_terms}
               onChange={(e) => update("payment_terms", e.target.value)}
-              placeholder="Ej: 50% al inicio · 50% contra entrega"
+              placeholder="Ej: 50% al inicio · 50% contra entrega. Transferencia BROU / Santander o Wise."
               className="adm-input"
             />
           </label>
@@ -406,7 +406,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
             <input
               value={form.timeline}
               onChange={(e) => update("timeline", e.target.value)}
-              placeholder="Ej: 3 a 4 semanas hábiles"
+              placeholder="Ej: Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento"
               className="adm-input"
             />
           </label>
