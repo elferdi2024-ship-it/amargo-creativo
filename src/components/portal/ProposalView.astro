@@ -11,7 +11,7 @@ interface Props {
 
 const { proposal, project, documents = [] } = Astro.props;
 
-const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
+const clientName = proposal.clients?.name || proposal.client_name || proposal.clientName || "Cliente";
 const stages = project?.stages || [
   { id: 1, name: "Propuesta y Alcance", status: "done" },
   { id: 2, name: "Kick-off y Contenidos", status: "pending" },
@@ -24,44 +24,44 @@ const stages = project?.stages || [
 
 const inv = proposal.investment || {};
 const plans = inv.plans || [];
-const waMessage = proposal.whatsapp_message || defaultWhatsappMessage(clientName, proposal.project_title);
+const recommended = plans.find((p: any) => p.recommended)?.name ?? plans[0]?.name;
+
+const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, proposal.project_title || proposal.projectTitle);
 const wa = whatsappHref(waMessage);
 ---
 
 <article class="portal">
-  <!-- TOP HEADER -->
+  <!-- Header -->
   <header class="portal-header">
     <a href="/" class="brand">AMARGO.</a>
     <div class="meta">
       <span class="label">Propuesta comercial</span>
       {proposal.status !== "active" && (
         <span class={`badge badge-${proposal.status}`}>
-          {proposal.status === "accepted" ? "✓ Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
+          {proposal.status === "accepted" ? "Aceptada" : proposal.status === "disabled" ? "No disponible" : proposal.status}
         </span>
       )}
     </div>
   </header>
 
-  <!-- HERO TITLE & CLIENT -->
-  <div class="hero-section">
-    <p class="client-label">Para {clientName}</p>
-    <h1 class="project-title">{proposal.project_title}</h1>
+  <!-- Client + Title -->
+  <p class="client-label">Para {clientName}</p>
+  <h1 class="project-title">{proposal.project_title || proposal.projectTitle}</h1>
 
-    {proposal.value_phrase && (
-      <p class="value-phrase">{proposal.value_phrase}</p>
-    )}
-  </div>
+  {(proposal.value_phrase || proposal.valuePhrase) && (
+    <p class="value-phrase">{proposal.value_phrase || proposal.valuePhrase}</p>
+  )}
 
-  {proposal.status === "accepted" && proposal.accepted_at && (
+  {proposal.status === "accepted" && (proposal.accepted_at || proposal.acceptedAt) && (
     <div class="accepted-banner">
-      ✓ Propuesta aceptada el {formatDate(proposal.accepted_at)}
-      {proposal.accepted_name && ` por ${proposal.accepted_name}`}
-      {proposal.accepted_plan && ` · Plan ${proposal.accepted_plan}`}.
+      Aceptada el {formatDate(proposal.accepted_at || proposal.acceptedAt)}
+      {(proposal.accepted_name || proposal.acceptedName) && ` por ${proposal.accepted_name || proposal.acceptedName}`}
+      {(proposal.accepted_plan || proposal.acceptedPlan) && ` · Plan ${proposal.accepted_plan || proposal.acceptedPlan}`}.
     </div>
   )}
 
   <!-- 01 Desafío -->
-  {proposal.challenge && (
+  {(proposal.challenge) && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">01</span>
@@ -73,7 +73,7 @@ const wa = whatsappHref(waMessage);
   )}
 
   <!-- 02 Solución -->
-  {proposal.solution && (
+  {(proposal.solution) && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">02</span>
@@ -85,7 +85,7 @@ const wa = whatsappHref(waMessage);
   )}
 
   <!-- 03 Alcance -->
-  {(proposal.includes?.length > 0 || proposal.excludes?.length > 0) && (
+  {((proposal.includes?.length > 0) || (proposal.excludes?.length > 0)) && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">03</span>
@@ -94,9 +94,9 @@ const wa = whatsappHref(waMessage);
       </div>
       <div class="scope-grid">
         {proposal.includes?.length > 0 && (
-          <div class="scope-box">
-            <h3>Incluye</h3>
-            <ul class="includes-list">
+          <div>
+            <h3 class="scope-title">Incluye</h3>
+            <ul class="scope-list">
               {proposal.includes.map((item: string) => (
                 <li>
                   <span class="check">✓</span>
@@ -107,9 +107,9 @@ const wa = whatsappHref(waMessage);
           </div>
         )}
         {proposal.excludes?.length > 0 && (
-          <div class="scope-box excludes-box">
-            <h3>No incluye</h3>
-            <ul class="excludes-list">
+          <div>
+            <h3 class="scope-title">No incluye</h3>
+            <ul class="scope-list muted">
               {proposal.excludes.map((item: string) => (
                 <li>
                   <span class="minus">−</span>
@@ -124,7 +124,7 @@ const wa = whatsappHref(waMessage);
   )}
 
   <!-- 04 Inversión -->
-  <section class="section" id="inversion">
+  <section class="section">
     <div class="section-kicker">
       <span class="num">04</span>
       <span class="line"></span>
@@ -132,17 +132,18 @@ const wa = whatsappHref(waMessage);
     </div>
 
     {inv.type === "plans" && plans.length > 0 ? (
-      <div class="plans-grid">
+      <div class="plans-grid" id="plans-grid">
         {plans.map((plan: any) => (
-          <div class={`plan-card ${plan.recommended || plan.featured ? "recommended" : ""}`}>
+          <button
+            type="button"
+            class={`plan-card ${plan.name === recommended ? "selected" : ""}`}
+            data-plan={plan.name}
+          >
             <div class="plan-header">
-              <strong class="plan-title">{plan.name}</strong>
-              {(plan.recommended || plan.featured) && <span class="sugerido">Recomendado</span>}
+              <p class="plan-name">{plan.name}</p>
+              {plan.recommended && <span class="sugerido">Sugerido</span>}
             </div>
-            <div class="plan-price-wrap">
-              <span class="plan-price">{formatMoney(plan.price, inv.currency)}</span>
-              {plan.period && <span class="plan-period">/ {plan.period}</span>}
-            </div>
+            <p class="plan-price">{formatMoney(plan.price, inv.currency)}</p>
             {plan.description && <p class="plan-desc">{plan.description}</p>}
             {plan.features?.length > 0 && (
               <ul class="plan-features">
@@ -151,52 +152,54 @@ const wa = whatsappHref(waMessage);
                 ))}
               </ul>
             )}
-          </div>
+          </button>
         ))}
       </div>
     ) : (
-      <div class="fixed-price-card">
-        <div class="amount">{formatMoney(inv.amount || 0, inv.currency)}</div>
+      <div class="fixed-price">
+        <p class="amount">{formatMoney(inv.amount ?? 0, inv.currency)}</p>
         {inv.paymentTerms && <p class="terms">{inv.paymentTerms}</p>}
       </div>
+    )}
+
+    {inv.type === "plans" && inv.paymentTerms && (
+      <p class="payment-terms">{inv.paymentTerms}</p>
     )}
   </section>
 
   <!-- 05 Tiempos -->
-  {proposal.timeline && (
+  {(proposal.timeline) && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">05</span>
         <span class="line"></span>
-        <span class="title">Tiempos de entrega</span>
+        <span class="title">Tiempos</span>
       </div>
       <p class="body-text">{proposal.timeline}</p>
     </section>
   )}
 
   <!-- 06 ROI -->
-  {proposal.roi_table?.headers?.length > 0 && (
+  {(proposal.roi_table?.headers?.length > 0 || proposal.roiTable?.headers?.length > 0) && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">06</span>
         <span class="line"></span>
-        <span class="title">Retorno de Inversión (ROI)</span>
+        <span class="title">Retorno</span>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              {proposal.roi_table.headers.map((h: string) => (
+              {(proposal.roi_table?.headers || proposal.roiTable?.headers || []).map((h: string) => (
                 <th>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {proposal.roi_table.rows?.map((row: string[]) => (
+            {(proposal.roi_table?.rows || proposal.roiTable?.rows || []).map((row: string[]) => (
               <tr>
-                {row.map((cell: string) => (
-                  <td>{cell}</td>
-                ))}
+                {row.map((cell) => <td>{cell}</td>)}
               </tr>
             ))}
           </tbody>
@@ -206,11 +209,11 @@ const wa = whatsappHref(waMessage);
   )}
 
   <!-- 07 Timeline -->
-  <section class="section timeline-section">
+  <section class="section">
     <div class="section-kicker">
       <span class="num">07</span>
       <span class="line"></span>
-      <span class="title">Etapas del proyecto</span>
+      <span class="title">Estado del proyecto</span>
     </div>
     <div class="timeline">
       {stages.map((stage: any) => (
@@ -218,8 +221,8 @@ const wa = whatsappHref(waMessage);
           <div class="dot"></div>
           <div class="stage-info">
             <strong>{stage.name}</strong>
-            <span class="status-label">
-              {stage.status === "done" ? "✓ Completado" : stage.status === "current" ? "● En curso" : "○ Pendiente"}
+            <span>
+              {stage.status === "done" ? "Completado" : stage.status === "current" ? "En curso" : "Pendiente"}
             </span>
           </div>
         </div>
@@ -233,15 +236,15 @@ const wa = whatsappHref(waMessage);
       <div class="section-kicker">
         <span class="num">08</span>
         <span class="line"></span>
-        <span class="title">Documentos adjuntos</span>
+        <span class="title">Documentos</span>
       </div>
-      <ul class="documents-list">
+      <ul class="documents">
         {documents.map((doc: any) => (
           <li>
-            <a href={doc.url || `/api/documents/${doc.id}/download`} target="_blank" rel="noopener">
+            <a href={doc.url || `#`} target="_blank" rel="noopener">
               <span class="doc-type">{doc.type}</span>
               <span class="doc-name">{doc.name}</span>
-              <span class="doc-arrow">↗</span>
+              <span class="arrow">↗</span>
             </a>
           </li>
         ))}
@@ -249,23 +252,19 @@ const wa = whatsappHref(waMessage);
     </section>
   )}
 
-  <!-- Acciones Principales -->
+  <!-- Acciones -->
   <section class="actions no-print">
     <AcceptButton
       client:load
       slug={proposal.slug}
       status={proposal.status}
-      plans={plans}
-      planName={inv.type === "plans" ? (plans.find((p: any) => p.recommended || p.featured)?.name) : undefined}
+      planName={recommended}
       clientName={clientName}
     />
 
     <div class="secondary-actions">
       <a href={wa} target="_blank" rel="noopener" class="btn-outline">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-        </svg>
-        <span>Hablar por WhatsApp</span>
+        Hablar por WhatsApp
       </a>
       <button type="button" class="btn-ghost" onclick="window.print()">
         Guardar como PDF
@@ -273,15 +272,26 @@ const wa = whatsappHref(waMessage);
     </div>
 
     <p class="note">
-      Este Magic Link es personal y confidencial. Ante cualquier duda podés responder directamente por WhatsApp.
+      El magic link no caduca. Si esta propuesta deja de estar disponible, Amargo la desactiva a mano. Aceptar registra fecha, contacto y plan elegido.
     </p>
   </section>
 
   <footer class="portal-footer">
-    <span>AMARGO CREATIVO · Atlántida, Canelones, Uruguay</span>
-    <span>Arquitectura limpia · Conversión directa · Cero bloat</span>
+    <span>Amargo Creativo · Atlántida, Uruguay</span>
+    <span>Agencia digital de alto rendimiento</span>
   </footer>
 </article>
+
+<script>
+  // Plan selection (cliente)
+  const cards = document.querySelectorAll(".plan-card");
+  cards.forEach((card) => {
+    card.addEventListener("click", () => {
+      cards.forEach((c) => c.classList.remove("selected"));
+      card.classList.add("selected");
+    });
+  });
+</script>
 
 <style>
   :root {
@@ -289,428 +299,429 @@ const wa = whatsappHref(waMessage);
     --ink: #141E18;
     --mute: #6B756E;
     --mate: #2E4A3A;
-    --mate-light: #97BC62;
     --lime: #C8FF00;
     --border: #E2E4DC;
     --card: #FFFFFF;
+    --paper: #F8F9F6;
   }
 
   .portal {
     max-width: 48rem;
     margin: 0 auto;
-    padding: clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem) 6rem;
+    padding: 2rem 1.25rem 6rem;
     background: var(--bg);
     color: var(--ink);
     font-family: "Archivo", system-ui, -apple-system, sans-serif;
-    line-height: 1.55;
-    box-sizing: border-box;
+    line-height: 1.5;
   }
 
+  @media (min-width: 640px) {
+    .portal {
+      padding: 3rem 2rem 6rem;
+    }
+  }
+
+  /* Header */
   .portal-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.25rem;
-    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 3.5rem;
   }
 
   .brand {
-    font-weight: 900;
-    font-size: 1.35rem;
+    font-weight: 800;
+    font-size: 1.25rem;
     letter-spacing: -0.03em;
     color: var(--ink);
     text-decoration: none;
   }
 
   .meta {
-    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
   }
 
   .label {
-    display: block;
-    font-size: 0.68rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     color: var(--mute);
-    font-weight: 700;
   }
 
   .badge {
     display: inline-block;
-    margin-top: 0.25rem;
     padding: 0.2rem 0.55rem;
     font-size: 0.65rem;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.1em;
     border-radius: 4px;
     background: var(--border);
-    font-weight: 700;
   }
-
-  .badge-accepted { background: rgba(31, 138, 76, 0.15); color: #166534; border: 1px solid #C4EAD0; }
-  .badge-disabled { background: #fee2e2; color: #991b1b; }
-
-  .hero-section {
-    margin-bottom: 2rem;
-  }
-
-  .client-label {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.18em;
+  .badge-accepted {
+    background: rgba(46, 74, 58, 0.12);
     color: var(--mate);
-    font-weight: 800;
-    margin-bottom: 0.6rem;
+    border: 1px solid rgba(46, 74, 58, 0.25);
+  }
+  .badge-disabled {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  /* Hero */
+  .client-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--mate);
+    margin-bottom: 0.75rem;
   }
 
   .project-title {
-    font-size: clamp(1.85rem, 5.5vw, 3.2rem);
-    font-weight: 900;
-    line-height: 1.04;
-    letter-spacing: -0.035em;
-    margin: 0 0 1.25rem;
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    margin: 0 0 0;
     color: var(--ink);
-    word-break: break-word;
   }
 
   .value-phrase {
-    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
-    color: #2E3831;
-    max-width: 42rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.45;
+    margin-top: 2rem;
+    max-width: 36rem;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: #3a433d;
+  }
+
+  @media (min-width: 640px) {
+    .value-phrase {
+      font-size: 1.25rem;
+    }
   }
 
   .accepted-banner {
-    background: #EBF7EE;
-    border: 1.5px solid #C4EAD0;
-    color: #166534;
-    padding: 0.85rem 1.15rem;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 700;
-    margin-bottom: 2rem;
+    margin-top: 2rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(46, 74, 58, 0.25);
+    background: rgba(46, 74, 58, 0.08);
+    color: var(--mate);
+    font-size: 0.9rem;
   }
 
+  /* Sections */
   .section {
-    margin-top: clamp(2.5rem, 6vw, 3.75rem);
+    margin-top: 3.5rem;
   }
 
   .section-kicker {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 1rem;
   }
 
   .section-kicker .num {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.75rem;
-    letter-spacing: 0.15em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
     color: var(--mate);
-    font-weight: 800;
+    font-weight: 600;
   }
 
   .section-kicker .line {
     flex: 1;
     height: 1px;
-    background: var(--border);
+    background: rgba(20, 30, 24, 0.1);
   }
 
   .section-kicker .title {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.18em;
     color: var(--mute);
-    font-weight: 700;
   }
 
   .body-text {
-    font-size: clamp(0.98rem, 2.2vw, 1.08rem);
-    color: #2B332D;
+    font-size: 1rem;
     line-height: 1.65;
-    white-space: pre-line;
-  }
-
-  .scope-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+    color: #3a433d;
   }
 
   @media (min-width: 640px) {
-    .scope-grid { grid-template-columns: 1fr 1fr; }
+    .body-text {
+      font-size: 1.05rem;
+    }
   }
 
-  .scope-box {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.35rem;
+  /* Scope */
+  .scope-grid {
+    display: grid;
+    gap: 2rem;
   }
 
-  .scope-box h3 {
-    font-size: 0.82rem;
+  @media (min-width: 640px) {
+    .scope-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .scope-title {
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    margin: 0 0 1rem;
-    color: var(--ink);
-    font-weight: 800;
   }
 
-  .includes-list, .excludes-list {
+  .scope-list {
     list-style: none;
     padding: 0;
     margin: 0;
     display: flex;
     flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .scope-list li {
+    display: flex;
+    gap: 0.625rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+
+  .check {
+    color: var(--mate);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .minus {
+    color: var(--mute);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .scope-list.muted li {
+    color: var(--mute);
+  }
+
+  /* Plans */
+  .plans-grid {
+    display: grid;
     gap: 0.75rem;
   }
 
-  .includes-list li, .excludes-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.65rem;
-    font-size: 0.92rem;
-    line-height: 1.45;
-  }
-
-  .check { color: #1F8A4C; font-weight: 900; flex-shrink: 0; }
-  .minus { color: #94A3B8; font-weight: 900; flex-shrink: 0; }
-
-  .excludes-list li { color: var(--mute); }
-
-  /* Plans Grid */
-  .plans-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
   @media (min-width: 640px) {
-    .plans-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .plans-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   .plan-card {
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 1.5rem;
+    border: 1px solid rgba(20, 30, 24, 0.12);
+    border-radius: 8px;
+    padding: 1.25rem;
     background: var(--card);
-    display: flex;
-    flex-direction: column;
-    position: relative;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
   }
 
-  .plan-card.recommended {
-    border-color: var(--mate);
-    background: #FAFCFA;
-    box-shadow: 0 10px 25px rgba(46, 74, 58, 0.08);
+  .plan-card:hover {
+    border-color: rgba(20, 30, 24, 0.4);
+  }
+
+  .plan-card.selected {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: white;
   }
 
   .plan-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    gap: 0.5rem;
   }
 
-  .plan-title {
-    font-size: 1.05rem;
-    font-weight: 800;
+  .plan-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
   }
 
   .sugerido {
     font-size: 0.65rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #1F8A4C;
-    font-weight: 800;
-    background: #EBF7EE;
-    border: 1px solid #C4EAD0;
-    padding: 0.2rem 0.5rem;
-    border-radius: 99px;
+    letter-spacing: 0.14em;
+    color: var(--mate);
   }
 
-  .plan-price-wrap {
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-    margin: 0.4rem 0 0.6rem;
+  .plan-card.selected .sugerido {
+    color: var(--lime);
   }
 
   .plan-price {
-    font-size: clamp(1.6rem, 3.5vw, 1.95rem);
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    color: var(--ink);
-  }
-
-  .plan-period {
-    font-size: 0.8rem;
-    color: var(--mute);
-    font-weight: 600;
+    margin-top: 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
   }
 
   .plan-desc {
-    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
     color: var(--mute);
-    margin-bottom: 1.25rem;
-    line-height: 1.45;
+  }
+
+  .plan-card.selected .plan-desc {
+    color: rgba(255, 255, 255, 0.7);
   }
 
   .plan-features {
     list-style: none;
     padding: 0;
-    margin: 0;
-    font-size: 0.85rem;
+    margin: 1rem 0 0;
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
-    flex: 1;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
+    gap: 0.375rem;
+    font-size: 0.8rem;
   }
 
-  .plan-features li {
-    line-height: 1.4;
-  }
-
-  .fixed-price-card {
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.75rem;
+  .fixed-price {
+    border: 1px solid rgba(20, 30, 24, 0.1);
+    border-radius: 8px;
+    padding: 1.5rem;
     background: var(--card);
   }
 
   .amount {
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 900;
-    letter-spacing: -0.03em;
-    color: var(--ink);
+    font-size: 2.25rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    margin: 0;
   }
 
   .terms {
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
+    font-size: 0.875rem;
     color: var(--mute);
-    font-size: 0.95rem;
+  }
+
+  .payment-terms {
+    margin-top: 1rem;
+    font-size: 0.875rem;
+    color: var(--mute);
   }
 
   /* Table */
   .table-wrap {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
+    border: 1px solid rgba(20, 30, 24, 0.1);
+    border-radius: 8px;
   }
 
   table {
     width: 100%;
-    min-width: 500px;
+    min-width: 28rem;
     border-collapse: collapse;
-    font-size: 0.88rem;
+    font-size: 0.875rem;
     text-align: left;
   }
 
   th {
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--border);
-    font-weight: 800;
-    color: var(--ink);
-    background: #F4F6F2;
-    font-size: 0.72rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.7rem;
+    font-weight: 500;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
+    color: var(--mute);
+    background: rgba(244, 245, 241, 0.8);
   }
 
   td {
-    padding: 0.85rem 1rem;
-    border-bottom: 1px solid var(--border);
-    color: #2B332D;
-  }
-
-  tr:last-child td {
-    border-bottom: none;
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(20, 30, 24, 0.08);
+    vertical-align: top;
   }
 
   /* Timeline */
   .timeline {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
+    gap: 1.1rem;
   }
 
   .stage {
     display: flex;
-    gap: 0.85rem;
+    gap: 0.9rem;
     align-items: flex-start;
   }
 
   .dot {
-    width: 14px;
-    height: 14px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background: var(--border);
-    margin-top: 0.25rem;
+    margin-top: 0.3rem;
     flex-shrink: 0;
   }
 
   .stage-done .dot {
-    background: #1F8A4C;
-    box-shadow: 0 0 0 3px rgba(31, 138, 76, 0.25);
+    background: var(--lime);
   }
 
   .stage-current .dot {
     background: var(--ink);
-    box-shadow: 0 0 0 4px rgba(200, 255, 0, 0.6);
+    box-shadow: 0 0 0 4px rgba(200, 255, 0, 0.25);
   }
 
   .stage-info strong {
     display: block;
-    font-size: 0.92rem;
-    color: var(--ink);
+    font-size: 0.95rem;
   }
 
-  .status-label {
-    font-size: 0.75rem;
+  .stage-info span {
+    font-size: 0.78rem;
     color: var(--mute);
   }
 
-  .stage-done .status-label { color: #1F8A4C; font-weight: 700; }
-  .stage-current .status-label { color: var(--ink); font-weight: 800; }
+  .stage-done .stage-info span {
+    color: var(--mate);
+  }
 
   /* Documents */
-  .documents-list {
+  .documents {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
   }
 
-  .documents-list a {
+  .documents li {
+    margin-bottom: 0.5rem;
+  }
+
+  .documents a {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.85rem 1.15rem;
+    padding: 0.8rem 1rem;
     background: var(--card);
     border: 1px solid var(--border);
-    border-radius: 10px;
+    border-radius: 8px;
     text-decoration: none;
     color: var(--ink);
-    font-size: 0.92rem;
-    font-weight: 600;
-    transition: all 0.15s ease;
-  }
-
-  .documents-list a:hover {
-    border-color: var(--ink);
+    font-size: 0.9rem;
   }
 
   .doc-type {
@@ -718,53 +729,24 @@ const wa = whatsappHref(waMessage);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     background: var(--border);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-weight: 700;
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
   }
 
   .doc-name {
     flex: 1;
   }
 
-  .doc-arrow {
+  .arrow {
     color: var(--mute);
-    font-weight: 700;
   }
 
   /* Actions */
   .actions {
-    margin-top: clamp(2.5rem, 6vw, 4rem);
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+    border-top: 1px solid rgba(20, 30, 24, 0.1);
   }
-
-  :global(.btn-primary) {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    background: var(--ink);
-    color: white;
-    padding: 0.95rem 1.85rem;
-    font-weight: 800;
-    font-size: 1rem;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.15s ease, transform 0.1s ease;
-    min-height: 48px;
-  }
-
-  @media (min-width: 640px) {
-    :global(.btn-primary) { width: auto; }
-  }
-
-  :global(.btn-primary:hover) { background: #000; transform: translateY(-1px); }
-  :global(.btn-primary:disabled) { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  :global(.plan-tag) { font-weight: 400; opacity: 0.85; }
 
   .secondary-actions {
     display: flex;
@@ -773,108 +755,56 @@ const wa = whatsappHref(waMessage);
     margin-top: 1rem;
   }
 
-  .btn-outline, :global(.btn-outline) {
+  .btn-outline {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.85rem 1.35rem;
+    padding: 0.7rem 1.2rem;
     border: 1px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
+    border-radius: 6px;
+    background: transparent;
     color: var(--ink);
     text-decoration: none;
     font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    min-height: 48px;
-    width: 100%;
-  }
-
-  @media (min-width: 640px) {
-    .btn-outline, :global(.btn-outline) { width: auto; }
-  }
-
-  .btn-outline:hover, :global(.btn-outline:hover) {
-    border-color: var(--ink);
+    font-weight: 500;
   }
 
   .btn-ghost {
     background: none;
     border: none;
     color: var(--mute);
-    font-size: 0.88rem;
+    font-size: 0.9rem;
     cursor: pointer;
-    padding: 0.75rem 0.5rem;
-    font-weight: 600;
-    text-decoration: underline;
-  }
-
-  .btn-ghost:hover {
-    color: var(--ink);
+    padding: 0.7rem 0.5rem;
   }
 
   .note {
     margin-top: 1.5rem;
-    font-size: 0.8rem;
-    color: var(--mute);
-    max-width: 32rem;
+    max-width: 28rem;
+    font-size: 0.75rem;
     line-height: 1.5;
+    color: var(--mute);
   }
 
   .portal-footer {
-    margin-top: 4rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border);
-    font-size: 0.72rem;
+    margin-top: 5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(20, 30, 24, 0.1);
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
     color: var(--mute);
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-  }
-
-  /* Modals */
-  :global(.modal-overlay) {
-    position: fixed;
-    inset: 0;
-    background: rgba(20, 30, 24, 0.7);
-    backdrop-filter: blur(6px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    padding: 1rem;
-  }
-
-  :global(.modal) {
-    background: white;
-    border-radius: 14px;
-    padding: 1.75rem;
-    max-width: 440px;
-    width: 100%;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-    box-sizing: border-box;
-  }
-
-  :global(.modal h3) {
-    margin: 0 0 0.5rem;
-    font-size: 1.35rem;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-
-  :global(.modal p) {
-    color: #4A554E;
-    font-size: 0.92rem;
-    margin-bottom: 1.25rem;
-    line-height: 1.45;
+    gap: 0.25rem;
   }
 
   @media print {
-    .portal { padding: 0; }
-    .no-print { display: none !important; }
+    .no-print {
+      display: none !important;
+    }
+    .portal {
+      padding: 0;
+      max-width: none;
+    }
   }
 </style>
