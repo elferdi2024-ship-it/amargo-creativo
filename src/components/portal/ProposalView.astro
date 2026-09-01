@@ -38,6 +38,9 @@ let previewUrl = proposal.preview_url || null;
 if (!previewUrl && proposal.slug === "mercado-atlantida") {
   previewUrl = "https://mercado-atlantida.elferdi2024.workers.dev/";
 }
+if (!previewUrl && proposal.slug === "deal-motors") {
+  previewUrl = "https://driveprime-eta.vercel.app/";
+}
 if (!previewUrl && proposal.notes && proposal.notes.includes("http")) {
   const match = proposal.notes.match(/https?:\/\/[^\s]+/);
   if (match) previewUrl = match[0];
@@ -151,7 +154,9 @@ function formatEditorial(text: string) {
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <span class="browser-url font-mono">mercadoatlantida.uy</span>
+            <span class="browser-url font-mono">
+              {proposal.slug === "deal-motors" ? "dealmotors.uy" : proposal.slug === "mercado-atlantida" ? "mercadoatlantida.uy" : "demo.amargo.uy"}
+            </span>
             <span class="live-pulse-badge font-mono">
               <span class="pulse-dot"></span> EN VIVO
             </span>
@@ -190,7 +195,7 @@ function formatEditorial(text: string) {
         <div class="demo-footer-caption">
           <span class="demo-hint-icon">👆</span>
           <span>
-            <strong>Prototipo navegable:</strong> Podés interactuar directamente con la web aquí arriba, explorar los puestos y probar cómo funciona la experiencia en tiempo real.
+            <strong>Prototipo navegable:</strong> Podés interactuar directamente con la plataforma aquí arriba, explorar los vehículos/productos y probar la experiencia en tiempo real.
           </span>
         </div>
       </div>
@@ -211,7 +216,7 @@ function formatEditorial(text: string) {
             <h3 class="scope-title">INCLUYE</h3>
             <ul class="scope-list">
               {proposal.includes.map((item: string) => {
-                const isFullPack = item.includes("Pack de Marketing y Lanzamiento") || item.includes("Plan Full");
+                const isFullPack = item.includes("Pack de Marketing y Lanzamiento") || item.includes("Plan Full") || item.includes("Pack Lanzamiento");
                 return (
                   <li class={isFullPack ? "scope-item-highlight" : ""}>
                     <span class="check">{isFullPack ? "★" : "✓"}</span>
@@ -412,47 +417,107 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- Timeline Stages -->
+  <!-- Timeline Stages / Estado del Proyecto Elevado -->
   <section class="section">
     <div class="section-kicker">
       <span class="num">{previewUrl ? "08" : "07"}</span>
       <span class="line"></span>
-      <span class="title">ESTADO DEL PROYECTO</span>
+      <span class="title">ESTADO Y PROGRESO DEL PROYECTO</span>
     </div>
-    <div class="timeline">
-      {stages.map((stage: any) => (
-        <div class={`stage stage-${stage.status}`}>
-          <div class="dot"></div>
-          <div class="stage-info">
-            <strong>{stage.name}</strong>
-            <span>
-              {stage.status === "done" ? "Completado" : stage.status === "current" ? "En curso" : "Pendiente"}
-            </span>
-          </div>
+
+    <div class="timeline-container-card">
+      <div class="timeline-header-meta">
+        <div class="timeline-progress-label">
+          <span class="tl-pulse-dot"></span>
+          <span>{stages.filter((s: any) => s.status === "done").length} de {stages.length} etapas completadas</span>
         </div>
-      ))}
+        <span class="tl-current-pill">
+          {stages.find((s: any) => s.status === "current")?.name || (stages.every((s: any) => s.status === "done") ? "Proyecto Finalizado" : "En fase inicial")}
+        </span>
+      </div>
+
+      <div class="timeline-stages-track">
+        {stages.map((stage: any, idx: number) => {
+          const isDone = stage.status === "done";
+          const isCurrent = stage.status === "current";
+          const isLast = idx === stages.length - 1;
+
+          return (
+            <div class={`stage-row stage-${stage.status}`}>
+              <div class="stage-indicator-col">
+                <div class={`stage-node ${isDone ? "node-done" : isCurrent ? "node-current" : "node-pending"}`}>
+                  {isDone ? (
+                    <span class="node-check">✓</span>
+                  ) : isCurrent ? (
+                    <span class="node-pulse"></span>
+                  ) : (
+                    <span class="node-num font-mono">{String(stage.id || idx + 1).padStart(2, "0")}</span>
+                  )}
+                </div>
+                {!isLast && <div class={`stage-connector ${isDone ? "connector-done" : ""}`}></div>}
+              </div>
+
+              <div class="stage-content-col">
+                <div class="stage-title-wrap">
+                  <h4 class="stage-name">{stage.name}</h4>
+                  <span class={`stage-status-badge ${isDone ? "status-done" : isCurrent ? "status-current" : "status-pending"}`}>
+                    {isDone ? "Completado" : isCurrent ? "En curso" : "Pendiente"}
+                  </span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   </section>
 
-  <!-- Documentos -->
+  <!-- Documentos Adjuntos Oficiales -->
   {documents.length > 0 && (
     <section class="section">
       <div class="section-kicker">
         <span class="num">{previewUrl ? "09" : "08"}</span>
         <span class="line"></span>
-        <span class="title">DOCUMENTOS ADJUNTOS</span>
+        <span class="title">DOCUMENTACIÓN OFICIAL ADJUNTA</span>
       </div>
-      <ul class="documents">
-        {documents.map((doc: any) => (
-          <li>
-            <a href={doc.url || `/api/documents/${doc.id}/download`} target="_blank" rel="noopener">
-              <span class="doc-type">{doc.type}</span>
-              <span class="doc-name">{doc.name}</span>
-              <span class="arrow">↗</span>
+      <div class="documents-grid">
+        {documents.map((doc: any) => {
+          const typeLabel = doc.type === "contract" ? "CONTRATO" : doc.type === "invoice" ? "FACTURA" : doc.type === "brief" ? "ESPECIFICACIÓN" : doc.type?.toUpperCase() || "DOCUMENTO";
+          const isContract = doc.type === "contract";
+          const isInvoice = doc.type === "invoice";
+          const downloadUrl = doc.url || `/api/documents/${doc.id}/download`;
+
+          return (
+            <a href={downloadUrl} target="_blank" rel="noopener noreferrer" class="doc-card-premium">
+              <div class="doc-card-icon-wrap">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                  <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+              </div>
+
+              <div class="doc-card-info">
+                <div class="doc-card-top">
+                  <span class={`doc-type-pill ${isContract ? "pill-contract" : isInvoice ? "pill-invoice" : "pill-default"}`}>
+                    {typeLabel}
+                  </span>
+                  {doc.uploaded_at && (
+                    <span class="doc-date font-mono">{formatDate(doc.uploaded_at)}</span>
+                  )}
+                </div>
+                <h4 class="doc-title">{doc.name}</h4>
+                <span class="doc-action-hint">
+                  <span>Descargar / Ver archivo</span>
+                  <span class="doc-arrow">↗</span>
+                </span>
+              </div>
             </a>
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </div>
     </section>
   )}
 
@@ -1411,106 +1476,303 @@ function formatEditorial(text: string) {
     border-left: 1px solid #E1ECE3;
   }
 
-  /* Timeline */
-  .timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 1.1rem;
-    background: var(--card);
+  /* TIMELINE / PROGRESO DEL PROYECTO ELEVADO */
+  .timeline-container-card {
+    background: #FFFFFF;
     border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
+    border-radius: 18px;
+    padding: 1.65rem 1.75rem;
+    box-shadow: 0 4px 20px rgba(20, 30, 24, 0.04);
   }
 
-  .stage {
+  .timeline-header-meta {
     display: flex;
-    gap: 0.9rem;
-    align-items: flex-start;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ECEBE4;
+    padding-bottom: 1.1rem;
+    margin-bottom: 1.35rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
   }
 
-  .dot {
-    width: 12px;
-    height: 12px;
+  .timeline-progress-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .tl-pulse-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: var(--border);
-    margin-top: 0.35rem;
-    flex-shrink: 0;
-  }
-
-  .stage-done .dot {
     background: var(--mate);
     box-shadow: 0 0 0 3px rgba(46, 83, 57, 0.2);
   }
 
-  .stage-current .dot {
-    background: var(--ink);
-    box-shadow: 0 0 0 4px rgba(212, 255, 0, 0.5);
-  }
-
-  .stage-info strong {
-    display: block;
-    font-size: 0.95rem;
-    color: var(--ink);
-  }
-
-  .stage-info span {
-    font-size: 0.78rem;
-    color: var(--mute);
-  }
-
-  .stage-done .stage-info span {
+  .tl-current-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
     color: var(--mate);
-    font-weight: 600;
+    background: rgba(46, 83, 57, 0.08);
+    border: 1px solid rgba(46, 83, 57, 0.2);
+    padding: 0.25rem 0.65rem;
+    border-radius: 6px;
   }
 
-  /* Documents */
-  .documents {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+  .timeline-stages-track {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
   }
 
-  .documents a {
+  .stage-row {
+    display: flex;
+    gap: 1.15rem;
+    position: relative;
+  }
+
+  .stage-indicator-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 28px;
+    flex-shrink: 0;
+  }
+
+  .stage-node {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.85rem 1.15rem;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--ink);
-    font-size: 0.92rem;
-    font-weight: 600;
-    transition: all 0.15s ease;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 800;
+    z-index: 2;
+    transition: all 0.2s ease;
   }
 
-  .documents a:hover {
-    border-color: var(--mate);
-    transform: translateX(2px);
+  .node-done {
+    background: var(--mate);
+    color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(46, 83, 57, 0.2);
   }
 
-  .doc-type {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background: var(--border);
-    padding: 0.2rem 0.45rem;
-    border-radius: 4px;
+  .node-current {
+    background: #141E18;
+    color: var(--lime);
+    box-shadow: 0 0 0 4px rgba(212, 255, 0, 0.45);
   }
 
-  .doc-name {
+  .node-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--lime);
+    box-shadow: 0 0 8px var(--lime);
+    animation: livePulse 1.8s infinite;
+  }
+
+  .node-pending {
+    background: #F4F3EE;
+    border: 1.5px solid #D5D6CC;
+    color: #8C9990;
+  }
+
+  .stage-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 22px;
+    background: #E5E6DE;
+    margin: 3px 0;
+  }
+
+  .connector-done {
+    background: var(--mate);
+  }
+
+  .stage-content-col {
+    padding-bottom: 1.35rem;
     flex: 1;
   }
 
-  .arrow {
-    color: var(--mute);
+  .stage-row:last-child .stage-content-col {
+    padding-bottom: 0;
+  }
+
+  .stage-title-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.15rem;
+  }
+
+  .stage-name {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.95rem;
     font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .stage-status-badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .status-done {
+    background: rgba(46, 83, 57, 0.1);
+    color: var(--mate);
+  }
+
+  .status-current {
+    background: #141E18;
+    color: var(--lime);
+  }
+
+  .status-pending {
+    background: #F0EFE9;
+    color: #8C9990;
+  }
+
+  /* DOCUMENTOS OFICIALES EN GRID ELEGANTE */
+  .documents-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  @media (min-width: 640px) {
+    .documents-grid {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  .doc-card-premium {
+    background: #FFFFFF;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 1.35rem 1.45rem;
+    text-decoration: none;
+    color: var(--ink);
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    box-shadow: 0 4px 16px rgba(20, 30, 24, 0.03);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .doc-card-premium:hover {
+    border-color: var(--mate);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(46, 83, 57, 0.1);
+  }
+
+  .doc-card-icon-wrap {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: rgba(46, 83, 57, 0.08);
+    color: var(--mate);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+
+  .doc-card-premium:hover .doc-card-icon-wrap {
+    background: var(--mate);
+    color: #FFFFFF;
+  }
+
+  .doc-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .doc-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .doc-type-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .pill-contract {
+    background: rgba(46, 83, 57, 0.12);
+    color: var(--mate);
+    border: 1px solid rgba(46, 83, 57, 0.25);
+  }
+
+  .pill-invoice {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid rgba(217, 119, 6, 0.25);
+  }
+
+  .pill-default {
+    background: #ECEBE5;
+    color: #4A544D;
+  }
+
+  .doc-date {
+    font-size: 0.68rem;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .doc-title {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.94rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .doc-action-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--mate);
+    margin-top: 0.25rem;
+  }
+
+  .doc-arrow {
+    font-size: 0.85rem;
+    transition: transform 0.15s ease;
+  }
+
+  .doc-card-premium:hover .doc-arrow {
+    transform: translate(2px, -2px);
   }
 
   /* Actions */

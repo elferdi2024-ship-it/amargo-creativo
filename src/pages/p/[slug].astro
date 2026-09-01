@@ -39,13 +39,19 @@ const { data: project } = await supabaseAdmin
   .eq("proposal_id", proposal.id)
   .maybeSingle();
 
-// 3. Documentos visibles para el cliente
-const { data: documents } = await supabaseAdmin
+// 3. Documentos visibles para el cliente (asociados a la propuesta o al proyecto)
+let docQuery = supabaseAdmin
   .from("documents")
   .select("*")
-  .eq("proposal_id", proposal.id)
-  .eq("visible_to_client", true)
-  .order("uploaded_at", { ascending: false });
+  .eq("visible_to_client", true);
+
+if (project?.id) {
+  docQuery = docQuery.or(`proposal_id.eq.${proposal.id},project_id.eq.${project.id}`);
+} else {
+  docQuery = docQuery.eq("proposal_id", proposal.id);
+}
+
+const { data: documents } = await docQuery.order("uploaded_at", { ascending: false });
 
 const clientName = proposal.clients?.name || proposal.client_name || "Cliente";
 const pageTitle = `${proposal.project_title} · ${clientName} · Amargo Creativo`;

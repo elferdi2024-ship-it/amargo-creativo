@@ -152,6 +152,7 @@ async function main() {
   };
 
   // Upsert proposal
+  let proposalId;
   const { data: existing } = await supabase
     .from("proposals")
     .select("id")
@@ -160,11 +161,40 @@ async function main() {
 
   if (existing) {
     await supabase.from("proposals").update(proposalData).eq("id", existing.id);
-    console.log("Propuesta actualizada:", existing.id);
+    proposalId = existing.id;
+    console.log("Propuesta actualizada:", proposalId);
   } else {
     const { data: created } = await supabase.from("proposals").insert(proposalData).select().single();
-    console.log("Propuesta creada:", created.id);
+    proposalId = created.id;
+    console.log("Propuesta creada:", proposalId);
   }
+
+  // Sincronizar documentos oficiales
+  await supabase.from("documents").delete().eq("proposal_id", proposalId);
+
+  const sampleDocs = [
+    {
+      name: "Contrato de Prestación y Mantenimiento Web · Mercado Atlántida",
+      type: "contract",
+      storage_path: "mercado-atlantida/contrato-mercado-atlantida.pdf",
+      url: "https://mercado-atlantida.elferdi2024.workers.dev/",
+      proposal_id: proposalId,
+      client_id: client.id,
+      visible_to_client: true,
+    },
+    {
+      name: "Especificación de Catálogo y Conexión WhatsApp Direct",
+      type: "brief",
+      storage_path: "mercado-atlantida/brief-catalogo.pdf",
+      url: "https://mercado-atlantida.elferdi2024.workers.dev/",
+      proposal_id: proposalId,
+      client_id: client.id,
+      visible_to_client: true,
+    },
+  ];
+
+  await supabase.from("documents").insert(sampleDocs);
+  console.log("¡Documentos adjuntos sincronizados para Mercado Atlántida!");
 
   console.log("¡Sincronizado! Podés verla en https://amargo-creativo.pages.dev/p/mercado-atlantida");
 }
