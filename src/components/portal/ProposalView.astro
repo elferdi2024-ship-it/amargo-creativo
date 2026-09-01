@@ -44,12 +44,25 @@ if (!previewUrl && proposal.notes && proposal.notes.includes("http")) {
 }
 
 const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponent(previewUrl)}` : null;
+
+// Helper para formatear texto editorial con itálicas serif y subrayados delicados
+function formatEditorial(text: string) {
+  if (!text) return "";
+  let res = text;
+  // _italics_ -> serif editorial
+  res = res.replace(/_([^_]+)_/g, '<em class="editorial-serif">$1</em>');
+  // *highlight* -> subrayado/resaltado delicado
+  res = res.replace(/\*([^*]+)\*/g, '<span class="editorial-highlight">$1</span>');
+  return res;
+}
 ---
 
 <article class="portal">
   <!-- TOP BRAND & METADATA -->
   <header class="portal-header">
-    <a href="/" class="brand">AMARGO.</a>
+    <a href="/" class="brand">
+      AMARGO<span class="brand-dot">.</span>
+    </a>
     <div class="meta">
       <span class="label">PROPUESTA<br />COMERCIAL</span>
       {proposal.status !== "active" && (
@@ -62,7 +75,11 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 
   <!-- HERO: CLIENTE PRINCIPAL + OBJETIVO -->
   <div class="hero-block">
-    <span class="hero-pretitle">PROPUESTA EXCLUSIVA PARA</span>
+    <div class="hero-tag-wrap">
+      <span class="hero-pretitle">PROPUESTA EXCLUSIVA PARA</span>
+      <span class="hero-pretitle-line"></span>
+    </div>
+
     <!-- Título Principal: Nombre del Cliente / Marca -->
     <h1 class="client-hero-title">{clientName}</h1>
     {clientCompany && clientCompany !== clientName && (
@@ -75,7 +92,9 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     </div>
 
     {proposal.value_phrase && (
-      <p class="value-phrase">{proposal.value_phrase}</p>
+      <div class="value-phrase-box">
+        <p class="value-phrase" set:html={formatEditorial(proposal.value_phrase)} />
+      </div>
     )}
   </div>
 
@@ -95,7 +114,9 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
         <span class="line"></span>
         <span class="title">EL DESAFÍO</span>
       </div>
-      <p class="body-text">{proposal.challenge}</p>
+      <div class="editorial-narrative-card challenge-card">
+        <p class="body-text" set:html={formatEditorial(proposal.challenge)} />
+      </div>
     </section>
   )}
 
@@ -107,7 +128,9 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
         <span class="line"></span>
         <span class="title">LA SOLUCIÓN</span>
       </div>
-      <p class="body-text">{proposal.solution}</p>
+      <div class="editorial-narrative-card solution-card">
+        <p class="body-text" set:html={formatEditorial(proposal.solution)} />
+      </div>
     </section>
   )}
 
@@ -190,8 +213,10 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
       </div>
       <div class="scope-container">
         {proposal.includes?.length > 0 && (
-          <div class="scope-group">
-            <h3 class="scope-title">INCLUYE</h3>
+          <div class="scope-group scope-card">
+            <h3 class="scope-title">
+              <span class="scope-title-badge">INCLUYE</span>
+            </h3>
             <ul class="scope-list">
               {proposal.includes.map((item: string) => {
                 const isFullPack = item.includes("Pack de Marketing y Lanzamiento") || item.includes("Plan Full");
@@ -206,8 +231,10 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
           </div>
         )}
         {proposal.excludes?.length > 0 && (
-          <div class="scope-group excludes-group">
-            <h3 class="scope-title">NO INCLUYE</h3>
+          <div class="scope-group scope-card-excludes">
+            <h3 class="scope-title muted-title">
+              <span class="scope-title-badge-muted">NO INCLUYE</span>
+            </h3>
             <ul class="scope-list muted">
               {proposal.excludes.map((item: string) => (
                 <li>
@@ -358,7 +385,9 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
         <span class="line"></span>
         <span class="title">TIEMPOS Y CRONOGRAMA</span>
       </div>
-      <p class="body-text">{proposal.timeline}</p>
+      <div class="editorial-narrative-card timeline-card">
+        <p class="body-text" set:html={formatEditorial(proposal.timeline)} />
+      </div>
     </section>
   )}
 
@@ -374,15 +403,17 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
         <table>
           <thead>
             <tr>
-              {(proposal.roi_table?.headers || proposal.roiTable?.headers || []).map((h: string) => (
-                <th>{h}</th>
+              {(proposal.roi_table?.headers || proposal.roiTable?.headers || []).map((h: string, idx: number) => (
+                <th class={idx === 2 ? "th-target-highlight" : ""}>{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {(proposal.roi_table?.rows || proposal.roiTable?.rows || []).map((row: string[]) => (
               <tr>
-                {row.map((cell: string) => <td>{cell}</td>)}
+                {row.map((cell: string, idx: number) => (
+                  <td class={idx === 2 ? "td-target-highlight" : ""}>{cell}</td>
+                ))}
               </tr>
             ))}
           </tbody>
@@ -469,8 +500,11 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   </section>
 
   <footer class="portal-footer">
-    <span>AMARGO CREATIVO · ATLÁNTIDA, URUGUAY</span>
-    <span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span>
+    <div class="footer-brand-line">
+      <span>AMARGO CREATIVO · ATLÁNTIDA, URUGUAY</span>
+      <span class="footer-dot">✦</span>
+      <span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span>
+    </div>
   </footer>
 </article>
 
@@ -491,7 +525,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     --mute: #6C776E;
     --mate: #2E5339;
     --lime: #D4FF00;
-    --border: #E5E4DC;
+    --border: #E2E1D8;
     --card: #FFFFFF;
     --card-dark: #0D1510;
   }
@@ -505,6 +539,21 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     font-family: "Archivo", system-ui, -apple-system, sans-serif;
     line-height: 1.55;
     box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Micro-luz ambiental top-right para dar profundidad editorial */
+  .portal::before {
+    content: "";
+    position: absolute;
+    top: -50px;
+    right: -100px;
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, rgba(46, 83, 57, 0.05) 0%, rgba(212, 255, 0, 0.025) 45%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   /* Header */
@@ -513,6 +562,8 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 3.5rem;
+    position: relative;
+    z-index: 1;
   }
 
   .brand {
@@ -522,6 +573,12 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     letter-spacing: -0.04em;
     color: var(--ink);
     text-decoration: none;
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .brand-dot {
+    color: var(--mate);
   }
 
   .meta {
@@ -564,17 +621,34 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   /* Hero */
   .hero-block {
     margin-bottom: 2.75rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
   }
 
   .hero-pretitle {
     font-family: "JetBrains Mono", monospace;
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--mate);
-    display: block;
-    margin-bottom: 0.6rem;
+    background: rgba(46, 83, 57, 0.08);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    border: 1px solid rgba(46, 83, 57, 0.15);
+  }
+
+  .hero-pretitle-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(46, 83, 57, 0.25) 0%, transparent 100%);
   }
 
   /* Nombre del Cliente en Grande */
@@ -605,21 +679,53 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   }
 
   .project-objective-title {
-    font-family: "Syne", sans-serif;
+    font-family: "Space Grotesk", system-ui, sans-serif;
     font-size: clamp(1.2rem, 3.5vw, 1.65rem);
     font-weight: 700;
     color: #2D3D32;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     line-height: 1.25;
     margin: 0;
   }
 
-  .value-phrase {
+  /* Frase de Valor Editorial con detalle de borde sutil */
+  .value-phrase-box {
     margin-top: 1.5rem;
-    font-size: clamp(1.02rem, 2.3vw, 1.18rem);
-    line-height: 1.6;
-    color: #38423B;
-    max-width: 40rem;
+    padding: 1.15rem 1.4rem;
+    background: #FFFFFF;
+    border-left: 3.5px solid var(--mate);
+    border-radius: 0 12px 12px 0;
+    border-top: 1px solid #ECEBE4;
+    border-right: 1px solid #ECEBE4;
+    border-bottom: 1px solid #ECEBE4;
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
+    max-width: 44rem;
+  }
+
+  .value-phrase {
+    margin: 0;
+    font-size: clamp(1.02rem, 2.3vw, 1.15rem);
+    line-height: 1.65;
+    color: #2E3832;
+  }
+
+  /* SUBRAYADO Y TIPOGRAFÍA EDITORIAL (DELICADO Y ELEGANTE) */
+  :global(.editorial-serif) {
+    font-family: "Instrument Serif", Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.22em;
+    color: #23422D;
+    letter-spacing: -0.01em;
+    padding: 0 0.15rem;
+  }
+
+  :global(.editorial-highlight) {
+    position: relative;
+    font-weight: 700;
+    color: #141E18;
+    background: linear-gradient(180deg, transparent 65%, rgba(212, 255, 0, 0.38) 65%, rgba(212, 255, 0, 0.38) 92%, transparent 92%);
+    padding: 0 0.15rem;
   }
 
   .accepted-banner {
@@ -635,28 +741,36 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 
   /* Sections */
   .section {
-    margin-top: clamp(2.75rem, 6vw, 4rem);
+    margin-top: clamp(2.75rem, 6vw, 3.8rem);
+    position: relative;
+    z-index: 1;
   }
 
   .section-kicker {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    margin-bottom: 1.35rem;
+    margin-bottom: 1.25rem;
   }
 
   .section-kicker .num {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.78rem;
-    letter-spacing: 0.15em;
-    color: var(--mate);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    color: #F4F3EE;
+    background: var(--mate);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
     font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(46, 83, 57, 0.2);
   }
 
   .section-kicker .line {
     flex: 1;
     height: 1px;
-    background: #DCDCD4;
+    background: linear-gradient(90deg, #D8D8CF 0%, rgba(46, 83, 57, 0.2) 50%, #D8D8CF 100%);
   }
 
   .section-kicker .title {
@@ -665,13 +779,34 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.18em;
-    color: #6B756E;
+    color: #5C675F;
+  }
+
+  /* TARJETAS NARRATIVAS EDITORIALES */
+  .editorial-narrative-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E4DC;
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .editorial-narrative-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3.5px;
+    background: var(--mate);
   }
 
   .body-text {
     font-size: clamp(0.98rem, 2.2vw, 1.05rem);
-    line-height: 1.68;
-    color: #354038;
+    line-height: 1.7;
+    color: #2D3730;
     white-space: pre-line;
     margin: 0;
   }
@@ -826,17 +961,52 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   .scope-container {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
+  }
+
+  .scope-card {
+    background: #FFFFFF;
+    border: 1px solid #E2E4DC;
+    border-radius: 16px;
+    padding: 1.6rem 1.75rem;
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
+  }
+
+  .scope-card-excludes {
+    background: rgba(238, 237, 230, 0.45);
+    border: 1px dashed #D3D4CA;
+    border-radius: 16px;
+    padding: 1.4rem 1.75rem;
   }
 
   .scope-title {
+    margin: 0 0 1.15rem;
+    display: flex;
+  }
+
+  .scope-title-badge {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.82rem;
+    font-size: 0.74rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--ink);
-    margin: 0 0 1rem;
+    color: var(--mate);
+    background: rgba(46, 83, 57, 0.08);
+    border: 1px solid rgba(46, 83, 57, 0.2);
+    padding: 0.25rem 0.65rem;
+    border-radius: 5px;
+  }
+
+  .scope-title-badge-muted {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #717D73;
+    background: rgba(113, 125, 115, 0.1);
+    padding: 0.25rem 0.6rem;
+    border-radius: 5px;
   }
 
   .scope-list {
@@ -1250,8 +1420,9 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   .table-wrap {
     overflow-x: auto;
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
     background: var(--card);
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
   }
 
   table {
@@ -1273,12 +1444,26 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     background: #ECEBE5;
   }
 
+  .th-target-highlight {
+    background: #E5EFE7;
+    color: var(--mate);
+    border-left: 1px solid #D5E5D8;
+    font-weight: 800;
+  }
+
   td {
     padding: 0.95rem 1.15rem;
     border-top: 1px solid var(--border);
     vertical-align: top;
     color: #2D3630;
     line-height: 1.45;
+  }
+
+  .td-target-highlight {
+    background: rgba(46, 83, 57, 0.035);
+    font-weight: 600;
+    color: #173420;
+    border-left: 1px solid #E1ECE3;
   }
 
   /* Timeline */
@@ -1290,6 +1475,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 1.5rem;
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
   }
 
   .stage {
@@ -1355,6 +1541,12 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     color: var(--ink);
     font-size: 0.92rem;
     font-weight: 600;
+    transition: all 0.15s ease;
+  }
+
+  .documents a:hover {
+    border-color: var(--mate);
+    transform: translateX(2px);
   }
 
   .doc-type {
@@ -1381,6 +1573,8 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     margin-top: clamp(3rem, 6vw, 4.5rem);
     padding-top: 2rem;
     border-top: 1px solid #DCDCD4;
+    position: relative;
+    z-index: 1;
   }
 
   :global(.btn-primary) {
@@ -1480,6 +1674,20 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .footer-brand-line {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-dot {
+    color: var(--mate);
+    font-size: 0.6rem;
   }
 
   @media print {
