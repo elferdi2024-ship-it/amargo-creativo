@@ -106,7 +106,7 @@ function formatEditorial(text: string) {
     </div>
   )}
 
-  <!-- 01 Desafío -->
+  <!-- 01 Desafío (Texto limpio sin tarjeta) -->
   {proposal.challenge && (
     <section class="section">
       <div class="section-kicker">
@@ -114,13 +114,11 @@ function formatEditorial(text: string) {
         <span class="line"></span>
         <span class="title">EL DESAFÍO</span>
       </div>
-      <div class="editorial-narrative-card challenge-card">
-        <p class="body-text" set:html={formatEditorial(proposal.challenge)} />
-      </div>
+      <p class="body-text" set:html={formatEditorial(proposal.challenge)} />
     </section>
   )}
 
-  <!-- 02 Solución -->
+  <!-- 02 Solución (Texto limpio sin tarjeta) -->
   {proposal.solution && (
     <section class="section">
       <div class="section-kicker">
@@ -128,9 +126,7 @@ function formatEditorial(text: string) {
         <span class="line"></span>
         <span class="title">LA SOLUCIÓN</span>
       </div>
-      <div class="editorial-narrative-card solution-card">
-        <p class="body-text" set:html={formatEditorial(proposal.solution)} />
-      </div>
+      <p class="body-text" set:html={formatEditorial(proposal.solution)} />
     </section>
   )}
 
@@ -203,7 +199,7 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- Alcance -->
+  <!-- Alcance (Diseño limpio original) -->
   {((proposal.includes?.length > 0) || (proposal.excludes?.length > 0)) && (
     <section class="section">
       <div class="section-kicker">
@@ -213,10 +209,8 @@ function formatEditorial(text: string) {
       </div>
       <div class="scope-container">
         {proposal.includes?.length > 0 && (
-          <div class="scope-group scope-card">
-            <h3 class="scope-title">
-              <span class="scope-title-badge">INCLUYE</span>
-            </h3>
+          <div class="scope-group">
+            <h3 class="scope-title">INCLUYE</h3>
             <ul class="scope-list">
               {proposal.includes.map((item: string) => {
                 const isFullPack = item.includes("Pack de Marketing y Lanzamiento") || item.includes("Plan Full");
@@ -231,10 +225,8 @@ function formatEditorial(text: string) {
           </div>
         )}
         {proposal.excludes?.length > 0 && (
-          <div class="scope-group scope-card-excludes">
-            <h3 class="scope-title muted-title">
-              <span class="scope-title-badge-muted">NO INCLUYE</span>
-            </h3>
+          <div class="scope-group excludes-group">
+            <h3 class="scope-title">NO INCLUYE</h3>
             <ul class="scope-list muted">
               {proposal.excludes.map((item: string) => (
                 <li>
@@ -377,7 +369,7 @@ function formatEditorial(text: string) {
     )}
   </section>
 
-  <!-- Tiempos -->
+  <!-- Tiempos (Tarjeta editorial sutil mantenida) -->
   {proposal.timeline && (
     <section class="section">
       <div class="section-kicker">
@@ -391,7 +383,7 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- ROI -->
+  <!-- ROI (Tabla con columna resaltada mantenida) -->
   {(proposal.roi_table?.headers?.length > 0 || proposal.roiTable?.headers?.length > 0) && (
     <section class="section">
       <div class="section-kicker">
@@ -782,7 +774,15 @@ function formatEditorial(text: string) {
     color: #5C675F;
   }
 
-  /* TARJETAS NARRATIVAS EDITORIALES */
+  .body-text {
+    font-size: clamp(0.98rem, 2.2vw, 1.05rem);
+    line-height: 1.7;
+    color: #2D3730;
+    white-space: pre-line;
+    margin: 0;
+  }
+
+  /* TARJETA EDITORIAL PARA CRONOGRAMA */
   .editorial-narrative-card {
     background: #FFFFFF;
     border: 1px solid #E2E4DC;
@@ -801,14 +801,6 @@ function formatEditorial(text: string) {
     bottom: 0;
     width: 3.5px;
     background: var(--mate);
-  }
-
-  .body-text {
-    font-size: clamp(0.98rem, 2.2vw, 1.05rem);
-    line-height: 1.7;
-    color: #2D3730;
-    white-space: pre-line;
-    margin: 0;
   }
 
   /* LIVE DEMO BROWSER FRAME */
@@ -957,56 +949,21 @@ function formatEditorial(text: string) {
     color: #F4F6F2;
   }
 
-  /* Scope */
+  /* Scope (Layout limpio original sin cajas) */
   .scope-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .scope-card {
-    background: #FFFFFF;
-    border: 1px solid #E2E4DC;
-    border-radius: 16px;
-    padding: 1.6rem 1.75rem;
-    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
-  }
-
-  .scope-card-excludes {
-    background: rgba(238, 237, 230, 0.45);
-    border: 1px dashed #D3D4CA;
-    border-radius: 16px;
-    padding: 1.4rem 1.75rem;
+    gap: 2rem;
   }
 
   .scope-title {
-    margin: 0 0 1.15rem;
-    display: flex;
-  }
-
-  .scope-title-badge {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.74rem;
+    font-size: 0.82rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.14em;
-    color: var(--mate);
-    background: rgba(46, 83, 57, 0.08);
-    border: 1px solid rgba(46, 83, 57, 0.2);
-    padding: 0.25rem 0.65rem;
-    border-radius: 5px;
-  }
-
-  .scope-title-badge-muted {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: #717D73;
-    background: rgba(113, 125, 115, 0.1);
-    padding: 0.25rem 0.6rem;
-    border-radius: 5px;
+    color: var(--ink);
+    margin: 0 0 1rem;
   }
 
   .scope-list {
