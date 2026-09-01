@@ -5,6 +5,7 @@ import type { APIRoute } from "astro";
 import { isAuthenticated } from "../../../lib/auth";
 import { supabaseAdmin } from "../../../lib/supabase";
 import { uploadToStorage, deleteFromStorage } from "../../../lib/storage";
+import { createNotification, messageDocumentUploaded } from "../../../lib/notifications";
 
 export const GET: APIRoute = async ({ request, cookies }) => {
   if (!(await isAuthenticated(cookies, request))) {
@@ -68,7 +69,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
         name: name.trim(),
         type,
         storage_path: storagePath,
-        url: null, // Los archivos se descargan de forma segura vía signed URL
+        url: null,
         visible_to_client: visibleToClient,
       })
       .select()
@@ -77,6 +78,24 @@ export const POST: APIRoute = async ({ request, cookies }) => {
     if (dbError) {
       console.error("DB error inserting document:", dbError);
       return new Response(JSON.stringify({ ok: false, message: dbError.message }), { status: 500 });
+    }
+
+    // 3. Notificación automática si es visible para el cliente
+    if (visibleToClient && clientId) {
+      const { data: client } = await supabaseAdmin
+        .from("clients")
+        .select("name")
+        .eq("id", clientId)
+        .single();
+
+      await createNotification({
+        type: "document_uploaded",
+        clientId,
+        projectId,
+        proposalId,
+        message: messageDocumentUploaded(client?.name || "Cliente", name.trim()),
+        channel: "whatsapp",
+      });
     }
 
     return new Response(JSON.stringify({ ok: true, document: docRecord }), { status: 200 });
@@ -134,7 +153,6 @@ export const DELETE: APIRoute = async ({ request, cookies }) => {
       return new Response(JSON.stringify({ ok: false, message: "ID requerido" }), { status: 400 });
     }
 
-    // 1. Obtener registro para saber storage_path
     const { data: doc } = await supabaseAdmin
       .from("documents")
       .select("storage_path")

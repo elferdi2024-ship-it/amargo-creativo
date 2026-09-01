@@ -71,6 +71,9 @@ const amountDisplay =
       </div>
 
       <div class="header-actions">
+        <button type="button" id="btn-save-template" class="btn-outline-sm btn-tpl">
+          ★ Guardar como Plantilla
+        </button>
         <a href={`/admin/proposals/${proposal.id}/edit`} class="btn-outline-sm">
           ✏️ Editar Propuesta
         </a>
@@ -298,7 +301,7 @@ const amountDisplay =
     </div>
   </div>
 
-  <script define:vars={{ proposalId: proposal.id }}>
+  <script define:vars={{ proposalId: proposal.id, proposalTitle: proposal.project_title }}>
     // Status Switcher
     const buttons = document.querySelectorAll("#status-controls .btn-status-toggle");
     buttons.forEach((btn) => {
@@ -318,6 +321,34 @@ const amountDisplay =
           alert("Error al actualizar estado");
         }
       });
+    });
+
+    // Guardar como plantilla
+    const saveTplBtn = document.getElementById("btn-save-template");
+    saveTplBtn?.addEventListener("click", async () => {
+      const name = prompt("Nombre identificador para esta plantilla:", `Plantilla ${proposalTitle}`);
+      if (!name || !name.trim()) return;
+
+      try {
+        const res = await fetch("/api/admin/proposal-templates", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "save",
+            proposalId,
+            templateName: name.trim(),
+          }),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          alert("✓ Plantilla guardada exitosamente en la biblioteca.");
+          window.location.href = "/admin/plantillas-propuestas";
+        } else {
+          alert("Error al guardar plantilla: " + (data.error || ""));
+        }
+      } catch {
+        alert("Error de conexión");
+      }
     });
 
     // Delete Proposal
@@ -401,6 +432,16 @@ const amountDisplay =
     display: flex;
     gap: 0.6rem;
     flex-wrap: wrap;
+  }
+
+  .btn-tpl {
+    background: rgba(200, 255, 0, 0.1);
+    border-color: rgba(200, 255, 0, 0.4);
+    color: var(--adm-lime);
+  }
+
+  .btn-tpl:hover {
+    background: rgba(200, 255, 0, 0.2);
   }
 
   /* Magic Link Banner */

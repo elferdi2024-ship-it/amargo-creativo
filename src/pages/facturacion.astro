@@ -1,0 +1,404 @@
+---
+// filepath: src/pages/facturacion.astro
+export const prerender = true;
+
+import { whatsappHref } from "../lib/format";
+
+const waMessage = "Hola Amargo Creativo, me interesa conocer más sobre el Sistema de Facturación & Cobros para agencias y estudios en Uruguay.";
+const waLink = whatsappHref(waMessage);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Facturación & Gestión de Cobros para Agencias y Estudios · AMARGO</title>
+    <meta name="description" content="Controlá facturas, automatizá recordatorios de cobro por WhatsApp y ofrecé portales con estado de cuenta en vivo. Diseñado para Uruguay, CFE-ready." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <style>
+      :root {
+        --bg-warm: #F4F3EE;
+        --ink: #0D1510;
+        --mute: #55665B;
+        --card-bg: #FFFFFF;
+        --border-subtle: #D8D6CD;
+        --brand-green: #2E5339;
+        --lime-accent: #D4FF00;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        background: var(--bg-warm);
+        color: var(--ink);
+        font-family: "Archivo", system-ui, sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* Navbar */
+      .navbar {
+        padding: 1.5rem 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid var(--border-subtle);
+      }
+
+      .brand {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 1.5rem;
+        color: var(--ink);
+        text-decoration: none;
+        letter-spacing: -0.03em;
+      }
+
+      .nav-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--brand-green);
+        color: #FFFFFF;
+        padding: 0.6rem 1.15rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+      }
+
+      .nav-cta:hover {
+        background: #23402C;
+        transform: translateY(-1px);
+      }
+
+      /* Hero */
+      .hero {
+        padding: 5rem 0 3.5rem;
+        text-align: center;
+      }
+
+      .kicker {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: rgba(46, 83, 57, 0.1);
+        color: var(--brand-green);
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero h1 {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.2rem, 5vw, 3.75rem);
+        line-height: 1.08;
+        letter-spacing: -0.03em;
+        margin: 0 auto 1.25rem;
+        max-width: 820px;
+      }
+
+      .hero p {
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: var(--mute);
+        max-width: 640px;
+        margin: 0 auto 2.5rem;
+        line-height: 1.6;
+      }
+
+      .cta-group {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .btn-primary {
+        background: var(--brand-green);
+        color: #FFFFFF;
+        padding: 0.9rem 1.85rem;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 14px rgba(46, 83, 57, 0.25);
+        transition: all 0.2s ease;
+      }
+
+      .btn-primary:hover {
+        background: #23402C;
+        transform: translateY(-2px);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--border-subtle);
+        padding: 0.9rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 1rem;
+        text-decoration: none;
+      }
+
+      .btn-outline:hover {
+        border-color: var(--ink);
+      }
+
+      /* Mockup Card */
+      .hero-mockup {
+        background: #0D1510;
+        color: #F4F6F2;
+        border-radius: 16px;
+        padding: 2.5rem;
+        margin-top: 3.5rem;
+        text-align: left;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+        border: 1px solid #24352A;
+      }
+
+      .mockup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #24352A;
+        padding-bottom: 1.25rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .mockup-title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.85rem;
+        color: var(--lime-accent);
+      }
+
+      .mockup-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.25rem;
+      }
+
+      .mock-box {
+        background: #141E18;
+        border: 1px solid #24352A;
+        border-radius: 10px;
+        padding: 1.25rem;
+      }
+
+      .mock-label {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        color: #85968B;
+        text-transform: uppercase;
+      }
+
+      .mock-val {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.6rem;
+        font-weight: 800;
+        margin-top: 0.25rem;
+        color: #F4F6F2;
+      }
+
+      /* Features Grid */
+      .features {
+        padding: 5rem 0;
+      }
+
+      .features-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2.2rem;
+        text-align: center;
+        margin: 0 0 3rem;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+      }
+
+      .feat-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-subtle);
+        border-radius: 14px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.85rem;
+      }
+
+      .feat-icon {
+        font-size: 1.8rem;
+      }
+
+      .feat-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+      }
+
+      .feat-card p {
+        margin: 0;
+        color: var(--mute);
+        font-size: 0.92rem;
+        line-height: 1.5;
+      }
+
+      /* Bottom CTA */
+      .bottom-banner {
+        background: var(--brand-green);
+        color: #FFFFFF;
+        border-radius: 16px;
+        padding: 3.5rem 2rem;
+        text-align: center;
+        margin-bottom: 5rem;
+      }
+
+      .bottom-banner h2 {
+        font-family: "Syne", sans-serif;
+        font-size: clamp(1.8rem, 4vw, 2.6rem);
+        margin: 0 0 1rem;
+        font-weight: 800;
+      }
+
+      .bottom-banner p {
+        font-size: 1.05rem;
+        color: #D2DDD6;
+        max-width: 540px;
+        margin: 0 auto 2rem;
+      }
+
+      .btn-lime {
+        background: var(--lime-accent);
+        color: #0D1510;
+        padding: 0.9rem 2rem;
+        border-radius: 10px;
+        font-weight: 800;
+        font-size: 1rem;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s ease;
+      }
+
+      .btn-lime:hover {
+        background: #b5e600;
+        transform: translateY(-2px);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- NAVBAR -->
+      <nav class="navbar">
+        <a href="/" class="brand">AMARGO.</a>
+        <a href={waLink} target="_blank" class="nav-cta">
+          Consultar por WhatsApp ↗
+        </a>
+      </nav>
+
+      <!-- HERO -->
+      <header class="hero">
+        <span class="kicker">MÓDULO FINANCIERO · URUGUAY</span>
+        <h1>Control de Facturas, Cobros y Estado de Cuenta en Tiempo Real</h1>
+        <p>
+          Dejá de perseguir pagos con planillas de Excel. Centralizá presupuestos, emití facturas con cálculo de IVA y ofrecé a tus clientes un portal transparente con comprobantes oficiales.
+        </p>
+        <div class="cta-group">
+          <a href={waLink} target="_blank" class="btn-primary">
+            💬 Agendar Demo por WhatsApp
+          </a>
+          <a href="/admin/login" class="btn-outline">
+            Acceso Clientes / Admin →
+          </a>
+        </div>
+
+        <!-- MOCKUP DISPLAY -->
+        <div class="hero-mockup">
+          <div class="mockup-header">
+            <span class="mockup-title">⚡ SISTEMA DE FINANZAS & COBROS (CFE-READY)</span>
+            <span style="font-size:0.75rem; color:#85968B;">DGI Uruguay · BROU · Santander · Mercado Pago</span>
+          </div>
+          <div class="mockup-grid">
+            <div class="mock-box">
+              <span class="mock-label">Cobrado este Mes</span>
+              <div class="mock-val" style="color:#C8FF00;">$ 148.500</div>
+            </div>
+            <div class="mock-box">
+              <span class="mock-label">Saldo por Cobrar</span>
+              <div class="mock-val" style="color:#60A5FA;">$ 42.000</div>
+            </div>
+            <div class="mock-box">
+              <span class="mock-label">Tasa de Efectividad</span>
+              <div class="mock-val" style="color:#34D399;">96.8%</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- FEATURES -->
+      <section class="features">
+        <h2 class="features-title">Diseñado para la operativa real de servicios</h2>
+
+        <div class="grid-3">
+          <div class="feat-card">
+            <div class="feat-icon">🧾</div>
+            <h3>Comprobantes CFE Ready</h3>
+            <p>
+              Numeración correlativa por serie, discriminación automática de IVA 22% (Uruguay), identificación de RUT del cliente y formato oficial A4 membretado.
+            </p>
+          </div>
+
+          <div class="feat-card">
+            <div class="feat-icon">📲</div>
+            <h3>Automatización por WhatsApp</h3>
+            <p>
+              Notificación inmediata al cliente cuando se emite una factura o se confirma un pago recibido, eliminando fricciones y demoras.
+            </p>
+          </div>
+
+          <div class="feat-card">
+            <div class="feat-icon">🔒</div>
+            <h3>Portal Seguro con Magic Link</h3>
+            <p>
+              Tus clientes acceden en cualquier momento a su historial de facturas, saldo pendiente y comprobantes PDF sin contraseñas engorrosas.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- BOTTOM BANNER -->
+      <section class="bottom-banner">
+        <h2>¿Querés implementar este sistema en tu empresa?</h2>
+        <p>
+          Te ayudamos a integrar tu flujo comercial, presupuestos interactivos y control de cobros con la identidad de tu marca.
+        </p>
+        <a href={waLink} target="_blank" class="btn-lime">
+          Hablar con el Equipo de AMARGO →
+        </a>
+      </section>
+    </div>
+  </body>
+</html>

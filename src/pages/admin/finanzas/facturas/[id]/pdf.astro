@@ -1,0 +1,465 @@
+---
+// filepath: src/pages/admin/finanzas/facturas/[id]/pdf.astro
+export const prerender = false;
+
+import { supabaseAdmin } from "../../../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../../../lib/format";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return new Response("ID no encontrado", { status: 404 });
+}
+
+const { data: invoice, error } = await supabaseAdmin
+  .from("invoices")
+  .select("*, clients(*), payments(*)")
+  .eq("id", id)
+  .single();
+
+if (error || !invoice) {
+  return new Response("Factura no encontrada", { status: 404 });
+}
+
+const client = invoice.clients as any;
+const items = Array.isArray(invoice.items) ? invoice.items : [];
+const payments = invoice.payments || [];
+const totalPaid = payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+const remainingBalance = Math.max(0, Number(invoice.total || 0) - totalPaid);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Comprobante {invoice.number || "Borrador"} · AMARGO Agencia Creativa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #111814;
+        --mute: #526056;
+        --light: #F4F6F2;
+        --border: #D2DDD6;
+        --brand: #2E5339;
+        --lime: #C8FF00;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #202922;
+        font-family: "Archivo", system-ui, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* Toolbar */
+      .no-print {
+        position: sticky;
+        top: 0;
+        background: #0E1611;
+        border-bottom: 1px solid #24352A;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 100;
+      }
+
+      .btn-back {
+        color: #A3B8AC;
+        text-decoration: none;
+        font-size: 0.85rem;
+      }
+
+      .btn-back:hover { color: #FFFFFF; }
+
+      .btn-print {
+        background: var(--lime);
+        color: #141E18;
+        border: none;
+        padding: 0.55rem 1.25rem;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 0.88rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .btn-print:hover { background: #b5e600; }
+
+      /* A4 Container */
+      .page-wrap {
+        max-width: 820px;
+        margin: 2rem auto;
+        background: #FFFFFF;
+        padding: 3.5rem 3.5rem;
+        border-radius: 4px;
+        box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+        min-height: 1100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      /* Header */
+      .doc-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 2px solid var(--ink);
+        padding-bottom: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .brand-title {
+        font-family: "Syne", sans-serif;
+        font-weight: 800;
+        font-size: 2rem;
+        letter-spacing: -0.04em;
+        margin: 0 0 0.2rem;
+        color: var(--brand);
+      }
+
+      .brand-sub {
+        font-size: 0.82rem;
+        color: var(--mute);
+        line-height: 1.4;
+      }
+
+      .cfe-meta-box {
+        text-align: right;
+      }
+
+      .cfe-type-tag {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.72rem;
+        font-weight: 700;
+        background: #F1F4EE;
+        border: 1px solid var(--border);
+        padding: 0.25rem 0.6rem;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 0.4rem;
+        letter-spacing: 0.08em;
+      }
+
+      .cfe-number {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 1.35rem;
+        font-weight: 800;
+        margin: 0 0 0.25rem;
+      }
+
+      .cfe-rut {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.82rem;
+        color: var(--mute);
+      }
+
+      /* Client & Dates Grid */
+      .meta-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .meta-block-title {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--mute);
+        font-weight: 700;
+        margin-bottom: 0.35rem;
+      }
+
+      .client-target-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 0.15rem;
+      }
+
+      .client-target-sub {
+        font-size: 0.88rem;
+        color: var(--mute);
+      }
+
+      .dates-table {
+        width: 100%;
+        font-size: 0.85rem;
+      }
+
+      .dates-table td {
+        padding: 0.25rem 0;
+      }
+
+      .dates-table td:last-child {
+        text-align: right;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 600;
+      }
+
+      /* Items Table */
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 2rem;
+        font-size: 0.9rem;
+      }
+
+      .items-table th {
+        border-bottom: 2px solid var(--ink);
+        padding: 0.65rem 0.5rem;
+        text-align: left;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--mute);
+      }
+
+      .items-table td {
+        padding: 0.85rem 0.5rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .font-mono {
+        font-family: "JetBrains Mono", monospace;
+      }
+
+      /* Totals & Banking */
+      .summary-section {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2rem;
+        margin-top: 1rem;
+      }
+
+      .banking-box {
+        background: #F8FAF7;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 1rem 1.25rem;
+        font-size: 0.82rem;
+        line-height: 1.5;
+      }
+
+      .banking-box strong {
+        color: var(--brand);
+        display: block;
+        margin-bottom: 0.25rem;
+      }
+
+      .totals-box {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      .totals-row {
+        display: flex;
+        justify-content: space-between;
+        color: var(--mute);
+      }
+
+      .total-due {
+        border-top: 2px solid var(--ink);
+        padding-top: 0.6rem;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--ink);
+      }
+
+      /* Footer */
+      .doc-footer {
+        margin-top: 3rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        font-size: 0.75rem;
+        color: var(--mute);
+      }
+
+      .cfe-dgi-badge {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 0.65rem;
+        border: 1px dashed var(--border);
+        padding: 0.35rem 0.65rem;
+        border-radius: 4px;
+        background: #FAFAFA;
+      }
+
+      /* Print Overrides */
+      @media print {
+        body { background: #FFFFFF; }
+        .no-print { display: none !important; }
+        .page-wrap {
+          margin: 0;
+          padding: 2cm;
+          box-shadow: none;
+          max-width: 100%;
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- TOOLBAR (NO PRINT) -->
+    <div class="no-print">
+      <a href={`/admin/finanzas/facturas/${invoice.id}`} class="btn-back">
+        ← Volver a Factura
+      </a>
+      <button onclick="window.print()" class="btn-print">
+        🖨️ Imprimir / Guardar como PDF
+      </button>
+    </div>
+
+    <!-- A4 PRINTABLE DOCUMENT -->
+    <div class="page-wrap">
+      <div>
+        <!-- HEADER -->
+        <header class="doc-header">
+          <div>
+            <h1 class="brand-title">AMARGO.</h1>
+            <div class="brand-sub">
+              <strong>AMARGO Agencia Creativa</strong><br />
+              Atlántida, Canelones, Uruguay<br />
+              Email: contacto@amargocreativo.uy · Tel: +598 98 300 491
+            </div>
+          </div>
+
+          <div class="cfe-meta-box">
+            <span class="cfe-type-tag">
+              {invoice.cfe_type === "101" ? "e-Factura CFE" : "COMPROBANTE DE VENTA"}
+            </span>
+            <div class="cfe-number">{invoice.number || `BORRADOR ${invoice.series || "A"}`}</div>
+            <div class="cfe-rut">R.U.T. Emisor: 219999990011</div>
+          </div>
+        </header>
+
+        <!-- RECIPIENT & DATES -->
+        <section class="meta-grid">
+          <div>
+            <div class="meta-block-title">Receptor / Cliente</div>
+            <div class="client-target-name">{client?.name || "Consumidor Final"}</div>
+            {client?.company && <div class="client-target-sub">{client.company}</div>}
+            <div class="client-target-sub font-mono">
+              RUT / Documento: <strong>{client?.rut || "Consumidor Final"}</strong>
+            </div>
+            {client?.address && <div class="client-target-sub">{client.address}</div>}
+          </div>
+
+          <div>
+            <div class="meta-block-title">Datos del Comprobante</div>
+            <table class="dates-table">
+              <tr>
+                <td>Fecha Emisión:</td>
+                <td>{invoice.issue_date ? formatDate(invoice.issue_date) : "—"}</td>
+              </tr>
+              {invoice.due_date && (
+                <tr>
+                  <td>Vencimiento:</td>
+                  <td>{formatDate(invoice.due_date)}</td>
+                </tr>
+              )}
+              <tr>
+                <td>Moneda:</td>
+                <td>{invoice.currency || "UYU"}</td>
+              </tr>
+              <tr>
+                <td>Condición de pago:</td>
+                <td>{invoice.payment_terms || "Contado"}</td>
+              </tr>
+            </table>
+          </div>
+        </section>
+
+        <!-- ITEMS TABLE -->
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th>Concepto / Descripción</th>
+              <th style="text-align: center;">Cant.</th>
+              <th style="text-align: right;">Precio Unit.</th>
+              <th style="text-align: right;">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((it: any) => (
+              <tr>
+                <td>{it.description}</td>
+                <td style="text-align: center;" class="font-mono">{it.quantity || 1}</td>
+                <td style="text-align: right;" class="font-mono">{formatMoney(Number(it.unit_price), invoice.currency)}</td>
+                <td style="text-align: right;" class="font-mono">{formatMoney(Number(it.total), invoice.currency)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <!-- TOTALS & BANKING -->
+        <section class="summary-section">
+          <div class="banking-box">
+            <strong>Cuentas Bancarias para Transferencias:</strong>
+            • BROU Caja de Ahorros: 0015-09887722-01 (Pesos / USD)<br />
+            • Santander Caja de Ahorros: 5100-2993881 (Pesos / USD)<br />
+            Titular: AMARGO Agencia Creativa<br />
+            <em>Agradecemos notificar la transferencia al +598 98 300 491.</em>
+          </div>
+
+          <div class="totals-box">
+            <div class="totals-row">
+              <span>Subtotal Neto:</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.subtotal), invoice.currency)}</strong>
+            </div>
+            <div class="totals-row">
+              <span>IVA ({invoice.tax_rate || 22}%):</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.tax_amount), invoice.currency)}</strong>
+            </div>
+            <div class="totals-row total-due">
+              <span>TOTAL A PAGAR:</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.total), invoice.currency)}</strong>
+            </div>
+            {totalPaid > 0 && (
+              <div class="totals-row font-mono" style="color:#059669;">
+                <span>Total Abonado:</span>
+                <strong>- {formatMoney(totalPaid, invoice.currency)}</strong>
+              </div>
+            )}
+            {totalPaid > 0 && remainingBalance > 0 && (
+              <div class="totals-row font-mono" style="color:#DC2626; font-weight:700;">
+                <span>Saldo Pendiente:</span>
+                <strong>{formatMoney(remainingBalance, invoice.currency)}</strong>
+              </div>
+            )}
+          </div>
+        </section>
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="doc-footer">
+        <div>
+          AMARGO Agencia Creativa · Soluciones Digitales y Diseño Web de Alto Rendimiento.<br />
+          Atlántida, Canelones · amargocreativo.uy
+        </div>
+
+        <div class="cfe-dgi-badge">
+          CFE READY · DGI URUGUAY<br />
+          CAE N°: 998822001199 (Vto: 2027)
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

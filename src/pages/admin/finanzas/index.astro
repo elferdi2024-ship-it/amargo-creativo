@@ -1,0 +1,299 @@
+---
+// filepath: src/pages/admin/finanzas/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../lib/format";
+
+const now = new Date();
+const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
+
+const { data: invoices } = await supabaseAdmin
+  .from("invoices")
+  .select("id, number, series, status, total, currency, issue_date, due_date, client_id, clients(name, company)")
+  .order("issue_date", { ascending: false });
+
+const all = invoices || [];
+
+const paidThisMonth = all.filter(
+  (i) => i.status === "paid" && i.issue_date && i.issue_date >= firstDayOfMonth
+);
+const pending = all.filter((i) => ["issued", "sent", "partial", "draft"].includes(i.status));
+const overdue = all.filter(
+  (i) =>
+    i.status === "overdue" ||
+    (i.due_date && i.due_date < now.toISOString().slice(0, 10) && !["paid", "cancelled"].includes(i.status))
+);
+
+const incomeThisMonth = paidThisMonth.reduce((sum, i) => sum + Number(i.total || 0), 0);
+const totalPending = pending.reduce((sum, i) => sum + Number(i.total || 0), 0);
+const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
+---
+
+<AdminLayout title="Finanzas & Cobros" activeSection="finanzas">
+  <div class="finanzas-page">
+    <div class="top-header-banner">
+      <div>
+        <h2>Control de Facturación & Cobros (Uruguay)</h2>
+        <p>
+          Administrá facturas, estados de cuenta de clientes y registro de pagos. Preparado con estructura CFE (Comprobantes Fiscales Electrónicos).
+        </p>
+      </div>
+      <div class="top-actions">
+        <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
+          + Nueva Factura
+        </a>
+      </div>
+    </div>
+
+    <!-- METRICS CARDS -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <span class="m-label">Ingresos del Mes</span>
+        <div class="m-value m-income">{formatMoney(incomeThisMonth, "UYU")}</div>
+        <span class="m-sub">Facturas cobradas en el período</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="m-label">Por Cobrar</span>
+        <div class="m-value m-pending">{formatMoney(totalPending, "UYU")}</div>
+        <span class="m-sub">{pending.length} facturas activas</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="m-label">Vencidas</span>
+        <div class="m-value m-overdue">{formatMoney(totalOverdue, "UYU")}</div>
+        <span class="m-sub">{overdue.length} facturas fuera de fecha</span>
+      </div>
+
+      <div class="metric-card">
+        <span class="m-label">Total Emitidas</span>
+        <div class="m-value">{all.length}</div>
+        <span class="m-sub">Histórico registrado</span>
+      </div>
+    </div>
+
+    <!-- RECENT INVOICES -->
+    <div class="invoices-box">
+      <div class="invoices-box-header">
+        <div>
+          <h3>Facturas Recientes</h3>
+          <span class="sub-text">Comprobantes emitidos y borradores</span>
+        </div>
+        <a href="/admin/finanzas/facturas" class="btn-link">
+          Ver todas las facturas →
+        </a>
+      </div>
+
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Número / Serie</th>
+              <th>Cliente</th>
+              <th>Estado</th>
+              <th>Emisión</th>
+              <th>Vencimiento</th>
+              <th style="text-align: right;">Total</th>
+              <th style="text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {all.slice(0, 10).map((inv) => (
+              <tr>
+                <td>
+                  <a href={`/admin/finanzas/facturas/${inv.id}`} class="inv-num-link">
+                    {inv.number || `Borrador (${inv.series || "A"})`}
+                  </a>
+                </td>
+                <td>
+                  <strong>{(inv.clients as any)?.name || "Sin cliente"}</strong>
+                  {(inv.clients as any)?.company && (
+                    <span class="client-sub"> · {(inv.clients as any).company}</span>
+                  )}
+                </td>
+                <td>
+                  <span class={`badge-status status-${inv.status}`}>
+                    {inv.status === "paid"
+                      ? "✓ Pagada"
+                      : inv.status === "issued"
+                      ? "Emitida"
+                      : inv.status === "partial"
+                      ? "Pago Parcial"
+                      : inv.status === "overdue"
+                      ? "Vencida"
+                      : inv.status === "draft"
+                      ? "Borrador"
+                      : inv.status}
+                  </span>
+                </td>
+                <td>{inv.issue_date ? formatDate(inv.issue_date) : "—"}</td>
+                <td>{inv.due_date ? formatDate(inv.due_date) : "—"}</td>
+                <td style="text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--adm-lime);">
+                  {formatMoney(Number(inv.total), inv.currency)}
+                </td>
+                <td style="text-align: right;">
+                  <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">
+                    Gestionar →
+                  </a>
+                </td>
+              </tr>
+            ))}
+
+            {all.length === 0 && (
+              <tr>
+                <td colspan="7" style="text-align:center; padding:3rem; color:var(--adm-mute);">
+                  Todavía no hay facturas registradas. Hacé clic en "+ Nueva Factura" para crear la primera.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .finanzas-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .top-header-banner {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .top-header-banner h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .top-header-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 680px;
+    line-height: 1.45;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .metric-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .m-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .m-value {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .m-income { color: var(--adm-lime); }
+  .m-pending { color: #60A5FA; }
+  .m-overdue { color: #F87171; }
+
+  .m-sub {
+    font-size: 0.78rem;
+    color: var(--adm-mute);
+  }
+
+  .invoices-box {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .invoices-box-header {
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--adm-border);
+  }
+
+  .invoices-box-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+  }
+
+  .sub-text {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-link {
+    color: var(--adm-lime);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .inv-num-link {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    color: var(--adm-ink);
+    text-decoration: none;
+  }
+
+  .inv-num-link:hover {
+    color: var(--adm-lime);
+  }
+
+  .client-sub {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-sm:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--adm-lime);
+  }
+</style>

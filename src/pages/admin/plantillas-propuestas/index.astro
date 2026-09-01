@@ -1,0 +1,306 @@
+---
+// filepath: src/pages/admin/plantillas-propuestas/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../lib/format";
+
+// 1. Obtener plantillas
+const { data: templates } = await supabaseAdmin
+  .from("proposals")
+  .select("*, cloned:proposals!cloned_from(id)")
+  .eq("is_template", true)
+  .order("created_at", { ascending: false });
+
+// 2. Obtener clientes para clonación rápida
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("id, name, company")
+  .order("name", { ascending: true });
+---
+
+<AdminLayout title="Plantillas de Propuestas" activeSection="proposals">
+  <div class="templates-page">
+    <div class="header-banner">
+      <div>
+        <h2>Biblioteca de Plantillas Reutilizables</h2>
+        <p>
+          Guardá tus mejores propuestas como plantillas base para clonar títulos, estructuras de diagnóstico, alcances, planes de inversión y ROI en 1 solo clic.
+        </p>
+      </div>
+      <a href="/admin/proposals/new" class="btn-primary-sm">
+        + Crear Propuesta Base
+      </a>
+    </div>
+
+    <!-- TEMPLATES GRID -->
+    <div class="templates-grid">
+      {(templates || []).map((t) => {
+        const clonedCount = t.cloned?.length || 0;
+        const inv = t.investment || {};
+        const amountDisplay =
+          inv.type === "plans"
+            ? `Grilla de ${inv.plans?.length || 3} Planes`
+            : formatMoney(inv.amount || 0, inv.currency);
+
+        return (
+          <div class="template-card">
+            <div class="card-header">
+              <div>
+                <span class="template-badge">PLANTILLA COMERCIAL</span>
+                <h3 class="template-name">{t.template_name || t.project_title}</h3>
+              </div>
+              <span class="cloned-tag">
+                Clonada {clonedCount} {clonedCount === 1 ? "vez" : "veces"}
+              </span>
+            </div>
+
+            <div class="card-body">
+              <div class="obj-text">
+                <strong>Objetivo:</strong> {t.project_title}
+              </div>
+              {t.value_phrase && (
+                <p class="desc-text">"{t.value_phrase}"</p>
+              )}
+              <div class="meta-row">
+                <span class="inv-tag">💰 {amountDisplay}</span>
+                <span class="date-tag">Guardada: {formatDate(t.created_at)}</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <a href={`/admin/proposals/${t.id}`} class="btn-link">
+                Ver Contenido
+              </a>
+
+              <form action="/admin/proposals/new" method="GET" class="clone-form">
+                <input type="hidden" name="from_template" value={t.id} />
+                <button type="submit" class="btn-use-template">
+                  ★ Usar Plantilla →
+                </button>
+              </form>
+            </div>
+          </div>
+        );
+      })}
+
+      {(!templates || templates.length === 0) && (
+        <div class="empty-state">
+          <div class="empty-icon">📋</div>
+          <h3>No hay plantillas guardadas todavía</h3>
+          <p>
+            Podés guardar cualquier propuesta existente como plantilla entrando al detalle de la propuesta y haciendo clic en <strong>"★ Guardar como Plantilla"</strong>.
+          </p>
+          <a href="/admin/proposals" class="btn-primary-sm">
+            Ir a Mis Propuestas
+          </a>
+        </div>
+      )}
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .templates-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .header-banner {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .header-banner h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+
+  .header-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 680px;
+    line-height: 1.45;
+  }
+
+  .templates-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .templates-grid {
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    }
+  }
+
+  .template-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
+    transition: all 0.15s ease;
+  }
+
+  .template-card:hover {
+    border-color: var(--adm-border-light);
+    transform: translateY(-2px);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .template-badge {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--adm-lime);
+    background: rgba(200, 255, 0, 0.1);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+    margin-bottom: 0.4rem;
+  }
+
+  .template-name {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .cloned-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    color: var(--adm-mute);
+    white-space: nowrap;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    font-size: 0.88rem;
+  }
+
+  .obj-text {
+    color: #E2E8E4;
+  }
+
+  .desc-text {
+    margin: 0;
+    color: var(--adm-mute);
+    font-style: italic;
+    font-size: 0.82rem;
+    line-height: 1.4;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--adm-border);
+    font-size: 0.8rem;
+  }
+
+  .inv-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    color: var(--adm-lime);
+  }
+
+  .date-tag {
+    color: var(--adm-mute);
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--adm-border);
+  }
+
+  .btn-link {
+    color: var(--adm-mute);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-link:hover {
+    color: var(--adm-ink);
+  }
+
+  .btn-use-template {
+    background: var(--adm-lime);
+    color: #141E18;
+    border: none;
+    padding: 0.45rem 0.9rem;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-use-template:hover {
+    background: #b5e600;
+    transform: translateY(-1px);
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3.5rem 1.5rem;
+    background: var(--adm-card);
+    border: 1px dashed var(--adm-border);
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .empty-icon {
+    font-size: 2.5rem;
+  }
+
+  .empty-state h3 {
+    margin: 0;
+    font-size: 1.15rem;
+  }
+
+  .empty-state p {
+    margin: 0;
+    color: var(--adm-mute);
+    font-size: 0.88rem;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+</style>

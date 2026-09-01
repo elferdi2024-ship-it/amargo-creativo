@@ -1,0 +1,211 @@
+---
+// filepath: src/pages/admin/automatizaciones/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../lib/supabase";
+import { formatDate } from "../../../lib/format";
+
+const { data: notifications } = await supabaseAdmin
+  .from("notifications")
+  .select("*, clients(name, company, phone), projects(title), proposals(project_title)")
+  .order("created_at", { ascending: false });
+
+const all = notifications || [];
+---
+
+<AdminLayout title="Automatizaciones & Notificaciones" activeSection="automatizaciones">
+  <div class="auto-page">
+    <div class="top-banner">
+      <div>
+        <h2>Centro de Automatizaciones & Mensajería</h2>
+        <p>
+          Historial de eventos automáticos generados por el sistema (aceptación de propuestas, subida de entregables, avance de etapas y confirmación de cobros).
+        </p>
+      </div>
+      <div class="status-summary">
+        <span class="badge-tag">⚡ {all.length} Eventos disparados</span>
+      </div>
+    </div>
+
+    <!-- NOTIFICATIONS LOG -->
+    <div class="card-box">
+      <div class="box-header">
+        <h3>Registro de Actividad y Webhooks</h3>
+        <span class="sub-text">Payloads listos para WhatsApp Business API, n8n, Make y Resend</span>
+      </div>
+
+      <div class="adm-table-wrap">
+        <table class="adm-table">
+          <thead>
+            <tr>
+              <th>Evento / Tipo</th>
+              <th>Destinatario / Cliente</th>
+              <th>Canal</th>
+              <th>Mensaje Formateado</th>
+              <th>Estado</th>
+              <th>Fecha y Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            {all.map((n) => {
+              const client = n.clients as any;
+              const projectTitle = (n.projects as any)?.title || (n.proposals as any)?.project_title || "General";
+
+              return (
+                <tr>
+                  <td>
+                    <span class="event-badge font-mono">
+                      {n.type === "proposal_accepted"
+                        ? "⭐ Propuesta Aceptada"
+                        : n.type === "document_uploaded"
+                        ? "📄 Entregable Subido"
+                        : n.type === "stage_changed"
+                        ? "🚀 Etapa Avanzada"
+                        : n.type === "project_finished"
+                        ? "🏆 Proyecto Finalizado"
+                        : n.type === "payment_received"
+                        ? "💰 Cobro Recibido"
+                        : n.type}
+                    </span>
+                    <div class="proj-ref">{projectTitle}</div>
+                  </td>
+                  <td>
+                    <strong>{client?.name || "Cliente"}</strong>
+                    {client?.phone && <div class="font-mono client-phone">{client.phone}</div>}
+                  </td>
+                  <td>
+                    <span class="channel-tag font-mono">
+                      {n.channel === "whatsapp" ? "🟢 WhatsApp" : n.channel === "email" ? "✉️ Email" : "🔄 Ambos"}
+                    </span>
+                  </td>
+                  <td class="msg-cell">
+                    <p class="msg-preview">{n.message}</p>
+                  </td>
+                  <td>
+                    <span class={`badge-status status-${n.status}`}>
+                      {n.status === "sent" ? "Enviado" : n.status === "pending" ? "Pendiente" : "Fallido"}
+                    </span>
+                  </td>
+                  <td class="date-cell font-mono">
+                    {formatDate(n.created_at)}
+                  </td>
+                </tr>
+              );
+            })}
+
+            {all.length === 0 && (
+              <tr>
+                <td colspan="6" style="text-align:center; padding:3.5rem; color:var(--adm-mute);">
+                  No hay notificaciones generadas todavía. A medida que los clientes acepten propuestas o avances etapas, aparecerán aquí automáticamente.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .auto-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .top-banner {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .top-banner h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  .top-banner p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    max-width: 680px;
+    line-height: 1.45;
+  }
+
+  .badge-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--adm-lime);
+    background: rgba(200, 255, 0, 0.1);
+    border: 1px solid rgba(200, 255, 0, 0.3);
+    padding: 0.4rem 0.75rem;
+    border-radius: 20px;
+  }
+
+  .box-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .box-header h3 {
+    margin: 0 0 0.2rem;
+    font-size: 1.05rem;
+  }
+
+  .sub-text {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+  }
+
+  .event-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--adm-lime);
+    background: rgba(200, 255, 0, 0.1);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    margin-bottom: 0.2rem;
+  }
+
+  .proj-ref {
+    font-size: 0.75rem;
+    color: var(--adm-mute);
+  }
+
+  .client-phone {
+    font-size: 0.75rem;
+    color: var(--adm-mute);
+  }
+
+  .channel-tag {
+    font-size: 0.75rem;
+    color: var(--adm-ink);
+  }
+
+  .msg-cell {
+    max-width: 340px;
+  }
+
+  .msg-preview {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #D2DDD6;
+    line-height: 1.4;
+  }
+
+  .date-cell {
+    font-size: 0.78rem;
+    color: var(--adm-mute);
+    white-space: nowrap;
+  }
+</style>

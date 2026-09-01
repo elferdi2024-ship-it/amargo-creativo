@@ -1,0 +1,668 @@
+---
+// filepath: src/pages/admin/finanzas/facturas/[id].astro
+export const prerender = false;
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../../lib/supabase";
+import { createNotification, messagePaymentReceived } from "../../../../lib/notifications";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/admin/finanzas/facturas");
+}
+
+let message = "";
+let errorMsg = "";
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData();
+  const action = form.get("action") as string;
+
+  try {
+    if (action === "update_status") {
+      const newStatus = form.get("status") as string;
+      await supabaseAdmin
+        .from("invoices")
+        .update({
+          status: newStatus,
+          paid_at: newStatus === "paid" ? new Date().toISOString() : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", id);
+      message = `Estado actualizado a "${newStatus}"`;
+    }
+
+    if (action === "add_payment") {
+      const amount = Number(form.get("amount") || 0);
+      const method = form.get("method") as string;
+      const reference = form.get("reference") as string;
+      const notes = form.get("notes") as string;
+      const notifyClient = form.get("notify_client") === "on";
+
+      if (amount <= 0) {
+        errorMsg = "El monto debe ser mayor a 0";
+      } else {
+        const { data: inv } = await supabaseAdmin
+          .from("invoices")
+          .select("*, clients(name, phone)")
+          .eq("id", id)
+          .single();
+
+        await supabaseAdmin.from("payments").insert({
+          invoice_id: id,
+          client_id: inv?.client_id,
+          amount,
+          currency: inv?.currency || "UYU",
+          method: method || "Transferencia",
+          reference: reference || null,
+          notes: notes || null,
+          paid_at: new Date().toISOString(),
+        });
+
+        // Calcular total pagado
+        const { data: allPayments } = await supabaseAdmin
+          .from("payments")
+          .select("amount")
+          .eq("invoice_id", id);
+
+        const totalPaid = (allPayments || []).reduce((sum, p) => sum + Number(p.amount), 0);
+        const invoiceTotal = Number(inv?.total || 0);
+
+        let newStatus = inv?.status || "draft";
+        if (totalPaid >= invoiceTotal) {
+          newStatus = "paid";
+        } else if (totalPaid > 0) {
+          newStatus = "partial";
+        }
+
+        await supabaseAdmin
+          .from("invoices")
+          .update({
+            status: newStatus,
+            paid_at: newStatus === "paid" ? new Date().toISOString() : null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", id);
+
+        // Notificación automática si se marcó
+        if (notifyClient && inv?.client_id) {
+          const clientName = (inv.clients as any)?.name || "Cliente";
+          await createNotification({
+            type: "payment_received",
+            invoiceId: inv.id,
+            clientId: inv.client_id,
+            message: messagePaymentReceived(clientName, `$ ${amount.toLocaleString("es-UY")}`, inv.number),
+            channel: "whatsapp",
+          });
+        }
+
+        return Astro.redirect(`/admin/finanzas/facturas/${id}?ok=1`);
+      }
+    }
+  } catch (err: any) {
+    errorMsg = err.message || "Error al procesar la solicitud";
+  }
+}
+
+const { data: invoice } = await supabaseAdmin
+  .from("invoices")
+  .select(`
+    *,
+    clients (id, name, email, phone, company, rut),
+    projects (id, title)
+  `)
+  .eq("id", id)
+  .single();
+
+if (!invoice) {
+  return Astro.redirect("/admin/finanzas/facturas");
+}
+
+const { data: payments } = await supabaseAdmin
+  .from("payments")
+  .select("*")
+  .eq("invoice_id", id)
+  .order("paid_at", { ascending: false });
+
+function formatMoney(amount: number, currency = "UYU") {
+  return new Intl.NumberFormat("es-UY", {
+    style: "currency",
+    currency: currency === "USD" ? "USD" : "UYU",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+const totalPaid = (payments || []).reduce((sum, p) => sum + Number(p.amount), 0);
+const remaining = Math.max(0, Number(invoice.total || 0) - totalPaid);
+const items = Array.isArray(invoice.items) ? invoice.items : [];
+---
+
+<AdminLayout title={`Factura ${invoice.number || "Borrador"}`} activeSection="finanzas">
+  <div class="inv-page">
+    <div class="top-header-card">
+      <div>
+        <div class="breadcrumb">
+          <a href="/admin/finanzas/facturas">← Volver al Listado de Facturas</a>
+        </div>
+        <div class="title-row">
+          <h1>{invoice.number || `Factura en Borrador (${invoice.series})`}</h1>
+          <span class={`badge-status status-${invoice.status}`}>
+            {invoice.status === "paid"
+              ? "✓ Pagada"
+              : invoice.status === "issued"
+              ? "Emitida"
+              : invoice.status === "partial"
+              ? "Pago Parcial"
+              : invoice.status === "overdue"
+              ? "Vencida"
+              : invoice.status === "draft"
+              ? "Borrador"
+              : invoice.status}
+          </span>
+        </div>
+        <div class="client-sub">
+          Cliente: <strong>{(invoice.clients as any)?.name || "Sin cliente"}</strong>
+          {(invoice.clients as any)?.company && <span> · {(invoice.clients as any).company}</span>}
+          {(invoice.clients as any)?.rut && <span class="font-mono"> · RUT: {(invoice.clients as any).rut}</span>}
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a href={`/admin/finanzas/facturas/${invoice.id}/pdf`} target="_blank" class="btn-pdf">
+          📄 Ver / Imprimir Factura A4 (CFE) ↗
+        </a>
+      </div>
+    </div>
+
+    {Astro.url.searchParams.get("ok") && (
+      <div class="alert-success">
+        ✓ Cambios guardados correctamente.
+      </div>
+    )}
+
+    {errorMsg && (
+      <div class="alert-error">
+        ⚠️ {errorMsg}
+      </div>
+    )}
+
+    <!-- MAIN 2 COLUMNS -->
+    <div class="layout-grid">
+      <!-- MAIN DETAILS -->
+      <div class="col-main">
+        <!-- Metadata -->
+        <div class="card-box">
+          <h3 class="box-title">Datos del Comprobante</h3>
+          <div class="meta-grid">
+            <div>
+              <span class="meta-lbl">Emisión</span>
+              <div class="meta-val">{invoice.issue_date ? new Date(invoice.issue_date).toLocaleDateString("es-UY") : "—"}</div>
+            </div>
+            <div>
+              <span class="meta-lbl">Vencimiento</span>
+              <div class="meta-val">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString("es-UY") : "—"}</div>
+            </div>
+            <div>
+              <span class="meta-lbl">Proyecto</span>
+              <div class="meta-val">{(invoice.projects as any)?.title || "—"}</div>
+            </div>
+            <div>
+              <span class="meta-lbl">Condiciones</span>
+              <div class="meta-val">{invoice.payment_terms || "Contado"}</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="card-box">
+          <h3 class="box-title">Detalle de Conceptos</h3>
+          <div class="adm-table-wrap">
+            <table class="adm-table">
+              <thead>
+                <tr>
+                  <th>Descripción</th>
+                  <th style="text-align:center;">Cant.</th>
+                  <th style="text-align:right;">P. Unitario</th>
+                  <th style="text-align:right;">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map((it: any) => (
+                  <tr>
+                    <td>{it.description}</td>
+                    <td style="text-align:center;" class="font-mono">{it.quantity || 1}</td>
+                    <td style="text-align:right;" class="font-mono">{formatMoney(Number(it.unit_price), invoice.currency)}</td>
+                    <td style="text-align:right; font-weight:700;" class="font-mono">{formatMoney(Number(it.total), invoice.currency)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals summary -->
+          <div class="totals-block">
+            <div class="totals-line">
+              <span>Subtotal Neto:</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.subtotal), invoice.currency)}</strong>
+            </div>
+            <div class="totals-line">
+              <span>IVA ({invoice.tax_rate}%):</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.tax_amount), invoice.currency)}</strong>
+            </div>
+            <div class="totals-line total-highlight">
+              <span>Total Factura:</span>
+              <strong class="font-mono total-val">{formatMoney(Number(invoice.total), invoice.currency)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payments Log -->
+        <div class="card-box">
+          <div class="box-header-row">
+            <h3 class="box-title" style="margin:0;">Historial de Cobros</h3>
+            <span class="font-mono" style="color:var(--adm-lime); font-size:0.88rem; font-weight:700;">
+              Total cobrado: {formatMoney(totalPaid, invoice.currency)}
+            </span>
+          </div>
+
+          <div class="adm-table-wrap" style="margin-top:1rem;">
+            <table class="adm-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th>
+                  <th>Método</th>
+                  <th>Referencia</th>
+                  <th style="text-align:right;">Monto</th>
+                </tr>
+              </thead>
+              <tbody>
+                {(payments || []).map((p) => (
+                  <tr>
+                    <td class="font-mono">{new Date(p.paid_at).toLocaleDateString("es-UY")}</td>
+                    <td>{p.method || "Transferencia"}</td>
+                    <td class="font-mono">{p.reference || p.notes || "—"}</td>
+                    <td style="text-align:right; color:#34D399; font-weight:700;" class="font-mono">
+                      + {formatMoney(Number(p.amount), p.currency)}
+                    </td>
+                  </tr>
+                ))}
+                {(payments || []).length === 0 && (
+                  <tr>
+                    <td colspan="4" style="text-align:center; padding:2rem; color:var(--adm-mute);">
+                      Aún no se han registrado pagos para esta factura.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR CONTROLS -->
+      <div class="col-side">
+        <!-- Balance -->
+        <div class="card-box balance-box">
+          <span class="balance-lbl">Saldo Pendiente</span>
+          <div class="balance-num font-mono">{formatMoney(remaining, invoice.currency)}</div>
+          {remaining === 0 ? (
+            <span class="badge-cleared">✓ Cobro completado</span>
+          ) : (
+            <span class="badge-pending">⏳ Pendiente de cobro</span>
+          )}
+        </div>
+
+        <!-- Register Payment -->
+        {remaining > 0 && (
+          <div class="card-box">
+            <h3 class="box-title">Registrar Cobro</h3>
+            <form method="POST" class="side-form">
+              <input type="hidden" name="action" value="add_payment" />
+
+              <label class="form-field">
+                <span class="field-label">Monto Recibido ({invoice.currency})</span>
+                <input
+                  type="number"
+                  name="amount"
+                  required
+                  min="1"
+                  max={remaining}
+                  step="1"
+                  value={remaining}
+                  class="adm-input font-mono"
+                />
+              </label>
+
+              <label class="form-field">
+                <span class="field-label">Método</span>
+                <select name="method" class="adm-input">
+                  <option value="Transferencia BROU">Transferencia BROU</option>
+                  <option value="Transferencia Santander">Transferencia Santander</option>
+                  <option value="Transferencia Itaú">Transferencia Itaú</option>
+                  <option value="Mercado Pago">Mercado Pago</option>
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Wise / Extranjero">Wise / Extranjero</option>
+                </select>
+              </label>
+
+              <label class="form-field">
+                <span class="field-label">N° de Referencia</span>
+                <input
+                  type="text"
+                  name="reference"
+                  placeholder="Ej: Transf #129983"
+                  class="adm-input"
+                />
+              </label>
+
+              <label class="form-field-check">
+                <input type="checkbox" name="notify_client" checked />
+                <span>Enviar aviso por WhatsApp al cliente</span>
+              </label>
+
+              <button type="submit" class="btn-primary-sm" style="width:100%; justify-content:center; padding:0.7rem;">
+                Registrar Pago →
+              </button>
+            </form>
+          </div>
+        )}
+
+        <!-- Status updater -->
+        <div class="card-box">
+          <h3 class="box-title">Estado del Comprobante</h3>
+          <form method="POST" class="side-form">
+            <input type="hidden" name="action" value="update_status" />
+            <select name="status" class="adm-input">
+              <option value="draft" selected={invoice.status === "draft"}>Borrador</option>
+              <option value="issued" selected={invoice.status === "issued"}>Emitida</option>
+              <option value="sent" selected={invoice.status === "sent"}>Enviada</option>
+              <option value="partial" selected={invoice.status === "partial"}>Pago Parcial</option>
+              <option value="paid" selected={invoice.status === "paid"}>Pagada</option>
+              <option value="overdue" selected={invoice.status === "overdue"}>Vencida</option>
+              <option value="cancelled" selected={invoice.status === "cancelled"}>Cancelada</option>
+            </select>
+            <button type="submit" class="btn-outline-sm" style="width:100%; justify-content:center;">
+              Actualizar Estado
+            </button>
+          </form>
+        </div>
+
+        <!-- CFE DGI Box -->
+        <div class="cfe-info-card">
+          <strong>⚡ Preparación CFE / DGI Uruguay</strong>
+          <p>
+            Comprobante compatible con la normativa de Facturación Electrónica (e-Factura tipo 101, Serie {invoice.series || "A"}).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .inv-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .top-header-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .breadcrumb a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover { color: var(--adm-ink); }
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.35rem 0;
+    flex-wrap: wrap;
+  }
+
+  .title-row h1 {
+    margin: 0;
+    font-size: 1.55rem;
+    font-weight: 800;
+  }
+
+  .client-sub {
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+  }
+
+  .client-sub strong { color: var(--adm-ink); }
+
+  .btn-pdf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(200, 255, 0, 0.15);
+    border: 1px solid var(--adm-lime);
+    color: var(--adm-lime);
+    padding: 0.6rem 1.15rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-pdf:hover {
+    background: rgba(200, 255, 0, 0.25);
+    color: #FFFFFF;
+  }
+
+  .alert-success {
+    background: rgba(200, 255, 0, 0.15);
+    border: 1px solid var(--adm-lime);
+    color: var(--adm-lime);
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid var(--adm-danger);
+    color: #FCA5A5;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 1024px) {
+    .layout-grid { grid-template-columns: 1.6fr 1fr; }
+  }
+
+  .col-main, .col-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .box-title {
+    margin: 0 0 1rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+  }
+
+  .meta-lbl {
+    display: block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--adm-mute);
+    margin-bottom: 0.2rem;
+  }
+
+  .meta-val {
+    font-size: 0.9rem;
+    color: var(--adm-ink);
+  }
+
+  .totals-block {
+    align-self: flex-end;
+    width: 100%;
+    max-width: 320px;
+    margin-left: auto;
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .totals-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.88rem;
+    color: var(--adm-mute);
+  }
+
+  .total-highlight {
+    border-top: 1px solid var(--adm-border);
+    padding-top: 0.6rem;
+    font-size: 1.15rem;
+    color: var(--adm-ink);
+    font-weight: 800;
+  }
+
+  .total-val {
+    color: var(--adm-lime);
+    font-size: 1.35rem;
+  }
+
+  .box-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Balance Box */
+  .balance-box {
+    background: #111E16;
+    border-color: rgba(200, 255, 0, 0.3);
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .balance-lbl {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    color: var(--adm-mute);
+  }
+
+  .balance-num {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--adm-lime);
+    margin: 0.25rem 0;
+  }
+
+  .badge-cleared {
+    color: #34D399;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .badge-pending {
+    color: #FBBF24;
+    font-size: 0.82rem;
+  }
+
+  .side-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .field-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .form-field-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--adm-ink);
+  }
+
+  .adm-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-family: inherit;
+  }
+
+  .adm-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .cfe-info-card {
+    background: #101813;
+    border: 1px dashed var(--adm-border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    line-height: 1.45;
+  }
+
+  .cfe-info-card strong {
+    color: var(--adm-ink);
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+
+  .cfe-info-card p { margin: 0; }
+</style>

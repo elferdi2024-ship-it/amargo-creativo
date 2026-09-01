@@ -1,0 +1,602 @@
+---
+// filepath: src/pages/admin/finanzas/facturas/nueva.astro
+export const prerender = false;
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../../lib/supabase";
+import { createInvoice } from "../../../../lib/invoices";
+
+const { data: clients } = await supabaseAdmin
+  .from("clients")
+  .select("id, name, company, rut")
+  .order("name", { ascending: true });
+
+const { data: proposals } = await supabaseAdmin
+  .from("proposals")
+  .select("id, project_title, client_id, investment")
+  .order("created_at", { ascending: false });
+
+let errorMsg = "";
+
+if (Astro.request.method === "POST") {
+  try {
+    const form = await Astro.request.formData();
+    const clientId = form.get("client_id") as string;
+    const proposalId = (form.get("proposal_id") as string) || undefined;
+    const currency = (form.get("currency") as string) || "UYU";
+    const issueDate = (form.get("issue_date") as string) || new Date().toISOString().slice(0, 10);
+    const dueDate = (form.get("due_date") as string) || undefined;
+    const paymentTerms = (form.get("payment_terms") as string) || "Pago al contado / Transferencia";
+    const notes = (form.get("notes") as string) || undefined;
+    const taxRate = Number(form.get("tax_rate") || 22);
+
+    // Items
+    const descriptions = form.getAll("item_desc") as string[];
+    const quantities = form.getAll("item_qty").map(Number);
+    const prices = form.getAll("item_price").map(Number);
+
+    const items = descriptions
+      .map((desc, idx) => {
+        const qty = quantities[idx] || 1;
+        const price = prices[idx] || 0;
+        return {
+          description: desc.trim(),
+          quantity: qty,
+          unit_price: price,
+          total: qty * price,
+        };
+      })
+      .filter((i) => i.description.length > 0 && i.total > 0);
+
+    if (!clientId) {
+      errorMsg = "Debés seleccionar un cliente.";
+    } else if (items.length === 0) {
+      errorMsg = "Agregá al menos un ítem con descripción y monto válido.";
+    } else {
+      const invoice = await createInvoice({
+        client_id: clientId,
+        proposal_id: proposalId,
+        items,
+        issue_date: issueDate,
+        due_date: dueDate,
+        currency,
+        tax_rate: taxRate,
+        payment_terms: paymentTerms,
+        notes,
+      });
+
+      return Astro.redirect(`/admin/finanzas/facturas/${invoice.id}`);
+    }
+  } catch (err: any) {
+    errorMsg = err.message || "Error al crear la factura";
+  }
+}
+---
+
+<AdminLayout title="Emitir Nueva Factura" activeSection="finanzas">
+  <div class="new-invoice-page">
+    <div class="page-top-link">
+      <a href="/admin/finanzas/facturas">← Volver a Facturas</a>
+    </div>
+
+    <div class="form-container-card">
+      <div class="card-header">
+        <h2>Emitir Factura / Comprobante de Venta</h2>
+        <p>Generá una factura formal en estado borrador con cálculo de IVA y formato CFE (Uruguay).</p>
+      </div>
+
+      {errorMsg && (
+        <div class="alert-error">
+          ⚠️ {errorMsg}
+        </div>
+      )}
+
+      <form method="POST" class="invoice-form" id="inv-form">
+        <!-- 1. CLIENTE Y FECHAS -->
+        <div class="form-section">
+          <h3 class="section-title">1. Cliente y Fechas</h3>
+          <div class="form-grid-2">
+            <label class="form-field">
+              <span class="field-label">Cliente Receptor *</span>
+              <select name="client_id" required class="adm-input">
+                <option value="">Seleccionar cliente…</option>
+                {(clients || []).map((c) => (
+                  <option value={c.id}>
+                    {c.name} {c.company ? `(${c.company})` : ""} {c.rut ? `· RUT: ${c.rut}` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">Propuesta Asociada (Opcional)</span>
+              <select name="proposal_id" class="adm-input">
+                <option value="">Ninguna / Factura independiente</option>
+                {(proposals || []).map((p) => (
+                  <option value={p.id}>{p.project_title}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div class="form-grid-3">
+            <label class="form-field">
+              <span class="field-label">Moneda</span>
+              <select name="currency" class="adm-input" id="currency-select">
+                <option value="UYU">UYU ($ Pesos Uruguayos)</option>
+                <option value="USD">USD ($ Dólares)</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">Fecha de Emisión</span>
+              <input
+                type="date"
+                name="issue_date"
+                value={new Date().toISOString().slice(0, 10)}
+                class="adm-input"
+              />
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">Fecha de Vencimiento</span>
+              <input type="date" name="due_date" class="adm-input" />
+            </label>
+          </div>
+        </div>
+
+        <!-- 2. ÍTEMS Y LÍNEAS DE FACTURA -->
+        <div class="form-section">
+          <div class="items-header">
+            <h3 class="section-title" style="margin-bottom:0; border-bottom:none; padding-bottom:0;">
+              2. Conceptos y Servicios
+            </h3>
+            <button type="button" id="btn-add-item" class="btn-add-line">
+              + Agregar Ítem
+            </button>
+          </div>
+
+          <div id="items-list" class="items-list">
+            <div class="item-row">
+              <div class="col-desc">
+                <span class="row-label">Descripción del Servicio</span>
+                <input
+                  type="text"
+                  name="item_desc"
+                  required
+                  placeholder="Ej: Desarrollo Web en Astro 5 - Pago 1/2"
+                  class="adm-input"
+                />
+              </div>
+              <div class="col-qty">
+                <span class="row-label">Cant.</span>
+                <input
+                  type="number"
+                  name="item_qty"
+                  value="1"
+                  min="1"
+                  class="adm-input qty-input"
+                />
+              </div>
+              <div class="col-price">
+                <span class="row-label">Precio Unit. (sin IVA)</span>
+                <input
+                  type="number"
+                  name="item_price"
+                  required
+                  min="0"
+                  step="10"
+                  placeholder="25000"
+                  class="adm-input price-input"
+                />
+              </div>
+              <div class="col-del">
+                <button type="button" class="btn-del-line" title="Eliminar ítem">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TOTALS SUMMARY PREVIEW -->
+          <div class="totals-panel">
+            <div class="totals-row">
+              <span>Subtotal neto:</span>
+              <strong id="disp-subtotal" class="font-mono">$ 0</strong>
+            </div>
+            <div class="totals-row">
+              <div style="display:flex; align-items:center; gap:0.4rem;">
+                <span>IVA (Tasa Básica UY):</span>
+                <select name="tax_rate" id="tax-rate-select" class="adm-input-xs">
+                  <option value="22">22%</option>
+                  <option value="10">10% (Mínimo)</option>
+                  <option value="0">0% (Exento / Exportación)</option>
+                </select>
+              </div>
+              <strong id="disp-tax" class="font-mono">$ 0</strong>
+            </div>
+            <div class="totals-row total-highlight">
+              <span>Total a Pagar:</span>
+              <strong id="disp-total" class="font-mono disp-total-val">$ 0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. CONDICIONES Y NOTAS -->
+        <div class="form-section">
+          <h3 class="section-title">3. Condiciones y Notas</h3>
+          <div class="form-grid-2">
+            <label class="form-field">
+              <span class="field-label">Condiciones de Pago</span>
+              <input
+                type="text"
+                name="payment_terms"
+                value="Transferencia BROU / Santander o Mercado Pago"
+                class="adm-input"
+              />
+            </label>
+
+            <label class="form-field">
+              <span class="field-label">Notas al pie del comprobante</span>
+              <input
+                type="text"
+                name="notes"
+                placeholder="Ej: Agradecemos enviar comprobante por WhatsApp"
+                class="adm-input"
+              />
+            </label>
+          </div>
+        </div>
+
+        <!-- SUBMIT BAR -->
+        <div class="form-actions-bar">
+          <a href="/admin/finanzas/facturas" class="btn-cancel">
+            Cancelar
+          </a>
+          <button type="submit" class="btn-submit">
+            Emitir Factura →
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function recalc() {
+      const rows = document.querySelectorAll(".item-row");
+      let subtotal = 0;
+
+      rows.forEach((row) => {
+        const qty = Number((row.querySelector(".qty-input") as HTMLInputElement)?.value || 1);
+        const price = Number((row.querySelector(".price-input") as HTMLInputElement)?.value || 0);
+        subtotal += qty * price;
+      });
+
+      const taxRate = Number((document.getElementById("tax-rate-select") as HTMLSelectElement)?.value || 22);
+      const taxAmount = Math.round(((subtotal * taxRate) / 100) * 100) / 100;
+      const total = subtotal + taxAmount;
+      const currency = (document.getElementById("currency-select") as HTMLSelectElement)?.value || "UYU";
+      const sym = currency === "USD" ? "USD " : "$ ";
+
+      const dispSub = document.getElementById("disp-subtotal");
+      const dispTax = document.getElementById("disp-tax");
+      const dispTot = document.getElementById("disp-total");
+
+      if (dispSub) dispSub.textContent = sym + subtotal.toLocaleString("es-UY");
+      if (dispTax) dispTax.textContent = sym + taxAmount.toLocaleString("es-UY");
+      if (dispTot) dispTot.textContent = sym + total.toLocaleString("es-UY");
+    }
+
+    document.getElementById("inv-form")?.addEventListener("input", recalc);
+    document.getElementById("currency-select")?.addEventListener("change", recalc);
+    document.getElementById("tax-rate-select")?.addEventListener("change", recalc);
+
+    // Add item line
+    document.getElementById("btn-add-item")?.addEventListener("click", () => {
+      const container = document.getElementById("items-list");
+      if (!container) return;
+
+      const newRow = document.createElement("div");
+      newRow.className = "item-row";
+      newRow.innerHTML = `
+        <div class="col-desc">
+          <span class="row-label">Descripción del Servicio</span>
+          <input type="text" name="item_desc" required placeholder="Concepto adicional..." class="adm-input" />
+        </div>
+        <div class="col-qty">
+          <span class="row-label">Cant.</span>
+          <input type="number" name="item_qty" value="1" min="1" class="adm-input qty-input" />
+        </div>
+        <div class="col-price">
+          <span class="row-label">Precio Unit. (sin IVA)</span>
+          <input type="number" name="item_price" required min="0" step="10" placeholder="0" class="adm-input price-input" />
+        </div>
+        <div class="col-del">
+          <button type="button" class="btn-del-line" title="Eliminar ítem">✕</button>
+        </div>
+      `;
+      container.appendChild(newRow);
+      recalc();
+    });
+
+    // Delete item line
+    document.getElementById("items-list")?.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (target.classList.contains("btn-del-line")) {
+        const row = target.closest(".item-row");
+        const allRows = document.querySelectorAll(".item-row");
+        if (allRows.length > 1) {
+          row?.remove();
+          recalc();
+        } else {
+          alert("La factura debe tener al menos una línea.");
+        }
+      }
+    });
+
+    recalc();
+  </script>
+</AdminLayout>
+
+<style>
+  .new-invoice-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .page-top-link a {
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .page-top-link a:hover {
+    color: var(--adm-ink);
+  }
+
+  .form-container-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 14px;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .card-header h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+
+  .card-header p {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--adm-mute);
+  }
+
+  .alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid #EF4444;
+    color: #FCA5A5;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .invoice-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  .form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    border-bottom: 1px solid var(--adm-border);
+    padding-bottom: 1.5rem;
+  }
+
+  .section-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--adm-ink);
+  }
+
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .form-grid-2 { grid-template-columns: 1fr 1fr; }
+  }
+
+  .form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .form-grid-3 { grid-template-columns: 1.2fr 1fr 1fr; }
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .adm-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    font-family: inherit;
+    box-sizing: border-box;
+  }
+
+  .adm-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .adm-input-xs {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+
+  /* Items List */
+  .items-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .btn-add-line {
+    background: transparent;
+    border: 1px dashed var(--adm-lime);
+    color: var(--adm-lime);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .item-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid var(--adm-border);
+    flex-wrap: wrap;
+  }
+
+  .col-desc { flex: 3; min-width: 200px; }
+  .col-qty { flex: 0.8; min-width: 60px; }
+  .col-price { flex: 1.5; min-width: 120px; }
+  .col-del { align-self: center; padding-top: 1rem; }
+
+  .row-label {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--adm-mute);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  .btn-del-line {
+    background: none;
+    border: none;
+    color: var(--adm-danger);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 0.4rem;
+  }
+
+  /* Totals Panel */
+  .totals-panel {
+    align-self: flex-end;
+    width: 100%;
+    max-width: 380px;
+    background: #111C14;
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+  }
+
+  .totals-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--adm-mute);
+  }
+
+  .total-highlight {
+    border-top: 1px solid var(--adm-border);
+    padding-top: 0.6rem;
+    font-size: 1.05rem;
+    color: var(--adm-ink);
+    font-weight: 800;
+  }
+
+  .disp-total-val {
+    color: var(--adm-lime);
+    font-size: 1.35rem;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  /* Submit Bar */
+  .form-actions-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .btn-cancel {
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-mute);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .btn-submit {
+    padding: 0.75rem 1.85rem;
+    background: var(--adm-lime);
+    color: #141E18;
+    border: none;
+    border-radius: 8px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-submit:hover {
+    background: #b5e600;
+    transform: translateY(-1px);
+  }
+</style>

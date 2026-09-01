@@ -20,12 +20,19 @@ export interface PlanItem {
 
 interface Props {
   clients: Client[];
+  templates?: any[];
   initial?: any;
   proposalId?: string;
   isEdit?: boolean;
 }
 
-export default function ProposalForm({ clients, initial, proposalId, isEdit = false }: Props) {
+export default function ProposalForm({
+  clients,
+  templates = [],
+  initial,
+  proposalId,
+  isEdit = false,
+}: Props) {
   const [form, setForm] = useState({
     client_id: initial?.client_id || "",
     project_title: initial?.project_title || "",
@@ -34,7 +41,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
     solution: initial?.solution || "",
     includes: (initial?.includes || []).join("\n"),
     excludes: (initial?.excludes || []).join("\n"),
-    investment_type: initial?.investment?.type || "fixed",
+    investment_type: initial?.investment?.type || "plans",
     amount: initial?.investment?.amount ?? "",
     currency: initial?.investment?.currency || "USD",
     payment_terms: initial?.investment?.paymentTerms || "50% al inicio · 50% contra entrega",
@@ -43,21 +50,71 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
     notes: initial?.notes || "",
     status: initial?.status || "draft",
     custom_slug: initial?.slug || "",
+    cloned_from: initial?.cloned_from || null,
   });
 
   const [plans, setPlans] = useState<PlanItem[]>(
     initial?.investment?.plans || [
-      { name: "Vidriera", price: 980, description: "Presencia digital de alto impacto para abrir el canal.", features: ["Landing + 6 secciones", "WhatsApp Commerce en CTAs", "SEO local base", "Entrega en 10 días hábiles"], recommended: false },
-      { name: "Mercado", price: 1680, description: "El sitio que trabaja como un puesto más del predio.", features: ["Directorio de puestos", "Fichas de producto ilimitadas", "Panel de novedades", "SEO técnico + Schema", "Entrega en 16 días hábiles"], recommended: true },
-      { name: "Motor", price: 2480, description: "Plataforma viva: catálogo, búsqueda y operación diaria.", features: ["Todo lo de Mercado", "Búsqueda instantánea", "Horarios y stock por puesto", "Capacitación al equipo", "30 días de ajuste post-lanzamiento"], recommended: false },
+      {
+        name: "Vidriera",
+        price: 980,
+        description: "Presencia digital de alto impacto para abrir el canal.",
+        features: ["Landing + 6 secciones", "WhatsApp Commerce en CTAs", "SEO local base", "Entrega en 10 días hábiles"],
+        recommended: false,
+      },
+      {
+        name: "Mercado",
+        price: 1680,
+        description: "El sitio que trabaja como un puesto más del predio.",
+        features: ["Directorio de puestos", "Fichas de producto ilimitadas", "Panel de novedades", "SEO técnico + Schema", "Entrega en 16 días hábiles"],
+        recommended: true,
+      },
+      {
+        name: "Motor",
+        price: 2480,
+        description: "Plataforma viva: catálogo, búsqueda y operación diaria.",
+        features: ["Todo lo de Mercado", "Búsqueda instantánea", "Horarios y stock por puesto", "Capacitación al equipo", "30 días de ajuste post-lanzamiento"],
+        recommended: false,
+      },
     ]
   );
 
+  const [selectedTemplateId, setSelectedTemplateId] = useState(initial?.cloned_from || "");
   const [pending, setPending] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; msg: string } | null>(null);
 
   function update(field: string, value: any) {
     setForm((f) => ({ ...f, [field]: value }));
+  }
+
+  function handleSelectTemplate(tplId: string) {
+    setSelectedTemplateId(tplId);
+    if (!tplId) return;
+
+    const tpl = templates.find((t) => t.id === tplId);
+    if (!tpl) return;
+
+    setForm((prev) => ({
+      ...prev,
+      project_title: tpl.project_title || prev.project_title,
+      value_phrase: tpl.value_phrase || "",
+      challenge: tpl.challenge || "",
+      solution: tpl.solution || "",
+      includes: (tpl.includes || []).join("\n"),
+      excludes: (tpl.excludes || []).join("\n"),
+      investment_type: tpl.investment?.type || "plans",
+      amount: tpl.investment?.amount ?? "",
+      currency: tpl.investment?.currency || "USD",
+      payment_terms: tpl.investment?.paymentTerms || prev.payment_terms,
+      timeline: tpl.timeline || "",
+      whatsapp_message: tpl.whatsapp_message || "",
+      notes: tpl.notes || "",
+      cloned_from: tpl.id,
+    }));
+
+    if (tpl.investment?.plans && Array.isArray(tpl.investment.plans)) {
+      setPlans(tpl.investment.plans);
+    }
   }
 
   function updatePlan(index: number, key: keyof PlanItem, value: any) {
@@ -117,6 +174,7 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
       whatsapp_message: form.whatsapp_message.trim() || null,
       notes: form.notes.trim() || null,
       status: form.status,
+      cloned_from: form.cloned_from,
     };
 
     try {
@@ -152,6 +210,28 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
       {feedback && (
         <div className={`adm-alert ${feedback.type === "success" ? "alert-success" : "alert-error"}`}>
           {feedback.msg}
+        </div>
+      )}
+
+      {/* Selector de Plantilla (Solo en creación) */}
+      {!isEdit && templates.length > 0 && (
+        <div className="template-picker-card">
+          <div className="tpl-picker-header">
+            <span className="tpl-picker-tag">⚡ PLANTILLAS REUTILIZABLES</span>
+            <span className="tpl-picker-desc">Completá todos los campos en un clic a partir de una propuesta guardada</span>
+          </div>
+          <select
+            value={selectedTemplateId}
+            onChange={(e) => handleSelectTemplate(e.target.value)}
+            className="adm-input tpl-select"
+          >
+            <option value="">Crear desde cero (Plantilla en blanco)…</option>
+            {templates.map((t) => (
+              <option key={t.id} value={t.id}>
+                ★ {t.template_name || t.project_title}
+              </option>
+            ))}
+          </select>
         </div>
       )}
 
@@ -292,8 +372,8 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
               onChange={(e) => update("investment_type", e.target.value)}
               className="adm-input"
             >
-              <option value="fixed">Precio Fijo Único</option>
               <option value="plans">Grilla de Planes (Recomendado)</option>
+              <option value="fixed">Precio Fijo Único</option>
             </select>
           </label>
 
@@ -455,6 +535,41 @@ export default function ProposalForm({ clients, initial, proposalId, isEdit = fa
           flex-direction: column;
           gap: 1.75rem;
           max-width: 900px;
+        }
+
+        .template-picker-card {
+          background: #111E16;
+          border: 1px solid rgba(200, 255, 0, 0.3);
+          border-radius: 12px;
+          padding: 1.25rem 1.5rem;
+          display: flex;
+          flex-direction: column;
+          gap: 0.6rem;
+        }
+
+        .tpl-picker-header {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+        }
+
+        .tpl-picker-tag {
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.7rem;
+          font-weight: 700;
+          color: var(--adm-lime);
+          letter-spacing: 0.1em;
+        }
+
+        .tpl-picker-desc {
+          font-size: 0.8rem;
+          color: var(--adm-mute);
+        }
+
+        .tpl-select {
+          border-color: rgba(200, 255, 0, 0.4);
+          font-weight: 600;
         }
 
         .adm-section {

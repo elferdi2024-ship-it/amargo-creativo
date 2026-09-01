@@ -4,6 +4,11 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { isAuthenticated } from "../../../lib/auth";
 import { supabaseAdmin } from "../../../lib/supabase";
+import {
+  createNotification,
+  messageStageChanged,
+  messageProjectFinished,
+} from "../../../lib/notifications";
 
 export const GET: APIRoute = async ({ request, cookies }) => {
   if (!(await isAuthenticated(cookies, request))) {
@@ -37,6 +42,13 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
       });
     }
 
+    // Obtener proyecto anterior para detectar cambios
+    const { data: prevProject } = await supabaseAdmin
+      .from("projects")
+      .select("*, clients(name)")
+      .eq("id", id)
+      .single();
+
     const updates: Record<string, any> = {
       updated_at: new Date().toISOString(),
     };
@@ -52,11 +64,47 @@ export const PUT: APIRoute = async ({ request, cookies }) => {
       .from("projects")
       .update(updates)
       .eq("id", id)
-      .select()
+      .select("*, clients(name)")
       .single();
 
     if (error) {
       return new Response(JSON.stringify({ ok: false, message: error.message }), { status: 500 });
+    }
+
+    // Disparar notificaciones automáticas si hubo cambio de etapa o finalización
+    const clientName = data.clients?.name || "Cliente";
+
+    if (
+      current_stage !== undefined &&
+      prevProject &&
+      prevProject.current_stage !== current_stage &&
+      data.stages &&
+      data.stages[current_stage - 1]
+    ) {
+      const stageName = data.stages[current_stage - 1].name;
+      await createNotification({
+        type: "stage_changed",
+        projectId: data.id,
+        clientId: data.client_id,
+        proposalId: data.proposal_id,
+        message: messageStageChanged(clientName, stageName, data.title),
+        channel: "whatsapp",
+      });
+    }
+
+    if (
+      status === "finished" &&
+      prevProject &&
+      prevProject.status !== "finished"
+    ) {
+      await createNotification({
+        type: "project_finished",
+        projectId: data.id,
+        clientId: data.client_id,
+        proposalId: data.proposal_id,
+        message: messageProjectFinished(clientName, data.title),
+        channel: "whatsapp",
+      });
     }
 
     return new Response(JSON.stringify({ ok: true, data }), { status: 200 });

@@ -7,10 +7,46 @@ import ProposalForm from "../../../components/admin/ProposalForm";
 import ClientModal from "../../../components/admin/ClientModal";
 import { supabaseAdmin } from "../../../lib/supabase";
 
+const fromTemplateId = Astro.url.searchParams.get("from_template");
+
+// 1. Clientes
 const { data: clients } = await supabaseAdmin
   .from("clients")
   .select("id, name, company, email, phone")
   .order("name", { ascending: true });
+
+// 2. Plantillas guardadas
+const { data: templates } = await supabaseAdmin
+  .from("proposals")
+  .select("*")
+  .eq("is_template", true)
+  .order("created_at", { ascending: false });
+
+// 3. Si vino from_template, traer los datos de esa plantilla
+let initialData: any = null;
+if (fromTemplateId) {
+  const { data: tpl } = await supabaseAdmin
+    .from("proposals")
+    .select("*")
+    .eq("id", fromTemplateId)
+    .single();
+  if (tpl) {
+    initialData = {
+      project_title: tpl.project_title,
+      value_phrase: tpl.value_phrase,
+      challenge: tpl.challenge,
+      solution: tpl.solution,
+      includes: tpl.includes,
+      excludes: tpl.excludes,
+      investment: tpl.investment,
+      timeline: tpl.timeline,
+      roi_table: tpl.roi_table,
+      whatsapp_message: tpl.whatsapp_message,
+      notes: tpl.notes,
+      cloned_from: tpl.id,
+    };
+  }
+}
 ---
 
 <AdminLayout title="Nueva Propuesta Comercial" activeSection="proposals">
@@ -19,7 +55,7 @@ const { data: clients } = await supabaseAdmin
       <div>
         <h2>Crear Propuesta & Magic Link</h2>
         <p>
-          Completa el alcance, solución e inversión. Al guardarla en estado <strong>Activo</strong>, el cliente podrá acceder inmediatamente mediante su URL única.
+          Completá el alcance, diagnóstico y planes de inversión. Podés partir de una plantilla prediseñada o crearla desde cero.
         </p>
       </div>
       <div class="banner-actions">
@@ -27,7 +63,13 @@ const { data: clients } = await supabaseAdmin
       </div>
     </div>
 
-    <ProposalForm client:load clients={clients || []} isEdit={false} />
+    <ProposalForm
+      client:load
+      clients={clients || []}
+      templates={templates || []}
+      initial={initialData}
+      isEdit={false}
+    />
   </div>
 </AdminLayout>
 

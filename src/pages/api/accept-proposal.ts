@@ -4,6 +4,7 @@ export const prerender = false;
 import type { APIRoute } from "astro";
 import { supabaseAdmin } from "../../lib/supabase";
 import { DEFAULT_STAGES } from "../../lib/stages";
+import { createNotification, messageProposalAccepted } from "../../lib/notifications";
 
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -105,6 +106,17 @@ export const POST: APIRoute = async ({ request }) => {
       }
       projectId = project.id;
     }
+
+    // 4. Disparar automatización / Notificación
+    const clientDisplayName = proposal.clients?.name || name.trim();
+    await createNotification({
+      type: "proposal_accepted",
+      proposalId: proposal.id,
+      projectId: projectId || null,
+      clientId: proposal.client_id || null,
+      message: messageProposalAccepted(clientDisplayName, proposal.project_title, plan),
+      channel: "whatsapp",
+    });
 
     return new Response(
       JSON.stringify({

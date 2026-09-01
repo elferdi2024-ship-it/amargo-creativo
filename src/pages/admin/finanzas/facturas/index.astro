@@ -1,0 +1,294 @@
+---
+// filepath: src/pages/admin/finanzas/facturas/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../../layouts/AdminLayout.astro";
+import { supabaseAdmin } from "../../../../lib/supabase";
+import { formatMoney, formatDate } from "../../../../lib/format";
+
+const statusFilter = Astro.url.searchParams.get("status") || "all";
+const query = Astro.url.searchParams.get("q") || "";
+
+let dbQuery = supabaseAdmin
+  .from("invoices")
+  .select("id, number, series, status, total, currency, issue_date, due_date, client_id, clients(name, company, rut)")
+  .order("issue_date", { ascending: false });
+
+if (statusFilter !== "all") {
+  dbQuery = dbQuery.eq("status", statusFilter);
+}
+
+const { data: invoices } = await dbQuery;
+
+const filtered = (invoices || []).filter((inv) => {
+  if (!query.trim()) return true;
+  const q = query.toLowerCase();
+  const c = inv.clients as any;
+  return (
+    (inv.number && inv.number.toLowerCase().includes(q)) ||
+    (c?.name && c.name.toLowerCase().includes(q)) ||
+    (c?.company && c.company.toLowerCase().includes(q)) ||
+    (c?.rut && c.rut.toLowerCase().includes(q))
+  );
+});
+---
+
+<AdminLayout title="Listado de Facturas" activeSection="finanzas">
+  <div class="facturas-page">
+    <div class="page-top-bar">
+      <div class="breadcrumb-title">
+        <a href="/admin/finanzas">← Volver al Dashboard Financiero</a>
+        <h2>Facturas y Comprobantes</h2>
+      </div>
+      <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
+        + Emitir Nueva Factura
+      </a>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+      <div class="filter-tabs">
+        <a href="/admin/finanzas/facturas?status=all" class={`tab-btn ${statusFilter === "all" ? "active" : ""}`}>
+          Todas
+        </a>
+        <a href="/admin/finanzas/facturas?status=draft" class={`tab-btn ${statusFilter === "draft" ? "active" : ""}`}>
+          Borradores
+        </a>
+        <a href="/admin/finanzas/facturas?status=issued" class={`tab-btn ${statusFilter === "issued" ? "active" : ""}`}>
+          Emitidas
+        </a>
+        <a href="/admin/finanzas/facturas?status=paid" class={`tab-btn ${statusFilter === "paid" ? "active" : ""}`}>
+          Pagadas
+        </a>
+        <a href="/admin/finanzas/facturas?status=overdue" class={`tab-btn ${statusFilter === "overdue" ? "active" : ""}`}>
+          Vencidas
+        </a>
+      </div>
+
+      <form method="GET" class="search-box">
+        <input type="hidden" name="status" value={statusFilter} />
+        <input
+          type="text"
+          name="q"
+          value={query}
+          placeholder="Buscar por número, cliente o RUT..."
+          class="search-input"
+        />
+        {query && (
+          <a href={`/admin/finanzas/facturas?status=${statusFilter}`} class="btn-clear">
+            ✕
+          </a>
+        )}
+      </form>
+    </div>
+
+    <!-- TABLE -->
+    <div class="adm-table-wrap">
+      <table class="adm-table">
+        <thead>
+          <tr>
+            <th>Número / Serie</th>
+            <th>Cliente / Razón Social</th>
+            <th>RUT / ID</th>
+            <th>Estado</th>
+            <th>Fecha Emisión</th>
+            <th>Vencimiento</th>
+            <th style="text-align: right;">Total</th>
+            <th style="text-align: right;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filtered.map((inv) => (
+            <tr>
+              <td>
+                <a href={`/admin/finanzas/facturas/${inv.id}`} class="inv-link">
+                  {inv.number || `Borrador (${inv.series})`}
+                </a>
+              </td>
+              <td>
+                <strong>{(inv.clients as any)?.name || "Sin cliente"}</strong>
+                {(inv.clients as any)?.company && (
+                  <div class="sub-company">{(inv.clients as any).company}</div>
+                )}
+              </td>
+              <td>
+                <span class="font-mono" style="font-size:0.8rem; color:var(--adm-mute);">
+                  {(inv.clients as any)?.rut || "Cons. Final"}
+                </span>
+              </td>
+              <td>
+                <span class={`badge-status status-${inv.status}`}>
+                  {inv.status === "paid"
+                    ? "✓ Pagada"
+                    : inv.status === "issued"
+                    ? "Emitida"
+                    : inv.status === "partial"
+                    ? "Parcial"
+                    : inv.status === "overdue"
+                    ? "Vencida"
+                    : inv.status === "draft"
+                    ? "Borrador"
+                    : inv.status}
+                </span>
+              </td>
+              <td>{inv.issue_date ? formatDate(inv.issue_date) : "—"}</td>
+              <td>{inv.due_date ? formatDate(inv.due_date) : "—"}</td>
+              <td style="text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--adm-lime);">
+                {formatMoney(Number(inv.total), inv.currency)}
+              </td>
+              <td style="text-align: right;">
+                <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">
+                  Ver Factura →
+                </a>
+              </td>
+            </tr>
+          ))}
+
+          {filtered.length === 0 && (
+            <tr>
+              <td colspan="8" style="text-align:center; padding:3.5rem; color:var(--adm-mute);">
+                No se encontraron facturas con los filtros seleccionados.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</AdminLayout>
+
+<style>
+  .facturas-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .page-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .breadcrumb-title a {
+    font-size: 0.8rem;
+    color: var(--adm-mute);
+    text-decoration: none;
+  }
+
+  .breadcrumb-title a:hover {
+    color: var(--adm-ink);
+  }
+
+  .breadcrumb-title h2 {
+    margin: 0.35rem 0 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+  }
+
+  .filters-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+  }
+
+  .tab-btn {
+    padding: 0.45rem 0.85rem;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 20px;
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+  }
+
+  .tab-btn:hover {
+    color: var(--adm-ink);
+  }
+
+  .tab-btn.active {
+    background: rgba(200, 255, 0, 0.15);
+    border-color: var(--adm-lime);
+    color: var(--adm-lime);
+  }
+
+  .search-box {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search-input {
+    background: #101A13;
+    border: 1px solid var(--adm-border);
+    color: var(--adm-ink);
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    width: 100%;
+    box-sizing: border-box;
+    font-family: inherit;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .btn-clear {
+    position: absolute;
+    right: 0.6rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--adm-mute);
+    text-decoration: none;
+    font-size: 0.8rem;
+  }
+
+  .inv-link {
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 700;
+    color: var(--adm-ink);
+    text-decoration: none;
+  }
+
+  .inv-link:hover {
+    color: var(--adm-lime);
+  }
+
+  .sub-company {
+    font-size: 0.78rem;
+    color: var(--adm-mute);
+  }
+
+  .btn-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .btn-sm:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--adm-lime);
+  }
+</style>
