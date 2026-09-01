@@ -28,7 +28,7 @@ const stages = project?.stages || [
 
 const inv = proposal.investment || {};
 const plans = inv.plans || [];
-const recommended = plans.find((p: any) => p.recommended || p.featured)?.name ?? plans[0]?.name;
+const recommended = plans.find((p: any) => p.recommended || p.featured)?.name ?? plans[1]?.name ?? plans[0]?.name;
 
 const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, projectObjective);
 const wa = whatsappHref(waMessage);
@@ -180,7 +180,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     </section>
   )}
 
-  <!-- Alcance (03 o 04 según exista preview) -->
+  <!-- Alcance -->
   {((proposal.includes?.length > 0) || (proposal.excludes?.length > 0)) && (
     <section class="section">
       <div class="section-kicker">
@@ -193,12 +193,15 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
           <div class="scope-group">
             <h3 class="scope-title">INCLUYE</h3>
             <ul class="scope-list">
-              {proposal.includes.map((item: string) => (
-                <li>
-                  <span class="check">✓</span>
-                  <span>{item}</span>
-                </li>
-              ))}
+              {proposal.includes.map((item: string) => {
+                const isFullPack = item.includes("Pack de Marketing y Lanzamiento") || item.includes("Plan Full");
+                return (
+                  <li class={isFullPack ? "scope-item-highlight" : ""}>
+                    <span class="check">{isFullPack ? "★" : "✓"}</span>
+                    <span>{item}</span>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         )}
@@ -228,35 +231,38 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     </div>
 
     {inv.type === "plans" && plans.length > 0 ? (
-      <div class="plans-grid" id="plans-grid">
+      <div class="plans-grid-3" id="plans-grid">
         {plans.map((plan: any) => {
           const isSelected = plan.name === recommended;
+          const isRec = plan.recommended || plan.featured;
           return (
             <div
-              class={`plan-card ${isSelected ? "selected" : ""}`}
+              class={`plan-card-pro ${isSelected ? "selected" : ""} ${isRec ? "is-recommended" : ""}`}
               data-plan={plan.name}
             >
-              <div class="plan-header">
-                <div>
-                  <span class="plan-name">{plan.name}</span>
-                  {plan.description && <p class="plan-desc">{plan.description}</p>}
+              {isRec && (
+                <div class="rec-badge-pill">
+                  <span>RECOMENDADO</span>
                 </div>
-                {(plan.recommended || plan.featured) && <span class="sugerido">SUGERIDO</span>}
+              )}
+
+              <div class="plan-pro-header">
+                <h3 class="plan-pro-name">{plan.name}</h3>
+                {plan.description && <p class="plan-pro-desc">{plan.description}</p>}
               </div>
 
-              <div class="plan-price-block">
-                <span class="plan-price-label">Inversión:</span>
-                <div class="plan-price">
+              <div class="plan-pro-price-row">
+                <span class="plan-price-num">
                   {formatMoney(plan.price, inv.currency)}
-                  {plan.period && <span class="plan-period"> {plan.period}</span>}
-                </div>
+                </span>
+                {plan.period && <span class="plan-price-period">{plan.period}</span>}
               </div>
 
               {plan.features?.length > 0 && (
-                <ul class="plan-features">
+                <ul class="plan-pro-features">
                   {plan.features.map((f: string) => (
                     <li>
-                      <span class="feat-check">✓</span>
+                      <span class="f-check">✓</span>
                       <span>{f}</span>
                     </li>
                   ))}
@@ -412,7 +418,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
 </article>
 
 <script>
-  const cards = document.querySelectorAll(".plan-card");
+  const cards = document.querySelectorAll(".plan-card-pro");
   cards.forEach((card) => {
     card.addEventListener("click", () => {
       cards.forEach((c) => c.classList.remove("selected"));
@@ -434,7 +440,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   }
 
   .portal {
-    max-width: 44rem;
+    max-width: 52rem;
     margin: 0 auto;
     padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2rem) 6rem;
     background: var(--bg);
@@ -794,6 +800,15 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     color: #2D3630;
   }
 
+  .scope-item-highlight {
+    background: rgba(46, 83, 57, 0.08);
+    border: 1px solid rgba(46, 83, 57, 0.25);
+    padding: 0.65rem 0.85rem;
+    border-radius: 8px;
+    font-weight: 600;
+    color: var(--ink) !important;
+  }
+
   .check {
     color: var(--mate);
     font-weight: 900;
@@ -812,145 +827,135 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     color: var(--mute);
   }
 
-  /* Refined Pricing Cards */
-  .plans-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1.15rem;
+  /* 3-COLUMN PRICING GRID (EXACT FIDELITY) */
+  .plans-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    align-items: stretch;
   }
 
-  .plan-card {
-    border: 1.5px solid var(--border);
-    border-radius: 18px;
-    padding: 1.5rem 1.65rem;
-    background: var(--card);
+  @media (min-width: 768px) {
+    .plans-grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .plan-card-pro {
+    position: relative;
+    background: #FFFFFF;
+    border: 1.5px solid #E2E4DC;
+    border-radius: 16px;
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.25rem;
     text-align: left;
     cursor: pointer;
     transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
   }
 
-  .plan-card:hover {
-    border-color: #B5B4A8;
+  .plan-card-pro:hover {
+    border-color: #A6A498;
     transform: translateY(-2px);
   }
 
-  .plan-card.selected {
-    border-color: var(--card-dark);
-    background: var(--card-dark);
+  .plan-card-pro.is-recommended {
+    border: 2px solid var(--mate);
+    box-shadow: 0 8px 24px rgba(46, 83, 57, 0.12);
+  }
+
+  .rec-badge-pill {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--mate);
     color: #FFFFFF;
-    box-shadow: 0 12px 32px rgba(13, 21, 16, 0.15);
-  }
-
-  .plan-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .plan-name {
-    font-family: "Syne", sans-serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    margin: 0;
-    display: block;
-  }
-
-  .plan-desc {
-    margin: 0.25rem 0 0;
-    font-size: 0.88rem;
-    color: var(--mute);
-    line-height: 1.4;
-  }
-
-  .plan-card.selected .plan-desc {
-    color: rgba(255, 255, 255, 0.72);
-  }
-
-  .sugerido {
     font-family: "JetBrains Mono", monospace;
     font-size: 0.65rem;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    color: var(--mate);
-    flex-shrink: 0;
-    background: rgba(46, 83, 57, 0.1);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
+    letter-spacing: 0.12em;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    white-space: nowrap;
   }
 
-  .plan-card.selected .sugerido {
-    color: var(--lime);
-    background: rgba(212, 255, 0, 0.15);
-  }
-
-  .plan-price-block {
-    display: flex;
-    align-items: baseline;
-    gap: 0.5rem;
-    border-top: 1px solid var(--border);
-    padding-top: 0.85rem;
-  }
-
-  .plan-card.selected .plan-price-block {
-    border-top-color: rgba(255, 255, 255, 0.12);
-  }
-
-  .plan-price-label {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--mute);
-  }
-
-  .plan-card.selected .plan-price-label {
-    color: rgba(255, 255, 255, 0.6);
-  }
-
-  .plan-price {
-    font-family: "Syne", sans-serif;
-    font-size: 1.45rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .plan-period {
-    font-family: "Archivo", sans-serif;
-    font-size: 0.82rem;
-    font-weight: 500;
-    opacity: 0.8;
-  }
-
-  .plan-features {
-    list-style: none;
-    padding: 0.25rem 0 0;
-    margin: 0;
+  .plan-pro-header {
     display: flex;
     flex-direction: column;
-    gap: 0.55rem;
-    font-size: 0.88rem;
+    gap: 0.35rem;
   }
 
-  .plan-features li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
+  .plan-pro-name {
+    font-family: "Syne", sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .plan-pro-desc {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--mute);
     line-height: 1.4;
   }
 
-  .feat-check {
-    color: var(--mate);
-    font-weight: 900;
+  .plan-pro-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    margin: 0.5rem 0;
   }
 
-  .plan-card.selected .feat-check {
-    color: var(--lime);
+  .plan-price-num {
+    font-family: "Syne", sans-serif;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+
+  .plan-price-period {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.75rem;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .plan-pro-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    font-size: 0.85rem;
+    border-top: 1px solid #ECEBE4;
+    padding-top: 1rem;
+  }
+
+  .plan-pro-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    line-height: 1.35;
+    color: #2D3630;
+  }
+
+  .f-check {
+    color: var(--mate);
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  /* Selection highlight */
+  .plan-card-pro.selected {
+    border-color: var(--ink);
+    box-shadow: 0 10px 30px rgba(20, 30, 24, 0.16);
   }
 
   /* Fixed Price Card */

@@ -33,7 +33,7 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta con contenido exacto...");
+  console.log("2. Sincronizando propuesta con los planes mensuales y el pack de lanzamiento...");
 
   const proposalData = {
     client_id: client.id,
@@ -51,61 +51,67 @@ async function main() {
       "Panel simple para actualizar horarios, novedades y destacados",
       "Identidad visual extendida (tipografía, color, isologo digital)",
       "Lanzamiento, redirecciones y capacitación de 60 minutos",
+      "★ Pack de Marketing y Lanzamiento (Exclusivo en Plan Full): 10 imágenes diseñadas para promocionar el lanzamiento de la web (5 de ellas para la campaña previa de expectativa y 5 para cuando la web ya esté operativa)",
     ],
     excludes: [
-      "Fotografía de producto (podemos coordinar sesión aparte)",
+      "Fotografía de producto en piso (podemos coordinar sesión aparte)",
       "Gestión diaria de redes o community management",
       "Pasarela de cobro con tarjeta — se resuelve por WhatsApp / Mercado Pago",
       "App nativa iOS/Android",
     ],
     investment: {
       type: "plans",
-      currency: "USD",
-      paymentTerms: "50% al inicio · 50% contra entrega. Transferencia BROU / Santander o Wise.",
+      currency: "UYU",
+      paymentTerms: "Planes mensuales de operación, hosting y soporte. Sin contratos de permanencia forzados.",
       plans: [
         {
-          name: "Vidriera",
-          price: 980,
-          period: "",
-          description: "Presencia digital de alto impacto para abrir el canal.",
+          name: "Plan Base",
+          price: 3500,
+          period: "UYU/mes",
+          description: "Mantenimiento técnico y hosting seguro para operar.",
           features: [
-            "Landing + 6 secciones",
-            "WhatsApp Commerce en CTAs",
-            "SEO local base",
-            "Entrega en 10 días hábiles",
+            "Hosting en la nube 24/7 (Cloudflare)",
+            "Certificado de seguridad SSL (HTTPS)",
+            "Base de datos de pedidos y catálogo",
+            "Copias de seguridad (Backups) semanales",
+            "Soporte técnico ante caídas o errores",
+            "Acceso total al Panel de Control",
           ],
         },
         {
-          name: "Mercado",
-          price: 1680,
-          period: "",
+          name: "Plan Crecimiento",
+          price: 6900,
+          period: "UYU/mes",
           recommended: true,
           featured: true,
-          description: "El sitio que trabaja como un puesto más del predio.",
+          description: "Operación asistida, cambio de precios y marketing.",
           features: [
-            "Directorio de puestos",
-            "Fichas de producto ilimitadas",
-            "Panel de novedades",
-            "SEO técnico + Schema",
-            "Entrega en 16 días hábiles",
+            "Todo lo del Plan Base",
+            "Ajustes masivos de precios mensuales",
+            "Alta y baja de productos nuevos",
+            "Diseño de 2 Banners de Oferta mensuales",
+            "Soporte prioritario por WhatsApp al local",
+            "Capacitación continua al personal de turno",
           ],
         },
         {
-          name: "Motor",
-          price: 2480,
-          period: "",
-          description: "Plataforma viva: catálogo, búsqueda y operación diaria.",
+          name: "Plan Full",
+          price: 11500,
+          period: "UYU/mes",
+          description: "Gestión integral del catálogo y evolución digital.",
           features: [
-            "Todo lo de Mercado",
-            "Búsqueda instantánea",
-            "Horarios y stock por puesto",
-            "Capacitación al equipo",
-            "30 días de ajuste post-lanzamiento",
+            "Todo lo del Plan Crecimiento",
+            "Pack Lanzamiento: 10 imágenes promocionales (5 previa + 5 operativa)",
+            "Carga y optimización de fotos de productos",
+            "Reporte mensual de productos más pedidos",
+            "Banners de ofertas ilimitados",
+            "Desarrollo de mejoras a medida trimestrales",
+            "Guardia técnica prioritaria fines de semana",
           ],
         },
       ],
     },
-    timeline: "Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento. El plan Mercado queda en el aire en 16 días hábiles desde el ok.",
+    timeline: "Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento. La plataforma queda en el aire en 16 días hábiles desde el ok.",
     roi_table: {
       headers: [
         "MÉTRICA",
@@ -135,8 +141,8 @@ async function main() {
         ],
       ],
     },
-    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Sitio web + WhatsApp Commerce para Mercado Atlántida y quiero avanzar con el plan Mercado.",
-    notes: "Propuesta comercial para Mercado Atlántida.",
+    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Sitio web + WhatsApp Commerce para Mercado Atlántida y quiero avanzar con el Plan Crecimiento.",
+    notes: "Propuesta comercial para Mercado Atlántida. Demo: https://mercado-atlantida.elferdi2024.workers.dev/",
   };
 
   // Upsert proposal
