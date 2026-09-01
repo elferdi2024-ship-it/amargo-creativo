@@ -51,7 +51,7 @@ function formatEditorial(text: string) {
   let res = text;
   // _italics_ -> serif editorial
   res = res.replace(/_([^_]+)_/g, '<em class="editorial-serif">$1</em>');
-  // *highlight* -> subrayado/resaltado delicado
+  // *highlight* -> subrayado sutil y delicado sin negrita
   res = res.replace(/\*([^*]+)\*/g, '<span class="editorial-highlight">$1</span>');
   return res;
 }
@@ -92,9 +92,7 @@ function formatEditorial(text: string) {
     </div>
 
     {proposal.value_phrase && (
-      <div class="value-phrase-box">
-        <p class="value-phrase" set:html={formatEditorial(proposal.value_phrase)} />
-      </div>
+      <p class="value-phrase" set:html={formatEditorial(proposal.value_phrase)} />
     )}
   </div>
 
@@ -106,7 +104,7 @@ function formatEditorial(text: string) {
     </div>
   )}
 
-  <!-- 01 Desafío (Texto limpio sin tarjeta) -->
+  <!-- 01 Desafío (Texto limpio) -->
   {proposal.challenge && (
     <section class="section">
       <div class="section-kicker">
@@ -118,7 +116,7 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- 02 Solución (Texto limpio sin tarjeta) -->
+  <!-- 02 Solución (Texto limpio) -->
   {proposal.solution && (
     <section class="section">
       <div class="section-kicker">
@@ -680,44 +678,34 @@ function formatEditorial(text: string) {
     margin: 0;
   }
 
-  /* Frase de Valor Editorial con detalle de borde sutil */
-  .value-phrase-box {
+  /* Frase de Valor limpia sin tarjeta */
+  .value-phrase {
     margin-top: 1.5rem;
-    padding: 1.15rem 1.4rem;
-    background: #FFFFFF;
-    border-left: 3.5px solid var(--mate);
-    border-radius: 0 12px 12px 0;
-    border-top: 1px solid #ECEBE4;
-    border-right: 1px solid #ECEBE4;
-    border-bottom: 1px solid #ECEBE4;
-    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.03);
+    font-size: clamp(1.02rem, 2.3vw, 1.18rem);
+    line-height: 1.68;
+    color: #38423B;
     max-width: 44rem;
   }
 
-  .value-phrase {
-    margin: 0;
-    font-size: clamp(1.02rem, 2.3vw, 1.15rem);
-    line-height: 1.65;
-    color: #2E3832;
-  }
-
-  /* SUBRAYADO Y TIPOGRAFÍA EDITORIAL (DELICADO Y ELEGANTE) */
+  /* SUBRAYADO Y TIPOGRAFÍA EDITORIAL (DELICADO, SUTIL Y SIN NEGRITA) */
   :global(.editorial-serif) {
     font-family: "Instrument Serif", Georgia, serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 1.22em;
+    font-size: 1.18em;
     color: #23422D;
     letter-spacing: -0.01em;
-    padding: 0 0.15rem;
+    padding: 0 0.1rem;
   }
 
   :global(.editorial-highlight) {
-    position: relative;
-    font-weight: 700;
-    color: #141E18;
-    background: linear-gradient(180deg, transparent 65%, rgba(212, 255, 0, 0.38) 65%, rgba(212, 255, 0, 0.38) 92%, transparent 92%);
-    padding: 0 0.15rem;
+    font-weight: inherit;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(46, 83, 57, 0.45);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 3.5px;
+    padding: 0 0.05rem;
   }
 
   .accepted-banner {
