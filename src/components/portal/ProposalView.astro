@@ -288,7 +288,18 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
               {plan.features?.length > 0 && (
                 <ul class="plan-pro-features">
                   {plan.features.map((f: string) => {
+                    const isCumulative = f.toLowerCase().includes("todo lo del") || f.toLowerCase().includes("todo lo de") || f.toLowerCase().includes("incluye todo");
                     const isFeatureHero = f.includes("Pack Lanzamiento") || f.includes("10 imágenes");
+
+                    if (isCumulative) {
+                      return (
+                        <li class="feature-cumulative-pill">
+                          <span class="f-plus">＋</span>
+                          <span class="cumulative-text">{f}</span>
+                        </li>
+                      );
+                    }
+
                     return (
                       <li class={isFeatureHero ? "feature-hero-item" : ""}>
                         <span class="f-check">{isFeatureHero ? "★" : "✓"}</span>
@@ -1055,6 +1066,33 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     gap: 0.55rem;
     line-height: 1.35;
     color: #2D3630;
+  }
+
+  /* CUMULATIVE PLAN FEATURE PILL (DESTACADO EN NEGRITA Y PASTILLA) */
+  .feature-cumulative-pill {
+    background: #EEF4E8 !important;
+    border: 1.5px solid rgba(46, 83, 57, 0.28) !important;
+    padding: 0.55rem 0.75rem !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    margin-bottom: 0.25rem !important;
+    box-shadow: 0 2px 6px rgba(46, 83, 57, 0.06);
+  }
+
+  .f-plus {
+    font-weight: 900;
+    font-size: 0.95rem;
+    color: var(--mate);
+    flex-shrink: 0;
+  }
+
+  .cumulative-text {
+    font-weight: 800 !important;
+    color: #141E18 !important;
+    letter-spacing: -0.01em;
+    font-size: 0.86rem;
   }
 
   .feature-hero-item {
