@@ -33,7 +33,7 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta con los planes mensuales y el pack de lanzamiento...");
+  console.log("2. Sincronizando propuesta con los planes de precios actualizados...");
 
   const proposalData = {
     client_id: client.id,
@@ -51,7 +51,7 @@ async function main() {
       "Panel simple para actualizar horarios, novedades y destacados",
       "Identidad visual extendida (tipografía, color, isologo digital)",
       "Lanzamiento, redirecciones y capacitación de 60 minutos",
-      "★ Pack de Marketing y Lanzamiento (Exclusivo en Plan Full): 10 imágenes diseñadas para promocionar el lanzamiento de la web (5 de ellas para la campaña previa de expectativa y 5 para cuando la web ya esté operativa)",
+      "★ Pack de Marketing y Lanzamiento (Exclusivo en Plan Full): 10 imágenes diseñadas para promocionar el lanzamiento de la web (5 piezas para la previa de expectativa + 5 piezas para cuando ya esté operativa)",
     ],
     excludes: [
       "Fotografía de producto en piso (podemos coordinar sesión aparte)",
@@ -62,11 +62,11 @@ async function main() {
     investment: {
       type: "plans",
       currency: "UYU",
-      paymentTerms: "Planes mensuales de operación, hosting y soporte. Sin contratos de permanencia forzados.",
+      paymentTerms: "Planes mensuales de operación, hosting y soporte continuo. Sin contratos forzados.",
       plans: [
         {
           name: "Plan Base",
-          price: 3500,
+          price: 4890,
           period: "UYU/mes",
           description: "Mantenimiento técnico y hosting seguro para operar.",
           features: [
@@ -79,11 +79,11 @@ async function main() {
           ],
         },
         {
-          name: "Plan Crecimiento",
-          price: 6900,
+          name: "Plan Avanzado",
+          price: 9490,
           period: "UYU/mes",
           recommended: true,
-          featured: true,
+          badge: "RECOMENDADO",
           description: "Operación asistida, cambio de precios y marketing.",
           features: [
             "Todo lo del Plan Base",
@@ -96,11 +96,14 @@ async function main() {
         },
         {
           name: "Plan Full",
-          price: 11500,
+          price: 13990,
+          original_price: 14990,
+          discount_badge: "-7% Lanzamiento",
+          badge: "SIN LÍMITES",
           period: "UYU/mes",
           description: "Gestión integral del catálogo y evolución digital.",
           features: [
-            "Todo lo del Plan Crecimiento",
+            "Todo lo del Plan Avanzado",
             "Pack Lanzamiento: 10 imágenes promocionales (5 previa + 5 operativa)",
             "Carga y optimización de fotos de productos",
             "Reporte mensual de productos más pedidos",
@@ -141,7 +144,7 @@ async function main() {
         ],
       ],
     },
-    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Sitio web + WhatsApp Commerce para Mercado Atlántida y quiero avanzar con el Plan Crecimiento.",
+    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Sitio web + WhatsApp Commerce para Mercado Atlántida y quiero avanzar con el Plan Avanzado.",
     notes: "Propuesta comercial para Mercado Atlántida. Demo: https://mercado-atlantida.elferdi2024.workers.dev/",
   };
 

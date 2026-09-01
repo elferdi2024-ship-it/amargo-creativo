@@ -28,7 +28,7 @@ const stages = project?.stages || [
 
 const inv = proposal.investment || {};
 const plans = inv.plans || [];
-const recommended = plans.find((p: any) => p.recommended || p.featured)?.name ?? plans[1]?.name ?? plans[0]?.name;
+const recommended = plans.find((p: any) => p.recommended || p.featured || p.badge === "RECOMENDADO")?.name ?? plans[1]?.name ?? plans[0]?.name;
 
 const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, projectObjective);
 const wa = whatsappHref(waMessage);
@@ -234,15 +234,20 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
       <div class="plans-grid-3" id="plans-grid">
         {plans.map((plan: any) => {
           const isSelected = plan.name === recommended;
-          const isRec = plan.recommended || plan.featured;
+          const badgeText = plan.badge || (plan.recommended ? "RECOMENDADO" : null);
+          const isRec = badgeText === "RECOMENDADO";
+          const isLimitless = badgeText === "SIN LÍMITES";
+          const hasDiscount = Boolean(plan.original_price || plan.originalPrice);
+          const origPrice = plan.original_price || plan.originalPrice;
+
           return (
             <div
-              class={`plan-card-pro ${isSelected ? "selected" : ""} ${isRec ? "is-recommended" : ""}`}
+              class={`plan-card-pro ${isSelected ? "selected" : ""} ${isRec ? "is-recommended" : ""} ${isLimitless ? "is-limitless" : ""}`}
               data-plan={plan.name}
             >
-              {isRec && (
-                <div class="rec-badge-pill">
-                  <span>RECOMENDADO</span>
+              {badgeText && (
+                <div class={`rec-badge-pill ${isRec ? "badge-green" : isLimitless ? "badge-dark" : "badge-neutral"}`}>
+                  <span>{badgeText}</span>
                 </div>
               )}
 
@@ -251,21 +256,46 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
                 {plan.description && <p class="plan-pro-desc">{plan.description}</p>}
               </div>
 
-              <div class="plan-pro-price-row">
-                <span class="plan-price-num">
-                  {formatMoney(plan.price, inv.currency)}
-                </span>
-                {plan.period && <span class="plan-price-period">{plan.period}</span>}
+              <!-- Bloque de Precio con soporte para Precio Tachado y Descuento de Lanzamiento -->
+              <div class="plan-pro-price-block">
+                {hasDiscount ? (
+                  <div class="discount-price-container">
+                    <div class="strikethrough-row">
+                      <span class="strikethrough-val font-mono">
+                        {formatMoney(origPrice, inv.currency)}
+                      </span>
+                      <span class="discount-chip font-mono">
+                        {plan.discount_badge || "-7% Lanzamiento"}
+                      </span>
+                    </div>
+                    <div class="final-price-row">
+                      <span class="plan-price-num price-highlight">
+                        {formatMoney(plan.price, inv.currency)}
+                      </span>
+                      {plan.period && <span class="plan-price-period">{plan.period}</span>}
+                    </div>
+                  </div>
+                ) : (
+                  <div class="normal-price-row">
+                    <span class="plan-price-num">
+                      {formatMoney(plan.price, inv.currency)}
+                    </span>
+                    {plan.period && <span class="plan-price-period">{plan.period}</span>}
+                  </div>
+                )}
               </div>
 
               {plan.features?.length > 0 && (
                 <ul class="plan-pro-features">
-                  {plan.features.map((f: string) => (
-                    <li>
-                      <span class="f-check">✓</span>
-                      <span>{f}</span>
-                    </li>
-                  ))}
+                  {plan.features.map((f: string) => {
+                    const isFeatureHero = f.includes("Pack Lanzamiento") || f.includes("10 imágenes");
+                    return (
+                      <li class={isFeatureHero ? "feature-hero-item" : ""}>
+                        <span class="f-check">{isFeatureHero ? "★" : "✓"}</span>
+                        <span>{f}</span>
+                      </li>
+                    );
+                  })}
                 </ul>
               )}
             </div>
@@ -440,7 +470,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
   }
 
   .portal {
-    max-width: 52rem;
+    max-width: 54rem;
     margin: 0 auto;
     padding: clamp(2rem, 5vw, 3.5rem) clamp(1.25rem, 4vw, 2rem) 6rem;
     background: var(--bg);
@@ -827,17 +857,18 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     color: var(--mute);
   }
 
-  /* 3-COLUMN PRICING GRID (EXACT FIDELITY) */
+  /* 3-COLUMN PRICING GRID & HIGH-IMPACT CARDS */
   .plans-grid-3 {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.25rem;
+    gap: 1.35rem;
     align-items: stretch;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 800px) {
     .plans-grid-3 {
       grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
     }
   }
 
@@ -845,42 +876,67 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     position: relative;
     background: #FFFFFF;
     border: 1.5px solid #E2E4DC;
-    border-radius: 16px;
-    padding: 1.75rem 1.5rem;
+    border-radius: 18px;
+    padding: 1.85rem 1.45rem;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     gap: 1.25rem;
     text-align: left;
     cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 18px rgba(20, 30, 24, 0.04);
   }
 
   .plan-card-pro:hover {
-    border-color: #A6A498;
-    transform: translateY(-2px);
+    border-color: #9E9D90;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 28px rgba(20, 30, 24, 0.08);
   }
 
   .plan-card-pro.is-recommended {
     border: 2px solid var(--mate);
-    box-shadow: 0 8px 24px rgba(46, 83, 57, 0.12);
+    box-shadow: 0 10px 30px rgba(46, 83, 57, 0.14);
   }
 
+  .plan-card-pro.is-limitless {
+    border: 2px solid #141E18;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFBF9 100%);
+    box-shadow: 0 10px 30px rgba(20, 30, 24, 0.12);
+  }
+
+  /* Top Badge Pills */
   .rec-badge-pill {
     position: absolute;
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--mate);
-    color: #FFFFFF;
     font-family: "JetBrains Mono", monospace;
     font-size: 0.65rem;
     font-weight: 800;
-    letter-spacing: 0.12em;
-    padding: 0.25rem 0.75rem;
+    letter-spacing: 0.14em;
+    padding: 0.28rem 0.85rem;
     border-radius: 20px;
     white-space: nowrap;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .badge-green {
+    background: var(--mate);
+    color: #FFFFFF;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .badge-dark {
+    background: #141E18;
+    color: var(--lime);
+    border: 1px solid rgba(212, 255, 0, 0.4);
+  }
+
+  .badge-neutral {
+    background: #ECEBE5;
+    color: var(--ink);
   }
 
   .plan-pro-header {
@@ -895,37 +951,91 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     font-weight: 800;
     color: var(--ink);
     margin: 0;
+    letter-spacing: -0.02em;
   }
 
   .plan-pro-desc {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     color: var(--mute);
-    line-height: 1.4;
+    line-height: 1.42;
+    min-height: 2.5rem;
   }
 
-  .plan-pro-price-row {
+  /* Pricing block & Discount Rows */
+  .plan-pro-price-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-top: 1px solid #ECEBE4;
+    padding-top: 1rem;
+    min-height: 4.2rem;
+    justify-content: center;
+  }
+
+  .normal-price-row {
     display: flex;
     align-items: baseline;
     gap: 0.35rem;
-    margin: 0.5rem 0;
+  }
+
+  .discount-price-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .strikethrough-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .strikethrough-val {
+    font-size: 0.88rem;
+    color: #94A398;
+    text-decoration: line-through;
+    font-weight: 600;
+  }
+
+  .discount-chip {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #141E18;
+    background: #EAF4CC;
+    border: 1px solid rgba(46, 83, 57, 0.25);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .final-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
   }
 
   .plan-price-num {
     font-family: "Syne", sans-serif;
-    font-size: 1.75rem;
+    font-size: 1.65rem;
     font-weight: 800;
     color: var(--ink);
     letter-spacing: -0.03em;
   }
 
+  .price-highlight {
+    color: var(--mate);
+  }
+
   .plan-price-period {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--mute);
     font-weight: 600;
   }
 
+  /* Features List */
   .plan-pro-features {
     list-style: none;
     padding: 0;
@@ -933,9 +1043,10 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     display: flex;
     flex-direction: column;
     gap: 0.65rem;
-    font-size: 0.85rem;
+    font-size: 0.84rem;
     border-top: 1px solid #ECEBE4;
     padding-top: 1rem;
+    flex: 1;
   }
 
   .plan-pro-features li {
@@ -946,16 +1057,25 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     color: #2D3630;
   }
 
+  .feature-hero-item {
+    background: rgba(46, 83, 57, 0.08);
+    border: 1px solid rgba(46, 83, 57, 0.25);
+    padding: 0.45rem 0.65rem;
+    border-radius: 6px;
+    font-weight: 700;
+    color: var(--ink) !important;
+  }
+
   .f-check {
     color: var(--mate);
     font-weight: 900;
     flex-shrink: 0;
   }
 
-  /* Selection highlight */
+  /* Selected Card State */
   .plan-card-pro.selected {
-    border-color: var(--ink);
-    box-shadow: 0 10px 30px rgba(20, 30, 24, 0.16);
+    border-color: #141E18;
+    box-shadow: 0 12px 36px rgba(20, 30, 24, 0.18);
   }
 
   /* Fixed Price Card */
