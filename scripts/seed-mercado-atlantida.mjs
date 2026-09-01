@@ -33,7 +33,7 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta con detalles estéticos editoriales...");
+  console.log("2. Sincronizando propuesta con palabras clave de impacto y detalles de color...");
 
   const proposalData = {
     client_id: client.id,
@@ -41,8 +41,8 @@ async function main() {
     project_title: "Sitio web + WhatsApp Commerce",
     status: "active",
     value_phrase: "Tu local abre a las 8. _Tu web, nunca cierra._ Una vidriera que *vende todos los días*, no un folleto que junta polvo.",
-    challenge: "Mercado Atlántida es el corazón comercial de la Costa de Oro, pero online todavía *se busca de oído*. El catálogo vive en historias de Instagram que caducan, los precios se piden por privado y cada consulta se responde mil veces.\n\nMientras tanto, el visitante de Atlántida, Parque del Plata o Montevideo que quiere saber si hay stock un domingo a las 22 *se va con las manos vacías* — y compra en el primero que sí le responde.",
-    solution: "Diseñamos una plataforma a medida en *Astro 5 con carga instantánea*, organiza todos los puestos y productos del predio y convierte cada visita en un *pedido directo a WhatsApp* ya armado con fotos, precio y código único.",
+    challenge: "Mercado Atlántida es el corazón comercial de la Costa de Oro, pero online todavía se busca de oído. El catálogo vive en historias de Instagram que caducan, los precios se piden por privado y cada consulta se responde mil veces.\n\nMientras tanto, el visitante de Atlántida, Parque del Plata o Montevideo que quiere saber si hay stock un domingo a las 22 *se va con las manos vacías* — y compra en el primero que sí le responde.",
+    solution: "Diseñamos una plataforma a medida en Astro 5 con *carga instantánea*, organiza todos los puestos y productos del predio y convierte cada visita en un *pedido directo a WhatsApp* ya armado con fotos, precio y código único.",
     includes: [
       "Sitio a medida en Astro 5, mobile-first, Core Web Vitals en verde",
       "Home editorial + directorio de puestos + fichas de producto",
@@ -117,7 +117,7 @@ async function main() {
         },
       ],
     },
-    timeline: "Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento. La plataforma queda en el aire en 16 días hábiles desde el ok.",
+    timeline: "Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento. La plataforma queda en el aire en *16 días hábiles* desde el ok.",
     roi_table: {
       headers: [
         "MÉTRICA",

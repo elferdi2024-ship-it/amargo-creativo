@@ -45,14 +45,14 @@ if (!previewUrl && proposal.notes && proposal.notes.includes("http")) {
 
 const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponent(previewUrl)}` : null;
 
-// Helper para formatear texto editorial con itálicas serif y subrayados delicados
+// Helper para formatear texto editorial con itálicas serif y resaltado flúor delicado
 function formatEditorial(text: string) {
   if (!text) return "";
   let res = text;
   // _italics_ -> serif editorial
   res = res.replace(/_([^_]+)_/g, '<em class="editorial-serif">$1</em>');
-  // *highlight* -> subrayado sutil y delicado sin negrita
-  res = res.replace(/\*([^*]+)\*/g, '<span class="editorial-highlight">$1</span>');
+  // *highlight* -> resaltador flúor suave en palabras clave
+  res = res.replace(/\*([^*]+)\*/g, '<mark class="editorial-fluor">$1</mark>');
   return res;
 }
 ---
@@ -104,7 +104,7 @@ function formatEditorial(text: string) {
     </div>
   )}
 
-  <!-- 01 Desafío (Texto limpio) -->
+  <!-- 01 Desafío (Texto limpio con palabras clave resaltadas) -->
   {proposal.challenge && (
     <section class="section">
       <div class="section-kicker">
@@ -116,7 +116,7 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- 02 Solución (Texto limpio) -->
+  <!-- 02 Solución (Texto limpio con palabras clave resaltadas) -->
   {proposal.solution && (
     <section class="section">
       <div class="section-kicker">
@@ -367,7 +367,7 @@ function formatEditorial(text: string) {
     )}
   </section>
 
-  <!-- Tiempos (Tarjeta editorial sutil mantenida) -->
+  <!-- Tiempos (Tarjeta editorial sutil) -->
   {proposal.timeline && (
     <section class="section">
       <div class="section-kicker">
@@ -381,7 +381,7 @@ function formatEditorial(text: string) {
     </section>
   )}
 
-  <!-- ROI (Tabla con columna resaltada mantenida) -->
+  <!-- ROI (Tabla con columna objetivo en verde suave) -->
   {(proposal.roi_table?.headers?.length > 0 || proposal.roiTable?.headers?.length > 0) && (
     <section class="section">
       <div class="section-kicker">
@@ -533,15 +533,15 @@ function formatEditorial(text: string) {
     overflow: hidden;
   }
 
-  /* Micro-luz ambiental top-right para dar profundidad editorial */
+  /* Micro-luz ambiental en esquina superior para textura de papel premium */
   .portal::before {
     content: "";
     position: absolute;
-    top: -50px;
-    right: -100px;
+    top: -60px;
+    right: -80px;
     width: 480px;
     height: 480px;
-    background: radial-gradient(circle, rgba(46, 83, 57, 0.05) 0%, rgba(212, 255, 0, 0.025) 45%, transparent 70%);
+    background: radial-gradient(circle, rgba(46, 83, 57, 0.05) 0%, rgba(212, 255, 0, 0.03) 40%, transparent 70%);
     pointer-events: none;
     z-index: 0;
   }
@@ -632,13 +632,13 @@ function formatEditorial(text: string) {
     background: rgba(46, 83, 57, 0.08);
     padding: 0.2rem 0.6rem;
     border-radius: 4px;
-    border: 1px solid rgba(46, 83, 57, 0.15);
+    border: 1px solid rgba(46, 83, 57, 0.18);
   }
 
   .hero-pretitle-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, rgba(46, 83, 57, 0.25) 0%, transparent 100%);
+    background: linear-gradient(90deg, rgba(46, 83, 57, 0.3) 0%, rgba(212, 255, 0, 0.4) 30%, transparent 100%);
   }
 
   /* Nombre del Cliente en Grande */
@@ -678,34 +678,34 @@ function formatEditorial(text: string) {
     margin: 0;
   }
 
-  /* Frase de Valor limpia sin tarjeta */
+  /* Frase de Valor limpia */
   .value-phrase {
     margin-top: 1.5rem;
     font-size: clamp(1.02rem, 2.3vw, 1.18rem);
     line-height: 1.68;
-    color: #38423B;
+    color: #354038;
     max-width: 44rem;
   }
 
-  /* SUBRAYADO Y TIPOGRAFÍA EDITORIAL (DELICADO, SUTIL Y SIN NEGRITA) */
+  /* RESALTADOR FLÚOR EDITORIAL (SUAVE, ELEGANTE, SIN NEGRITA PESADA) */
+  :global(.editorial-fluor) {
+    background: linear-gradient(104deg, rgba(212, 255, 0, 0.15) 0%, rgba(212, 255, 0, 0.48) 5%, rgba(212, 255, 0, 0.48) 95%, rgba(212, 255, 0, 0.15) 100%);
+    padding: 0.1em 0.35em;
+    border-radius: 3.5px;
+    color: #141E18;
+    font-weight: 600;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+
   :global(.editorial-serif) {
     font-family: "Instrument Serif", Georgia, serif;
     font-style: italic;
     font-weight: 400;
-    font-size: 1.18em;
+    font-size: 1.2em;
     color: #23422D;
     letter-spacing: -0.01em;
     padding: 0 0.1rem;
-  }
-
-  :global(.editorial-highlight) {
-    font-weight: inherit;
-    color: inherit;
-    text-decoration: underline;
-    text-decoration-color: rgba(46, 83, 57, 0.45);
-    text-decoration-thickness: 1.5px;
-    text-underline-offset: 3.5px;
-    padding: 0 0.05rem;
   }
 
   .accepted-banner {
@@ -750,7 +750,7 @@ function formatEditorial(text: string) {
   .section-kicker .line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, #D8D8CF 0%, rgba(46, 83, 57, 0.2) 50%, #D8D8CF 100%);
+    background: linear-gradient(90deg, rgba(46, 83, 57, 0.3) 0%, rgba(212, 255, 0, 0.4) 30%, #D8D8CF 80%);
   }
 
   .section-kicker .title {
@@ -937,7 +937,7 @@ function formatEditorial(text: string) {
     color: #F4F6F2;
   }
 
-  /* Scope (Layout limpio original sin cajas) */
+  /* Scope (Layout limpio original) */
   .scope-container {
     display: flex;
     flex-direction: column;
