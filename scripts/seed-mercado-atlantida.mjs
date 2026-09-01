@@ -26,119 +26,116 @@ async function main() {
         company: "Mercado Atlántida",
         email: "contacto@mercadoatlantida.uy",
         phone: "+598 98 300 491",
-        notes: "Comercio minorista en Atlántida, Canelones. Catálogo de frutería, verdulería y almacén con delivery y pedidos directos por WhatsApp.",
+        notes: "Comercio minorista y predio gastronómico en Atlántida, Canelones.",
       })
       .select()
       .single();
     client = newClient;
   }
 
-  console.log("2. Insertando/Actualizando propuesta con formato exacto...");
+  console.log("2. Sincronizando propuesta con contenido exacto...");
 
   const proposalData = {
     client_id: client.id,
     slug: "mercado-atlantida",
-    project_title: "Sistema Integral de Pedidos Online, Catálogo & Panel Operativo",
+    project_title: "Sitio web + WhatsApp Commerce",
     status: "active",
-    value_phrase: "Eliminamos las comisiones del 18% al 25% de apps intermediarias con un sistema propio ultrarrápido con catálogo, fraccionamiento por kilo y panel Kanban para el local.",
-    challenge: "Las plataformas tradicionales (PedidosYa, Rappi) retienen entre 15% y 25% de cada venta, no entregan la base de datos de los clientes y generan fricción operativa en el local.",
-    solution: "Diseñamos e implementamos una infraestructura digital completa orientada a maximizar las ventas directas por WhatsApp con código único AT-XXXX, catálogo de 150+ productos y panel de control operativo Kanban en tiempo real.",
+    value_phrase: "Tu local abre a las 8. Tu web, nunca cierra. Una vidriera que vende todos los días, no un folleto que junta polvo.",
+    challenge: "Mercado Atlántida es el corazón comercial de la Costa de Oro, pero online todavía se busca de oído. El catálogo vive en historias de Instagram que caducan, los precios se piden por privado y cada consulta se responde mil veces. Mientras tanto, el visitante de Atlántida, Parque del Plata o Montevideo que quiere saber si hay stock un domingo a las 22 se va con las manos vacías — y compra en el primero que sí le responde.",
+    solution: "Diseñamos una plataforma a medida en Astro 5 que carga instantáneamente, organiza todos los puestos y productos del predio y convierte cada visita en un pedido directo a WhatsApp ya armado con fotos, precio y código único.",
     includes: [
-      "Tienda Web Móvil PWA con buscador predictivo y fraccionamiento por kilo (medio/uno/dos kg)",
-      "Catálogo optimizado de más de 150 productos, categorías y ofertas destacadas",
-      "Generación automática de pedido con código único AT-XXXX directo a WhatsApp",
-      "Pipeline Operativo Kanban en tiempo real (Pendiente → Confirmado → Preparando → Listo → En camino)",
-      "Alertas sonoras de pedidos nuevos en el mostrador del local",
-      "Infraestructura ultrarrápida en Cloudflare Edge con SSL y disponibilidad 24/7",
-      "100% de la venta y datos del cliente quedan en el comercio (Cero comisiones)",
+      "Sitio a medida en Astro 5, mobile-first, Core Web Vitals en verde",
+      "Home editorial + directorio de puestos + fichas de producto",
+      "Botón de compra/consulta a WhatsApp con mensaje precargado por producto",
+      "SEO local (Atlántida, Costa de Oro, Canelones) + Schema.org",
+      "Panel simple para actualizar horarios, novedades y destacados",
+      "Identidad visual extendida (tipografía, color, isologo digital)",
+      "Lanzamiento, redirecciones y capacitación de 60 minutos",
     ],
     excludes: [
-      "Líneas telefónicas o dispositivos físicos (tablets/celulares para el mostrador)",
-      "Campañas de publicidad paga en Meta Ads o Google Ads (se cotizan por separado)",
-      "Comisiones de pasarelas de pago externas si el cliente opta por Mercado Pago en el futuro",
+      "Fotografía de producto (podemos coordinar sesión aparte)",
+      "Gestión diaria de redes o community management",
+      "Pasarela de cobro con tarjeta — se resuelve por WhatsApp / Mercado Pago",
+      "App nativa iOS/Android",
     ],
     investment: {
       type: "plans",
-      currency: "UYU",
-      paymentTerms: "Tarifa plana mensual sin contratos de permanencia. Facturación a mes adelantado.",
+      currency: "USD",
+      paymentTerms: "50% al inicio · 50% contra entrega. Transferencia BROU / Santander o Wise.",
       plans: [
         {
-          name: "Plan Base",
-          price: 3500,
-          period: "UYU/mes",
-          description: "Mantenimiento técnico y hosting seguro para operar sin caídas.",
+          name: "Vidriera",
+          price: 980,
+          period: "",
+          description: "Presencia digital de alto impacto para abrir el canal.",
           features: [
-            "Hosting en la nube 24/7 en Cloudflare Edge",
-            "Certificado de seguridad SSL (HTTPS)",
-            "Base de datos de pedidos y catálogo",
-            "Copias de seguridad semanales automáticas",
-            "Soporte técnico ante caídas o errores",
-            "Acceso total al Panel de Control",
+            "Landing + 6 secciones",
+            "WhatsApp Commerce en CTAs",
+            "SEO local base",
+            "Entrega en 10 días hábiles",
           ],
         },
         {
-          name: "Plan Crecimiento",
-          price: 6900,
-          period: "UYU/mes",
+          name: "Mercado",
+          price: 1680,
+          period: "",
           recommended: true,
           featured: true,
-          description: "Operación asistida, cambio de precios, altas de productos y marketing.",
+          description: "El sitio que trabaja como un puesto más del predio.",
           features: [
-            "Todo lo incluido en el Plan Base",
-            "Ajustes masivos de precios mensuales",
-            "Alta y baja de productos nuevos en catálogo",
-            "Diseño de 2 Banners de Oferta mensuales",
-            "Soporte prioritario por WhatsApp directo al local",
-            "Capacitación continua al personal de turno",
+            "Directorio de puestos",
+            "Fichas de producto ilimitadas",
+            "Panel de novedades",
+            "SEO técnico + Schema",
+            "Entrega en 16 días hábiles",
           ],
         },
         {
-          name: "Plan Full",
-          price: 11500,
-          period: "UYU/mes",
-          description: "Gestión integral del catálogo, fotografía y evolución continua.",
+          name: "Motor",
+          price: 2480,
+          period: "",
+          description: "Plataforma viva: catálogo, búsqueda y operación diaria.",
           features: [
-            "Todo lo incluido en el Plan Crecimiento",
-            "Carga y optimización de fotos de productos",
-            "Reporte mensual de métricas y productos más pedidos",
-            "Banners de ofertas y promociones ilimitados",
-            "Desarrollo de mejoras a medida trimestrales",
-            "Guardia técnica prioritaria fines de semana",
+            "Todo lo de Mercado",
+            "Búsqueda instantánea",
+            "Horarios y stock por puesto",
+            "Capacitación al equipo",
+            "30 días de ajuste post-lanzamiento",
           ],
         },
       ],
     },
-    timeline: "24 a 48 horas hábiles para traspaso a producción y puesta en marcha con dominio definitivo.",
+    timeline: "Descubrimiento 3 días · Diseño 5 días · Desarrollo 8 días · Lanzamiento. El plan Mercado queda en el aire en 16 días hábiles desde el ok.",
     roi_table: {
       headers: [
-        "Concepto",
-        "Con Apps Tradicionales (18% comisión)",
-        "Con Sistema Propio Mercado Atlántida",
+        "MÉTRICA",
+        "HOY",
+        "A 90 DÍAS CON LA WEB",
       ],
       rows: [
         [
-          "Ventas mensuales estimadas",
-          "$ 120.000 UYU",
-          "$ 120.000 UYU",
+          "Consultas por WhatsApp",
+          "Esporádicas / manuales",
+          "En flujo constante con pedido armado",
         ],
         [
-          "Comisión / Costo mensual",
-          "-$ 21.600 UYU (en comisiones)",
-          "$ 6.900 UYU (tarifa plana fija)",
+          "Tiempo de respuesta",
+          "Horas o al otro día",
+          "< 5 min (el pedido ya llega con código y precio)",
         ],
         [
-          "Ahorro neto mensual",
-          "$ 0",
-          "+$ 14.700 UYU de ganancia extra/mes",
+          "Presencia en Google",
+          "Ficha incompleta",
+          "Posicionado #1 en búsquedas de la Costa de Oro",
         ],
         [
-          "Base de datos de clientes",
-          "Propiedad de la app",
-          "Propiedad exclusiva de Mercado Atlántida",
+          "Dependencia de Instagram",
+          "Alta (historias que caducan)",
+          "Activo propio que vende 24/7 sin pagar pauta",
         ],
       ],
     },
-    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta del sistema para Mercado Atlántida y me interesa avanzar con la implementación.",
+    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Sitio web + WhatsApp Commerce para Mercado Atlántida y quiero avanzar con el plan Mercado.",
     notes: "Propuesta comercial para Mercado Atlántida.",
   };
 
@@ -157,7 +154,7 @@ async function main() {
     console.log("Propuesta creada:", created.id);
   }
 
-  console.log("Listo en https://amargo-creativo.pages.dev/p/mercado-atlantida");
+  console.log("¡Sincronizado! Podés verla en https://amargo-creativo.pages.dev/p/mercado-atlantida");
 }
 
 main();
