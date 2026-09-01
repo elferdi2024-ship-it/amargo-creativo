@@ -33,7 +33,7 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta con los planes de precios actualizados...");
+  console.log("2. Sincronizando propuesta con los equivalentes diarios...");
 
   const proposalData = {
     client_id: client.id,
@@ -68,6 +68,7 @@ async function main() {
           name: "Plan Base",
           price: 4890,
           period: "UYU/mes",
+          daily_equivalent: "Menos de $170/día",
           description: "Mantenimiento técnico y hosting seguro para operar.",
           features: [
             "Hosting en la nube 24/7 (Cloudflare)",
@@ -82,6 +83,7 @@ async function main() {
           name: "Plan Avanzado",
           price: 9490,
           period: "UYU/mes",
+          daily_equivalent: "Menos de $320/día",
           recommended: true,
           badge: "RECOMENDADO",
           description: "Operación asistida, cambio de precios y marketing.",
@@ -101,6 +103,7 @@ async function main() {
           discount_badge: "-7% Lanzamiento",
           badge: "SIN LÍMITES",
           period: "UYU/mes",
+          daily_equivalent: "Menos de $470/día",
           description: "Gestión integral del catálogo y evolución digital.",
           features: [
             "Todo lo del Plan Avanzado",

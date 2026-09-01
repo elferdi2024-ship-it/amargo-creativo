@@ -240,6 +240,13 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
           const hasDiscount = Boolean(plan.original_price || plan.originalPrice);
           const origPrice = plan.original_price || plan.originalPrice;
 
+          // Cálculo o asignación del equivalente diario
+          let dailyEq = plan.daily_equivalent || plan.dailyEquivalent || null;
+          if (!dailyEq && plan.period && plan.period.includes("/mes") && plan.price) {
+            const roundedDaily = Math.ceil((Number(plan.price) / 30) / 10) * 10;
+            dailyEq = `Menos de $${roundedDaily}/día`;
+          }
+
           return (
             <div
               class={`plan-card-pro ${isSelected ? "selected" : ""} ${isRec ? "is-recommended" : ""} ${isLimitless ? "is-limitless" : ""}`}
@@ -256,7 +263,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
                 {plan.description && <p class="plan-pro-desc">{plan.description}</p>}
               </div>
 
-              <!-- Bloque de Precio con soporte para Precio Tachado y Descuento de Lanzamiento -->
+              <!-- Bloque de Precio con soporte para Precio Tachado, Descuento y Equivalente Diario -->
               <div class="plan-pro-price-block">
                 {hasDiscount ? (
                   <div class="discount-price-container">
@@ -281,6 +288,15 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
                       {formatMoney(plan.price, inv.currency)}
                     </span>
                     {plan.period && <span class="plan-price-period">{plan.period}</span>}
+                  </div>
+                )}
+
+                <!-- Equivalente Diario Delicado -->
+                {dailyEq && (
+                  <div class="daily-eq-wrap">
+                    <span class="daily-eq-chip">
+                      <span class="daily-eq-icon">≈</span> {dailyEq}
+                    </span>
                   </div>
                 )}
               </div>
@@ -981,7 +997,7 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     gap: 0.25rem;
     border-top: 1px solid #ECEBE4;
     padding-top: 1rem;
-    min-height: 4.4rem;
+    min-height: 4.8rem;
     justify-content: center;
   }
 
@@ -1051,6 +1067,34 @@ const proxyPreviewUrl = previewUrl ? `/api/preview-proxy?url=${encodeURIComponen
     font-size: 0.78rem;
     color: var(--mute);
     font-weight: 600;
+  }
+
+  /* EQUIVALENTE DIARIO DELICADO Y ELEGANTE */
+  .daily-eq-wrap {
+    margin-top: 0.35rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .daily-eq-chip {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.76rem;
+    font-weight: 600;
+    color: #385141;
+    background: rgba(46, 83, 57, 0.06);
+    border: 1px solid rgba(46, 83, 57, 0.15);
+    padding: 0.18rem 0.55rem;
+    border-radius: 5px;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .daily-eq-icon {
+    color: var(--mate);
+    font-weight: 700;
+    font-size: 0.82rem;
   }
 
   /* Features List */
