@@ -130,6 +130,53 @@ const amountDisplay =
           </div>
         )}
 
+        <!-- Scheduled Meetings Card if Any -->
+        {Array.isArray(proposal.meetings) && proposal.meetings.length > 0 && (
+          <div class="card-box meeting-data-card">
+            <div class="acc-header">
+              <span class="acc-icon acc-icon-calendar">📅</span>
+              <div>
+                <h3 class="acc-title">Reuniones / Kick-off Coordinados ({proposal.meetings.length})</h3>
+                <span class="acc-date">Agendadas por el cliente desde la propuesta</span>
+              </div>
+            </div>
+            <div class="meetings-admin-list">
+              {proposal.meetings.map((m: any) => {
+                const waPhone = m.contact ? m.contact.replace(/\D/g, "") : "";
+                const waText = encodeURIComponent(`Hola ${m.name}, te contacto de Amargo Creativo para confirmar nuestra reunión del día ${m.date} en el horario ${m.time_range}.`);
+                return (
+                  <div class="meeting-item-box">
+                    <div class="m-item-info">
+                      <div class="m-top-row">
+                        <strong class="m-date-text">📅 {m.date} · {m.time_range}</strong>
+                        <span class="m-type-pill">
+                          {m.meeting_type === "videocall" ? "📹 Google Meet" : m.meeting_type === "call" ? "📞 Llamada WhatsApp" : "📍 Presencial"}
+                        </span>
+                        {m.plan && <span class="plan-tag font-mono">{m.plan}</span>}
+                      </div>
+                      <div class="m-client-line">
+                        <span>Solicitante: <strong>{m.name}</strong></span> · 
+                        <span>Contacto: <strong>{m.contact}</strong></span>
+                      </div>
+                      {m.notes && <p class="m-notes-text">"{m.notes}"</p>}
+                    </div>
+                    {waPhone && (
+                      <a
+                        href={`https://wa.me/${waPhone}?text=${waText}`}
+                        target="_blank"
+                        rel="noopener"
+                        class="btn-wa-sm"
+                      >
+                        WhatsApp ↗
+                      </a>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         <!-- Proposal Scope & Summary Card -->
         <div class="card-box">
           <h3 class="box-title">Resumen de la Propuesta</h3>
@@ -599,6 +646,98 @@ const amountDisplay =
     color: var(--adm-lime);
     padding: 0.15rem 0.45rem;
     border-radius: 4px;
+  }
+
+  /* Meetings Data Card */
+  .meeting-data-card {
+    border-color: #3B82F6;
+    background: #0F172A;
+  }
+
+  .acc-icon-calendar {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #60A5FA !important;
+  }
+
+  .meetings-admin-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+  }
+
+  .meeting-item-box {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .m-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+  }
+
+  .m-top-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .m-date-text {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    color: #F8FAFC;
+    font-size: 0.92rem;
+  }
+
+  .m-type-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    background: rgba(59, 130, 246, 0.2);
+    color: #93C5FD;
+    padding: 0.12rem 0.45rem;
+    border-radius: 4px;
+  }
+
+  .m-client-line {
+    font-size: 0.8rem;
+    color: #94A3B8;
+  }
+
+  .m-client-line strong {
+    color: #E2E8F0;
+  }
+
+  .m-notes-text {
+    margin: 0.2rem 0 0;
+    font-size: 0.78rem;
+    color: #CBD5E1;
+    font-style: italic;
+  }
+
+  .btn-wa-sm {
+    background: #22C55E;
+    color: #FFFFFF;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: background 0.15s ease;
+  }
+
+  .btn-wa-sm:hover {
+    background: #16A34A;
   }
 
   /* Preview Fields */
