@@ -347,6 +347,20 @@ function formatEditorial(text: string) {
                   })}
                 </ul>
               )}
+
+              <!-- Botón interactivo de selección del plan -->
+              <div class="plan-card-action-bar">
+                <button
+                  type="button"
+                  class={`btn-plan-select-card ${isSelected ? "is-selected" : ""}`}
+                  data-plan-target={plan.name}
+                >
+                  <span class="plan-dot-indicator"></span>
+                  <span class="plan-select-label">
+                    {isSelected ? "✓ Plan Seleccionado" : "Elegir este Plan"}
+                  </span>
+                </button>
+              </div>
             </div>
           );
         })}
@@ -531,6 +545,7 @@ function formatEditorial(text: string) {
       plans={plans}
       planName={recommended}
       clientName={clientName}
+      currency={inv.currency || "UYU"}
     />
 
     <div class="secondary-actions">
@@ -565,13 +580,81 @@ function formatEditorial(text: string) {
 </article>
 
 <script>
-  const cards = document.querySelectorAll(".plan-card-pro");
+  const cards = document.querySelectorAll<HTMLElement>(".plan-card-pro");
+  const waBtn = document.querySelector<HTMLAnchorElement>(".btn-outline-wa");
+  const baseWaHref = waBtn ? waBtn.getAttribute("href") || "" : "";
+
+  function setPlanSelection(targetPlan: string) {
+    cards.forEach((card) => {
+      const pName = card.getAttribute("data-plan");
+      const isTarget = pName === targetPlan;
+      if (isTarget) {
+        card.classList.add("selected");
+      } else {
+        card.classList.remove("selected");
+      }
+
+      const btn = card.querySelector<HTMLElement>(".btn-plan-select-card");
+      if (btn) {
+        if (isTarget) {
+          btn.classList.add("is-selected");
+          btn.innerHTML = '<span class="plan-dot-indicator"></span><span class="plan-select-label">✓ Plan Seleccionado</span>';
+        } else {
+          btn.classList.remove("is-selected");
+          btn.innerHTML = '<span class="plan-dot-indicator"></span><span class="plan-select-label">Elegir este Plan</span>';
+        }
+      }
+    });
+
+    // Actualizar WhatsApp link dinámicamente con el plan seleccionado
+    if (waBtn && baseWaHref) {
+      try {
+        const url = new URL(baseWaHref);
+        const originalText = url.searchParams.get("text") || "";
+        const updatedText = originalText.replace(/Plan [A-Za-z0-9\s]+|con el [A-Za-z0-9\s]+/i, `con el ${targetPlan}`);
+        url.searchParams.set("text", updatedText);
+        waBtn.setAttribute("href", url.toString());
+      } catch (err) {}
+    }
+
+    // Notificar al componente React AcceptButton
+    window.dispatchEvent(
+      new CustomEvent("amargo:plan-selected", {
+        detail: { planName: targetPlan },
+      })
+    );
+  }
+
   cards.forEach((card) => {
     card.addEventListener("click", () => {
-      cards.forEach((c) => c.classList.remove("selected"));
-      card.classList.add("selected");
+      const planName = card.getAttribute("data-plan");
+      if (planName) setPlanSelection(planName);
     });
   });
+
+  window.addEventListener("amargo:plan-selected", ((e: CustomEvent) => {
+    if (e.detail?.planName) {
+      cards.forEach((card) => {
+        const pName = card.getAttribute("data-plan");
+        const isTarget = pName === e.detail.planName;
+        if (isTarget) {
+          card.classList.add("selected");
+        } else {
+          card.classList.remove("selected");
+        }
+        const btn = card.querySelector<HTMLElement>(".btn-plan-select-card");
+        if (btn) {
+          if (isTarget) {
+            btn.classList.add("is-selected");
+            btn.innerHTML = '<span class="plan-dot-indicator"></span><span class="plan-select-label">✓ Plan Seleccionado</span>';
+          } else {
+            btn.classList.remove("is-selected");
+            btn.innerHTML = '<span class="plan-dot-indicator"></span><span class="plan-select-label">Elegir este Plan</span>';
+          }
+        }
+      });
+    }
+  }) as EventListener);
 </script>
 
 <style>
@@ -1346,6 +1429,57 @@ function formatEditorial(text: string) {
   .plan-card-pro.selected {
     border-color: #141E18;
     box-shadow: 0 12px 36px rgba(20, 30, 24, 0.18);
+  }
+
+  /* Plan Selection Button Bar */
+  .plan-card-action-bar {
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid #ECEBE4;
+  }
+
+  .btn-plan-select-card {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    border-radius: 10px;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    transition: all 0.15s ease;
+    background: #F4F3EE;
+    color: #4A544D;
+    border: 1.5px solid #D5D6CC;
+  }
+
+  .btn-plan-select-card:hover {
+    background: #EAE9E0;
+    color: #141E18;
+    border-color: #A3B0A7;
+  }
+
+  .btn-plan-select-card.is-selected {
+    background: #2E5339;
+    color: #FFFFFF;
+    border-color: #2E5339;
+    box-shadow: 0 4px 12px rgba(46, 83, 57, 0.25);
+  }
+
+  .plan-dot-indicator {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #A3B0A7;
+    transition: background 0.15s ease;
+  }
+
+  .btn-plan-select-card.is-selected .plan-dot-indicator {
+    background: #D4FF00;
+    box-shadow: 0 0 6px #D4FF00;
   }
 
   /* Fixed Price Card */

@@ -15,6 +15,7 @@ export interface PipelineItem {
   createdAt: string;
   slug?: string;
   proposalId?: string;
+  planName?: string;
 }
 
 interface Props {
@@ -81,36 +82,55 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
       title: "1. Propuesta Enviada",
       subtitle: "Links activos en decisión",
       color: "#97BC62",
-      items: colSent.map((p) => ({
-        id: p.id,
-        type: "proposal" as const,
-        title: p.project_title,
-        clientName: p.clients?.name || "Sin cliente",
-        clientCompany: p.clients?.company,
-        status: p.status,
-        amount: p.investment?.amount || (p.investment?.plans?.[0]?.price),
-        currency: p.investment?.currency || "USD",
-        createdAt: p.created_at,
-        slug: p.slug,
-      })),
+      items: colSent.map((p) => {
+        const inv = p.investment || {};
+        const plans = inv.plans || [];
+        const defaultPlan = plans.find((x: any) => x.recommended || x.featured) || plans[0];
+        const amount = inv.amount || defaultPlan?.price || 0;
+        return {
+          id: p.id,
+          type: "proposal" as const,
+          title: p.project_title,
+          clientName: p.clients?.name || "Sin cliente",
+          clientCompany: p.clients?.company,
+          status: p.status,
+          amount,
+          currency: inv.currency || "UYU",
+          createdAt: p.created_at,
+          slug: p.slug,
+          planName: defaultPlan?.name,
+        };
+      }),
     },
     {
       id: "accepted",
       title: "2. Propuesta Aceptada",
       subtitle: "Confirmadas por el cliente",
       color: "#C8FF00",
-      items: colAccepted.map((p) => ({
-        id: p.id,
-        type: "proposal" as const,
-        title: p.project_title,
-        clientName: p.clients?.name || "Sin cliente",
-        clientCompany: p.clients?.company,
-        status: p.status,
-        amount: p.investment?.amount || (p.investment?.plans?.[0]?.price),
-        currency: p.investment?.currency || "USD",
-        createdAt: p.accepted_at || p.created_at,
-        slug: p.slug,
-      })),
+      items: colAccepted.map((p) => {
+        const inv = p.investment || {};
+        const plans = inv.plans || [];
+        let price = p.accepted_price;
+        if (!price && p.accepted_plan && plans.length > 0) {
+          const match = plans.find((x: any) => x.name === p.accepted_plan);
+          if (match) price = match.price;
+        }
+        if (!price) price = inv.amount || plans[0]?.price || 0;
+
+        return {
+          id: p.id,
+          type: "proposal" as const,
+          title: p.project_title,
+          clientName: p.clients?.name || "Sin cliente",
+          clientCompany: p.clients?.company,
+          status: p.status,
+          amount: price,
+          currency: inv.currency || "UYU",
+          createdAt: p.accepted_at || p.created_at,
+          slug: p.slug,
+          planName: p.accepted_plan || "Plan Confirmado",
+        };
+      }),
     },
     {
       id: "active",
@@ -124,7 +144,10 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
         clientName: pr.clients?.name || "Sin cliente",
         clientCompany: pr.clients?.company,
         status: pr.status,
+        amount: pr.budget || 0,
+        currency: pr.currency || "UYU",
         createdAt: pr.created_at,
+        planName: pr.plan,
       })),
     },
     {
@@ -139,171 +162,192 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
         clientName: pr.clients?.name || "Sin cliente",
         clientCompany: pr.clients?.company,
         status: pr.status,
+        amount: pr.budget || 0,
+        currency: pr.currency || "UYU",
         createdAt: pr.updated_at || pr.created_at,
+        planName: pr.plan,
       })),
     },
   ];
 
   return (
     <div className="pipeline-board">
-      {columns.map((col) => (
-        <div key={col.id} className="pipeline-col">
-          <div className="col-header" style={{ borderTopColor: col.color }}>
-            <div>
-              <h3 className="col-title">{col.title}</h3>
-              <span className="col-sub">{col.subtitle}</span>
+      {columns.map((col) => {
+        const colTotal = col.items.reduce((acc, curr) => acc + (curr.amount || 0), 0);
+
+        return (
+          <div key={col.id} className="pipeline-col">
+            <div className="col-header" style={{ borderTopColor: col.color }}>
+              <div className="col-header-info">
+                <h3 className="col-title">{col.title}</h3>
+                <span className="col-sub">{col.subtitle}</span>
+                {colTotal > 0 && (
+                  <span className="col-total-badge font-mono">
+                    Σ {formatMoney(colTotal, "UYU")}
+                  </span>
+                )}
+              </div>
+              <span className="col-count" style={{ background: `${col.color}22`, color: col.color }}>
+                {col.items.length}
+              </span>
             </div>
-            <span className="col-count" style={{ background: `${col.color}22`, color: col.color }}>
-              {col.items.length}
-            </span>
-          </div>
 
-          <div className="col-cards-list">
-            {col.items.map((item) => {
-              const days = daysSince(item.createdAt);
-              const isLoading = loadingId === item.id;
+            <div className="col-cards-list">
+              {col.items.map((item) => {
+                const days = daysSince(item.createdAt);
+                const isLoading = loadingId === item.id;
 
-              return (
-                <div key={item.id} className={`pipeline-card ${isLoading ? "is-loading" : ""}`}>
-                  <div className="card-top">
-                    <a
-                      href={item.type === "proposal" ? `/admin/proposals/${item.id}` : `/admin/projects/${item.id}`}
-                      className="item-title"
-                    >
-                      {item.title}
-                    </a>
-                    <span className="days-badge">hace {days}d</span>
-                  </div>
-
-                  <div className="client-line">
-                    👤 {item.clientName} {item.clientCompany ? `(${item.clientCompany})` : ""}
-                  </div>
-
-                  {item.amount !== undefined && item.amount > 0 && (
-                    <div className="amount-tag">
-                      {formatMoney(item.amount, item.currency)}
+                return (
+                  <div key={item.id} className={`pipeline-card ${isLoading ? "is-loading" : ""}`}>
+                    <div className="card-top">
+                      <a
+                        href={item.type === "proposal" ? `/admin/proposals/${item.id}` : `/admin/projects/${item.id}`}
+                        className="item-title"
+                      >
+                        {item.title}
+                      </a>
+                      <span className="days-badge">hace {days}d</span>
                     </div>
-                  )}
 
-                  {/* Acciones de transición rápida */}
-                  <div className="card-actions-bar">
-                    {item.type === "proposal" && item.status === "active" && (
-                      <button
-                        type="button"
-                        onClick={() => updateProposalStatus(item.id, "accepted")}
-                        disabled={isLoading}
-                        className="btn-move"
-                      >
-                        ✓ Marcar Aceptada
-                      </button>
-                    )}
+                    <div className="client-line">
+                      👤 {item.clientName} {item.clientCompany ? `(${item.clientCompany})` : ""}
+                    </div>
 
-                    {item.type === "proposal" && item.status === "accepted" && (
-                      <a href={`/admin/proposals/${item.id}`} className="btn-move">
-                        Ver Proyecto →
-                      </a>
-                    )}
+                    {/* Plan Badge & Revenue */}
+                    <div className="card-revenue-row">
+                      {item.planName && (
+                        <span className="card-plan-chip">
+                          {item.planName}
+                        </span>
+                      )}
+                      {item.amount !== undefined && item.amount > 0 && (
+                        <span className="amount-tag font-mono">
+                          {formatMoney(item.amount, item.currency)}
+                        </span>
+                      )}
+                    </div>
 
-                    {item.type === "project" && item.status === "active" && (
-                      <button
-                        type="button"
-                        onClick={() => updateProjectStatus(item.id, "finished")}
-                        disabled={isLoading}
-                        className="btn-move highlight"
-                      >
-                        ★ Marcar Terminado
-                      </button>
-                    )}
+                    {/* Acciones de transición rápida */}
+                    <div className="card-actions-bar">
+                      {item.type === "proposal" && item.status === "active" && (
+                        <button
+                          type="button"
+                          onClick={() => updateProposalStatus(item.id, "accepted")}
+                          disabled={isLoading}
+                          className="btn-move"
+                        >
+                          ✓ Marcar Aceptada
+                        </button>
+                      )}
 
-                    {item.type === "project" && item.status === "finished" && (
-                      <a href={`/admin/projects/${item.id}`} className="btn-move content-btn">
-                        ✨ Contenido
-                      </a>
-                    )}
+                      {item.type === "proposal" && item.status === "accepted" && (
+                        <a href={`/admin/proposals/${item.id}`} className="btn-move">
+                          Ver Propuesta & Proyecto →
+                        </a>
+                      )}
+
+                      {item.type === "project" && item.status === "active" && (
+                        <button
+                          type="button"
+                          onClick={() => updateProjectStatus(item.id, "finished")}
+                          disabled={isLoading}
+                          className="btn-move highlight"
+                        >
+                          ★ Marcar Terminado
+                        </button>
+                      )}
+
+                      {item.type === "project" && item.status === "finished" && (
+                        <a href={`/admin/projects/${item.id}`} className="btn-move content-btn">
+                          ✨ Contenido
+                        </a>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
 
-            {col.items.length === 0 && (
-              <div className="col-empty">Sin elementos en esta etapa</div>
-            )}
+              {col.items.length === 0 && (
+                <div className="col-empty">Sin elementos en esta etapa</div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       <style>{`
         .pipeline-board {
-          display: flex;
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
           gap: 1.25rem;
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-          scroll-snap-type: x mandatory;
-          padding-bottom: 1rem;
+          align-items: start;
         }
 
-        @media (min-width: 1024px) {
+        @media (max-width: 1200px) {
           .pipeline-board {
-            display: grid;
-            grid-template-columns: repeat(4, minmax(240px, 1fr));
-            overflow-x: visible;
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+
+        @media (max-width: 640px) {
+          .pipeline-board {
+            grid-template-columns: 1fr;
           }
         }
 
         .pipeline-col {
-          background: var(--adm-card, #18261E);
-          border: 1px solid var(--adm-border, #24352A);
+          background: #F4F6F2;
+          border: 1px solid #E1E6DF;
           border-radius: 12px;
           display: flex;
           flex-direction: column;
-          min-height: 480px;
-          flex: 0 0 85vw;
-          scroll-snap-align: start;
-        }
-
-        @media (min-width: 640px) {
-          .pipeline-col {
-            flex: 0 0 320px;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .pipeline-col {
-            flex: 1;
-          }
+          overflow: hidden;
         }
 
         .col-header {
-          padding: 1rem 1.25rem;
-          border-top: 3px solid #85968B;
-          border-bottom: 1px solid var(--adm-border, #24352A);
+          background: #FFFFFF;
+          padding: 1rem 1.15rem;
+          border-top: 3px solid transparent;
+          border-bottom: 1px solid #E1E6DF;
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          border-radius: 12px 12px 0 0;
-          background: rgba(0, 0, 0, 0.15);
+          gap: 0.5rem;
+        }
+
+        .col-header-info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.2rem;
         }
 
         .col-title {
-          margin: 0;
-          font-size: 0.92rem;
+          font-family: "Space Grotesk", system-ui, sans-serif;
+          font-size: 0.95rem;
           font-weight: 800;
-          color: var(--adm-ink, #F4F6F2);
+          color: #141E18;
+          margin: 0;
         }
 
         .col-sub {
+          font-size: 0.72rem;
+          color: #6C776E;
+        }
+
+        .col-total-badge {
           font-size: 0.75rem;
-          color: var(--adm-mute, #85968B);
-          display: block;
-          margin-top: 0.15rem;
+          font-weight: 700;
+          color: #2E5339;
+          margin-top: 0.25rem;
         }
 
         .col-count {
           font-family: "JetBrains Mono", monospace;
           font-size: 0.75rem;
-          font-weight: 700;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
+          font-weight: 800;
+          padding: 0.2rem 0.55rem;
+          border-radius: 20px;
+          flex-shrink: 0;
         }
 
         .col-cards-list {
@@ -311,27 +355,30 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
           display: flex;
           flex-direction: column;
           gap: 0.85rem;
-          flex: 1;
+          min-height: 200px;
         }
 
         .pipeline-card {
-          background: #111C14;
-          border: 1px solid var(--adm-border, #24352A);
-          border-radius: 8px;
-          padding: 0.85rem 1rem;
+          background: #FFFFFF;
+          border: 1.5px solid #E2E4DC;
+          border-radius: 10px;
+          padding: 1rem;
           display: flex;
           flex-direction: column;
-          gap: 0.5rem;
-          transition: transform 0.15s ease, border-color 0.15s ease;
+          gap: 0.65rem;
+          box-shadow: 0 2px 8px rgba(20, 30, 24, 0.03);
+          transition: all 0.15s ease;
         }
 
         .pipeline-card:hover {
-          border-color: var(--adm-border-light, #32473A);
+          border-color: #2E5339;
           transform: translateY(-2px);
+          box-shadow: 0 6px 16px rgba(20, 30, 24, 0.06);
         }
 
         .pipeline-card.is-loading {
           opacity: 0.5;
+          pointer-events: none;
         }
 
         .card-top {
@@ -342,81 +389,107 @@ export default function PipelineBoard({ initialProposals = [], initialProjects =
         }
 
         .item-title {
-          font-size: 0.9rem;
+          font-family: "Space Grotesk", system-ui, sans-serif;
+          font-size: 0.92rem;
           font-weight: 700;
-          color: var(--adm-ink, #F4F6F2);
+          color: #141E18;
           text-decoration: none;
-          line-height: 1.3;
+          line-height: 1.35;
         }
 
         .item-title:hover {
-          color: var(--adm-lime, #C8FF00);
+          color: #2E5339;
         }
 
         .days-badge {
-          font-family: "JetBrains Mono", monospace;
-          font-size: 0.68rem;
-          color: var(--adm-mute, #85968B);
+          font-size: 0.65rem;
+          color: #8C9990;
+          background: #F4F3EE;
+          padding: 0.15rem 0.4rem;
+          border-radius: 4px;
           white-space: nowrap;
         }
 
         .client-line {
-          font-size: 0.78rem;
-          color: var(--adm-mute, #85968B);
+          font-size: 0.8rem;
+          color: #55665B;
+        }
+
+        .card-revenue-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.5rem;
+          background: #FAF9F5;
+          padding: 0.35rem 0.6rem;
+          border-radius: 6px;
+          border: 1px solid #ECEBE4;
+        }
+
+        .card-plan-chip {
+          font-family: "JetBrains Mono", monospace;
+          font-size: 0.65rem;
+          font-weight: 700;
+          color: #2E5339;
+          background: rgba(46, 83, 57, 0.08);
+          padding: 0.12rem 0.4rem;
+          border-radius: 4px;
         }
 
         .amount-tag {
-          font-family: "JetBrains Mono", monospace;
-          font-size: 0.82rem;
           font-weight: 700;
-          color: var(--adm-lime, #C8FF00);
+          font-size: 0.84rem;
+          color: #141E18;
         }
 
         .card-actions-bar {
           display: flex;
-          justify-content: flex-end;
-          gap: 0.4rem;
+          gap: 0.5rem;
+          margin-top: 0.25rem;
           padding-top: 0.5rem;
-          border-top: 1px solid rgba(255, 255, 255, 0.05);
+          border-top: 1px solid #F0EFEA;
         }
 
         .btn-move {
-          background: rgba(255, 255, 255, 0.06);
-          border: 1px solid var(--adm-border, #24352A);
-          color: var(--adm-ink, #F4F6F2);
-          font-size: 0.72rem;
-          font-weight: 600;
-          padding: 0.25rem 0.6rem;
-          border-radius: 4px;
+          flex: 1;
+          font-family: "Archivo", system-ui, sans-serif;
+          font-size: 0.75rem;
+          font-weight: 700;
+          text-align: center;
+          padding: 0.4rem 0.5rem;
+          border-radius: 6px;
+          border: 1px solid #D5D6CC;
+          background: #FFFFFF;
+          color: #2D3630;
           cursor: pointer;
           text-decoration: none;
           transition: all 0.15s ease;
         }
 
         .btn-move:hover {
-          background: rgba(255, 255, 255, 0.15);
-          border-color: var(--adm-ink);
+          background: #2E5339;
+          color: #FFFFFF;
+          border-color: #2E5339;
         }
 
         .btn-move.highlight {
-          background: rgba(200, 255, 0, 0.15);
-          border-color: var(--adm-lime);
-          color: var(--adm-lime);
+          background: #2E5339;
+          color: #FFFFFF;
+          border-color: #2E5339;
         }
 
         .btn-move.content-btn {
-          background: rgba(151, 188, 98, 0.2);
-          color: #97BC62;
-          border-color: #97BC62;
+          background: #141E18;
+          color: #D4FF00;
+          border-color: #141E18;
         }
 
         .col-empty {
           text-align: center;
-          color: var(--adm-mute, #85968B);
+          padding: 2rem 1rem;
           font-size: 0.8rem;
-          padding: 2rem 0.5rem;
-          border: 1px dashed rgba(255, 255, 255, 0.06);
-          border-radius: 6px;
+          color: #8C9990;
+          font-style: italic;
         }
       `}</style>
     </div>
