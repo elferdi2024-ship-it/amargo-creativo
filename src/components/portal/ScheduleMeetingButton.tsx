@@ -199,8 +199,7 @@ export default function ScheduleMeetingButton({
                       rel="noopener noreferrer"
                       className="btn-wa-confirm"
                     >
-                      <span>Confirmar al instante por WhatsApp</span>
-                      <span>↗</span>
+                      <span>Confirmar al instante por WhatsApp ↗</span>
                     </a>
                   )}
                   <button
@@ -373,9 +372,7 @@ export default function ScheduleMeetingButton({
                     onClick={handleSchedule}
                     disabled={pending}
                   >
-                    {pending
-                      ? "Agendando reunión…"
-                      : `Confirmar Reunión para el ${selectedDate ? selectedDate.split("-").reverse().join("/") : "día elegido"}`}
+                    {pending ? "Agendando…" : "Confirmar Reunión"}
                   </button>
                 </div>
               </>
@@ -390,7 +387,9 @@ export default function ScheduleMeetingButton({
           align-items: center;
           justify-content: center;
           gap: 0.55rem;
-          height: 48px;
+          min-height: 48px;
+          height: auto;
+          padding: 0.75rem 1.25rem;
           border: 1.5px solid #2E5339;
           border-radius: 12px;
           background: #FFFFFF;
@@ -402,6 +401,7 @@ export default function ScheduleMeetingButton({
           transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
           width: 100%;
           box-sizing: border-box;
+          text-align: center;
         }
 
         .btn-schedule-meeting:hover {
@@ -425,6 +425,7 @@ export default function ScheduleMeetingButton({
           justify-content: center;
           padding: 1rem;
           z-index: 9999;
+          box-sizing: border-box;
           animation: modalFade 0.2s ease;
         }
 
@@ -437,15 +438,17 @@ export default function ScheduleMeetingButton({
           background: #FFFFFF;
           border: 1.5px solid #E2E4DC;
           border-radius: 20px;
-          padding: clamp(1.4rem, 4vw, 2rem);
+          padding: clamp(1.25rem, 3.5vw, 1.85rem);
           max-width: 36rem;
           width: 100%;
           box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
           animation: modalSlide 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-          max-height: 92vh;
+          max-height: 88vh;
+          height: auto;
           display: flex;
           flex-direction: column;
           box-sizing: border-box;
+          overflow: hidden;
         }
 
         @keyframes modalSlide {
@@ -454,7 +457,7 @@ export default function ScheduleMeetingButton({
         }
 
         .modal-header {
-          margin-bottom: 1.15rem;
+          margin-bottom: 1rem;
           flex-shrink: 0;
         }
 
@@ -467,37 +470,40 @@ export default function ScheduleMeetingButton({
           padding: 0.2rem 0.55rem;
           border-radius: 4px;
           display: inline-block;
-          margin-bottom: 0.45rem;
+          margin-bottom: 0.4rem;
         }
 
         .agenda-title {
           font-family: "Space Grotesk", system-ui, sans-serif;
-          font-size: 1.4rem;
+          font-size: 1.35rem;
           font-weight: 800;
           color: #141E18;
-          margin: 0 0 0.3rem;
+          margin: 0 0 0.25rem;
           letter-spacing: -0.02em;
         }
 
         .agenda-desc {
-          font-size: 0.86rem;
+          font-size: 0.84rem;
           color: #55665B;
           margin: 0;
           line-height: 1.4;
         }
 
         .modal-body-scroll {
+          flex: 1;
+          min-height: 0;
           overflow-y: auto;
           display: flex;
           flex-direction: column;
-          gap: 1.25rem;
+          gap: 1.15rem;
           padding-right: 0.35rem;
+          -webkit-overflow-scrolling: touch;
         }
 
         .agenda-section {
           display: flex;
           flex-direction: column;
-          gap: 0.45rem;
+          gap: 0.4rem;
         }
 
         .agenda-label {
@@ -515,11 +521,12 @@ export default function ScheduleMeetingButton({
           gap: 0.45rem;
           overflow-x: auto;
           padding-bottom: 0.35rem;
+          -webkit-overflow-scrolling: touch;
         }
 
         .day-pill-btn {
           flex-shrink: 0;
-          padding: 0.55rem 0.85rem;
+          padding: 0.5rem 0.8rem;
           border-radius: 8px;
           border: 1.5px solid #D5D6CC;
           background: #F4F3EE;
@@ -694,39 +701,43 @@ export default function ScheduleMeetingButton({
         /* Footer actions */
         .modal-actions-bar {
           display: flex;
-          justify-content: flex-end;
           align-items: center;
           gap: 0.75rem;
-          margin-top: 1.25rem;
-          padding-top: 1rem;
+          margin-top: 1rem;
+          padding-top: 0.85rem;
           border-top: 1px solid #ECEBE4;
           flex-shrink: 0;
-          flex-wrap: wrap;
+          width: 100%;
+          box-sizing: border-box;
         }
 
         .btn-cancel-agenda {
+          flex: 1;
           background: none;
           border: 1.5px solid #D5D6CC;
           color: #4A544D;
           font-weight: 700;
           font-size: 0.86rem;
-          padding: 0.65rem 1.15rem;
+          padding: 0.75rem 0.95rem;
           border-radius: 10px;
           cursor: pointer;
+          text-align: center;
         }
 
         .btn-confirm-agenda {
+          flex: 2;
           background: #2E5339;
           color: #FFFFFF;
           border: none;
           font-family: "Space Grotesk", system-ui, sans-serif;
           font-weight: 700;
           font-size: 0.92rem;
-          padding: 0.7rem 1.35rem;
+          padding: 0.75rem 1.15rem;
           border-radius: 10px;
           cursor: pointer;
           box-shadow: 0 4px 14px rgba(46, 83, 57, 0.25);
           transition: all 0.15s ease;
+          text-align: center;
         }
 
         .btn-confirm-agenda:hover {
