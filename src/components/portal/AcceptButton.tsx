@@ -130,26 +130,39 @@ export default function AcceptButton({
           onClick={() => setOpen(true)}
           type="button"
         >
-          <span className="btn-accept-text">Aceptar propuesta con</span>
-          <span className="btn-plan-highlight">
-            {selectedPlan || "Plan Recomendado"}
-          </span>
-          {currentPlanObj?.price ? (
-            <span className="btn-price-tag">
-              ({formatMoney(currentPlanObj.price, currency)}
-              {currentPlanObj.period ? ` ${currentPlanObj.period}` : ""})
-            </span>
-          ) : null}
-          <span className="btn-arrow-icon">→</span>
+          <div className="btn-accept-body">
+            <div className="btn-main-title">
+              <span>Aceptar propuesta</span>
+              {selectedPlan && (
+                <span className="btn-plan-badge">· {selectedPlan}</span>
+              )}
+            </div>
+
+            {currentPlanObj?.price ? (
+              <div className="btn-sub-pricing font-mono">
+                <span>
+                  {formatMoney(currentPlanObj.price, currency)}
+                  {currentPlanObj.period ? ` ${currentPlanObj.period}` : ""}
+                </span>
+                {currentPlanObj.daily_equivalent && (
+                  <span className="btn-daily-badge">
+                    ({currentPlanObj.daily_equivalent})
+                  </span>
+                )}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="btn-accept-arrow">
+            <span>→</span>
+          </div>
         </button>
 
-        {currentPlanObj && (
-          <div className="accept-sub-hint">
-            <span>
-              💡 Podés cambiar de plan haciendo clic en cualquiera de las tarjetas de arriba o en el formulario.
-            </span>
-          </div>
-        )}
+        <div className="accept-sub-hint">
+          <span>
+            💡 Podés cambiar de plan haciendo clic en cualquiera de las tarjetas de arriba o en el formulario.
+          </span>
+        </div>
       </div>
 
       {open && (
@@ -267,59 +280,83 @@ export default function AcceptButton({
         .accept-cta-container {
           display: flex;
           flex-direction: column;
-          gap: 0.6rem;
+          gap: 0.65rem;
           width: 100%;
         }
 
         .btn-accept-main {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 0.6rem;
-          background: #2E5339;
-          color: #FFFFFF;
-          padding: 0.95rem 1.65rem;
-          font-family: "Space Grotesk", system-ui, sans-serif;
-          font-weight: 700;
-          font-size: 1.05rem;
-          border: none;
-          border-radius: 14px;
-          cursor: pointer;
-          width: 100%;
-          min-height: 56px;
-          box-shadow: 0 6px 20px rgba(46, 83, 57, 0.28);
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          flex-wrap: wrap;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          background: #2E5339 !important;
+          color: #FFFFFF !important;
+          padding: 0.85rem 1.45rem !important;
+          border: none !important;
+          border-radius: 14px !important;
+          cursor: pointer !important;
+          width: 100% !important;
+          height: auto !important;
+          min-height: 64px !important;
+          box-shadow: 0 6px 20px rgba(46, 83, 57, 0.28) !important;
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          box-sizing: border-box !important;
+          text-align: left !important;
         }
 
         .btn-accept-main:hover {
-          background: #23422D;
-          transform: translateY(-2px);
-          box-shadow: 0 10px 28px rgba(46, 83, 57, 0.38);
+          background: #23422D !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 10px 28px rgba(46, 83, 57, 0.38) !important;
         }
 
-        .btn-plan-highlight {
+        .btn-accept-body {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+          flex: 1;
+        }
+
+        .btn-main-title {
+          font-family: "Space Grotesk", system-ui, sans-serif;
+          font-size: clamp(1rem, 2.5vw, 1.12rem);
+          font-weight: 700;
+          color: #FFFFFF;
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          flex-wrap: wrap;
+          line-height: 1.25;
+        }
+
+        .btn-plan-badge {
           color: #D4FF00;
           font-weight: 800;
-          text-decoration: underline;
-          text-underline-offset: 3px;
         }
 
-        .btn-price-tag {
-          font-family: "JetBrains Mono", monospace;
-          font-size: 0.88rem;
-          background: rgba(0, 0, 0, 0.25);
-          padding: 0.2rem 0.55rem;
-          border-radius: 6px;
-          color: #FFFFFF;
+        .btn-sub-pricing {
+          display: flex;
+          align-items: center;
+          gap: 0.45rem;
+          font-size: 0.8rem;
+          color: rgba(255, 255, 255, 0.82);
+          font-weight: 600;
+          flex-wrap: wrap;
         }
 
-        .btn-arrow-icon {
-          font-size: 1.2rem;
+        .btn-daily-badge {
+          color: #D4FF00;
+          opacity: 0.9;
+        }
+
+        .btn-accept-arrow {
+          font-size: 1.35rem;
+          color: #D4FF00;
+          margin-left: 0.75rem;
+          flex-shrink: 0;
           transition: transform 0.15s ease;
         }
 
-        .btn-accept-main:hover .btn-arrow-icon {
+        .btn-accept-main:hover .btn-accept-arrow {
           transform: translateX(4px);
         }
 
@@ -328,7 +365,9 @@ export default function AcceptButton({
           color: #D4FF00 !important;
           cursor: default !important;
           box-shadow: none !important;
-          font-size: 1rem;
+          font-size: 1rem !important;
+          min-height: 52px !important;
+          justify-content: center !important;
         }
 
         .accept-sub-hint {
@@ -336,6 +375,7 @@ export default function AcceptButton({
           color: #6C776E;
           text-align: center;
           padding: 0 0.5rem;
+          line-height: 1.4;
         }
 
         /* MODAL DIALOG */

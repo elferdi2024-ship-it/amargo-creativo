@@ -1926,7 +1926,7 @@ function formatEditorial(text: string) {
     gap: 0.5rem;
     background: var(--mate);
     color: white;
-    padding: 0 1.5rem;
+    padding: 0.85rem 1.4rem;
     font-family: "Archivo", system-ui, sans-serif;
     font-weight: 700;
     font-size: 1rem;
@@ -1934,7 +1934,9 @@ function formatEditorial(text: string) {
     border-radius: 12px;
     cursor: pointer;
     width: 100%;
-    height: 52px;
+    min-height: 54px;
+    height: auto;
+    box-sizing: border-box;
     box-shadow: 0 4px 14px rgba(46, 83, 57, 0.25);
     transition: all 0.15s ease;
   }
