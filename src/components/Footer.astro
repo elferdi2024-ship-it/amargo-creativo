@@ -157,10 +157,17 @@
     color: #0b140e;
   }
   @media (max-width: 768px) {
+    footer {
+      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+    }
+    .footer-inner {
+      gap: 20px;
+    }
     .footer-left {
       flex-direction: column;
       align-items: flex-start;
       gap: 16px;
+      margin-bottom: 8px;
     }
     .footer-phrase {
       border-left: none;

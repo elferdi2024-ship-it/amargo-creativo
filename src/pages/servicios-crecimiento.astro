@@ -488,7 +488,7 @@ const faqs = [
     <section class="growth-cta">
       <div class="cta-box">
         <span class="cta-kicker">¿NO SABES POR DÓNDE ARRANCAR?</span>
-        <h2>Conversemos 15 minutos sin compromiso y analicemos tu web.</h2>
+        <h2>Charlamos 15 minutos sin compromiso y diagnosticamos tu web.</h2>
         <p>
           Te decimos con honestidad qué cuello de botella está frenando tus ventas y cuál de estos módulos te conviene activar primero. Sin rodeos ni tácticas de venta agresivas.
         </p>
@@ -1172,13 +1172,15 @@ const faqs = [
   .cta-box h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(26px, 4vw, 56px);
-    line-height: 1.05;
+    font-size: clamp(20px, 4vw, 56px);
+    line-height: 1.1;
     letter-spacing: -0.02em;
     text-transform: uppercase;
     margin-bottom: 20px;
     max-width: 950px;
     color: #ffffff;
+    overflow-wrap: break-word;
+    word-break: normal;
   }
   :global(body.theme-electric) .cta-box h2 {
     color: var(--electric);
@@ -1263,6 +1265,13 @@ const faqs = [
     .btn-primary, .btn-ghost, .service-btn, .cta-btn {
       width: 100%;
       justify-content: center;
+    }
+    .cta-box {
+      padding: 36px 18px;
+    }
+    .cta-box h2 {
+      font-size: clamp(19px, 5.5vw, 32px);
+      line-height: 1.15;
     }
   }
 </style>

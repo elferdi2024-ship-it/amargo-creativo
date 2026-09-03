@@ -2,7 +2,7 @@
 // filepath: src/components/Navbar.astro
 ---
 <nav id="nav">
-  <a href="#top" class="brand" id="brandBtn">AMARGO<span class="brand-dot">.</span></a>
+  <a href="/" class="brand" id="brandBtn">AMARGO<span class="brand-dot">.</span></a>
   <ul class="nav-links">
     <li><a href="#manifesto" data-text="Manifiesto">Manifiesto</a></li>
     <li><a href="#capabilities" data-text="Servicios">Servicios</a></li>
@@ -40,13 +40,15 @@
       <li><a href="#performance">03. <em>Rendimiento</em></a></li>
       <li><a href="#showcase">04. Trabajo</a></li>
       <li><a href="#testimonials">05. <em>Clientes</em></a></li>
-      <li><a href="#faq">06. FAQ</a></li>
-      <li><a href="#contact">07. <em>Contacto</em></a></li>
-      <li><a href="#instagram">08. <em>Instagram</em></a></li>
+      <li><a href="#process">06. Metodología</a></li>
+      <li><a href="#faq">07. FAQ</a></li>
+      <li><a href="#contact">08. <em>Contacto</em></a></li>
+      <li><a href="#instagram">09. <em>Instagram</em></a></li>
+      <li><a href="/servicios-crecimiento" class="menu-growth-link">★ <em>Crecimiento & CRO</em></a></li>
     </ul>
     <div class="menu-aside">
       <h4>AGENCIA CREATIVA</h4>
-      <p>Más que una agencia creativa: una fuerza que amplifica voces y genera vínculos reales. Integramos estrategia, diseño, tecnología y datos para crear activos digitales que se sienten y convierten.</p>
+      <p>Más que una agencia creativa: una fuerza que amplifica marcas y genera vínculos reales. Unimos estrategia comercial, diseño radical y software de alto rendimiento para crear activos digitales que se sienten y convierten.</p>
       <h4>FILOSOFÍA</h4>
       <p>Como un buen mate: cercano, intenso y que deja huella.</p>
       <h4>UBICACIÓN & DISPONIBILIDAD</h4>
@@ -293,6 +295,11 @@
   .menu-overlay:global(.active) .menu-items li:nth-child(6) a { transition-delay: 0.36s; }
   .menu-overlay:global(.active) .menu-items li:nth-child(7) a { transition-delay: 0.42s; }
   .menu-overlay:global(.active) .menu-items li:nth-child(8) a { transition-delay: 0.48s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(9) a { transition-delay: 0.54s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(10) a { transition-delay: 0.60s; }
+  .menu-growth-link {
+    color: var(--electric) !important;
+  }
   .menu-items a em {
     font-family: 'Instrument Serif', serif;
     font-style: italic;

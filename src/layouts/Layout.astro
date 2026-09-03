@@ -415,17 +415,31 @@ const structuredData = {
       anchor.addEventListener('click', (e) => {
         const href = anchor.getAttribute('href');
         if (!href || href === '#' || href === '#!') return;
-        e.preventDefault();
-        if (href === '#top') {
-          lenis.scrollTo(0, { duration: 1.2 });
-        } else {
-          const target = document.querySelector(href);
-          if (target) {
+        const target = document.querySelector(href);
+        if (target) {
+          e.preventDefault();
+          if (href === '#top') {
+            lenis.scrollTo(0, { duration: 1.2 });
+          } else {
             lenis.scrollTo(target, { offset: -60, duration: 1.2 });
           }
+        } else if (window.location.pathname !== '/' && window.location.pathname !== '') {
+          e.preventDefault();
+          window.location.href = '/' + href;
         }
       });
     });
+
+    // Brand logo: if on home, scroll to top; if on subpage, navigates via href="/"
+    const brandBtn = document.getElementById('brandBtn');
+    if (brandBtn) {
+      brandBtn.addEventListener('click', (e) => {
+        if (window.location.pathname === '/' || window.location.pathname === '') {
+          e.preventDefault();
+          lenis.scrollTo(0, { duration: 1.2 });
+        }
+      });
+    }
 
     // --- 3. HIGH PERFORMANCE LERPER CURSOR (EXACTO DEL ORIGINAL) ---
     const cursor = document.getElementById('cursor');
@@ -643,17 +657,21 @@ const structuredData = {
     if (menuOverlay) {
       menuOverlay.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', (e) => {
-          e.preventDefault();
           const targetId = link.getAttribute('href');
+          if (!targetId) return;
           closeMenu();
-          setTimeout(() => {
-            if (targetId) {
-              const targetEl = document.querySelector(targetId);
-              if (targetEl) {
+          if (targetId.startsWith('#')) {
+            const targetEl = document.querySelector(targetId);
+            if (targetEl) {
+              e.preventDefault();
+              setTimeout(() => {
                 lenis.scrollTo(targetEl, { offset: -60, duration: 1.2 });
-              }
+              }, 400);
+            } else if (window.location.pathname !== '/' && window.location.pathname !== '') {
+              e.preventDefault();
+              window.location.href = '/' + targetId;
             }
-          }, 400);
+          }
         });
       });
     }

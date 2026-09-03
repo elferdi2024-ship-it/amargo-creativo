@@ -12,11 +12,11 @@
   </div>
 
   <div class="manifesto-body" id="manifestoBody">
-    <div class="line"><span>Integramos <em>estrategia, diseño, tecnología y datos</em> bajo un mismo techo.</span></div>
-    <div class="line"><span>Creamos webs ultrarrápidas (<mark class="mate-mark">&lt;0.8s</mark>) y sistemas que convierten visitas en clientes.</span></div>
-    <div class="line"><span>Operamos desde <strong>Atlántida, Uruguay</strong>, con alcance en <em>Argentina y España</em>.</span></div>
-    <div class="line"><span>Sin plantillas genéricas ni código basura: activos propios pensados para que tu negocio crezca.</span></div>
-    <div class="line"><span>Escuchamos con atención, pensamos con estrategia y ejecutamos con precisión.</span></div>
+    <div class="line"><span>Unimos <em>estrategia comercial, diseño radical y software</em> sin intermediarios.</span></div>
+    <div class="line"><span>Construimos webs que cargan en <mark class="mate-mark">&lt;0.8s</mark> y transforman visitas en clientes reales.</span></div>
+    <div class="line"><span>Desde <strong>Atlántida, Uruguay</strong>, potenciamos marcas en <em>Argentina y España</em>.</span></div>
+    <div class="line"><span>Cero plantillas infladas, cero dependencias cautivas: <em>código propio que es 100% tuyo</em>.</span></div>
+    <div class="line"><span>Pensamos con estrategia de negocio y <em>ejecutamos con precisión milimétrica</em>.</span></div>
     <div class="line"><span>Como un buen mate: <em>cercano, intenso y que deja huella</em>.</span></div>
   </div>
 </section>
@@ -122,9 +122,12 @@
   }
   .manifesto-body .line span {
     display: inline-block;
+    max-width: 100%;
     transform: translateY(110%);
     transition: transform 1s var(--ease-emphasis);
     will-change: transform;
+    overflow-wrap: break-word;
+    word-break: normal;
   }
   .manifesto-body .line.is-in span,
   .manifesto-body.is-in .line span {
@@ -178,7 +181,8 @@
       gap: 16px;
     }
     .manifesto-body {
-      font-size: 20px;
+      font-size: clamp(16px, 4.4vw, 20px);
+      line-height: 1.45;
     }
     .manifesto-ambient-bg {
       width: 75vw;
