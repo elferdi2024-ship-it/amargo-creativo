@@ -87,6 +87,27 @@ const services: Service[] = [
       </div>
     ))}
   </div>
+
+  <!-- Bridge a Servicios de Crecimiento -->
+  <div class="growth-banner">
+    <div class="growth-content">
+      <div class="growth-tag">
+        <span class="growth-tag-dot"></span>
+        <span>¿YA TIENES WEB ACTIVA?</span>
+      </div>
+      <h3 class="growth-title">Hacemos que tu sitio actual cargue en &lt;0.8s y multiplique sus conversiones.</h3>
+      <p class="growth-desc">Mantenimiento continuo, auditorías de fricción CRO, SEO local y flujos automatizados de WhatsApp para empresas en Uruguay, Argentina y España.</p>
+    </div>
+    <div class="growth-action">
+      <a href="/servicios-crecimiento" class="growth-btn" data-cursor="EXPLORAR">
+        <span>SERVICIOS DE CRECIMIENTO</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+          <polyline points="12 5 19 12 12 19"></polyline>
+        </svg>
+      </a>
+    </div>
+  </div>
 </section>
 
 <style>
@@ -309,6 +330,125 @@ const services: Service[] = [
     }
     .cap-icon {
       display: none;
+    }
+  }
+
+  /* Growth Banner Styling */
+  .growth-banner {
+    border-top: 1px solid var(--line);
+    margin-top: 56px;
+    padding-top: 48px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .growth-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mate);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+  :global(body.theme-electric) .growth-tag {
+    color: var(--electric);
+  }
+  .growth-tag-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--rust);
+    border-radius: 50%;
+    animation: pulseDot 2s infinite ease-in-out;
+  }
+  @keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+  .growth-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(20px, 2.6vw, 34px);
+    line-height: 1.15;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .growth-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+    max-width: 680px;
+  }
+  .growth-action {
+    display: flex;
+    align-items: center;
+  }
+  .growth-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--bone);
+    padding: 16px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    transition: all 0.3s var(--ease);
+    white-space: nowrap;
+  }
+  .growth-btn svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s var(--ease);
+  }
+  .growth-btn:hover {
+    background: var(--mate);
+    border-color: var(--mate);
+    color: #ffffff;
+    box-shadow: 0 8px 24px rgba(45, 99, 53, 0.25);
+  }
+  .growth-btn:hover svg {
+    transform: translateX(4px);
+  }
+  :global(body.theme-electric) .growth-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+  :global(body.theme-electric) .growth-btn:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0a0a0a;
+  }
+  :global(body.theme-mate) .growth-btn:hover {
+    background: var(--mate-light);
+    border-color: var(--mate-light);
+    color: #0a0a0a;
+  }
+  @media (max-width: 900px) {
+    .growth-banner {
+      grid-template-columns: 1fr;
+      gap: 28px;
+      margin-top: 40px;
+      padding-top: 36px;
+    }
+    .growth-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 20px;
     }
   }
 </style>

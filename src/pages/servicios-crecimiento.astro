@@ -1,0 +1,1268 @@
+---
+// filepath: src/pages/servicios-crecimiento.astro
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+
+const pageTitle = "Servicios de Crecimiento Web, CRO & WhatsApp | Amargo Creativo";
+const pageDescription = "Mantenimiento continuo, auditorías de conversión CRO, velocidad <0.8s, automatizaciones de WhatsApp y SEO local. Hacemos que tu web venda más en Uruguay, Argentina y España.";
+const canonicalUrl = "https://amargo-creativo.pages.dev/servicios-crecimiento";
+const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
+
+const growthSchema = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": `${canonicalUrl}#webpage`,
+      "url": canonicalUrl,
+      "name": pageTitle,
+      "description": pageDescription,
+      "isPartOf": {
+        "@id": "https://amargo-creativo.pages.dev/#website"
+      },
+      "about": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "inLanguage": "es"
+    },
+    {
+      "@type": "Service",
+      "@id": `${canonicalUrl}#plan-crecimiento`,
+      "name": "Plan de Crecimiento Continuo",
+      "serviceType": "Mantenimiento y Optimización Web",
+      "provider": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "areaServed": ["UY", "AR", "ES"],
+      "description": "Plan mensual de mantenimiento técnico, optimización de velocidad, parches de seguridad, mejoras de conversión y ajustes continuos de SEO."
+    },
+    {
+      "@type": "Service",
+      "@id": `${canonicalUrl}#auditoria-cro`,
+      "name": "Auditoría de Conversión (CRO)",
+      "serviceType": "Optimización de Conversión y UX",
+      "provider": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "areaServed": ["UY", "AR", "ES"],
+      "description": "Diagnóstico integral de puntos de fricción, velocidad LCP y embudos de venta para multiplicar las consultas recibidas."
+    },
+    {
+      "@type": "Service",
+      "@id": `${canonicalUrl}#whatsapp-commerce`,
+      "name": "WhatsApp que Vende",
+      "serviceType": "Automatización y Flujos Comerciales",
+      "provider": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "areaServed": ["UY", "AR", "ES"],
+      "description": "Configuración profesional de WhatsApp Business, respuestas inmediatas, catalogación e integración directa con formularios de tu web."
+    },
+    {
+      "@type": "Service",
+      "@id": `${canonicalUrl}#landing-pages`,
+      "name": "Landing Pages de Alta Conversión",
+      "serviceType": "Diseño y Desarrollo de Landing Pages",
+      "provider": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "areaServed": ["UY", "AR", "ES"],
+      "description": "Páginas ultrarrápidas (<0.8s) orientadas a un objetivo unificado, ideales para campañas de Meta Ads y Google Ads."
+    },
+    {
+      "@type": "Service",
+      "@id": `${canonicalUrl}#seo-local`,
+      "name": "Visibilidad Local & Google Business",
+      "serviceType": "SEO Local y Presencia en Maps",
+      "provider": {
+        "@id": "https://amargo-creativo.pages.dev/#organization"
+      },
+      "areaServed": ["UY", "AR", "ES"],
+      "description": "Optimización de perfil de Google Business, arquitectura semántica LocalBusiness y estrategia de posicionamiento en Google Maps."
+    },
+    {
+      "@type": "FAQPage",
+      "@id": `${canonicalUrl}#faq`,
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "¿Puedo contratar solo uno de estos servicios?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Cada servicio se puede contratar de forma independiente. Evaluamos tu punto de partida y priorizamos lo que genere mayor retorno inmediato."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿El Plan de Crecimiento Continuo tiene permanencia?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Se renueva mes a mes sin contratos cautivos. Puedes pausar o cancelar en cualquier momento con un aviso previo."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Hacen cambios grandes dentro del mantenimiento mensual?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "El plan mensual cubre optimizaciones de velocidad, seguridad, ajustes de copy y mejoras continuas de conversión. Rediseños estructurales completos o módulos nuevos se cotizan con alcance cerrado."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Trabajan con empresas de Argentina y España también?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sí. Aunque nuestra base física está en Atlántida (Uruguay), operamos con clientes activos en Argentina (Mercado Pago / transferencias) y España (pagos internacionales Stripe/Wise)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "¿Cuánto tardan en entregar una Landing Page?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Generalmente entre 7 y 10 días hábiles una vez recibidos los contenidos clave, con código limpio de alto rendimiento."
+          }
+        }
+      ]
+    }
+  ]
+};
+
+const growthServices = [
+  {
+    num: "01",
+    title: "Plan de Crecimiento Continuo",
+    subtitle: "Mantenimiento técnico + Optimización mensual",
+    desc: "Tu web no termina cuando se publica. Con este plan nos aseguramos mes a mes de que mantenga su velocidad extrema (<0.8s), seguridad blindada y enfoque constante en la conversión.",
+    features: [
+      "Monitoreo proactivo de Core Web Vitals y velocidad",
+      "Actualizaciones de dependencias y parches de seguridad",
+      "Micro-optimizaciones continuas de conversión (CRO)",
+      "Ajustes de SEO on-page y arquitectura de datos",
+      "Reporte mensual conciso, transparente y accionable",
+      "Soporte técnico prioritario y canal directo por WhatsApp"
+    ],
+    ideal: "Empresas con sitio web en funcionamiento que buscan rendimiento y tranquilidad técnica sin contratar un equipo interno.",
+    waText: "Hola Amargo Creativo, me interesa el Plan de Crecimiento Continuo para mi sitio web"
+  },
+  {
+    num: "02",
+    title: "Auditoría de Conversión (CRO)",
+    subtitle: "Identificamos con precisión por qué no estás cerrando ventas",
+    desc: "Muchos sitios reciben tráfico pero fallan en generar consultas calificadas. Analizamos el embudo completo, tiempos de respuesta y puntos de fricción para darte un plan de acción de impacto inmediato.",
+    features: [
+      "Análisis heurístico de UX en mobile (donde ocurre el 85% del tráfico)",
+      "Revisión y reescritura de llamados a la acción (CTAs) y formularios",
+      "Detección de fugas de tráfico y puntos de rebote anticipado",
+      "Medición de latencia de carga y first contentful paint (FCP)",
+      "Hoja de ruta priorizada por impacto versus esfuerzo técnico",
+      "Propuesta de implementación llave en mano (opcional)"
+    ],
+    ideal: "Negocios que ya tienen volumen de visitas pero sienten que están dejando dinero sobre la mesa.",
+    waText: "Hola Amargo Creativo, quiero solicitar una Auditoría de Conversión para mi web actual"
+  },
+  {
+    num: "03",
+    title: "WhatsApp que Vende",
+    subtitle: "Automatización y embudos de alta respuesta",
+    desc: "WhatsApp es el canal de cierre número 1 en el Río de la Plata y España. Lo transformamos en una máquina organizada que responde en segundos, precalifica prospectos y no deja conversaciones colgadas.",
+    features: [
+      "Configuración profesional de WhatsApp Business y catálogo",
+      "Mensajes de bienvenida y respuestas automáticas inteligentes",
+      "Flujos de calificación previa para filtrar consultas curiosas",
+      "Integración directa con botones dinámicos y formularios de tu web",
+      "Plantillas de seguimiento comercial para reenganchar leads",
+      "Protocolo de atención para equipos de ventas"
+    ],
+    ideal: "Negocios que reciben consultas por chat y necesitan profesionalizar y acelerar el tiempo de cierre.",
+    waText: "Hola Amargo Creativo, quiero implementar el sistema de WhatsApp que Vende"
+  },
+  {
+    num: "04",
+    title: "Landing Pages de Alta Conversión",
+    subtitle: "Páginas independientes diseñadas para un solo objetivo",
+    desc: "Para campañas publicitarias en Meta o Google Ads, enviar tráfico a la home general es quemar presupuesto. Diseñamos landing pages ultrarrápidas pensadas exclusivamente para una acción: cotizar o comprar.",
+    features: [
+      "Diseño a medida con enfoque editorial brutalista y sin distracciones",
+      "Carga ultrarrápida (<0.8s) que reduce el costo por clic publicitario",
+      "Embudos directos a WhatsApp con mensaje de origen predefinido",
+      "Prioridad Mobile-First con botones fijos de conversión ergonómicos",
+      "Entrega lista para pauta en 7 a 10 días hábiles",
+      "Integración con Píxel de Meta, Google Analytics 4 y Tag Manager"
+    ],
+    ideal: "Lanzamientos de servicios, productos destacados o campañas activas de Google Ads y Meta Ads.",
+    waText: "Hola Amargo Creativo, necesito una Landing Page de alta conversión para una campaña"
+  },
+  {
+    num: "05",
+    title: "Visibilidad Local & Google Business",
+    subtitle: "SEO Local y presencia dominante en Google Maps",
+    desc: "Si tus clientes están en tu radio de influencia, aparecer entre los primeros resultados locales es decisivo. Optimizamos tu ficha de negocio y arquitectura web para captar clientes en tu zona.",
+    features: [
+      "Optimización integral de Google Business Profile (ex Google My Business)",
+      "Estrategia de recolección y respuesta de reseñas verificadas",
+      "Consistencia estricta de datos NAP (Nombre, Dirección, Teléfono)",
+      "Marcado semántico Schema.org LocalBusiness en tu web",
+      "Páginas de aterrizaje geolocalizadas por zona o barrio",
+      "Monitoreo de posicionamiento en el Google Local 3-Pack"
+    ],
+    ideal: "Inmobiliarias, clínicas, servicios profesionales, comercios y empresas con presencia física o zona definida.",
+    waText: "Hola Amargo Creativo, quiero potenciar la Visibilidad Local de mi negocio en Google"
+  }
+];
+
+const targetAudiences = [
+  {
+    kicker: "01 / SITIO ACTIVO",
+    title: "Ya tienes web",
+    desc: "Pero sientes que es un folleto estático que no genera las consultas ni los ingresos que tu negocio necesita."
+  },
+  {
+    kicker: "02 / PAUTA ACTIVA",
+    title: "Inviertes en Ads",
+    desc: "Pagas publicidad en Google o Instagram y necesitas que cada visita se transforme en un contacto real antes de rebotar."
+  },
+  {
+    kicker: "03 / TRACCIÓN",
+    title: "Crecimiento predecible",
+    desc: "Buscas mejoras continuas mes a mes sin lidiar con roturas técnicas, caídas de servidor o lentitud crónica."
+  },
+  {
+    kicker: "04 / EJECUCIÓN",
+    title: "Claridad y velocidad",
+    desc: "Prefieres trabajar con especialistas directos que hablan con números y código limpio, sin vueltas burocráticas."
+  }
+];
+
+const steps = [
+  {
+    num: "01",
+    title: "Contacto directo",
+    desc: "Una charla rápida de 15 minutos por WhatsApp o videollamada para entender tu situación actual y metas comerciales."
+  },
+  {
+    num: "02",
+    title: "Diagnóstico técnico",
+    desc: "Auditamos tu web actual, latencia de carga, formularios y embudos para detectar con exactitud dónde se pierde dinero."
+  },
+  {
+    num: "03",
+    title: "Propuesta de impacto",
+    desc: "Te presentamos una solución puntual con alcance exacto, cronograma de entrega y presupuesto cerrado sin sorpresas."
+  },
+  {
+    num: "04",
+    title: "Implementación & Medición",
+    desc: "Ejecutamos los cambios en código de producción, validamos métricas en verde y medimos la subida en conversión."
+  }
+];
+
+const faqs = [
+  {
+    num: "01",
+    question: "¿Puedo contratar solo uno de estos servicios?",
+    answer: "Sí. Cada servicio funciona de manera modular e independiente. Analizamos tu caso y arrancamos por el punto que genere el impacto más rápido en tus ventas."
+  },
+  {
+    num: "02",
+    question: "¿El Plan de Crecimiento Continuo tiene permanencia?",
+    answer: "No. El servicio se renueva mes a mes sin ningún tipo de permanencia obligatoria. Si en algún momento decides pausarlo o cancelarlo, lo haces sin penalizaciones."
+  },
+  {
+    num: "03",
+    question: "¿Hacen cambios grandes dentro del mantenimiento mensual?",
+    answer: "El plan está diseñado para optimizaciones continuas, mejoras de velocidad, parches de seguridad, copywriting y CRO. Nuevos desarrollos de módulos o rediseños de cero se cotizan por separado con precio preferencial."
+  },
+  {
+    num: "04",
+    question: "¿Trabajan con empresas de Argentina y España también?",
+    answer: "Sí. Aunque nuestra base física está en Atlántida, Canelones (Uruguay), trabajamos fluidamente con clientes en Argentina (pagos locales vía transferencia o Mercado Pago) y España (pagos en EUR vía Stripe o Wise)."
+  },
+  {
+    num: "05",
+    question: "¿Cuánto tardan en entregar una Landing Page?",
+    answer: "Generalmente entre 7 y 10 días hábiles una vez acordado el contenido y objetivos de conversión, entregando una página con Core Web Vitals en 100% verde."
+  }
+];
+---
+
+<Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} image={ogImage}>
+  <!-- Inyección de Schema.org Específico de Servicios de Crecimiento -->
+  <script type="application/ld+json" set:html={JSON.stringify(growthSchema)} />
+
+  <Navbar />
+
+  <main id="main-content" class="growth-page">
+    <!-- HERO SECTION -->
+    <header class="growth-hero">
+      <div class="hero-inner">
+        <div class="breadcrumb">
+          <a href="/">← VOLVER AL INICIO</a>
+          <span class="breadcrumb-sep">/</span>
+          <span>SERVICIOS DE CRECIMIENTO</span>
+        </div>
+
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>CRECIMIENTO, CRO & VELOCIDAD</span>
+        </div>
+
+        <h1 class="hero-headline">
+          Tu web ya existe.<br />
+          <em>Ahora hacemos que venda más.</em>
+        </h1>
+
+        <p class="hero-sub">
+          No todos los negocios necesitan un sitio web nuevo desde cero. Muchos ya tienen uno que simplemente está estancado, lento o perdiendo prospectos. Optimizamos velocidad (<mark class="mate-mark">&lt;0.8s</mark>), pulimos puntos de fuga y conectamos embudos directos a WhatsApp para transformar visitas en facturación real.
+        </p>
+
+        <div class="hero-ctas">
+          <a 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20hacer%20crecer%20las%20ventas%20de%20mi%20web%20actual" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="btn-primary"
+            data-cursor="WHATSAPP"
+          >
+            <span>HABLEMOS POR WHATSAPP</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
+            </svg>
+          </a>
+          <a href="#servicios" class="btn-ghost">
+            <span>VER SERVICIOS DETALLADOS ↓</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- INTRO STATEMENT -->
+    <section class="growth-intro">
+      <div class="intro-grid">
+        <div class="section-label">
+          <span class="num">01</span> FILOSOFÍA
+        </div>
+        <div class="intro-content">
+          <h2>Crecimiento medible, sin vueltas ni humo.</h2>
+          <p>
+            En Amargo Creativo no nos conformamos con entregar código y desentendernos. Estos servicios están diseñados para negocios que ya tienen presencia online y quieren extraer el máximo rendimiento de cada visita.
+          </p>
+          <p>
+            Menos tiempo de carga significa menor costo por lead. Formularios directos a WhatsApp significan cierres inmediatos. Menos fricción visual significa más confianza.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 SERVICIOS DETALLADOS -->
+    <section class="services-section" id="servicios">
+      <div class="section-head">
+        <div class="section-label">
+          <span class="num">02</span> CATÁLOGO MODULAR
+        </div>
+        <h2>Soluciones de <em>alto rendimiento</em> para tu activo digital</h2>
+      </div>
+
+      <div class="services-stack">
+        {growthServices.map(srv => (
+          <article class="service-card">
+            <div class="service-card-head">
+              <span class="service-num">{srv.num}</span>
+              <div class="service-title-group">
+                <h3>{srv.title}</h3>
+                <p class="service-sub">{srv.subtitle}</p>
+              </div>
+            </div>
+
+            <p class="service-desc">{srv.desc}</p>
+
+            <div class="service-includes">
+              <h4>QUÉ INCLUYE:</h4>
+              <ul>
+                {srv.features.map(feat => (
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="service-ideal">
+              <strong>IDEAL PARA:</strong>
+              <p>{srv.ideal}</p>
+            </div>
+
+            <div class="service-action">
+              <a 
+                href={`https://wa.me/59898300491?text=${encodeURIComponent(srv.waText)}`}
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="service-btn"
+                data-cursor="COTIZAR"
+              >
+                <span>CONSULTAR ESTE SERVICIO</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- PARA QUIÉN ES -->
+    <section class="audience-section">
+      <div class="section-head">
+        <div class="section-label">
+          <span class="num">03</span> CALIFICACIÓN
+        </div>
+        <h2>¿Para quién son estos <em>servicios</em>?</h2>
+      </div>
+
+      <div class="audience-grid">
+        {targetAudiences.map(item => (
+          <div class="audience-card">
+            <span class="audience-kicker">{item.kicker}</span>
+            <h3>{item.title}</h3>
+            <p>{item.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CÓMO TRABAJAMOS -->
+    <section class="process-section">
+      <div class="section-head">
+        <div class="section-label">
+          <span class="num">04</span> METODOLOGÍA
+        </div>
+        <h2>Cómo <em>trabajamos</em> juntos</h2>
+      </div>
+
+      <div class="process-grid">
+        {steps.map(step => (
+          <div class="process-step">
+            <div class="step-num">{step.num}</div>
+            <h3>{step.title}</h3>
+            <p>{step.desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- FAQ ACCORDION -->
+    <section class="growth-faq">
+      <div class="section-head">
+        <div class="section-label">
+          <span class="num">05</span> PREGUNTAS FRECUENTES
+        </div>
+        <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
+      </div>
+
+      <div class="faq-list">
+        {faqs.map((faq, index) => (
+          <div class="faq-item" data-index={index}>
+            <button class="faq-trigger" aria-expanded="false">
+              <span class="faq-num">{faq.num}</span>
+              <span class="faq-title">{faq.question}</span>
+              <span class="faq-icon" aria-hidden="true">+</span>
+            </button>
+            <div class="faq-content">
+              <p>{faq.answer}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="growth-cta">
+      <div class="cta-box">
+        <span class="cta-kicker">¿NO SABES POR DÓNDE ARRANCAR?</span>
+        <h2>Conversemos 15 minutos sin compromiso y analicemos tu web.</h2>
+        <p>
+          Te decimos con honestidad qué cuello de botella está frenando tus ventas y cuál de estos módulos te conviene activar primero. Sin rodeos ni tácticas de venta agresivas.
+        </p>
+        <div class="cta-actions">
+          <a 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20conversar%20sobre%20el%20crecimiento%20de%20mi%20sitio%20web" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="cta-btn"
+            data-cursor="WHATSAPP"
+          >
+            <span>HABLAR POR WHATSAPP DIRECTO</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"></path>
+            </svg>
+          </a>
+          <span class="cta-note">Respuesta habitual en menos de 2 horas hábiles • Uruguay, Argentina y España</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // FAQ Interactivity
+  const faqItems = document.querySelectorAll('.faq-item');
+
+  faqItems.forEach(item => {
+    const trigger = item.querySelector('.faq-trigger');
+    if (!trigger) return;
+
+    trigger.addEventListener('click', () => {
+      const isActive = item.classList.contains('active');
+
+      faqItems.forEach(otherItem => {
+        otherItem.classList.remove('active');
+        const otherTrigger = otherItem.querySelector('.faq-trigger');
+        if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isActive) {
+        item.classList.add('active');
+        trigger.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+</script>
+
+<style>
+  .growth-page {
+    width: 100%;
+    overflow-x: clip;
+    padding-top: calc(60px + env(safe-area-inset-top));
+  }
+
+  /* HERO SECTION */
+  .growth-hero {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mute);
+    margin-bottom: 32px;
+  }
+  .breadcrumb a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.2s var(--ease);
+    font-weight: 600;
+  }
+  .breadcrumb a:hover {
+    color: var(--mate);
+  }
+  :global(body.theme-electric) .breadcrumb a:hover {
+    color: var(--electric);
+  }
+  .breadcrumb-sep {
+    opacity: 0.4;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mate);
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: rgba(45, 99, 53, 0.08);
+    padding: 6px 12px;
+    border: 1px solid rgba(45, 99, 53, 0.2);
+  }
+  :global(body.theme-electric) .hero-badge {
+    color: var(--electric);
+    background: rgba(212, 255, 0, 0.08);
+    border-color: rgba(212, 255, 0, 0.25);
+  }
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--rust);
+    border-radius: 50%;
+  }
+  .hero-headline {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 5.5vw, 84px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 28px;
+    text-wrap: balance;
+  }
+  .hero-headline em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rust);
+    text-transform: none;
+  }
+  .hero-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(16px, 1.8vw, 21px);
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+    max-width: 920px;
+    margin-bottom: 40px;
+  }
+  .hero-sub mark.mate-mark {
+    background: var(--mate);
+    color: var(--bone);
+    padding: 2px 8px;
+    font-weight: 600;
+  }
+  :global(body.theme-electric) .hero-sub mark.mate-mark {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .hero-ctas {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--bone);
+    padding: 18px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    transition: all 0.3s var(--ease);
+  }
+  .btn-primary svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s var(--ease);
+  }
+  .btn-primary:hover {
+    background: var(--mate);
+    border-color: var(--mate);
+    color: #ffffff;
+    box-shadow: 0 10px 30px rgba(45, 99, 53, 0.3);
+  }
+  .btn-primary:hover svg {
+    transform: translate(3px, -3px);
+  }
+  :global(body.theme-electric) .btn-primary {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+  :global(body.theme-electric) .btn-primary:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0a0a0a;
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    padding: 18px 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    transition: all 0.3s var(--ease);
+  }
+  .btn-ghost:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: var(--ink);
+  }
+  :global(body.theme-dark) .btn-ghost:hover,
+  :global(body.theme-electric) .btn-ghost:hover,
+  :global(body.theme-mate) .btn-ghost:hover {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  /* SECTION HEADERS */
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+    margin-bottom: 64px;
+    align-items: start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  .section-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(26px, 4.5vw, 64px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .section-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rust);
+    text-transform: none;
+  }
+
+  /* INTRO */
+  .growth-intro {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 8vh, 100px) var(--gut);
+    border-bottom: 1px solid var(--line);
+  }
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 48px;
+  }
+  .intro-content h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: clamp(24px, 3.2vw, 44px);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 24px;
+    color: var(--ink);
+  }
+  .intro-content p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    opacity: 0.85;
+    margin-bottom: 16px;
+    max-width: 800px;
+  }
+
+  /* SERVICES STACK */
+  .services-section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+  }
+  .services-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+  .service-card {
+    border: 1px solid var(--line);
+    padding: clamp(28px, 4vw, 56px);
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s var(--ease);
+  }
+  .service-card:hover {
+    border-color: var(--mate);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.06);
+  }
+  :global(body.theme-electric) .service-card:hover {
+    border-color: var(--electric);
+  }
+  .service-card-head {
+    display: flex;
+    align-items: baseline;
+    gap: 28px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    padding-bottom: 20px;
+  }
+  :global(body.theme-dark) .service-card-head,
+  :global(body.theme-electric) .service-card-head,
+  :global(body.theme-mate) .service-card-head {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+  .service-num {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(36px, 5vw, 64px);
+    color: var(--mate);
+    line-height: 1;
+  }
+  :global(body.theme-electric) .service-num {
+    color: var(--electric);
+  }
+  .service-title-group h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 3vw, 36px);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .service-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--rust);
+    font-weight: 600;
+  }
+  .service-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink);
+    opacity: 0.9;
+    max-width: 900px;
+    margin-bottom: 32px;
+  }
+  .service-includes {
+    margin-bottom: 32px;
+  }
+  .service-includes h4 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--mute);
+    margin-bottom: 16px;
+  }
+  .service-includes ul {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px 24px;
+  }
+  .service-includes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .service-includes li svg {
+    width: 16px;
+    height: 16px;
+    color: var(--mate);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  :global(body.theme-electric) .service-includes li svg {
+    color: var(--electric);
+  }
+  .service-ideal {
+    background: rgba(0, 0, 0, 0.03);
+    border-left: 3px solid var(--mate);
+    padding: 16px 20px;
+    margin-bottom: 32px;
+  }
+  :global(body.theme-dark) .service-ideal,
+  :global(body.theme-electric) .service-ideal,
+  :global(body.theme-mate) .service-ideal {
+    background: rgba(255, 255, 255, 0.04);
+  }
+  :global(body.theme-electric) .service-ideal {
+    border-left-color: var(--electric);
+  }
+  .service-ideal strong {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--mate);
+    margin-bottom: 4px;
+  }
+  :global(body.theme-electric) .service-ideal strong {
+    color: var(--electric);
+  }
+  .service-ideal p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .service-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--ink);
+    color: var(--bone);
+    padding: 14px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid var(--ink);
+    transition: all 0.3s var(--ease);
+  }
+  .service-btn svg {
+    width: 14px;
+    height: 14px;
+    transition: transform 0.3s var(--ease);
+  }
+  .service-btn:hover {
+    background: var(--mate);
+    border-color: var(--mate);
+    color: #ffffff;
+  }
+  .service-btn:hover svg {
+    transform: translateX(4px);
+  }
+  :global(body.theme-electric) .service-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+  :global(body.theme-electric) .service-btn:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #0a0a0a;
+  }
+
+  /* AUDIENCE GRID */
+  .audience-section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+  }
+  .audience-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .audience-card {
+    border: 1px solid var(--line);
+    padding: 36px 28px;
+    background: rgba(255, 255, 255, 0.02);
+    transition: all 0.3s var(--ease);
+  }
+  .audience-card:hover {
+    border-color: var(--rust);
+    transform: translateY(-4px);
+  }
+  .audience-kicker {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--rust);
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .audience-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .audience-card p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+  }
+
+  /* PROCESS SECTION */
+  .process-section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+  }
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 32px;
+  }
+  .process-step {
+    border-top: 2px solid var(--line);
+    padding-top: 24px;
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px;
+    color: var(--mate);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  :global(body.theme-electric) .step-num {
+    color: var(--electric);
+  }
+  .process-step h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .process-step p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+  }
+
+  /* FAQ */
+  .growth-faq {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--line);
+  }
+  .faq-trigger {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 80px 1fr 40px;
+    align-items: center;
+    padding: 32px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: var(--ink);
+  }
+  .faq-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 32px;
+    color: var(--mute);
+    line-height: 1;
+  }
+  .faq-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px, 2vw, 24px);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+  .faq-icon {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 800;
+    text-align: center;
+    transition: transform 0.3s var(--ease);
+  }
+  .faq-item.active .faq-icon {
+    transform: rotate(45deg);
+    color: var(--rust);
+  }
+  .faq-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-emphasis), padding 0.3s var(--ease);
+    padding-left: 80px;
+    padding-right: 40px;
+  }
+  .faq-item.active .faq-content {
+    max-height: 300px;
+    padding-bottom: 32px;
+  }
+  .faq-content p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink);
+    opacity: 0.85;
+  }
+
+  /* CTA FINAL BOX */
+  .growth-cta {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 10vh, 120px) var(--gut);
+  }
+  .cta-box {
+    background: var(--ink);
+    color: var(--bone);
+    padding: clamp(40px, 7vw, 90px) clamp(24px, 5vw, 70px);
+    border: 1px solid var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+  :global(body.theme-dark) .cta-box {
+    background: #141413;
+  }
+  :global(body.theme-electric) .cta-box {
+    background: #000000;
+    border-color: var(--electric);
+  }
+  :global(body.theme-mate) .cta-box {
+    background: #121e15;
+    border-color: var(--mate);
+  }
+  .cta-kicker {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--electric);
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+  .cta-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 56px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    max-width: 950px;
+    color: #ffffff;
+  }
+  :global(body.theme-electric) .cta-box h2 {
+    color: var(--electric);
+  }
+  .cta-box p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(15px, 1.6vw, 19px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 800px;
+    margin-bottom: 36px;
+  }
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--mate);
+    color: #ffffff;
+    padding: 18px 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: none;
+    transition: all 0.3s var(--ease);
+  }
+  .cta-btn svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s var(--ease);
+  }
+  .cta-btn:hover {
+    background: #ffffff;
+    color: #0a0a0a;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+  }
+  .cta-btn:hover svg {
+    transform: translateX(4px);
+  }
+  :global(body.theme-electric) .cta-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+  :global(body.theme-electric) .cta-btn:hover {
+    background: #ffffff;
+    color: #0a0a0a;
+  }
+  .cta-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .section-head, .intro-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .service-card-head {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-trigger {
+      grid-template-columns: 40px 1fr 30px;
+      gap: 12px;
+      padding: 24px 0;
+    }
+    .faq-content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    .btn-primary, .btn-ghost, .service-btn, .cta-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
