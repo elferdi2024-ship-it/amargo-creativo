@@ -159,7 +159,7 @@ function formatEditorial(text: string) {
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
             <span class="browser-url font-mono">
-              {proposal.slug === "deal-motors" ? "dealmotors.uy" : proposal.slug === "mercado-atlantida" ? "mercadoatlantida.uy" : "demo.amargo.uy"}
+              {proposal.slug === "tsunami-dulce-de-leche" ? "tsunami.uy" : proposal.slug === "deal-motors" ? "dealmotors.uy" : proposal.slug === "mercado-atlantida" ? "mercadoatlantida.uy" : "demo.amargo.uy"}
             </span>
             <span class="live-pulse-badge font-mono">
               <span class="pulse-dot"></span> EN VIVO
@@ -172,9 +172,9 @@ function formatEditorial(text: string) {
               target="_blank"
               rel="noopener noreferrer"
               class="btn-open-external"
-              title="Abrir en pantalla completa en nueva pestaña"
+              title="Abrir web en nueva pestaña"
             >
-              <span>Pantalla completa</span>
+              <span>Abrir Web en Vivo</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
@@ -184,22 +184,44 @@ function formatEditorial(text: string) {
           </div>
         </div>
 
-        <!-- Embedded Live Iframe -->
-        <div class="demo-iframe-container">
-          <iframe
-            src={proxyPreviewUrl || previewUrl}
-            title={`Prototipo en vivo para ${clientName}`}
-            class="demo-iframe"
-            loading="lazy"
-            allow="fullscreen; clipboard-read; clipboard-write"
-          ></iframe>
-        </div>
+        {proposal.slug === "tsunami-dulce-de-leche" ? (
+          <!-- Showcase Screenshot HD con Link Directo a la Web -->
+          <div class="demo-screenshot-container">
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" class="demo-preview-link">
+              <img
+                src="/projects/tsunami-preview.png"
+                alt={`Web diseñada para ${clientName}`}
+                class="demo-screenshot-img"
+                loading="eager"
+              />
+              <div class="demo-screenshot-overlay">
+                <div class="demo-overlay-pill">
+                  <span>Ver Web en Vivo (tsunami-uruguay.elferdi2024.workers.dev)</span>
+                  <span class="overlay-arr">↗</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        ) : (
+          <!-- Embedded Live Iframe -->
+          <div class="demo-iframe-container">
+            <iframe
+              src={proxyPreviewUrl || previewUrl}
+              title={`Prototipo en vivo para ${clientName}`}
+              class="demo-iframe"
+              loading="lazy"
+              allow="fullscreen; clipboard-read; clipboard-write"
+            ></iframe>
+          </div>
+        )}
 
         <!-- Demo Footer info -->
         <div class="demo-footer-caption">
-          <span class="demo-hint-icon">👆</span>
+          <span class="demo-hint-icon">🧉</span>
           <span>
-            <strong>Prototipo navegable:</strong> Podés interactuar directamente con la plataforma aquí arriba, explorar los vehículos/productos y probar la experiencia en tiempo real.
+            {proposal.slug === "tsunami-dulce-de-leche"
+              ? "Tomamos la iniciativa de diseñar esta web para Tsunami: moderna, rápida, con catálogo interactivo y optimizada para Google y buscadores de IA. Hacé clic arriba para abrirla y probarla."
+              : "Podés interactuar directamente con la plataforma aquí arriba o abrirla en pantalla completa para probar la experiencia en tiempo real."}
           </span>
         </div>
       </div>
@@ -253,7 +275,7 @@ function formatEditorial(text: string) {
     <div class="section-kicker">
       <span class="num">{previewUrl ? "05" : "04"}</span>
       <span class="line"></span>
-      <span class="title">INVERSIÓN Y PLANES</span>
+      <span class="title">INVERSIÓN Y PROPUESTA</span>
     </div>
 
     {inv.type === "plans" && plans.length > 0 ? (
@@ -261,7 +283,7 @@ function formatEditorial(text: string) {
         {plans.map((plan: any) => {
           const isSelected = plan.name === recommended;
           const badgeText = plan.badge || (plan.recommended ? "RECOMENDADO" : null);
-          const isRec = badgeText === "RECOMENDADO";
+          const isRec = badgeText === "RECOMENDADO" || badgeText?.includes("PAGO ÚNICO");
           const isLimitless = badgeText === "SIN LÍMITES";
           const hasDiscount = Boolean(plan.original_price || plan.originalPrice);
           const origPrice = plan.original_price || plan.originalPrice;
@@ -291,7 +313,14 @@ function formatEditorial(text: string) {
 
               <!-- Bloque de Precio con soporte para Precio Tachado, Descuento y Equivalente Diario -->
               <div class="plan-pro-price-block">
-                {hasDiscount ? (
+                {plan.price_display ? (
+                  <div class="normal-price-row">
+                    <span class="plan-price-num">
+                      {plan.price_display}
+                    </span>
+                    {plan.period && <span class="plan-price-period">{plan.period}</span>}
+                  </div>
+                ) : hasDiscount ? (
                   <div class="discount-price-container">
                     <div class="strikethrough-row">
                       <span class="strikethrough-val">
@@ -1075,6 +1104,86 @@ function formatEditorial(text: string) {
     border: none;
     display: block;
     background: #FFFFFF;
+  }
+
+  /* Screenshot Showcase */
+  .demo-screenshot-container {
+    position: relative;
+    width: 100%;
+    background: #0E1611;
+    overflow: hidden;
+  }
+
+  .demo-preview-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .demo-screenshot-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    max-height: 480px;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+
+  .demo-preview-link:hover .demo-screenshot-img {
+    transform: scale(1.015);
+    filter: brightness(0.95);
+  }
+
+  .demo-screenshot-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(13, 21, 16, 0.35);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .demo-preview-link:hover .demo-screenshot-overlay {
+    opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    .demo-screenshot-overlay {
+      opacity: 1;
+      background: linear-gradient(to top, rgba(13, 21, 16, 0.8) 0%, transparent 60%);
+      align-items: flex-end;
+      padding-bottom: 1.25rem;
+    }
+  }
+
+  .demo-overlay-pill {
+    background: #2E5339;
+    color: #FFFFFF;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.92rem;
+    font-weight: 700;
+    padding: 0.75rem 1.35rem;
+    border-radius: 30px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border: 1.5px solid rgba(212, 255, 0, 0.45);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: transform 0.15s ease;
+  }
+
+  .demo-preview-link:hover .demo-overlay-pill {
+    transform: scale(1.04);
+  }
+
+  .overlay-arr {
+    color: #D4FF00;
+    font-size: 1.1rem;
+    font-weight: 900;
   }
 
   .demo-footer-caption {

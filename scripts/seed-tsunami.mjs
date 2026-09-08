@@ -10,7 +10,7 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
 });
 
 async function main() {
-  console.log("1. Buscando o creando cliente 'Tsunami Dulce de Leche Premium'...");
+  console.log("1. Buscando o actualizando cliente 'Tsunami Dulce de Leche'...");
 
   let { data: client } = await supabase
     .from("clients")
@@ -23,7 +23,7 @@ async function main() {
       .from("clients")
       .insert({
         name: "Tsunami Dulce de Leche",
-        company: "Tsunami Dulce de Leche Premium / Alfajores Uruguay",
+        company: "Tsunami Dulce de Leche Premium & Alfajores",
         email: "contacto@tsunami.uy",
         phone: "+598 92 719 271",
         notes: "Dulce de leche artesanal premiado (1er Premio 2021) 100% Sin Gluten y Alfajores Premium Blanco y Negro.",
@@ -33,116 +33,98 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta comercial para Tsunami...");
+  console.log("2. Sincronizando propuesta de venta directa y evolución a demanda para Tsunami...");
 
   const proposalData = {
     client_id: client.id,
     slug: "tsunami-dulce-de-leche",
-    project_title: "Plataforma de Venta Directa, Catálogo de Alfajores & Canal Mayorista B2B",
+    project_title: "Plataforma Web Oficial + Catálogo de Alfajores & Canal Mayorista B2B",
     status: "active",
-    value_phrase: "Un producto premiado merece una vitrina a su altura. _De la fábrica al paladar del cliente en un solo clic._ Una plataforma que *transforma el antojo en pedidos inmediatos* y abre canales con distribuidores en todo el país.",
-    challenge: "Tsunami tiene el producto más codiciado del mercado: 1er Premio en el Concurso Uruguayo de Dulce de Leche y certificación 100% Sin Gluten. Sin embargo, en redes sociales la venta se diluye en mensajes sueltos sin orden y muchos potenciales compradores *terminan comprando opciones industriales en el supermercado* por no tener una vía rápida de compra online.\n\nAdemás, almacenes, cafeterías y distribuidores del interior no cuentan con un canal ágil para solicitar pedidos mayoristas con condiciones claras.",
-    solution: "Diseñamos una plataforma gastronómica de alto impacto visual y carga ultrarrápida (< 30ms) con *catálogo interactivo de frascos y alfajores*, selector de unidades con *pedido directo a WhatsApp pre-configurado*, formulario de alta para comercios B2B y posicionamiento SEO gastronómico para dominar las búsquedas en Uruguay.",
+    value_phrase: "Tomamos la iniciativa de diseñar una web nueva para Tsunami, enfocada en su Dulce de Leche premiado. _Más moderna, rápida y visualmente atractiva._ Optimizada para *convertir visitas en pedidos directos de WhatsApp* y posicionarse en Google y buscadores de IA.",
+    challenge: "Tsunami elabora el dulce de leche más premiado de Uruguay: 1er Premio en el Concurso Uruguayo de Dulce de Leche y receta 100% Sin Gluten. Sin embargo, su presencia digital anterior no transmitía la calidad artesanal del producto ni facilitaba la compra directa, perdiendo ventas frente a opciones industriales.\n\nFaltaba una vitrina digital que hiciera justicia al producto, permitiera a los clientes *pedir en un solo clic* y a los comercios del interior solicitar listas de precios mayoristas con total agilidad.",
+    solution: "Por iniciativa de AMARGO, diseñamos y desarrollamos una plataforma web completa pensada para la identidad gastronómica de Tsunami. Incluye *catálogo interactivo de frascos y alfajores*, pedidos directos a WhatsApp con mensaje automático, infraestructura Cloudflare Edge ultrarrápida y *optimización SEO para Google y motores de IA*.",
     includes: [
-      "Landing page editorial con fotografía gourmet y carga instantánea (< 0.8s)",
-      "Catálogo interactivo de productos: Dulce de Leche (frascos) y Alfajores Premium (Blanco / Negro)",
-      "Botón de pedido directo a WhatsApp por producto con mensaje y cantidad precargados",
-      "Canal exclusivo para Comercios y Distribuidores B2B (solicitud de lista de precios mayorista)",
-      "Sección de premios, avales de calidad y certificación 100% Sin Gluten (Celíacos)",
-      "Módulo de testimonios y valoraciones de clientes gastronómicos",
-      "SEO gastronómico optimizado para Google en Uruguay (Montevideo, Canelones, Punta del Este)",
-      "★ Pack Lanzamiento Digital (Exclusivo Plan Full): 10 creatividades fotográficas y videos publicitarios para Meta/Instagram Ads",
+      "Diseño UI/UX gourmet moderno, rápido y visualmente atractivo enfocado en Dulce de Leche y Alfajores",
+      "Catálogo interactivo con selector de variedades (frascos de DDL y cajas de alfajores Blanco / Negro)",
+      "Botón de compra directa a WhatsApp con mensaje automático y producto pre-seleccionado",
+      "Optimización SEO avanzada para Google y motores de Inteligencia Artificial (ChatGPT, Perplexity, Gemini)",
+      "Infraestructura Cloudflare Edge de alto rendimiento con carga en menos de 0.8s",
+      "Puesta en producción y vinculación completa con el dominio oficial tsunami.uy",
+      "Formulario de contacto para distribuidores y pedidos mayoristas del interior",
+      "1 año de hosting cloud de alta velocidad y certificado SSL de seguridad incluidos",
     ],
     excludes: [
-      "Costos de logística, empaque y envíos físicos a domicilio",
-      "Inversión publicitaria directa en Meta Ads / Google Ads (presupuesto definido por la marca)",
-      "Desarrollo de pasarela de cobros con tarjetas bancarias complejas (se utiliza WhatsApp Checkout directo)",
+      "Inversión en pauta publicitaria en Meta Ads o Google Ads (presupuesto a cargo de la marca)",
+      "Pasarela de cobro bancario con tarjetas (se utiliza WhatsApp Checkout directo; disponible como módulo adicional)",
+      "Fotografía presencial adicional en fábrica (se optimizó el material y catálogo actual)",
     ],
     investment: {
       type: "plans",
-      currency: "UYU",
-      paymentTerms: "Inversión mensual con hosting Cloudflare Edge, soporte técnico continuo y actualización mensual de catálogo.",
+      currency: "USD",
+      paymentTerms: "Pago único de $480 USD por la entrega y puesta en producción de la web completa en su dominio propio. Los futuros desarrollos o ampliaciones se cotizan a demanda por separado, sin mensualidades obligatorias.",
       plans: [
         {
-          name: "Plan Base",
-          price: 5890,
-          period: "UYU/mes",
-          daily_equivalent: "Menos de $200/día",
-          description: "Presencia digital sólida, catálogo online y seguridad cloud 24/7.",
-          features: [
-            "Hosting de alta velocidad en Cloudflare Edge",
-            "Certificado SSL de seguridad y dominio propio",
-            "Catálogo completo de dulce de leche y alfajores",
-            "Botón de contacto general a WhatsApp",
-            "Copias de seguridad semanales",
-            "Soporte técnico ante incidencias",
-          ],
-        },
-        {
-          name: "Plan Avanzado",
-          price: 9490,
-          period: "UYU/mes",
-          daily_equivalent: "Menos de $320/día",
+          name: "Web Completa Llave en Mano",
+          price: 480,
+          period: "Pago Único",
           recommended: true,
-          badge: "RECOMENDADO",
-          description: "Venta directa por WhatsApp, canal mayorista B2B y optimización comercial.",
+          badge: "PRECIO FINAL · PAGO ÚNICO",
+          description: "La web completa ya diseñada y desarrollada para Tsunami, lista para publicar en su dominio propio.",
           features: [
-            "Todo lo del Plan Base",
-            "Botón de pedido directo por cada producto con mensaje pre-armado",
-            "Formulario de captación de comercios y distribuidores mayoristas",
-            "Módulo de opiniones de clientes y premios gastronómicos",
-            "Actualización mensual de precios, stock y promociones",
-            "Soporte comercial prioritario por WhatsApp",
+            "Web completa desarrollada a medida en Astro 5 y Cloudflare Edge",
+            "Catálogo interactivo de frascos de dulce de leche y alfajores (Blanco y Negro)",
+            "Botón de pedido directo a WhatsApp por producto con mensaje precargado",
+            "Optimización SEO para Google y motores de búsqueda con IA",
+            "Canal de solicitud de lista de precios para comercios mayoristas B2B",
+            "1 año de hosting cloud de alta disponibilidad y certificado SSL",
+            "Puesta en marcha, entrega de código y vinculación a dominio propio",
           ],
         },
         {
-          name: "Plan Full",
-          price: 13990,
-          original_price: 15490,
-          discount_badge: "-10% Lanzamiento",
-          badge: "SIN LÍMITES",
-          period: "UYU/mes",
-          daily_equivalent: "Menos de $470/día",
-          description: "Pack audiovisual de lanzamiento para Instagram, marketing y soporte total.",
+          name: "Evolución & Futuros Módulos",
+          price_display: "A Demanda",
+          period: "Sin mensualidades",
+          badge: "OPCIONAL · A DEMANDA",
+          description: "Futuros desarrollos y ampliaciones de la web se cotizan por separado según lo que necesiten, sin costos fijos.",
           features: [
-            "Todo lo del Plan Avanzado",
-            "Pack Lanzamiento: 10 creatividades y videos editoriales para Instagram Ads",
-            "Integración de Meta Pixel y TikTok Pixel para remarketing de compradores",
-            "Reporte mensual de productos más consultados y clics de compra",
-            "Optimización continua de imágenes para lanzamientos especiales",
-            "Guardia de soporte 24/7 para fechas especiales (Día del Padre, Fiestas, etc.)",
+            "Nuevas landing pages para lanzamientos o promociones especiales",
+            "Integración de pasarela de pagos online (MercadoPago / POS digital)",
+            "Incorporación de nuevas líneas de productos o ediciones limitadas",
+            "Campañas publicitarias y creatividades para Meta/Instagram Ads",
+            "Tarifas preferenciales y presupuesto cerrado por cada nuevo módulo",
+            "Sin mensualidades ni costos de mantenimiento obligatorios",
           ],
         },
       ],
     },
-    timeline: "Estructura de catálogo 3 días · Diseño UI/UX gourmet 4 días · Desarrollo en Astro 6 días · Pruebas y Go-Live. Entrega final en *14 días hábiles*.",
+    timeline: "Web ya diseñada y testeada. Puesta en marcha, vinculación de dominio y entrega final en *48 a 72 horas hábiles*.",
     roi_table: {
-      headers: ["MÉTRICA", "VENTA TRADICIONAL", "CON PLATAFORMA AMARGO"],
+      headers: ["MÉTRICA", "WEB ANTERIOR / REDES", "CON LA NUEVA WEB DE TSUNAMI"],
       rows: [
         [
           "Proceso de compra del cliente",
-          "Pregunta precio y espera respuesta manual",
+          "Preguntas manuales sin orden en Instagram",
           "Ve el producto, elige variedad y pide directo a WhatsApp en 1 click",
         ],
         [
           "Captación de comercios mayoristas",
-          "Llamadas y mensajes desordenados",
-          "Formulario B2B que filtra distribuidores calificados automáticamente",
+          "Mensajes sueltos y pérdida de oportunidades",
+          "Canal B2B directo que filtra pedidos mayoristas de todo el país",
         ],
         [
-          "Percepción de marca y premios",
-          "Historias efímeras en Instagram",
-          "Página oficial premium que posiciona a Tsunami como el DDL #1 del país",
+          "Velocidad y experiencia en celular",
+          "Lenta y desactualizada",
+          "Carga instantánea en < 0.8s en cualquier celular o computadora",
         ],
         [
-          "Presencia en Google y búsquedas",
-          "Invisible en Google",
-          "Top en búsquedas de 'mejor dulce de leche uruguayo' y 'alfajores sin gluten'",
+          "Posicionamiento en Google y búsquedas con IA",
+          "Sin optimización SEO",
+          "Indexada para búsquedas de 'mejor dulce de leche uruguayo' y 'alfajores sin gluten'",
         ],
       ],
     },
-    whatsapp_message: "Hola Amargo Creativo, estuve revisando la propuesta de Plataforma Digital para Tsunami Dulce de Leche y queremos avanzar con el Plan Avanzado.",
-    notes: "Propuesta para Tsunami Dulce de Leche Premium. Demo interactiva: https://tsunami-uruguay.elferdi2024.workers.dev/",
+    whatsapp_message: "Hola Amargo Creativo, vimos la web que diseñaron para Tsunami Dulce de Leche y queremos avanzar con la puesta en marcha.",
+    notes: "Propuesta para Tsunami Dulce de Leche Premium. Demo: https://tsunami-uruguay.elferdi2024.workers.dev/",
   };
 
   // Upsert proposal
@@ -172,7 +154,7 @@ async function main() {
     proposalId = inserted.id;
   }
 
-  console.log(`Propuesta sincronizada con éxito. ID: ${proposalId}`);
+  console.log(`Propuesta actualizada con éxito. ID: ${proposalId}`);
   console.log(`URL Magic Link: https://amargo-creativo.pages.dev/p/tsunami-dulce-de-leche`);
 }
 
