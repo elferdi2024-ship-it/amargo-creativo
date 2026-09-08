@@ -313,10 +313,10 @@ function formatEditorial(text: string) {
 
               <!-- Bloque de Precio con soporte para Precio Tachado, Descuento y Equivalente Diario -->
               <div class="plan-pro-price-block">
-                {plan.price_display ? (
+                {plan.price_display || !plan.price ? (
                   <div class="normal-price-row">
                     <span class="plan-price-num">
-                      {plan.price_display}
+                      {plan.price_display || "¿Charlamos? 🧉"}
                     </span>
                     {plan.period && <span class="plan-price-period">{plan.period}</span>}
                   </div>
