@@ -42,6 +42,9 @@ if (!previewUrl && proposal.slug === "mercado-atlantida") {
 if (!previewUrl && proposal.slug === "deal-motors") {
   previewUrl = "https://driveprime-eta.vercel.app/";
 }
+if (!previewUrl && (proposal.slug === "tsunami-dulce-de-leche" || proposal.slug === "tsunami-uruguay")) {
+  previewUrl = "https://tsunami-uruguay.elferdi2024.workers.dev/";
+}
 if (!previewUrl && proposal.notes && proposal.notes.includes("http")) {
   const match = proposal.notes.match(/https?:\/\/[^\s]+/);
   if (match) previewUrl = match[0];
