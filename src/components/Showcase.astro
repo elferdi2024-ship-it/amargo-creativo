@@ -174,10 +174,15 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     color: var(--bone);
   }
   .filter-btn.active {
+    background: var(--mate);
+    color: #ffffff;
+    border-color: var(--mate);
+    font-weight: 700;
+  }
+  :global(body.theme-electric) .filter-btn.active {
     background: var(--electric);
     color: #0a0a0a;
     border-color: var(--electric);
-    font-weight: 700;
   }
   .showcase-head .info {
     text-align: right;
@@ -331,16 +336,16 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: var(--electric);
-    color: var(--ink);
+    background: var(--mate);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 2;
     transform: translate(60px, -60px);
-    transition: transform 0.5s var(--ease-emphasis);
-    border: 1px solid #0a0a0a;
-    box-shadow: 2px 2px 0px #0a0a0a;
+    transition: transform 0.5s var(--ease-emphasis), background 0.3s;
+    border: 1px solid var(--mate-light);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
   }
   .pc-arrow svg {
     width: 18px;
@@ -348,6 +353,11 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
   }
   .project-card:hover .pc-arrow {
     transform: translate(0, 0) rotate(0deg);
+  }
+  :global(body.theme-electric) .pc-arrow {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: #0a0a0a;
   }
 
   .pc-meta {
@@ -435,10 +445,15 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
   }
 
   .pc-tag:hover {
+    background: var(--mate);
+    color: #ffffff;
+    border-color: var(--mate);
+    opacity: 1;
+  }
+  :global(body.theme-electric) .pc-tag:hover {
     background: var(--electric);
     color: #0a0a0a;
     border-color: var(--electric);
-    opacity: 1;
   }
 
   .pc-speed-chip {
@@ -490,19 +505,25 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
   }
 
   .see-all-top-btn:hover {
+    background: var(--mate);
+    color: #ffffff;
+    border-color: var(--mate);
+    box-shadow: 2px 2px 0px var(--line);
+  }
+  :global(body.theme-electric) .see-all-top-btn:hover {
     background: var(--electric);
     color: #0a0a0a;
     border-color: var(--line);
-    box-shadow: 2px 2px 0px var(--line);
   }
 
   .see-all-card {
-    border: 1px dashed var(--line);
-    background: var(--paper);
+    border: 1px solid #244b2c;
+    background: #0c180e;
     display: flex;
     align-items: stretch;
     border-radius: 18px;
     overflow: hidden;
+    box-shadow: 0 10px 30px rgba(18, 36, 22, 0.2);
   }
 
   .see-all-box {
@@ -511,14 +532,19 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     justify-content: center;
     padding: 40px 32px;
     text-decoration: none;
-    color: inherit;
+    color: #f4f1ea;
     width: 100%;
     height: 100%;
-    background: var(--charcoal);
-    color: #ffffff;
+    background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
     box-sizing: border-box;
     border-radius: 18px;
-    transition: background 0.3s var(--ease);
+    border: 1px solid #244b2c;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease), transform 0.3s var(--ease);
+  }
+
+  .see-all-box:hover {
+    border-color: var(--mate-light);
+    transform: translateY(-2px);
   }
 
   :global(body.theme-electric) .see-all-box {
@@ -530,9 +556,16 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 700;
-    color: var(--electric);
+    color: var(--mate-light);
     letter-spacing: 0.1em;
     margin-bottom: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  :global(body.theme-electric) .see-all-tag {
+    color: var(--electric);
   }
 
   .see-all-heading {
@@ -543,14 +576,14 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     letter-spacing: -0.02em;
     text-transform: uppercase;
     margin-bottom: 12px;
-    color: #ffffff;
+    color: #f4f1ea;
   }
 
   .see-all-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    color: rgba(244, 241, 234, 0.8);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: rgba(244, 241, 234, 0.85);
     margin-bottom: 24px;
   }
 
@@ -562,15 +595,29 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    background: var(--electric);
-    color: #0a0a0a;
+    background: var(--mate);
+    color: #ffffff;
     padding: 10px 20px;
-    border: 1px solid #0a0a0a;
+    border: 1px solid var(--mate-light);
     border-radius: 999px;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+    transition: all 0.25s var(--ease);
   }
 
   .see-all-box:hover .see-all-cta-btn {
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
+  }
+
+  :global(body.theme-electric) .see-all-cta-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: #0a0a0a;
+  }
+  :global(body.theme-electric) .see-all-box:hover .see-all-cta-btn {
     background: #ffffff;
+    color: #000000;
   }
 
   @media (max-width: 768px) {

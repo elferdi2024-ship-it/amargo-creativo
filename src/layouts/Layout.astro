@@ -319,6 +319,29 @@ const structuredData = {
   <noscript>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap">
   </noscript>
+
+  <script is:inline>
+    (function() {
+      try {
+        var saved = localStorage.getItem('amargo_theme') || 'default';
+        document.documentElement.setAttribute('data-theme', saved);
+        if (saved !== 'default') {
+          document.documentElement.classList.add('theme-' + saved);
+          var setBodyTheme = function() {
+            if (document.body) {
+              document.body.classList.remove('theme-default');
+              document.body.classList.add('theme-' + saved);
+            }
+          };
+          if (document.body) {
+            setBodyTheme();
+          } else {
+            document.addEventListener('DOMContentLoaded', setBodyTheme, { once: true });
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body class="theme-default">
   <div class="grain" aria-hidden="true"></div>
@@ -500,13 +523,37 @@ const structuredData = {
     }
 
     // --- 4. THEME SWITCHER ---
-    const themeDots = document.querySelectorAll('.theme-dot');
-    themeDots.forEach(dot => {
-      dot.addEventListener('click', () => {
-        const theme = dot.getAttribute('data-theme');
-        document.body.className = `theme-${theme}`;
-        themeDots.forEach(d => d.classList.remove('active'));
-        dot.classList.add('active');
+    function applyTheme(themeName: string) {
+      const themes = ['default', 'dark', 'electric', 'mate'];
+      themes.forEach(t => {
+        document.body.classList.remove(`theme-${t}`);
+        document.documentElement.classList.remove(`theme-${t}`);
+      });
+      document.body.classList.add(`theme-${themeName}`);
+      document.documentElement.classList.add(`theme-${themeName}`);
+      document.documentElement.setAttribute('data-theme', themeName);
+
+      document.querySelectorAll('.theme-dot').forEach(btn => {
+        const dotTheme = btn.getAttribute('data-theme');
+        btn.classList.toggle('active', dotTheme === themeName);
+      });
+      try {
+        localStorage.setItem('amargo_theme', themeName);
+      } catch (e) {}
+    }
+
+    try {
+      const savedTheme = localStorage.getItem('amargo_theme') || 'default';
+      applyTheme(savedTheme);
+    } catch (e) {
+      applyTheme('default');
+    }
+
+    document.querySelectorAll('.theme-dot').forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const theme = dot.getAttribute('data-theme') || 'default';
+        applyTheme(theme);
       });
     });
 

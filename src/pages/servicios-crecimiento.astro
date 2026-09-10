@@ -1544,27 +1544,36 @@ const faqs = [
     padding: clamp(60px, 9vh, 110px) var(--gut);
   }
   .cta-box {
-    background: var(--ink);
-    color: var(--bone);
+    background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
+    color: #f4f1ea;
     padding: clamp(40px, 7vw, 84px) clamp(24px, 5vw, 64px);
-    border: 1px solid var(--line);
+    border: 1px solid #244b2c;
+    border-radius: 20px;
+    box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
     position: relative;
   }
   :global(body.theme-electric) .cta-box {
     background: #000000;
     border-color: var(--electric);
+    box-shadow: none;
   }
 
   .cta-kicker {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--electric);
+    color: var(--mate-light);
     margin-bottom: 18px;
     font-weight: 700;
   }
+  :global(body.theme-electric) .cta-kicker {
+    color: var(--electric);
+  }
+
   .cta-box h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
@@ -1574,16 +1583,17 @@ const faqs = [
     text-transform: uppercase;
     margin-bottom: 18px;
     max-width: 950px;
-    color: #ffffff;
+    color: #f4f1ea;
   }
   :global(body.theme-electric) .cta-box h2 {
     color: var(--electric);
   }
+
   .cta-box p {
     font-family: 'Space Grotesk', sans-serif;
     font-size: clamp(15px, 1.5vw, 18px);
     line-height: 1.6;
-    color: rgba(255, 255, 255, 0.85);
+    color: rgba(244, 241, 234, 0.85);
     max-width: 800px;
     margin-bottom: 36px;
   }
@@ -1594,6 +1604,7 @@ const faqs = [
     gap: 16px;
     align-items: flex-start;
   }
+
   .cta-btn {
     display: inline-flex;
     align-items: center;
@@ -1607,30 +1618,44 @@ const faqs = [
     letter-spacing: 0.08em;
     text-decoration: none;
     text-transform: uppercase;
-    border: none;
+    border: 1px solid var(--mate-light);
+    border-radius: 999px;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
     transition: all 0.3s var(--ease);
   }
+
   .cta-btn svg {
     width: 16px;
     height: 16px;
     transition: transform 0.3s var(--ease);
   }
+
   .cta-btn:hover {
-    background: #ffffff;
-    color: #0a0a0a;
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
   }
+
   .cta-btn:hover svg {
     transform: translateX(4px);
   }
+
   :global(body.theme-electric) .cta-btn {
     background: var(--electric);
     color: #0a0a0a;
+    border-color: #0a0a0a;
   }
+
+  :global(body.theme-electric) .cta-btn:hover {
+    background: #ffffff;
+    color: #000000;
+  }
+
   .cta-note {
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(244, 241, 234, 0.65);
   }
 
   /* RESPONSIVE */

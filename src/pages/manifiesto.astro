@@ -817,6 +817,11 @@ const comparisons = [
   }
 
   .matrix-table th.th-highlight {
+    background: var(--mate);
+    color: #ffffff;
+  }
+
+  :global(body.theme-electric) .matrix-table th.th-highlight {
     background: var(--electric);
     color: #0a0a0a;
   }
@@ -830,8 +835,12 @@ const comparisons = [
   }
 
   .col-amargo {
-    background: rgba(212, 255, 0, 0.06);
+    background: rgba(45, 99, 53, 0.08);
     width: 40%;
+  }
+
+  :global(body.theme-electric) .col-amargo {
+    background: rgba(212, 255, 0, 0.06);
   }
 
   .col-amargo p {
@@ -895,12 +904,19 @@ const comparisons = [
     display: flex;
     flex-direction: column;
     gap: 8px;
-    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+    border-radius: 16px;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
   }
 
   .layer-card:hover {
     transform: translateX(6px);
-    box-shadow: 4px 4px 0px var(--line);
+    box-shadow: 4px 4px 0px var(--mate);
+    border-color: var(--mate);
+  }
+
+  :global(body.theme-electric) .layer-card:hover {
+    box-shadow: 4px 4px 0px var(--electric);
+    border-color: var(--electric);
   }
 
   .layer-badge {
@@ -991,18 +1007,29 @@ const comparisons = [
   }
 
   .term-run-btn {
-    background: var(--electric);
-    color: #0a0a0a;
-    border: none;
+    background: var(--mate);
+    color: #ffffff;
+    border: 1px solid var(--mate-light);
+    border-radius: 999px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 700;
-    padding: 6px 12px;
+    padding: 6px 14px;
     cursor: pointer;
     transition: all 0.2s var(--ease);
   }
 
   .term-run-btn:hover {
+    background: var(--mate-light);
+    color: #0c180e;
+  }
+
+  :global(body.theme-electric) .term-run-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border: none;
+  }
+  :global(body.theme-electric) .term-run-btn:hover {
     background: #ffffff;
   }
 
@@ -1028,9 +1055,13 @@ const comparisons = [
   }
 
   .prompt {
-    color: var(--electric);
+    color: var(--mate-light);
     margin-right: 8px;
     font-weight: 700;
+  }
+
+  :global(body.theme-electric) .prompt {
+    color: var(--electric);
   }
 
   .term-output {
@@ -1052,9 +1083,11 @@ const comparisons = [
   }
 
   .man-cta-card {
-    background: var(--charcoal);
-    color: var(--bone);
-    border: 1px solid var(--line);
+    background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
+    color: #f4f1ea;
+    border: 1px solid #244b2c;
+    border-radius: 20px;
+    box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
     padding: clamp(36px, 5vw, 64px);
     display: flex;
     justify-content: space-between;
@@ -1067,6 +1100,7 @@ const comparisons = [
   :global(body.theme-electric) .man-cta-card {
     background: #000000;
     border-color: #2e3010;
+    box-shadow: none;
   }
 
   .man-cta-text {
@@ -1077,10 +1111,16 @@ const comparisons = [
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
-    color: var(--electric);
+    color: var(--mate-light);
     letter-spacing: 0.1em;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 12px;
+  }
+
+  :global(body.theme-electric) .cta-label {
+    color: var(--electric);
   }
 
   .man-cta-text h2 {
@@ -1089,16 +1129,16 @@ const comparisons = [
     font-size: clamp(20px, 3.8vw, 44px);
     letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: #ffffff;
+    color: #f4f1ea;
     margin-bottom: 12px;
     line-height: 1.1;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
   }
 
   .man-cta-text p {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    font-size: 14.5px;
     line-height: 1.55;
     color: rgba(244, 241, 234, 0.85);
   }
@@ -1116,21 +1156,36 @@ const comparisons = [
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: var(--electric);
-    color: #0a0a0a;
+    background: var(--mate);
+    color: #ffffff;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 15px 22px;
+    padding: 15px 24px;
     text-decoration: none;
-    border: 1px solid #0a0a0a;
-    transition: transform 0.2s, background 0.2s;
+    border: 1px solid var(--mate-light);
+    border-radius: 999px;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
   }
 
   .man-wa-btn:hover {
-    background: #ffffff;
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
     transform: translate(-2px, -2px);
+  }
+
+  :global(body.theme-electric) .man-wa-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: #0a0a0a;
+  }
+
+  :global(body.theme-electric) .man-wa-btn:hover {
+    background: #ffffff;
+    color: #000000;
   }
 
   .man-secondary-btn {
@@ -1138,20 +1193,22 @@ const comparisons = [
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: var(--bone);
+    color: #f4f1ea;
     border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     padding: 12px 18px;
     text-decoration: none;
-    transition: border-color 0.2s, color 0.2s;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
   }
 
   .man-secondary-btn:hover {
-    border-color: #ffffff;
-    color: #ffffff;
+    border-color: var(--mate-light);
+    color: var(--mate-light);
+    background: rgba(130, 168, 80, 0.1);
   }
 
   /* RESPONSIVE */

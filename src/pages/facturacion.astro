@@ -756,8 +756,8 @@ const description = "Desarrollo de software a medida para empresas y agencias en
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: var(--electric);
-    color: #0a0a0a;
+    background: var(--mate);
+    color: #ffffff;
     padding: 14px 24px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11.5px;
@@ -765,16 +765,31 @@ const description = "Desarrollo de software a medida para empresas y agencias en
     text-transform: uppercase;
     letter-spacing: 0.06em;
     text-decoration: none;
-    border: 1px solid #0a0a0a;
-    box-shadow: 3px 3px 0px #0a0a0a;
+    border: 1px solid var(--mate-light);
+    border-radius: 999px;
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
     transition: all 0.2s var(--ease);
   }
 
   .fac-btn-primary:hover {
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
+    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
+    transform: translate(-1px, -1px);
+  }
+
+  :global(body.theme-electric) .fac-btn-primary {
+    background: var(--electric);
+    color: #0a0a0a;
+    border: 1px solid #0a0a0a;
+    box-shadow: 3px 3px 0px #0a0a0a;
+  }
+
+  :global(body.theme-electric) .fac-btn-primary:hover {
     background: #0a0a0a;
     color: var(--electric);
     box-shadow: 5px 5px 0px var(--electric);
-    transform: translate(-1px, -1px);
   }
 
   .fac-btn-secondary {
@@ -1609,15 +1624,22 @@ const description = "Desarrollo de software a medida para empresas y agencias en
   }
 
   .fac-banner-box {
-    background: var(--charcoal);
-    color: var(--bone);
+    background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
+    color: #f4f1ea;
     padding: clamp(36px, 5vw, 64px);
-    border: 1px solid var(--line);
+    border: 1px solid #244b2c;
+    border-radius: 20px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 18px;
+    box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
+  }
+
+  :global(body.theme-electric) .fac-banner-box {
+    background: #000000;
+    border-color: #2e3010;
     box-shadow: 8px 8px 0px var(--electric);
   }
 
@@ -1626,6 +1648,13 @@ const description = "Desarrollo de software a medida para empresas y agencias en
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
+    color: var(--mate-light);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  :global(body.theme-electric) .banner-tag {
     color: var(--electric);
   }
 
@@ -1638,6 +1667,7 @@ const description = "Desarrollo de software a medida para empresas y agencias en
     text-transform: uppercase;
     margin: 0;
     max-width: 800px;
+    color: #f4f1ea;
   }
 
   .fac-banner-box p {

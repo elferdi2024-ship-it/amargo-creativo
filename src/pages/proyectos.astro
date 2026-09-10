@@ -1065,17 +1065,25 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
-    padding: 4px 8px;
+    padding: 4px 10px;
     border: 1px solid var(--line);
     background: transparent;
     color: var(--ink);
     cursor: pointer;
+    border-radius: 999px;
     transition: all 0.2s var(--ease);
   }
 
   .stack-badge:hover {
-    background: var(--ink);
-    color: var(--bone);
+    background: var(--mate);
+    color: #ffffff;
+    border-color: var(--mate);
+  }
+
+  :global(body.theme-electric) .stack-badge:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
   }
 
   /* ACCIONES */
@@ -1098,18 +1106,33 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     padding: 11px 12px;
     text-decoration: none;
     box-sizing: border-box;
+    border-radius: 999px;
     transition: all 0.2s var(--ease);
   }
 
   .action-btn-live {
-    background: var(--electric);
-    color: #0a0a0a;
-    border: 1px solid var(--line);
+    background: var(--mate);
+    color: #ffffff;
+    border: 1px solid var(--mate-light);
+    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
   }
 
   .action-btn-live:hover {
-    background: #0a0a0a;
-    color: var(--electric);
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
+  }
+
+  :global(body.theme-electric) .action-btn-live {
+    background: var(--electric);
+    color: #0a0a0a;
+    border: 1px solid var(--line);
+    box-shadow: 2px 2px 0px var(--line);
+  }
+
+  :global(body.theme-electric) .action-btn-live:hover {
+    background: #ffffff;
+    color: #000000;
   }
 
   .action-btn-quote {
@@ -1133,14 +1156,21 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
 
   .reset-search-btn {
     margin-top: 16px;
-    background: var(--ink);
-    color: var(--bone);
+    background: var(--mate);
+    color: #ffffff;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
     padding: 10px 20px;
     border: none;
+    border-radius: 999px;
     cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .reset-search-btn:hover {
+    background: var(--mate-light);
+    color: #0c180e;
   }
 
   /* BENCHMARK TABLE */
@@ -1210,6 +1240,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     overflow-x: auto;
     border: 1px solid var(--line);
     background: var(--paper);
+    border-radius: 12px;
   }
 
   .benchmark-table {
@@ -1237,20 +1268,30 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   }
 
   .benchmark-table th.col-highlight {
+    background: var(--mate);
+    color: #ffffff;
+  }
+
+  :global(body.theme-electric) .benchmark-table th.col-highlight {
     background: var(--electric);
     color: #0a0a0a;
   }
 
   .benchmark-table td.col-highlight {
-    background: rgba(212, 255, 0, 0.06);
+    background: rgba(45, 99, 53, 0.08);
     font-weight: 600;
+  }
+
+  :global(body.theme-electric) .benchmark-table td.col-highlight {
+    background: rgba(212, 255, 0, 0.06);
   }
 
   .badge-good {
     display: inline-block;
     background: var(--mate);
     color: #ffffff;
-    padding: 2px 7px;
+    padding: 2px 8px;
+    border-radius: 999px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 700;
@@ -1260,7 +1301,8 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     display: inline-block;
     background: #dc2626;
     color: #ffffff;
-    padding: 2px 7px;
+    padding: 2px 8px;
+    border-radius: 999px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 700;
@@ -1274,9 +1316,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   }
 
   .cta-card {
-    background: var(--charcoal);
-    color: var(--bone);
-    border: 1px solid var(--line);
+    background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
+    color: #f4f1ea;
+    border: 1px solid #244b2c;
+    border-radius: 20px;
+    box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
     padding: clamp(36px, 5vw, 64px);
     display: flex;
     justify-content: space-between;
@@ -1288,6 +1332,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   :global(body.theme-electric) .cta-card {
     background: #000000;
     border-color: #2e3010;
+    box-shadow: none;
   }
 
   .cta-info {
@@ -1298,10 +1343,16 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
-    color: var(--electric);
+    color: var(--mate-light);
     letter-spacing: 0.1em;
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     margin-bottom: 12px;
+  }
+
+  :global(body.theme-electric) .cta-mini-tag {
+    color: var(--electric);
   }
 
   .cta-title {
@@ -1311,16 +1362,16 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     line-height: 1.1;
     letter-spacing: -0.02em;
     text-transform: uppercase;
-    color: #ffffff;
+    color: #f4f1ea;
     margin-bottom: 12px;
     overflow-wrap: break-word;
-    word-break: break-word;
+    word-break: normal;
   }
 
   .cta-desc {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    line-height: 1.5;
+    font-size: 14.5px;
+    line-height: 1.55;
     color: rgba(244, 241, 234, 0.85);
   }
 
@@ -1337,21 +1388,36 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: var(--electric);
-    color: #0a0a0a;
+    background: var(--mate);
+    color: #ffffff;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 14px 20px;
+    padding: 14px 24px;
     text-decoration: none;
-    border: 1px solid #0a0a0a;
-    transition: transform 0.2s, background 0.2s;
+    border: 1px solid var(--mate-light);
+    border-radius: 999px;
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
+    transition: transform 0.2s, background 0.2s, border-color 0.2s;
   }
 
   .cta-wa-btn:hover {
-    background: #ffffff;
+    background: var(--mate-light);
+    color: #0c180e;
+    border-color: #ffffff;
     transform: translate(-2px, -2px);
+  }
+
+  :global(body.theme-electric) .cta-wa-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: #0a0a0a;
+  }
+
+  :global(body.theme-electric) .cta-wa-btn:hover {
+    background: #ffffff;
+    color: #000000;
   }
 
   .cta-secondary-link {
@@ -1359,20 +1425,22 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     align-items: center;
     justify-content: center;
     background: transparent;
-    color: var(--bone);
+    color: #f4f1ea;
     border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     padding: 12px 18px;
     text-decoration: none;
-    transition: border-color 0.2s, color 0.2s;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
   }
 
   .cta-secondary-link:hover {
-    border-color: #ffffff;
-    color: #ffffff;
+    border-color: var(--mate-light);
+    color: var(--mate-light);
+    background: rgba(130, 168, 80, 0.1);
   }
 
   @media (max-width: 900px) {

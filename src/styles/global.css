@@ -181,11 +181,23 @@ code, pre, kbd, samp, .font-mono, .mono {
 
 .tactile-card:hover {
   transform: translateY(-2px);
-  box-shadow: 4px 4px 0px var(--line);
+  box-shadow: 4px 4px 0px var(--mate);
+  border-color: var(--mate);
 }
 
 :global(body.theme-electric) .tactile-card:hover {
   box-shadow: 4px 4px 0px var(--electric);
+  border-color: var(--electric);
+}
+
+:global(body.theme-dark) .tactile-card:hover {
+  box-shadow: 4px 4px 0px var(--mate-light);
+  border-color: var(--mate-light);
+}
+
+:global(body.theme-mate) .tactile-card:hover {
+  box-shadow: 4px 4px 0px var(--mate-light);
+  border-color: var(--mate-light);
 }
 
 /* Organic Pill Badges & Capsule Markers */
@@ -363,8 +375,36 @@ body.theme-dark .hl-yellow {
 
 body.theme-mate mark.hl-yellow,
 body.theme-mate .hl-yellow {
-  background: var(--electric);
+  background: var(--mate-light);
   color: #0a0a0a !important;
+}
+
+mark.hl-mate, .hl-mate {
+  background: var(--mate);
+  color: #f4f1ea !important;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline-block;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  font-style: normal;
+}
+
+mark.hl-mate-light, .hl-mate-light {
+  background: var(--mate-light);
+  color: #0c180e !important;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline-block;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  font-style: normal;
 }
 
 .graphic-mark {
