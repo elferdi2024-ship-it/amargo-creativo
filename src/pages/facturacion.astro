@@ -626,7 +626,7 @@ const description = "Desarrollo de software a medida para empresas y agencias en
 
 <style>
   .facturacion-page {
-    padding-top: 100px;
+    padding-top: calc(75px + env(safe-area-inset-top));
     background: var(--bone);
     color: var(--ink);
     min-height: 100vh;
@@ -694,12 +694,14 @@ const description = "Desarrollo de software a medida para empresas y agencias en
   .fac-h1 {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(32px, 5.2vw, 80px);
-    line-height: 0.95;
+    font-size: clamp(26px, 5.2vw, 80px);
+    line-height: 0.96;
     letter-spacing: -0.025em;
     text-transform: uppercase;
     margin: 0 0 24px;
     max-width: 1200px;
+    overflow-wrap: break-word;
+    word-break: normal;
   }
 
   .fac-h1 em {
