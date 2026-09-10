@@ -14,10 +14,10 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     <div>
       <div class="section-label"><span class="num">03</span> CASOS DE ÉXITO</div>
       <h2>TRABAJOS <em>seleccionados</em></h2>
-      <div class="showcase-filters" role="tablist" aria-label="Filtrar proyectos">
-        <button class="filter-btn active" data-filter="all">TODOS ({displayedProjects.length})</button>
-        <button class="filter-btn" data-filter="marketplace">MARKETPLACE</button>
-        <button class="filter-btn" data-filter="saas">SAAS & APPS</button>
+      <div class="showcase-filters" role="group" aria-label="Filtrar proyectos">
+        <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">TODOS ({displayedProjects.length})</button>
+        <button type="button" class="filter-btn" data-filter="marketplace" aria-pressed="false">MARKETPLACE</button>
+        <button type="button" class="filter-btn" data-filter="saas" aria-pressed="false">SAAS & APPS</button>
       </div>
     </div>
     <div class="showcase-head-right">
