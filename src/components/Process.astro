@@ -17,22 +17,22 @@ const steps: Step[] = [
   {
     num: "01",
     title: "Charla de 15 Minutos",
-    desc: "Nos tomamos un momento para entender tu negocio, qué problemas tenés y qué querés lograr con tu nueva web. Sin vueltas ni tecnicismos raros."
+    desc: "Nos tomamos un momento (<mark class=\"hl-yellow\">15 minutos</mark>) para entender tu negocio, qué problemas tenés y qué querés lograr con tu nueva web. Sin vueltas ni tecnicismos raros."
   },
   {
     num: "02",
     title: "Estructura y Diseño Visual",
-    desc: "Diseñamos las pantallas completas para que veas exactamente cómo va a quedar tu sitio, cómo se va a navegar en celulares y cómo va a recibir a tus clientes."
+    desc: "Diseñamos las pantallas completas para que veas exactamente cómo va a quedar tu sitio, cómo se va a navegar en celulares y cómo va a <mark class=\"hl-yellow\">recibir a tus clientes</mark>."
   },
   {
     num: "03",
     title: "Desarrollo y Velocidad",
-    desc: "Construimos el sitio con código limpio y ultra veloz. Integramos WhatsApp directo, mapas, formularios y todo lo necesario para que funcione como un reloj."
+    desc: "Construimos el sitio con <mark class=\"hl-yellow\">código ultra veloz</mark>. Integramos WhatsApp directo, mapas, formularios y todo lo necesario para que funcione como un reloj."
   },
   {
     num: "04",
     title: "Lanzamiento y a Rodar",
-    desc: "Probamos todo a fondo, conectamos tu dominio y publicamos tu web en internet. Te entregamos el acceso total y te enseñamos a usarla."
+    desc: "Probamos todo a fondo, conectamos tu dominio y publicamos tu web en internet. Te entregamos el <mark class=\"hl-yellow\">acceso total</mark> y te enseñamos a usarla."
   }
 ];
 ---
@@ -50,7 +50,7 @@ const steps: Step[] = [
       <div class="process-item">
         <div class="process-num">{step.num}</div>
         <div class="process-title">{step.title}</div>
-        <div class="process-desc">{step.desc}</div>
+        <div class="process-desc" set:html={step.desc} />
       </div>
     ))}
   </div>
@@ -71,25 +71,32 @@ const steps: Step[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.14;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 0;
     filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .process-ambient-bg {
-    opacity: 0.16;
+    opacity: 0.20;
+    mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
+  :global(body.theme-dark) .process-ambient-bg {
+    opacity: 0.18;
+    mix-blend-mode: screen;
+  }
   :global(body.theme-mate) .process-ambient-bg {
-    opacity: 0.15;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   @media (max-width: 768px) {
     .process-ambient-bg {
       width: 75vw;
       right: -12%;
-      opacity: 0.12;
+      opacity: 0.18;
     }
   }
 </style>

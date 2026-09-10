@@ -353,7 +353,7 @@ const comparisons = [
       <div class="man-cta-card tactile-card">
         <div class="man-cta-text">
           <span class="cta-label">● CUPOS LIMITADOS A 5 PROYECTOS / MES</span>
-          <h2>¿LISTO PARA UN ACTIVO DIGITAL QUE VENDA DE VERDAD?</h2>
+          <h2>¿LISTO PARA UN ACTIVO DIGITAL QUE <mark class="hl-yellow">VENDA DE VERDAD</mark>?</h2>
           <p>
             No aceptamos más de 5 clientes simultáneos para garantizar dedicación artesanal, velocidad extrema y acompañamiento directo sin delegar a juniors.
           </p>
@@ -1084,12 +1084,14 @@ const comparisons = [
   .man-cta-text h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(26px, 3.5vw, 44px);
+    font-size: clamp(20px, 3.8vw, 44px);
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: #ffffff;
     margin-bottom: 12px;
-    line-height: 1.05;
+    line-height: 1.1;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .man-cta-text p {

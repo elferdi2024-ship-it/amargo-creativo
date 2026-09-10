@@ -64,6 +64,16 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       <p>Como un buen mate: cercano, intenso y que deja huella.</p>
       <h4>UBICACIÓN & DISPONIBILIDAD</h4>
       <p>Atlántida, Canelones<br>Cobertura en Uruguay, Argentina y España<br><strong class="highlight-cupos">5 cupos disponibles este mes</strong></p>
+      
+      <div class="menu-theme-row">
+        <span class="menu-theme-label">TEMA VISUAL:</span>
+        <div class="menu-theme-dots">
+          <button class="theme-dot" data-theme="default" aria-label="Tema Hueso"></button>
+          <button class="theme-dot" data-theme="dark" aria-label="Tema Carbón"></button>
+          <button class="theme-dot" data-theme="electric" aria-label="Tema Eléctrico"></button>
+          <button class="theme-dot" data-theme="mate" aria-label="Tema Verde Mate" title="Modo Mate"></button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -460,6 +470,37 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     width: 24px;
     height: 24px;
   }
+  .menu-theme-row {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .menu-theme-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--mute-on-dark);
+    text-transform: uppercase;
+  }
+  .menu-theme-dots {
+    display: flex;
+    gap: 8px;
+  }
+  .menu-theme-dots .theme-dot {
+    width: 18px;
+    height: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 0;
+  }
+  .menu-theme-dots .theme-dot[data-theme="default"] { background: #e8e6e0; }
+  .menu-theme-dots .theme-dot[data-theme="dark"] { background: #1a1a18; }
+  .menu-theme-dots .theme-dot[data-theme="electric"] { background: #d4ff00; }
+  .menu-theme-dots .theme-dot[data-theme="mate"] { background: #3a7d44; }
+
   @media (max-width: 768px) {
     .menu-grid {
       grid-template-columns: 1fr;
@@ -489,5 +530,54 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     };
     setInterval(updateTime, 1000);
     updateTime();
+  }
+
+  // Safe Self-Contained Mobile Menu Controller
+  const menuBtn = document.getElementById('menuBtn');
+  const menuCloseBtn = document.getElementById('menuCloseBtn');
+  const menuOverlay = document.getElementById('menuOverlay');
+
+  function openMenuDirect() {
+    if (!menuOverlay) return;
+    menuOverlay.classList.add('active');
+    menuOverlay.setAttribute('aria-hidden', 'false');
+    if (menuCloseBtn) menuCloseBtn.classList.add('active');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('no-scroll');
+    const scrollCtl = (window as any).lenis;
+    if (scrollCtl && typeof scrollCtl.stop === 'function') scrollCtl.stop();
+  }
+
+  function closeMenuDirect() {
+    if (!menuOverlay) return;
+    menuOverlay.classList.remove('active');
+    menuOverlay.setAttribute('aria-hidden', 'true');
+    if (menuCloseBtn) menuCloseBtn.classList.remove('active');
+    if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('no-scroll');
+    const scrollCtl = (window as any).lenis;
+    if (scrollCtl && typeof scrollCtl.start === 'function') scrollCtl.start();
+  }
+
+  if (menuBtn) {
+    menuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openMenuDirect();
+    });
+  }
+
+  if (menuCloseBtn) {
+    menuCloseBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      closeMenuDirect();
+    });
+  }
+
+  if (menuOverlay) {
+    menuOverlay.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        closeMenuDirect();
+      });
+    });
   }
 </script>

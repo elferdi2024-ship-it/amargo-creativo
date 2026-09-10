@@ -285,17 +285,17 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
             <tbody>
               <tr>
                 <td><strong>Tiempo de Carga (LCP)</strong></td>
-                <td class="col-highlight"><span class="badge-good">&lt; 0.8 segundos</span> (Instantáneo)</td>
+                <td class="col-highlight"><span class="badge-good"><mark class="hl-yellow">&lt; 0.8 segundos</mark></span> (Instantáneo)</td>
                 <td><span class="badge-bad">3.8 a 6.5 segundos</span> (Lento)</td>
               </tr>
               <tr>
                 <td><strong>Lighthouse Performance</strong></td>
-                <td class="col-highlight"><span class="badge-good">95 - 100 / 100</span> garantizado</td>
+                <td class="col-highlight"><span class="badge-good"><mark class="hl-yellow">95 - 100 / 100</mark></span> garantizado</td>
                 <td><span class="badge-bad">35 - 65 / 100</span> habitual</td>
               </tr>
               <tr>
                 <td><strong>Embudos de Venta</strong></td>
-                <td class="col-highlight">Integración nativa directa a WhatsApp</td>
+                <td class="col-highlight"><mark class="hl-yellow">WhatsApp Directo</mark> sin intermediarios</td>
                 <td>Formularios estáticos o carritos abandonados</td>
               </tr>
               <tr>
@@ -324,7 +324,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
       <div class="cta-card">
         <div class="cta-info">
           <span class="cta-mini-tag">● DISPONIBILIDAD INMEDIATA</span>
-          <h2 class="cta-title">¿QUERÉS QUE CONSTRUYAMOS TU PRÓXIMO ACTIVO DIGITAL?</h2>
+          <h2 class="cta-title">¿QUERÉS QUE <mark class="hl-yellow">CONSTRUYAMOS</mark> TU PRÓXIMO ACTIVO DIGITAL?</h2>
           <p class="cta-desc">
             Evaluamos tu negocio, planificamos la arquitectura y entregamos tu web o app lista para vender en tiempo récord.
           </p>
@@ -1305,12 +1305,14 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   .cta-title {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
-    font-size: clamp(26px, 3.5vw, 44px);
-    line-height: 1.05;
+    font-size: clamp(20px, 3.8vw, 42px);
+    line-height: 1.1;
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: #ffffff;
     margin-bottom: 12px;
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   .cta-desc {
@@ -1392,6 +1394,16 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     }
     .cta-buttons {
       max-width: 100%;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .cta-card {
+      padding: 28px 18px;
+    }
+    .cta-title {
+      font-size: clamp(18px, 5.2vw, 24px);
+      line-height: 1.15;
     }
   }
 

@@ -605,8 +605,15 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     }
 
     .project-card {
+      opacity: 1 !important;
+      transform: none !important;
       width: clamp(285px, 84vw, 360px);
       border-radius: 16px;
+    }
+
+    .pc-img {
+      opacity: 1 !important;
+      filter: none !important;
     }
 
     .pc-title-row {

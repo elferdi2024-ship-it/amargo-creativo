@@ -79,25 +79,32 @@ const faqs: FAQItem[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.14;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 0;
     filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .faq-ambient-bg {
-    opacity: 0.16;
+    opacity: 0.20;
+    mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
+  :global(body.theme-dark) .faq-ambient-bg {
+    opacity: 0.18;
+    mix-blend-mode: screen;
+  }
   :global(body.theme-mate) .faq-ambient-bg {
-    opacity: 0.15;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   @media (max-width: 768px) {
     .faq-ambient-bg {
       width: 75vw;
       right: -12%;
-      opacity: 0.12;
+      opacity: 0.18;
     }
   }
   .faq-head {

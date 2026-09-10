@@ -317,7 +317,54 @@ body.no-scroll {
 }
 
 .grain {
-  display: none !important;
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 99990;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+body.theme-dark .grain,
+body.theme-electric .grain {
+  mix-blend-mode: screen;
+  opacity: 0.04;
+}
+
+/* Organic Editorial Highlighter & Marker Utilities */
+mark.hl-yellow, .hl-yellow {
+  background: var(--electric);
+  color: #0a0a0a !important;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 2px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  display: inline-block;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  font-style: normal;
+}
+
+body.theme-electric mark.hl-yellow,
+body.theme-electric .hl-yellow {
+  background: #ffffff;
+  color: #000000 !important;
+}
+
+body.theme-dark mark.hl-yellow,
+body.theme-dark .hl-yellow {
+  background: var(--electric);
+  color: #0a0a0a !important;
+}
+
+body.theme-mate mark.hl-yellow,
+body.theme-mate .hl-yellow {
+  background: var(--electric);
+  color: #0a0a0a !important;
 }
 
 .graphic-mark {
@@ -344,8 +391,19 @@ h1, h2, h3, h4, h5, h6,
   letter-spacing: -0.025em;
   text-wrap: balance;
   text-wrap: pretty;
-  hyphens: none;
-  -webkit-hyphens: none;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+@media (max-width: 600px) {
+  h1, h2, h3, h4, h5, h6,
+  .hero-title, .h1-title,
+  .cap-head h2, .manifesto-head h2, .perf-head h2,
+  .showcase-head h2, .test-header h2, .process-head h2,
+  .faq-head h2, .contact-title, .insta-head h2 {
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
 }
 
 h1 em, h2 em, h3 em, h4 em,

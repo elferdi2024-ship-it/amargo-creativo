@@ -15,14 +15,14 @@ const services: Service[] = [
   {
     num: "01",
     title: "Creación y Diseño Web de Élite",
-    desc: "Páginas web y tiendas online ultrarrápidas (<0.8s), responsivas en cualquier celular y diseñadas para convertir visitas en clientes reales en Uruguay, Argentina y España.",
+    desc: "Páginas web y tiendas online ultrarrápidas (<mark class=\"hl-yellow\">&lt;0.8s</mark>), responsivas en cualquier celular y diseñadas para convertir visitas en clientes reales en Uruguay, Argentina y España.",
     tags: ["DISEÑO WEB", "TIENDAS ONLINE", "ALTO RENDIMIENTO"],
     iconType: 1
   },
   {
     num: "02",
     title: "Desarrollo de Aplicaciones & SaaS",
-    desc: "Sistemas a medida, portales de clientes extranet, cotizadores inteligentes y plataformas web con tecnologías modernas (Next.js, Astro) que automatizan tus cobros y ventas.",
+    desc: "Sistemas a medida, portales de clientes extranet, cotizadores inteligentes y plataformas web con <mark class=\"hl-yellow\">Astro & Next.js</mark> que automatizan tus cobros y ventas.",
     tags: ["PORTALES B2B", "FACTURACIÓN CFE", "SAAS A MEDIDA"],
     iconType: 2,
     link: "/facturacion",
@@ -31,14 +31,14 @@ const services: Service[] = [
   {
     num: "03",
     title: "Posicionamiento SEO & Búsquedas IA",
-    desc: "Optimizamos tu sitio con SEO técnico, marcado Schema.org local y arquitectura semántica para liderar en Google y motores de inteligencia artificial.",
+    desc: "Optimizamos tu sitio con <mark class=\"hl-yellow\">SEO técnico & Schema</mark> local y arquitectura semántica para liderar en Google y motores de inteligencia artificial.",
     tags: ["SEO TÉCNICO", "GOOGLE URUGUAY / AR", "SCHEMA RICH SNIPPETS"],
     iconType: 4
   },
   {
     num: "04",
     title: "Estrategia Comercial & WhatsApp Commerce",
-    desc: "Embudos directos a WhatsApp, checkout simplificado y branding de alto impacto para maximizar la tasa de conversión y cerrar ventas en minutos.",
+    desc: "Embudos directos a <mark class=\"hl-yellow\">WhatsApp 1-click</mark>, checkout simplificado y branding de alto impacto para maximizar la tasa de conversión y cerrar ventas en minutos.",
     tags: ["WHATSAPP DIRECTO", "VENTAS SIN FRICCIÓN", "CRO"],
     iconType: 2
   }
@@ -57,7 +57,7 @@ const services: Service[] = [
         <div class="cap-num">{service.num}</div>
         <div class="cap-title">{service.title}</div>
         <div class="cap-desc">
-          <span>{service.desc}</span>
+          <span set:html={service.desc} />
           {service.link && (
             <div class="cap-service-link-wrap">
               <a href={service.link} class="cap-service-link">{service.linkText}</a>
@@ -141,18 +141,25 @@ const services: Service[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom left;
-    opacity: 0.14;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 0;
     filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .capabilities-ambient-bg {
-    opacity: 0.16;
+    opacity: 0.20;
+    mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
+  :global(body.theme-dark) .capabilities-ambient-bg {
+    opacity: 0.18;
+    mix-blend-mode: screen;
+  }
   :global(body.theme-mate) .capabilities-ambient-bg {
-    opacity: 0.15;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   .cap-head {

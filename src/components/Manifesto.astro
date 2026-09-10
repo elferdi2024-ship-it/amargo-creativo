@@ -12,10 +12,10 @@
   </div>
 
   <div class="manifesto-body" id="manifestoBody">
-    <div class="line"><span>Unimos <em>estrategia comercial, diseño radical y software</em> sin intermediarios.</span></div>
-    <div class="line"><span>Construimos webs que cargan en <mark class="mate-mark">&lt;0.8s</mark> y transforman visitas en clientes reales.</span></div>
+    <div class="line"><span>Unimos <em>estrategia comercial, diseño radical y software</em> <mark class="hl-yellow">sin intermediarios</mark>.</span></div>
+    <div class="line"><span>Construimos webs que cargan en <mark class="hl-yellow">&lt;0.8s</mark> y transforman visitas en clientes reales.</span></div>
     <div class="line"><span>Desde <strong>Atlántida, Uruguay</strong>, potenciamos marcas en <em>Argentina y España</em>.</span></div>
-    <div class="line"><span>Cero plantillas infladas, cero dependencias cautivas: <em>código propio que es 100% tuyo</em>.</span></div>
+    <div class="line"><span>Cero plantillas infladas, cero dependencias cautivas: <mark class="hl-yellow">código propio</mark> que es <em>100% tuyo</em>.</span></div>
     <div class="line"><span>Pensamos con estrategia de negocio y <em>ejecutamos con precisión milimétrica</em>.</span></div>
     <div class="line"><span>Como un buen mate: <em>cercano, intenso y que deja huella</em>.</span></div>
   </div>
@@ -49,7 +49,8 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.14;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 1;
     filter: contrast(1.1) brightness(0.98);
@@ -57,12 +58,19 @@
   }
 
   :global(body.theme-electric) .manifesto-ambient-bg {
-    opacity: 0.16;
+    opacity: 0.20;
+    mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
 
+  :global(body.theme-dark) .manifesto-ambient-bg {
+    opacity: 0.18;
+    mix-blend-mode: screen;
+  }
+
   :global(body.theme-mate) .manifesto-ambient-bg {
-    opacity: 0.15;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
 
