@@ -7,6 +7,8 @@ interface Service {
   desc: string;
   tags: string[];
   iconType: number;
+  link?: string;
+  linkText?: string;
 }
 
 const services: Service[] = [
@@ -20,9 +22,11 @@ const services: Service[] = [
   {
     num: "02",
     title: "Desarrollo de Aplicaciones & SaaS",
-    desc: "Sistemas a medida, marketplaces, cotizadores inteligentes y plataformas web con tecnologías modernas (Next.js, Astro) que automatizan tus ventas.",
-    tags: ["APPS A MEDIDA", "MARKETPLACES", "SAAS DIGITAL"],
-    iconType: 2
+    desc: "Sistemas a medida, portales de clientes extranet, cotizadores inteligentes y plataformas web con tecnologías modernas (Next.js, Astro) que automatizan tus cobros y ventas.",
+    tags: ["PORTALES B2B", "FACTURACIÓN CFE", "SAAS A MEDIDA"],
+    iconType: 2,
+    link: "/facturacion",
+    linkText: "EXPLORAR SUITE B2B & COBROS ↗"
   },
   {
     num: "03",
@@ -52,7 +56,14 @@ const services: Service[] = [
       <div class="cap-item">
         <div class="cap-num">{service.num}</div>
         <div class="cap-title">{service.title}</div>
-        <div class="cap-desc">{service.desc}</div>
+        <div class="cap-desc">
+          <span>{service.desc}</span>
+          {service.link && (
+            <div class="cap-service-link-wrap">
+              <a href={service.link} class="cap-service-link">{service.linkText}</a>
+            </div>
+          )}
+        </div>
         <div class="cap-tags">
           {service.tags.map(tag => (
             <span class="cap-tag">{tag}</span>
@@ -130,19 +141,18 @@ const services: Service[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom left;
-    opacity: 0.22;
-    mix-blend-mode: multiply;
+    opacity: 0.14;
     pointer-events: none;
     z-index: 0;
-    filter: contrast(1.15) brightness(0.95);
+    filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .capabilities-ambient-bg {
-    opacity: 0.26;
-    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+    opacity: 0.16;
+    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
   :global(body.theme-mate) .capabilities-ambient-bg {
-    opacity: 0.24;
+    opacity: 0.15;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   .cap-head {
@@ -264,6 +274,33 @@ const services: Service[] = [
     opacity: 0.85;
     max-width: 420px;
     transition: color 0.3s var(--ease), opacity 0.3s;
+  }
+  .cap-service-link-wrap {
+    margin-top: 10px;
+  }
+  .cap-service-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--mate);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s ease;
+  }
+  .cap-service-link:hover {
+    color: var(--rust);
+  }
+  :global(body.theme-electric) .cap-service-link {
+    color: var(--electric);
+  }
+  .cap-item:hover .cap-service-link {
+    color: var(--mate-light);
+  }
+  :global(body.theme-electric) .cap-item:hover .cap-service-link {
+    color: var(--electric);
   }
   .cap-tags {
     display: flex;

@@ -19,6 +19,12 @@
     <div class="line"><span>Pensamos con estrategia de negocio y <em>ejecutamos con precisión milimétrica</em>.</span></div>
     <div class="line"><span>Como un buen mate: <em>cercano, intenso y que deja huella</em>.</span></div>
   </div>
+
+  <div class="manifesto-action">
+    <a href="/manifiesto" class="manifesto-cta-link" data-cursor="METODOLOGÍA">
+      <span>EXPLORAR NUESTRA METODOLOGÍA & PROCESO</span> →
+    </a>
+  </div>
 </section>
 
 <style>
@@ -43,21 +49,20 @@
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.24;
-    mix-blend-mode: multiply;
+    opacity: 0.14;
     pointer-events: none;
     z-index: 1;
-    filter: contrast(1.15) brightness(0.95);
+    filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
 
   :global(body.theme-electric) .manifesto-ambient-bg {
-    opacity: 0.28;
-    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+    opacity: 0.16;
+    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
 
   :global(body.theme-mate) .manifesto-ambient-bg {
-    opacity: 0.26;
+    opacity: 0.15;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
 
@@ -189,5 +194,35 @@
       right: -10%;
       opacity: 0.18;
     }
+  }
+
+  .manifesto-action {
+    margin-top: clamp(28px, 4vw, 44px);
+    display: flex;
+    position: relative;
+    z-index: 2;
+  }
+
+  .manifesto-cta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink);
+    text-decoration: none;
+    padding: 10px 20px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    transition: all 0.25s var(--ease);
+  }
+
+  .manifesto-cta-link:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+    box-shadow: 2px 2px 0px var(--line);
+    transform: translate(-1px, -1px);
   }
 </style>

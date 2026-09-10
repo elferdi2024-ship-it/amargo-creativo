@@ -1,123 +1,35 @@
 ---
 // filepath: src/components/Showcase.astro
+import { projects, type Project } from '../lib/projects';
 
-export interface Project {
-  id: string;
-  category: 'all' | 'marketplace' | 'saas';
-  title: string;
-  yearCategory: string;
-  desc: string;
-  url: string;
-  img: string;
-  aspectWidth: number;
-  aspectHeight: number;
-  tags: string[];
+export interface Props {
+  limit?: number;
 }
 
-const projects: Project[] = [
-  {
-    id: "mercado-atlantida",
-    category: "marketplace",
-    title: "Mercado Atlántida",
-    yearCategory: "2026 — Polo Gastronómico & Comercial",
-    desc: "Plataforma digital interactiva y directorio comercial para el principal mercado gastronómico de la Costa de Oro. Directorio de puestos y locales en tiempo real, catálogo de productos con carga instantánea y pedidos directos a WhatsApp.",
-    url: "https://mercado-atlantida.elferdi2024.workers.dev/",
-    img: "/projects/mercado-atlantida.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["MARKETPLACE", "DIRECTORIO", "WHATSAPP COMMERCE"]
-  },
-  {
-    id: "barrio-uy",
-    category: "marketplace",
-    title: "Barrio.uy",
-    yearCategory: "2024 — Real Estate & Marketplace",
-    desc: "Plataforma inmobiliaria de élite en Uruguay. Búsqueda instantánea con Algolia SSR (<45ms), filtros reactivos en URL y catálogo geoespacial de alta retención que redujo la tasa de rebote en 45%.",
-    url: "https://www.barrio.uy/",
-    img: "/projects/barrio-uy.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["MARKETPLACE", "ALGOLIA SSR", "NEXT.JS 15"]
-  },
-  {
-    id: "lomax-propiedades",
-    category: "marketplace",
-    title: "LOMAX Propiedades",
-    yearCategory: "2026 — Inmobiliaria Premium & Curaduría",
-    desc: "Inmobiliaria boutique y curaduría editorial de residencias de autor y terrenos singulares en Montevideo y Punta del Este. Catálogo exclusivo, tasaciones de alta precisión y experiencia digital inmersiva para el mercado de lujo.",
-    url: "https://lomax-propiedades.elferdi2024.workers.dev/",
-    img: "/projects/lomax-propiedades.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["REAL ESTATE", "EDITORIAL", "CLOUDFLARE"]
-  },
-  {
-    id: "legendary-burger",
-    category: "saas",
-    title: "Legendary Burger",
-    yearCategory: "2025 — Food Tech & Smash Burgers",
-    desc: "Web app y e-commerce interactivo para marca líder de smash burgers en Canelones. Constructor personalizado 'Armá tu burger', pedidos directos a WhatsApp y checkout ultra-rápido respaldado en Supabase.",
-    url: "https://legendary-burger.vercel.app/",
-    img: "/projects/legendary-burger.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["FOOD TECH", "BURGER BUILDER", "WHATSAPP COMMERCE"]
-  },
-  {
-    id: "deal-motors",
-    category: "saas",
-    title: "Deal Motors UY",
-    yearCategory: "2025 — Automotora Digital & Trade-In",
-    desc: "Plataforma automotriz premium y representante oficial SHACMAN en Uruguay. Catálogo de vehículos seminuevos certificados con 240 puntos de inspección, cotizador inteligente de permutas (Trade-In) y gestión de inventario en tiempo real.",
-    url: "https://driveprime-eta.vercel.app/",
-    img: "/projects/driveprime.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["AUTOMOTRIZ", "TRADE-IN ENGINE", "NEXT.JS 15"]
-  },
-  {
-    id: "remate",
-    category: "marketplace",
-    title: "Distribuidora El Remate",
-    yearCategory: "2025 — Catálogo Mayorista & E-Commerce",
-    desc: "Ecosistema digital mayorista y minorista con más de 1.900 productos activos y 6 sucursales en Canelones. Buscador instantáneo de stock, selector de sucursales geolocalizado y canal de despacho express vía WhatsApp.",
-    url: "https://remate-psi.vercel.app/",
-    img: "/projects/remate.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["E-COMMERCE", "MAYORISTA", "CATÁLOGO DIGITAL"]
-  },
-  {
-    id: "avicola-control",
-    category: "saas",
-    title: "Avícola Control",
-    yearCategory: "2025 — Agro SaaS & Trazabilidad",
-    desc: "Software especializado en control operativo y trazabilidad avícola para plantas y productores. Gestión integral de lotes (Cobb 500 & Ross), balance de ración, curvas de ganancia de peso, faena y sincronización de planillas en tiempo real.",
-    url: "https://faconeros-app.vercel.app/hub",
-    img: "/projects/avicola-control.webp",
-    aspectWidth: 1200,
-    aspectHeight: 900,
-    tags: ["AGRO SAAS", "TRAZABILIDAD", "DASHBOARD"]
-  }
-];
+const { limit } = Astro.props;
+const displayedProjects = limit ? projects.slice(0, limit) : projects;
 ---
 <section class="showcase" id="showcase">
   <div class="showcase-head">
     <div>
-      <div class="section-label"><span class="num">04</span> TRABAJOS SELECCIONADOS</div>
-      <h2>NUESTRO <em>trabajo</em></h2>
+      <div class="section-label"><span class="num">03</span> CASOS DE ÉXITO</div>
+      <h2>TRABAJOS <em>seleccionados</em></h2>
       <div class="showcase-filters" role="tablist" aria-label="Filtrar proyectos">
-        <button class="filter-btn active" data-filter="all">TODOS ({projects.length})</button>
+        <button class="filter-btn active" data-filter="all">TODOS ({displayedProjects.length})</button>
         <button class="filter-btn" data-filter="marketplace">MARKETPLACE</button>
         <button class="filter-btn" data-filter="saas">SAAS & APPS</button>
       </div>
     </div>
-    <div class="info">Selección de proyectos activos construidos con tecnología de élite. Arrastra para explorar.</div>
+    <div class="showcase-head-right">
+      <a href="/proyectos" class="see-all-top-btn" data-cursor="PROYECTOS">
+        <span>VER TODOS LOS PROYECTOS ({projects.length})</span> →
+      </a>
+    </div>
   </div>
   <div class="projects-drag" id="projectsDrag">
-    {projects.map(project => (
+    {displayedProjects.map(project => (
       <div 
-        class="project-card" 
+        class="project-card tactile-card" 
         data-cursor="VER" 
         data-category={project.category}
         data-title={project.title} 
@@ -134,6 +46,13 @@ const projects: Project[] = [
             height={project.aspectHeight} 
             loading="lazy" 
           />
+          <div class="pc-loc-pill">{project.location}</div>
+          {project.lighthouse && (
+            <div class="pc-lighthouse-pill">
+              <span class="lh-dot">●</span>
+              <span>LIGHTHOUSE {project.lighthouse.perf}</span>
+            </div>
+          )}
           <div class="pc-arrow">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7 17L17 7M7 7h10v10"/>
@@ -141,18 +60,39 @@ const projects: Project[] = [
           </div>
         </div>
         <div class="pc-meta">
-          <div>
-            <div class="pc-title">{project.title}</div>
-            <span class="pc-year">{project.yearCategory}</span>
+          <div class="pc-head-info">
+            <div class="pc-title-row">
+              <h3 class="pc-title">{project.title}</h3>
+              <span class="pc-year">{project.yearCategory}</span>
+            </div>
           </div>
-          <div class="pc-tags">
-            {project.tags.map(tag => (
-              <span class="pc-tag">{tag}</span>
-            ))}
+          <div class="pc-tags-row">
+            <div class="pc-tags">
+              {project.tags.map(tag => (
+                <span class="pc-tag">{tag}</span>
+              ))}
+            </div>
+            {project.architecture?.speed && (
+              <div class="pc-speed-chip" title="Métricas de rendimiento en edge">
+                <span class="speed-bolt">⚡</span>
+                <span class="speed-val">{project.architecture.speed}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
     ))}
+
+    {limit && (
+      <div class="project-card see-all-card">
+        <a href="/proyectos" class="see-all-box" data-cursor="VER TODOS">
+          <span class="see-all-tag">● ARCHIVO COMPLETO</span>
+          <h3 class="see-all-heading">EXPLORAR TODOS LOS PROYECTOS</h3>
+          <p class="see-all-text">Marketplaces inmobiliarios, burger builder interactivo, plataformas de permutas y trazabilidad agro.</p>
+          <span class="see-all-cta-btn">VER 7 PROYECTOS ↗</span>
+        </a>
+      </div>
+    )}
   </div>
 </section>
 
@@ -218,13 +158,16 @@ const projects: Project[] = [
   .filter-btn {
     background: none;
     border: 1px solid var(--line);
-    padding: 6px 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    padding: 7px 16px;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--ink);
     cursor: pointer;
-    transition: all 0.3s var(--ease);
+    border-radius: 999px;
+    transition: all 0.25s var(--ease);
   }
   .filter-btn:hover {
     background: var(--ink);
@@ -271,12 +214,13 @@ const projects: Project[] = [
     display: flex;
     flex-direction: column;
     opacity: 0;
-    transform: translateY(60px);
+    transform: translateY(40px);
     transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
     flex: 0 0 auto;
-    width: clamp(300px, 50vw, 600px);
+    width: clamp(340px, 44vw, 540px);
     scroll-snap-align: start;
     will-change: transform, opacity;
+    border-radius: 18px;
   }
   .project-card.hidden {
     display: none !important;
@@ -303,6 +247,7 @@ const projects: Project[] = [
     width: 100%;
     border: 1px solid var(--line);
     aspect-ratio: 4/3;
+    border-radius: 14px;
   }
   .pc-img-wrap::after {
     content: '';
@@ -338,12 +283,54 @@ const projects: Project[] = [
   .project-card:active {
     transform: scale(0.99);
   }
+  .pc-loc-pill {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: rgba(10, 10, 10, 0.85);
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    padding: 4px 10px;
+    z-index: 2;
+    letter-spacing: 0.05em;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999px;
+  }
+  .pc-lighthouse-pill {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    background: rgba(10, 10, 10, 0.9);
+    color: #4ade80;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 4px 10px;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.08em;
+    border: 1px solid rgba(74, 222, 128, 0.3);
+    border-radius: 999px;
+  }
+  .lh-dot {
+    color: #4ade80;
+    animation: lhPulse 2s infinite ease-in-out;
+  }
+  @keyframes lhPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
   .pc-arrow {
     position: absolute;
     top: 16px;
     right: 16px;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     background: var(--electric);
     color: var(--ink);
     display: flex;
@@ -352,49 +339,312 @@ const projects: Project[] = [
     z-index: 2;
     transform: translate(60px, -60px);
     transition: transform 0.5s var(--ease-emphasis);
+    border: 1px solid #0a0a0a;
+    box-shadow: 2px 2px 0px #0a0a0a;
   }
   .pc-arrow svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
   .project-card:hover .pc-arrow {
     transform: translate(0, 0) rotate(0deg);
   }
+
   .pc-meta {
     display: flex;
-    justify-content: space-between;
-    padding: 20px 0 0;
-    align-items: flex-start;
-    gap: 16px;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px 4px 4px;
+    width: 100%;
+    box-sizing: border-box;
   }
+
+  .pc-head-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  .pc-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
   .pc-title {
-    font-family: 'Syne', sans-serif;
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     font-weight: 700;
-    font-size: clamp(20px, 2vw, 28px);
+    font-size: clamp(20px, 2.2vw, 25px);
     text-transform: uppercase;
     letter-spacing: -0.02em;
+    color: var(--ink);
+    line-height: 1.15;
+    margin: 0;
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
-  .pc-tags {
+
+  .pc-year {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--mute);
+    line-height: 1.4;
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+
+  .pc-tags-row {
     display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 8px;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    padding-top: 8px;
+    border-top: 1px solid rgba(10, 10, 10, 0.08);
   }
+
+  :global(body.theme-dark) .pc-tags-row,
+  :global(body.theme-electric) .pc-tags-row {
+    border-top-color: rgba(255, 255, 255, 0.1);
+  }
+
+  .pc-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   .pc-tag {
-    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     border: 1px solid var(--line);
-    padding: 4px 8px;
+    padding: 3px 9px;
     white-space: nowrap;
     color: var(--ink);
     opacity: 0.85;
+    border-radius: 999px;
+    transition: all 0.2s var(--ease);
   }
-  .pc-year {
+
+  .pc-tag:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+    opacity: 1;
+  }
+
+  .pc-speed-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--mate);
+    background: rgba(45, 99, 53, 0.08);
+    border: 1px solid rgba(45, 99, 53, 0.2);
+    padding: 3px 8px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  :global(body.theme-electric) .pc-speed-chip {
+    color: var(--electric);
+    background: rgba(212, 255, 0, 0.08);
+    border-color: rgba(212, 255, 0, 0.25);
+  }
+
+  .speed-bolt {
+    color: #eab308;
+    font-size: 10px;
+  }
+
+  .showcase-head-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .see-all-top-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
     color: var(--ink);
-    opacity: 0.7;
-    margin-top: 8px;
-    display: block;
+    text-decoration: none;
+    padding: 9px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    transition: all 0.25s var(--ease);
+  }
+
+  .see-all-top-btn:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--line);
+    box-shadow: 2px 2px 0px var(--line);
+  }
+
+  .see-all-card {
+    border: 1px dashed var(--line);
+    background: var(--paper);
+    display: flex;
+    align-items: stretch;
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .see-all-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 32px;
+    text-decoration: none;
+    color: inherit;
+    width: 100%;
+    height: 100%;
+    background: var(--charcoal);
+    color: #ffffff;
+    box-sizing: border-box;
+    border-radius: 18px;
+    transition: background 0.3s var(--ease);
+  }
+
+  :global(body.theme-electric) .see-all-box {
+    background: #000000;
+    border: 1px solid var(--electric);
+  }
+
+  .see-all-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--electric);
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+
+  .see-all-heading {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(22px, 2.5vw, 32px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    color: #ffffff;
+  }
+
+  .see-all-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(244, 241, 234, 0.8);
+    margin-bottom: 24px;
+  }
+
+  .see-all-cta-btn {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: var(--electric);
+    color: #0a0a0a;
+    padding: 10px 20px;
+    border: 1px solid #0a0a0a;
+    border-radius: 999px;
+  }
+
+  .see-all-box:hover .see-all-cta-btn {
+    background: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .showcase {
+      padding-bottom: 56px;
+    }
+
+    .showcase-head {
+      padding: 40px 0 20px;
+      margin-bottom: 24px;
+      gap: 16px;
+    }
+
+    .showcase-head h2 {
+      font-size: clamp(32px, 8vw, 44px);
+      line-height: 0.95;
+    }
+
+    .showcase-head-right {
+      width: 100%;
+    }
+
+    .see-all-top-btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .projects-drag {
+      gap: 16px;
+      padding-bottom: 24px;
+      scroll-padding: 0 16px;
+    }
+
+    .project-card {
+      width: clamp(285px, 84vw, 360px);
+      border-radius: 16px;
+    }
+
+    .pc-title-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 3px;
+    }
+
+    .pc-title {
+      font-size: 19px;
+      line-height: 1.2;
+    }
+
+    .pc-year {
+      font-size: 12px;
+      white-space: normal;
+    }
+
+    .pc-tags-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .pc-speed-chip {
+      font-size: 9px;
+      padding: 3px 7px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .see-all-box {
+      padding: 28px 20px;
+    }
+
+    .see-all-heading {
+      font-size: 22px;
+    }
   }
 </style>

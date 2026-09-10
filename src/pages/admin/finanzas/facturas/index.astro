@@ -40,9 +40,14 @@ const filtered = (invoices || []).filter((inv) => {
         <a href="/admin/finanzas">← Volver al Dashboard Financiero</a>
         <h2>Facturas y Comprobantes</h2>
       </div>
-      <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
-        + Emitir Nueva Factura
-      </a>
+      <div class="top-actions-row">
+        <a href="/admin/finanzas/configuracion" class="btn-sec-sm">
+          ⚙ Configuración CFE
+        </a>
+        <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
+          + Emitir Nueva Factura
+        </a>
+      </div>
     </div>
 
     <!-- FILTERS -->
@@ -136,7 +141,10 @@ const filtered = (invoices || []).filter((inv) => {
               <td style="text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--adm-lime);">
                 {formatMoney(Number(inv.total), inv.currency)}
               </td>
-              <td style="text-align: right;">
+              <td style="text-align: right; white-space: nowrap;">
+                <a href={`/comprobante/${inv.id}`} target="_blank" class="btn-portal-sm" title="Ver comprobante del cliente">
+                  Portal ↗
+                </a>
                 <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">
                   Ver Factura →
                 </a>
@@ -290,5 +298,51 @@ const filtered = (invoices || []).filter((inv) => {
   .btn-sm:hover {
     background: rgba(255, 255, 255, 0.12);
     border-color: var(--adm-lime);
+  }
+
+  .top-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn-sec-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.85rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-sec-sm:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--adm-lime);
+  }
+
+  .btn-portal-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.65rem;
+    background: rgba(200, 255, 0, 0.08);
+    border: 1px solid rgba(200, 255, 0, 0.3);
+    border-radius: 6px;
+    color: var(--adm-lime);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-right: 6px;
+    transition: all 0.15s ease;
+  }
+
+  .btn-portal-sm:hover {
+    background: var(--adm-lime);
+    color: #0a0a0a;
   }
 </style>

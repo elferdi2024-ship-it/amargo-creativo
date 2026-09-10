@@ -1,6 +1,12 @@
 ---
 // filepath: src/components/FAQ.astro
 
+interface Props {
+  sectionNum?: string;
+}
+
+const { sectionNum = "08" } = Astro.props;
+
 interface FAQItem {
   num: string;
   question: string;
@@ -34,7 +40,7 @@ const faqs: FAQItem[] = [
   <!-- Marca de Agua Ambiental Decorativa -->
   <div class="faq-ambient-bg" aria-hidden="true"></div>
   <div class="faq-head">
-    <div class="section-label"><span class="num">08</span> PREGUNTAS FRECUENTES</div>
+    <div class="section-label"><span class="num">{sectionNum}</span> PREGUNTAS FRECUENTES</div>
     <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
   </div>
   <div class="faq-list">
@@ -73,26 +79,25 @@ const faqs: FAQItem[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.22;
-    mix-blend-mode: multiply;
+    opacity: 0.14;
     pointer-events: none;
     z-index: 0;
-    filter: contrast(1.15) brightness(0.95);
+    filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .faq-ambient-bg {
-    opacity: 0.26;
-    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+    opacity: 0.16;
+    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
   :global(body.theme-mate) .faq-ambient-bg {
-    opacity: 0.24;
+    opacity: 0.15;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   @media (max-width: 768px) {
     .faq-ambient-bg {
       width: 75vw;
       right: -12%;
-      opacity: 0.16;
+      opacity: 0.12;
     }
   }
   .faq-head {

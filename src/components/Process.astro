@@ -1,6 +1,12 @@
 ---
 // filepath: src/components/Process.astro
 
+interface Props {
+  sectionNum?: string;
+}
+
+const { sectionNum = "07" } = Astro.props;
+
 interface Step {
   num: string;
   title: string;
@@ -35,7 +41,7 @@ const steps: Step[] = [
   <div class="process-ambient-bg" aria-hidden="true"></div>
 
   <div class="process-head">
-    <div class="section-label"><span class="num">07</span> METODOLOGÍA & PROCESO</div>
+    <div class="section-label"><span class="num">{sectionNum}</span> METODOLOGÍA & PROCESO</div>
     <h2>Del primer mate <em>al lanzamiento</em></h2>
   </div>
   <div class="process-list" id="processList">
@@ -65,26 +71,25 @@ const steps: Step[] = [
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.24;
-    mix-blend-mode: multiply;
+    opacity: 0.14;
     pointer-events: none;
     z-index: 0;
-    filter: contrast(1.15) brightness(0.95);
+    filter: contrast(1.1) brightness(0.98);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .process-ambient-bg {
-    opacity: 0.28;
-    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+    opacity: 0.16;
+    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
   :global(body.theme-mate) .process-ambient-bg {
-    opacity: 0.26;
+    opacity: 0.15;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
   @media (max-width: 768px) {
     .process-ambient-bg {
       width: 75vw;
       right: -12%;
-      opacity: 0.18;
+      opacity: 0.12;
     }
   }
 </style>

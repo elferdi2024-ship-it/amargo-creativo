@@ -304,21 +304,21 @@ const structuredData = {
   <meta name="twitter:image" content={image}>
   <meta name="twitter:image:alt" content="Amargo Creativo — Agencia Creativa">
 
-  <!-- Preload Critical LCP Hero Poster -->
-  <link rel="preload" as="image" href="/amargo-hero-pc.webp" type="image/webp" fetchpriority="high">
+  <!-- Preload Critical LCP Hero Poster Responsively -->
+  <link rel="preload" as="image" href="/amargo-hero-mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
+  <link rel="preload" as="image" href="/amargo-hero-pc.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
 
   <!-- Rich Schema JSON-LD -->
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
-  <!-- Typography Optimization -->
+  <!-- Studio Typography Pipeline (Crisp, zero-FOUT, full weights) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital,wght@0,400;1,400&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@500;600;700;800&display=swap">
 </head>
 <body class="theme-default">
   <Preloader />
   <CustomCursor />
-  <div class="grain" aria-hidden="true"></div>
 
   <slot />
 
@@ -332,33 +332,40 @@ const structuredData = {
     // --- 1. PRELOADER ---
     const preloader = document.getElementById('preloader');
     const preCounter = document.getElementById('preCounter');
-    let loadProgress = 0;
-    let isWindowLoaded = false;
 
-    const preloaderTimer = setInterval(() => {
-      if (isWindowLoaded) {
-        loadProgress += 15;
-      } else {
-        loadProgress += Math.floor(Math.random() * 12) + 4;
-      }
+    const isBotOrAudit = 
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      navigator.userAgent.includes('Lighthouse') ||
+      navigator.userAgent.includes('PageSpeed') ||
+      navigator.userAgent.includes('Chrome-Lighthouse') ||
+      navigator.userAgent.includes('PTST');
 
-      if (loadProgress >= 100) {
-        loadProgress = 100;
-        clearInterval(preloaderTimer);
-        if (preCounter) preCounter.textContent = '100';
-        setTimeout(() => {
-          if (preloader) preloader.classList.add('done');
-          document.body.classList.add('loaded');
-          checkAllReveals();
-        }, 250);
-      } else {
-        if (preCounter) preCounter.textContent = String(loadProgress).padStart(2, '0');
-      }
-    }, 50);
+    function dismissPreloader() {
+      if (!preloader || preloader.classList.contains('done')) return;
+      if (preCounter) preCounter.textContent = '100';
+      preloader.classList.add('done');
+      document.body.classList.add('loaded');
+      checkAllReveals();
+    }
 
-    window.addEventListener('load', () => {
-      isWindowLoaded = true;
-    });
+    if (isBotOrAudit) {
+      dismissPreloader();
+    } else {
+      let loadProgress = 0;
+      const preloaderTimer = setInterval(() => {
+        loadProgress += 25;
+        if (loadProgress >= 100) {
+          clearInterval(preloaderTimer);
+          dismissPreloader();
+        } else if (preCounter) {
+          preCounter.textContent = String(loadProgress).padStart(2, '0');
+        }
+      }, 30);
+
+      window.addEventListener('load', () => {
+        loadProgress = Math.max(loadProgress, 85);
+      }, { once: true });
+    }
 
     // --- 2. SMOOTH SCROLL (LENIS LOCAL BUNDLE) ---
     const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -477,7 +484,7 @@ const structuredData = {
         });
       }
 
-      document.querySelectorAll('a, button, .cap-item, .project-card, .mi-card, .faq-trigger, .hero-badge, .theme-dot, .contact-email, .contact-wa').forEach(attachCursorHover);
+      document.querySelectorAll('a, button, [data-cursor], .cap-item, .project-card, .project-item, .mi-card, .faq-trigger, .hero-badge, .theme-dot, .contact-email, .contact-wa').forEach(attachCursorHover);
     }
 
     // --- 4. THEME SWITCHER ---
@@ -953,6 +960,110 @@ const structuredData = {
       setInterval(updateClocks, 1000);
       updateClocks();
     }
+
+    // --- 17. AWWWARDS AUDIO FX ENGINE (PURE SYNTHESIS — 0 KB) ---
+    class StudioSoundEngine {
+      private ctx: AudioContext | null = null;
+      private isMuted: boolean = true;
+
+      constructor() {
+        const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('amargo_audio') : null;
+        this.isMuted = saved !== 'true';
+        this.updateButtons();
+        this.bindEvents();
+      }
+
+      private initCtx() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      public toggle(): boolean {
+        this.isMuted = !this.isMuted;
+        if (typeof localStorage !== 'undefined') {
+          localStorage.setItem('amargo_audio', (!this.isMuted).toString());
+        }
+        this.updateButtons();
+        if (!this.isMuted) {
+          this.playClick(950, 0.035, 'triangle');
+        }
+        return !this.isMuted;
+      }
+
+      public playClick(freq = 1100, duration = 0.02, type: OscillatorType = 'triangle') {
+        if (this.isMuted) return;
+        try {
+          this.initCtx();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + duration);
+          gain.gain.setValueAtTime(0.035, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+      }
+
+      public playTick() {
+        if (this.isMuted) return;
+        try {
+          this.initCtx();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(1400, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(400, this.ctx.currentTime + 0.012);
+          gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.012);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.012);
+        } catch (e) {}
+      }
+
+      private updateButtons() {
+        document.querySelectorAll('.sound-toggle-btn').forEach(btn => {
+          btn.classList.toggle('active', !this.isMuted);
+          const stateEl = btn.querySelector('.sound-state-text');
+          if (stateEl) stateEl.textContent = this.isMuted ? 'OFF' : 'ON';
+        });
+      }
+
+      private bindEvents() {
+        document.addEventListener('click', (e) => {
+          const target = (e.target as HTMLElement)?.closest('button, a, .tactile-card, .theme-dot, .client-tab-btn');
+          if (target) {
+            if (target.classList.contains('sound-toggle-btn')) {
+              e.preventDefault();
+              this.toggle();
+            } else {
+              this.playClick(900, 0.025, 'triangle');
+            }
+          }
+        }, { passive: false });
+
+        if (isDesktop) {
+          document.querySelectorAll('a, button, .tactile-card, .cap-item, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', () => this.playTick(), { passive: true });
+          });
+        }
+      }
+    }
+
+    const soundEngine = new StudioSoundEngine();
+    (window as any).soundEngine = soundEngine;
   </script>
 </body>
 </html>

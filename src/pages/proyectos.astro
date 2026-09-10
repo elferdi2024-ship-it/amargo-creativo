@@ -1,0 +1,1399 @@
+---
+// filepath: src/pages/proyectos.astro
+export const prerender = true;
+
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import { projects } from '../lib/projects';
+
+const pageTitle = "Proyectos, Plataformas & Casos de Éxito | Amargo Creativo";
+const pageDescription = "Archivo técnico de proyectos digitales a medida: marketplaces inmobiliarios, cotizadores en tiempo real, foodtech y software SaaS en Uruguay, Argentina y España.";
+const canonicalUrl = "https://amargo-creativo.pages.dev/proyectos";
+const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
+---
+<Layout 
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  image={ogImage}
+>
+  <Navbar />
+  
+  <main id="main-content" class="projects-page">
+    <!-- Header Hero Editorial -->
+    <header class="page-head">
+      <div class="page-head-container">
+        <div class="header-top-meta">
+          <div class="section-badge-top">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span>ARCHIVO TÉCNICO DE PRODUCCIÓN AMARGO™</span>
+            <span class="badge-separator">•</span>
+            <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+          </div>
+          <div class="header-stamp-row">
+            <span class="geo-coord">COORD: -34.7719° S, 55.7594° W // ATLÁNTIDA, UY</span>
+            <span class="live-counter" id="liveCounter">MOSTRANDO {projects.length} DE {projects.length} PROYECTOS</span>
+          </div>
+        </div>
+
+        <h1 class="page-title">
+          CASOS REALES &amp; INGENIERÍA <em>sin plantillas</em>
+        </h1>
+        
+        <p class="page-subtitle">
+          No vendemos maquetas ni temas prediseñados de ThemeForest. Cada proyecto es un activo digital diseñado desde cero para dominar en velocidad (&lt;0.8s), escalar en la nube y cerrar ventas directas por WhatsApp.
+        </p>
+
+        <!-- Barra de Estadísticas Clave -->
+        <div class="stats-strip">
+          <div class="stat-cell">
+            <strong>07</strong>
+            <span>PROYECTOS EN VIVO</span>
+          </div>
+          <div class="stat-cell">
+            <strong>&lt; 0.8s</strong>
+            <span>TIEMPO MEDIO LCP</span>
+          </div>
+          <div class="stat-cell">
+            <strong>100%</strong>
+            <span>CÓDIGO A MEDIDA</span>
+          </div>
+          <div class="stat-cell">
+            <strong>0%</strong>
+            <span>DEPENDENCIAS CAUTIVAS</span>
+          </div>
+        </div>
+
+        <!-- Barra de Controles y Búsqueda Reactiva -->
+        <div class="controls-bar">
+          <div class="filter-controls" role="tablist" aria-label="Filtrar por categoría">
+            <button class="filter-pill active" data-filter="all">TODOS ({projects.length})</button>
+            <button class="filter-pill" data-filter="marketplace">MARKETPLACES &amp; REAL ESTATE (3)</button>
+            <button class="filter-pill" data-filter="saas">SAAS &amp; AUTOMOTRIZ (2)</button>
+            <button class="filter-pill" data-filter="ecommerce">FOODTECH &amp; E-COMMERCE (2)</button>
+          </div>
+
+          <div class="search-input-wrap">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input 
+              type="text" 
+              id="projectSearch" 
+              placeholder="Buscar por tecnología, stack o cliente..." 
+              class="search-input"
+              aria-label="Buscar en el catálogo de proyectos"
+            />
+          </div>
+        </div>
+
+        <!-- Chips de Filtro Rápido por Tecnología -->
+        <div class="quick-tags-strip">
+          <span class="quick-label">FILTROS RÁPIDOS:</span>
+          <button type="button" class="quick-tag-chip" data-tag="algolia">#ALGOLIA</button>
+          <button type="button" class="quick-tag-chip" data-tag="supabase">#SUPABASE</button>
+          <button type="button" class="quick-tag-chip" data-tag="next.js">#NEXT.JS</button>
+          <button type="button" class="quick-tag-chip" data-tag="cloudflare">#CLOUDFLARE</button>
+          <button type="button" class="quick-tag-chip" data-tag="whatsapp">#WHATSAPP</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Grid de Casos de Estudio -->
+    <section class="projects-grid-section">
+      <div class="projects-grid" id="projectsGrid">
+        {projects.map((project, idx) => (
+          <article 
+            class="project-card tactile-card" 
+            data-category={project.category}
+            data-search={`${project.title} ${project.client} ${project.tags.join(' ')} ${project.desc} ${project.location}`.toLowerCase()}
+            data-cursor="VER"
+          >
+            <!-- Media Visual -->
+            <div class="project-media">
+              <img 
+                src={project.img} 
+                alt={`Captura de producción de ${project.title}`}
+                class="project-img"
+                width={project.aspectWidth}
+                height={project.aspectHeight}
+                loading={idx < 2 ? "eager" : "lazy"}
+                decoding="async"
+              />
+              <div class="media-tags-top">
+                <span class="project-num">0{idx + 1}</span>
+                <span class="project-loc">{project.location}</span>
+                <span class="project-status">
+                  <span class="status-pulse-mini"></span>
+                  {project.status}
+                </span>
+              </div>
+              <a 
+                href={project.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="live-chip"
+                aria-label={`Abrir sitio de ${project.title}`}
+                data-cursor="VISITAR"
+              >
+                <span>{project.liveUrlLabel}</span> ↗
+              </a>
+            </div>
+
+            <!-- Contenido Editorial -->
+            <div class="project-body">
+              <div class="project-client-row">
+                <span class="client-name">{project.client}</span>
+                <span class="project-year-label">{project.yearCategory}</span>
+              </div>
+
+              <h2 class="project-title">{project.title}</h2>
+              <p class="project-summary">{project.desc}</p>
+
+              <!-- Métrica de Impacto Destacada -->
+              <div class="project-metric-box">
+                <span class="metric-icon">⚡</span>
+                <span class="metric-text">{project.keyResult}</span>
+              </div>
+
+              <!-- Puntuación Lighthouse Real -->
+              <div class="lighthouse-strip" title="Métricas auditadas con Google Lighthouse">
+                <div class="lh-pill">
+                  <span class="lh-label">PERF</span>
+                  <span class="lh-score score-100">{project.lighthouse.perf}</span>
+                </div>
+                <div class="lh-pill">
+                  <span class="lh-label">A11Y</span>
+                  <span class="lh-score score-100">{project.lighthouse.a11y}</span>
+                </div>
+                <div class="lh-pill">
+                  <span class="lh-label">PRACT</span>
+                  <span class="lh-score score-100">{project.lighthouse.bp}</span>
+                </div>
+                <div class="lh-pill">
+                  <span class="lh-label">SEO</span>
+                  <span class="lh-score score-100">{project.lighthouse.seo}</span>
+                </div>
+              </div>
+
+              <!-- Desafío & Solución Técnica -->
+              <div class="case-details">
+                <div class="case-detail-item">
+                  <strong>EL DESAFÍO:</strong>
+                  <p>{project.challenge}</p>
+                </div>
+                <div class="case-detail-item">
+                  <strong>LA SOLUCIÓN TÉCNICA:</strong>
+                  <p>{project.solution}</p>
+                </div>
+              </div>
+
+              <!-- Acordeón Desplegable de Ficha de Arquitectura -->
+              <details class="tech-spec-drawer">
+                <summary class="spec-drawer-toggle">
+                  <span>[ VER ARQUITECTURA TÉCNICA ]</span>
+                  <span class="toggle-arrow">▾</span>
+                </summary>
+                <div class="spec-drawer-content">
+                  <div class="spec-item">
+                    <span class="spec-kicker">STACK &amp; RUNTIME:</span>
+                    <span class="spec-val">{project.architecture.stack}</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-kicker">EDGE CDN &amp; STREAM:</span>
+                    <span class="spec-val">{project.architecture.edge}</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-kicker">DATABASE / INDEX:</span>
+                    <span class="spec-val">{project.architecture.database}</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-kicker">TELEMETRÍA CWV:</span>
+                    <span class="spec-val highlight-speed">{project.architecture.speed}</span>
+                  </div>
+                </div>
+              </details>
+
+              <!-- Tech Stack Badges con Interacción de Filtro -->
+              <div class="tech-stack-row">
+                {project.tags.map(tag => (
+                  <button 
+                    type="button" 
+                    class="stack-badge filter-by-tag-btn" 
+                    data-tag={tag.toLowerCase()} 
+                    title={`Filtrar por ${tag}`}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+
+              <!-- Botones de Acción Directa -->
+              <div class="project-actions">
+                <a 
+                  href={project.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="action-btn-live"
+                  data-cursor="VISITAR"
+                >
+                  VER DEMO EN VIVO ↗
+                </a>
+                <a 
+                  href={`https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20vi%20el%20proyecto%20${encodeURIComponent(project.title)}%20y%20quiero%20cotizar%20un%20proyecto%20similar`} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  class="action-btn-quote"
+                  data-cursor="WHATSAPP"
+                >
+                  COTIZAR SIMILAR
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div id="noResults" class="no-results" style="display: none;">
+        <p>No se encontraron proyectos con ese criterio de búsqueda.</p>
+        <button id="resetSearch" class="reset-search-btn">VER TODOS LOS PROYECTOS</button>
+      </div>
+    </section>
+
+    <!-- Matriz de Benchmark Técnico -->
+    <section class="benchmark-section">
+      <div class="benchmark-container">
+        <div class="section-label">
+          <span class="num">02</span> COMPARATIVA TÉCNICA DE RENDIMIENTO
+        </div>
+        <h2 class="benchmark-heading">AMARGO STACK <em>vs</em> AGENCIAS TRADICIONALES</h2>
+        <p class="benchmark-sub">
+          Por qué nuestras webs cargan en menos de un segundo y las de WordPress demoran 4 segundos.
+        </p>
+
+        <div class="table-wrap">
+          <table class="benchmark-table">
+            <thead>
+              <tr>
+                <th>CRITERIO TÉCNICO</th>
+                <th class="col-highlight">AMARGO CREATIVO (ASTRO 5 / NEXT.JS 15)</th>
+                <th>AGENCIAS CON WORDPRESS / ELEMENTOR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Tiempo de Carga (LCP)</strong></td>
+                <td class="col-highlight"><span class="badge-good">&lt; 0.8 segundos</span> (Instantáneo)</td>
+                <td><span class="badge-bad">3.8 a 6.5 segundos</span> (Lento)</td>
+              </tr>
+              <tr>
+                <td><strong>Lighthouse Performance</strong></td>
+                <td class="col-highlight"><span class="badge-good">95 - 100 / 100</span> garantizado</td>
+                <td><span class="badge-bad">35 - 65 / 100</span> habitual</td>
+              </tr>
+              <tr>
+                <td><strong>Embudos de Venta</strong></td>
+                <td class="col-highlight">Integración nativa directa a WhatsApp</td>
+                <td>Formularios estáticos o carritos abandonados</td>
+              </tr>
+              <tr>
+                <td><strong>Búsqueda &amp; Catálogo</strong></td>
+                <td class="col-highlight">Algolia SSR InstantSearch (&lt;45ms)</td>
+                <td>Búsquedas SQL pesadas que congelan el servidor</td>
+              </tr>
+              <tr>
+                <td><strong>Propiedad del Código</strong></td>
+                <td class="col-highlight">100% tuyo, sin ataduras ni costos cautivos</td>
+                <td>Dependencia de licencias mensuales de plugins</td>
+              </tr>
+              <tr>
+                <td><strong>Seguridad &amp; Mantenimiento</strong></td>
+                <td class="col-highlight">Inmune a inyecciones SQL / Cloudflare Edge</td>
+                <td>Vulnerable a hackeos por plugins desactualizados</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner de Cierre con Conversión a WhatsApp -->
+    <section class="cta-banner-wrap">
+      <div class="cta-card">
+        <div class="cta-info">
+          <span class="cta-mini-tag">● DISPONIBILIDAD INMEDIATA</span>
+          <h2 class="cta-title">¿QUERÉS QUE CONSTRUYAMOS TU PRÓXIMO ACTIVO DIGITAL?</h2>
+          <p class="cta-desc">
+            Evaluamos tu negocio, planificamos la arquitectura y entregamos tu web o app lista para vender en tiempo récord.
+          </p>
+        </div>
+        <div class="cta-buttons">
+          <a 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="cta-wa-btn magnetic-btn"
+            data-cursor="WHATSAPP"
+          >
+            <span>HABLAR POR WHATSAPP</span> ↗
+          </a>
+          <a href="/servicios-crecimiento" class="cta-secondary-link">
+            EXPLORAR SERVICIOS &amp; PLANES →
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Filtrado reactivo y búsqueda en vivo de proyectos
+  const pills = document.querySelectorAll('.filter-pill');
+  const cards = document.querySelectorAll('.project-card') as NodeListOf<HTMLElement>;
+  const searchInput = document.getElementById('projectSearch') as HTMLInputElement;
+  const noResults = document.getElementById('noResults') as HTMLElement;
+  const resetBtn = document.getElementById('resetSearch') as HTMLButtonElement;
+  const liveCounter = document.getElementById('liveCounter');
+  const quickTags = document.querySelectorAll('.quick-tag-chip');
+  const tagBtns = document.querySelectorAll('.filter-by-tag-btn');
+
+  let currentCategory = 'all';
+  let currentSearchQuery = '';
+  const totalProjects = cards.length;
+
+  function applyFilters() {
+    let visibleCount = 0;
+
+    cards.forEach(card => {
+      const category = card.getAttribute('data-category');
+      const searchText = card.getAttribute('data-search') || '';
+
+      const matchesCat = (currentCategory === 'all' || category === currentCategory);
+      const matchesSearch = (!currentSearchQuery || searchText.includes(currentSearchQuery));
+
+      if (matchesCat && matchesSearch) {
+        card.style.display = 'flex';
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    if (noResults) {
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    if (liveCounter) {
+      liveCounter.textContent = `MOSTRANDO ${visibleCount} DE ${totalProjects} PROYECTOS`;
+    }
+  }
+
+  pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      pills.forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      currentCategory = pill.getAttribute('data-filter') || 'all';
+      applyFilters();
+    });
+  });
+
+  searchInput?.addEventListener('input', () => {
+    currentSearchQuery = searchInput.value.trim().toLowerCase();
+    applyFilters();
+  });
+
+  quickTags.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const tag = chip.getAttribute('data-tag') || '';
+      if (searchInput) {
+        searchInput.value = tag;
+        currentSearchQuery = tag.toLowerCase();
+        applyFilters();
+      }
+    });
+  });
+
+  tagBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tag = btn.getAttribute('data-tag') || '';
+      if (searchInput) {
+        searchInput.value = tag;
+        currentSearchQuery = tag.toLowerCase();
+        applyFilters();
+      }
+    });
+  });
+
+  resetBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    currentSearchQuery = '';
+    currentCategory = 'all';
+    pills.forEach(p => p.classList.remove('active'));
+    pills[0]?.classList.add('active');
+    applyFilters();
+  });
+</script>
+
+<style>
+  .projects-page {
+    padding-top: calc(70px + env(safe-area-inset-top));
+    background: var(--paper);
+    min-height: 100vh;
+  }
+
+  .page-head {
+    padding: clamp(44px, 6vw, 84px) var(--gut) 48px;
+    border-bottom: 1px solid var(--line);
+    background: var(--bone);
+  }
+
+  .page-head-container {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .header-top-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .section-badge-top {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--mate);
+    background: rgba(45, 99, 53, 0.08);
+    padding: 6px 14px;
+    border: 1px solid rgba(45, 99, 53, 0.2);
+    border-radius: 999px;
+    flex-wrap: wrap;
+  }
+
+  :global(body.theme-electric) .section-badge-top {
+    color: var(--electric);
+    background: rgba(212, 255, 0, 0.08);
+    border-color: rgba(212, 255, 0, 0.25);
+  }
+
+  .header-stamp-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--mute);
+    flex-wrap: wrap;
+  }
+
+  .geo-coord {
+    opacity: 0.7;
+    letter-spacing: 0.05em;
+  }
+
+  .live-counter {
+    background: var(--ink);
+    color: var(--bone);
+    padding: 3px 8px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  :global(body.theme-electric) .live-counter {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    background: #22c55e;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #22c55e;
+    animation: pulseGlow 2s infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.85); }
+  }
+
+  .badge-separator {
+    color: var(--mute);
+    opacity: 0.5;
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 6.2vw, 90px);
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  .page-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+
+  .page-subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(15px, 1.4vw, 19px);
+    line-height: 1.5;
+    color: var(--ink);
+    opacity: 0.88;
+    max-width: 840px;
+    margin-bottom: 36px;
+  }
+
+  /* BARRA DE ESTADÍSTICAS */
+  .stats-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 24px;
+    margin-bottom: 36px;
+  }
+
+  .stat-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 1px solid rgba(0,0,0,0.1);
+    padding-right: 16px;
+  }
+
+  .stat-cell:last-child {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .stat-cell strong {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(24px, 2.5vw, 36px);
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .stat-cell span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+
+  /* CONTROLES Y BUSCADOR */
+  .controls-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .filter-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .filter-pill {
+    background: transparent;
+    border: 1px solid var(--line);
+    padding: 9px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .filter-pill:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  .filter-pill.active {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--ink);
+    box-shadow: 2px 2px 0px var(--ink);
+  }
+
+  .search-input-wrap {
+    position: relative;
+    min-width: 280px;
+    flex: 1;
+    max-width: 380px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: var(--mute);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 10px 14px 10px 36px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: var(--mate);
+    box-shadow: 2px 2px 0px var(--line);
+  }
+  :global(body.theme-electric) .search-input:focus {
+    border-color: var(--electric);
+  }
+
+  .quick-tags-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 4px;
+  }
+
+  .quick-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+  }
+
+  .quick-tag-chip {
+    background: var(--paper);
+    border: 1px dashed var(--line);
+    padding: 3px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .quick-tag-chip:hover {
+    background: var(--ink);
+    color: var(--bone);
+    border-style: solid;
+  }
+
+  /* GRID DE PROYECTOS */
+  .projects-grid-section {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(40px, 6vw, 80px) var(--gut);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(320px, 45vw, 560px), 1fr));
+    gap: clamp(32px, 4vw, 52px);
+  }
+
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--line);
+    background: var(--bone);
+    position: relative;
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+
+  .project-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 6px 6px 0px var(--line);
+  }
+
+  .project-media {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: var(--hover-bg);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .project-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s var(--ease);
+  }
+
+  .project-card:hover .project-img {
+    transform: scale(1.04);
+  }
+
+  .media-tags-top {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    gap: 6px;
+    z-index: 2;
+    flex-wrap: wrap;
+  }
+
+  .project-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    background: #0a0a0a;
+    color: var(--electric);
+    padding: 3px 8px;
+    border-radius: 2px;
+  }
+
+  .project-loc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
+    background: rgba(10, 10, 10, 0.85);
+    color: #ffffff;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  .project-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: rgba(244, 241, 234, 0.95);
+    color: #0a0a0a;
+    padding: 3px 7px;
+    border-radius: 2px;
+  }
+
+  .status-pulse-mini {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 4px #22c55e;
+  }
+
+  .live-chip {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: var(--electric);
+    color: #0a0a0a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    text-decoration: none;
+    border: 1px solid #0a0a0a;
+    z-index: 2;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .live-chip:hover {
+    background: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  /* CUERPO DEL PROYECTO */
+  .project-body {
+    padding: clamp(20px, 3vw, 32px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .project-client-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .client-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mate);
+  }
+
+  :global(body.theme-electric) .client-name {
+    color: var(--electric);
+  }
+
+  .project-year-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--mute);
+  }
+
+  .project-title {
+    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 2.4vw, 30px);
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 10px;
+    line-height: 1.15;
+  }
+
+  .project-summary {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    opacity: 0.88;
+    margin-bottom: 16px;
+  }
+
+  /* MÉTRICA DESTACADA */
+  .project-metric-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 9px 12px;
+    margin-bottom: 14px;
+  }
+
+  .metric-icon {
+    font-size: 14px;
+  }
+
+  .metric-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* LIGHTHOUSE STRIP */
+  .lighthouse-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .lh-pill {
+    background: #0a0a0a;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+  }
+
+  .lh-label {
+    opacity: 0.7;
+  }
+
+  .lh-score {
+    font-weight: 800;
+    color: #4ade80;
+  }
+
+  /* DESAFÍO Y SOLUCIÓN */
+  .case-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 14px 0;
+    margin-bottom: 16px;
+  }
+
+  .case-detail-item strong {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    margin-bottom: 2px;
+  }
+
+  .case-detail-item p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    line-height: 1.45;
+    color: var(--ink);
+    opacity: 0.85;
+  }
+
+  /* FICHA TÉCNICA DRAWER */
+  .tech-spec-drawer {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+
+  .spec-drawer-toggle {
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    user-select: none;
+  }
+
+  .spec-drawer-toggle::-webkit-details-marker {
+    display: none;
+  }
+
+  .toggle-arrow {
+    transition: transform 0.2s;
+  }
+
+  .tech-spec-drawer[open] .toggle-arrow {
+    transform: rotate(180deg);
+  }
+
+  .spec-drawer-content {
+    padding: 10px 14px 14px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .spec-kicker {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    font-weight: 700;
+    color: var(--mute);
+    letter-spacing: 0.06em;
+  }
+
+  .spec-val {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .spec-val.highlight-speed {
+    color: var(--mate);
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  :global(body.theme-electric) .spec-val.highlight-speed {
+    color: var(--electric);
+  }
+
+  /* STACK PILLS */
+  .tech-stack-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .stack-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .stack-badge:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  /* ACCIONES */
+  .project-actions {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 8px;
+    margin-top: auto;
+  }
+
+  .action-btn-live,
+  .action-btn-quote {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 11px 12px;
+    text-decoration: none;
+    box-sizing: border-box;
+    transition: all 0.2s var(--ease);
+  }
+
+  .action-btn-live {
+    background: var(--electric);
+    color: #0a0a0a;
+    border: 1px solid var(--line);
+  }
+
+  .action-btn-live:hover {
+    background: #0a0a0a;
+    color: var(--electric);
+  }
+
+  .action-btn-quote {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+
+  .action-btn-quote:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 60px 20px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    color: var(--mute);
+  }
+
+  .reset-search-btn {
+    margin-top: 16px;
+    background: var(--ink);
+    color: var(--bone);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* BENCHMARK TABLE */
+  .benchmark-section {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--bone);
+    padding: clamp(60px, 8vw, 100px) var(--gut);
+  }
+
+  .benchmark-container {
+    max-width: var(--max);
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .benchmark-heading {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 60px);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 14px;
+  }
+
+  .benchmark-heading em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    color: var(--rust);
+  }
+
+  .benchmark-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(14px, 1.2vw, 17px);
+    color: var(--ink);
+    opacity: 0.85;
+    margin-bottom: 36px;
+  }
+
+  .table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    background: var(--paper);
+  }
+
+  .benchmark-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    text-align: left;
+    min-width: 650px;
+  }
+
+  .benchmark-table th,
+  .benchmark-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .benchmark-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    background: #0a0a0a;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+
+  .benchmark-table th.col-highlight {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .benchmark-table td.col-highlight {
+    background: rgba(212, 255, 0, 0.06);
+    font-weight: 600;
+  }
+
+  .badge-good {
+    display: inline-block;
+    background: var(--mate);
+    color: #ffffff;
+    padding: 2px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .badge-bad {
+    display: inline-block;
+    background: #dc2626;
+    color: #ffffff;
+    padding: 2px 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  /* BANNER FINAL */
+  .cta-banner-wrap {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: clamp(60px, 8vw, 100px) var(--gut);
+  }
+
+  .cta-card {
+    background: var(--charcoal);
+    color: var(--bone);
+    border: 1px solid var(--line);
+    padding: clamp(36px, 5vw, 64px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 32px;
+  }
+
+  :global(body.theme-electric) .cta-card {
+    background: #000000;
+    border-color: #2e3010;
+  }
+
+  .cta-info {
+    max-width: 650px;
+  }
+
+  .cta-mini-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--electric);
+    letter-spacing: 0.1em;
+    display: block;
+    margin-bottom: 12px;
+  }
+
+  .cta-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 3.5vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: #ffffff;
+    margin-bottom: 12px;
+  }
+
+  .cta-desc {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: rgba(244, 241, 234, 0.85);
+  }
+
+  .cta-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 280px;
+  }
+
+  .cta-wa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--electric);
+    color: #0a0a0a;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 14px 20px;
+    text-decoration: none;
+    border: 1px solid #0a0a0a;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .cta-wa-btn:hover {
+    background: #ffffff;
+    transform: translate(-2px, -2px);
+  }
+
+  .cta-secondary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    color: var(--bone);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    padding: 12px 18px;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .cta-secondary-link:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+  }
+
+  @media (max-width: 900px) {
+    .stats-strip {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .stat-cell {
+      border-right: none;
+    }
+    .controls-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .search-input-wrap {
+      max-width: 100%;
+    }
+    .cta-card {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .cta-buttons {
+      max-width: 100%;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .project-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

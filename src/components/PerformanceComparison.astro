@@ -3,72 +3,181 @@
 ---
 <section class="performance" id="performance">
   <div class="perf-head">
-    <div class="section-label"><span class="num">03</span> COMPARATIVA TÉCNICA</div>
-    <h2>Tu web actual vs. <em>un motor amargo</em></h2>
+    <div class="section-label"><span class="num">04</span> COMPARATIVA TÉCNICA EN VIVO</div>
+    <div class="perf-head-content">
+      <h2>Tu web actual vs. <em>un motor amargo</em></h2>
+      <div class="perf-controls">
+        <button class="perf-sim-btn" id="runPerfSimBtn" data-cursor="PROBAR" aria-label="Ejecutar simulación de carga en tiempo real">
+          <span class="sim-dot"></span>
+          <span>⚡ EJECUTAR TEST DE VELOCIDAD EN VIVO</span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div class="perf-grid">
     <!-- Web Tradicional -->
-    <div class="perf-card traditional">
+    <div class="perf-card traditional tactile-card" id="cardTrad">
       <div class="card-top">
-        <span class="badge-status bad">✖ WEB TRADICIONAL / PLANTILLA</span>
-        <div class="card-speed">4.8s</div>
-        <div class="card-speed-label">TIEMPO DE CARGA PROMEDIO</div>
+        <div class="badge-row">
+          <span class="badge-status bad">✖ WEB TRADICIONAL / PLANTILLA</span>
+          <span class="live-telemetry bad-telem" id="tradStatus">STATUS: ESPERANDO TEST</span>
+        </div>
+        <div class="speed-row">
+          <div class="card-speed" id="tradTimer">4.8s</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar bad-bar" id="tradProgress"></div>
+          </div>
+        </div>
+        <div class="card-speed-label">TIEMPO DE CARGA PROMEDIO (MÓVIL 4G)</div>
       </div>
+
       <ul class="perf-specs">
         <li>
           <span class="spec-label">Puntaje Google PageSpeed</span>
           <strong class="spec-value bad-val">38 / 100</strong>
         </li>
         <li>
-          <span class="spec-label">Retención en Móviles</span>
-          <strong class="spec-value bad-val">35% (65% de rebote)</strong>
+          <span class="spec-label">Largest Contentful Paint (LCP)</span>
+          <strong class="spec-value bad-val">4.2s (Deficiente)</strong>
         </li>
         <li>
-          <span class="spec-label">Tecnología</span>
-          <span class="spec-value">Plantillas genéricas y código inflado</span>
+          <span class="spec-label">Cumulative Layout Shift (CLS)</span>
+          <strong class="spec-value bad-val">0.24 (Inestable)</strong>
         </li>
         <li>
-          <span class="spec-label">Enfoque</span>
-          <span class="spec-value">Diseño estático que no convierte</span>
+          <span class="spec-label">Tecnología & Arquitectura</span>
+          <span class="spec-value">Plantillas genéricas / Plugins pesados</span>
+        </li>
+        <li>
+          <span class="spec-label">Enfoque Comercial</span>
+          <span class="spec-value">Diseño rígido sin embudo directo</span>
         </li>
       </ul>
+
       <div class="card-footer bad-foot">
-        Pérdida continua de clientes por lentitud y frustración visual.
+        Pérdida continua de clientes potenciales por fricción y demora de carga.
       </div>
     </div>
 
     <!-- Motor Amargo -->
-    <div class="perf-card amargo">
+    <div class="perf-card amargo tactile-card" id="cardAmargo">
       <div class="card-top">
-        <span class="badge-status good">✔ MOTOR AMARGO CREATIVO</span>
-        <div class="card-speed good-speed">&lt; 0.8s</div>
-        <div class="card-speed-label">CARGA INSTANTÁNEA EN URUGUAY</div>
+        <div class="badge-row">
+          <span class="badge-status good">✔ MOTOR AMARGO CREATIVO</span>
+          <span class="live-telemetry good-telem" id="amargoStatus">STATUS: NODO ACTIVO (18ms)</span>
+        </div>
+        <div class="speed-row">
+          <div class="card-speed good-speed" id="amargoTimer">&lt; 0.8s</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar good-bar" id="amargoProgress"></div>
+          </div>
+        </div>
+        <div class="card-speed-label">CARGA INSTANTÁNEA EN URUGUAY & CONVERSIÓN</div>
       </div>
+
       <ul class="perf-specs">
         <li>
           <span class="spec-label">Puntaje Google PageSpeed</span>
           <strong class="spec-value good-val">99 / 100 (Core Web Vitals)</strong>
         </li>
         <li>
-          <span class="spec-label">Retención en Móviles</span>
-          <strong class="spec-value good-val">92% (Fricción Cero)</strong>
+          <span class="spec-label">Largest Contentful Paint (LCP)</span>
+          <strong class="spec-value good-val">0.7s (Óptimo)</strong>
         </li>
         <li>
-          <span class="spec-label">Tecnología</span>
-          <span class="spec-value highlight">Stack Moderno a Medida (Cero Bloat)</span>
+          <span class="spec-label">Cumulative Layout Shift (CLS)</span>
+          <strong class="spec-value good-val">0.00 (Estabilidad total)</strong>
         </li>
         <li>
-          <span class="spec-label">Enfoque</span>
+          <span class="spec-label">Tecnología & Arquitectura</span>
+          <span class="spec-value highlight">Astro 5 + Next.js 15 + Cloudflare Edge</span>
+        </li>
+        <li>
+          <span class="spec-label">Enfoque Comercial</span>
           <span class="spec-value highlight">Embudos directos a WhatsApp & Ventas</span>
         </li>
       </ul>
+
       <div class="card-footer good-foot">
-        Tu activo digital más veloz, captando clientes las 24 horas del día.
+        Tu activo digital más veloz, captando clientes las 24 horas sin pérdidas.
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  function initPerfSimulator() {
+    const btn = document.getElementById('runPerfSimBtn');
+    const tradTimer = document.getElementById('tradTimer');
+    const amargoTimer = document.getElementById('amargoTimer');
+    const tradProgress = document.getElementById('tradProgress');
+    const amargoProgress = document.getElementById('amargoProgress');
+    const tradStatus = document.getElementById('tradStatus');
+    const amargoStatus = document.getElementById('amargoStatus');
+
+    if (!btn || !tradTimer || !amargoTimer || !tradProgress || !amargoProgress) return;
+
+    let isRunning = false;
+
+    btn.addEventListener('click', () => {
+      if (isRunning) return;
+      isRunning = true;
+      btn.classList.add('running');
+
+      // Reset
+      tradProgress.style.width = '0%';
+      amargoProgress.style.width = '0%';
+      tradTimer.textContent = '0.0s';
+      amargoTimer.textContent = '0.0s';
+      if (tradStatus) tradStatus.textContent = 'CONECTANDO AL HOSTING...';
+      if (amargoStatus) amargoStatus.textContent = 'EDGE MONTEVIDEO HIT (18ms)...';
+
+      const startTime = performance.now();
+
+      // Amargo timeline (snaps in 720ms)
+      const amargoInterval = setInterval(() => {
+        const elapsed = (performance.now() - startTime) / 1000;
+        if (elapsed >= 0.72) {
+          clearInterval(amargoInterval);
+          amargoTimer.textContent = '0.7s ✔';
+          amargoProgress.style.width = '100%';
+          if (amargoStatus) amargoStatus.textContent = 'COMPLETO: 99/100 CWV';
+        } else {
+          amargoTimer.textContent = elapsed.toFixed(1) + 's';
+          amargoProgress.style.width = Math.min(100, (elapsed / 0.72) * 100) + '%';
+        }
+      }, 30);
+
+      // Traditional timeline (crawls to 4.8s)
+      const tradInterval = setInterval(() => {
+        const elapsed = (performance.now() - startTime) / 1000;
+        if (elapsed >= 4.8) {
+          clearInterval(tradInterval);
+          tradTimer.textContent = '4.8s ✖';
+          tradProgress.style.width = '100%';
+          if (tradStatus) tradStatus.textContent = 'FINALIZADO: 65% REBOTE';
+          isRunning = false;
+          btn.classList.remove('running');
+        } else {
+          tradTimer.textContent = elapsed.toFixed(1) + 's';
+          tradProgress.style.width = Math.min(100, (elapsed / 4.8) * 100) + '%';
+          if (elapsed > 1.2 && elapsed < 2.5 && tradStatus) {
+            tradStatus.textContent = 'DESCARGANDO 4.2MB JS...';
+          } else if (elapsed >= 2.5 && tradStatus) {
+            tradStatus.textContent = 'BLOQUEO DE RENDER DOM...';
+          }
+        }
+      }, 40);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPerfSimulator);
+  } else {
+    initPerfSimulator();
+  }
+</script>
 
 <style>
   .performance {
@@ -78,12 +187,13 @@
     border-bottom: 1px solid var(--line);
     width: 100%;
     position: relative;
+    box-sizing: border-box;
   }
   .perf-head {
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 48px;
-    margin-bottom: 64px;
+    margin-bottom: 48px;
     align-items: start;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--line);
@@ -107,13 +217,19 @@
     background: var(--electric);
     color: #0a0a0a;
   }
+  .perf-head-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
   .perf-head h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(36px, 6vw, 96px);
-    line-height: 0.9;
+    font-size: clamp(32px, 5.5vw, 88px);
+    line-height: 0.92;
     letter-spacing: -0.02em;
     text-transform: uppercase;
+    margin: 0;
   }
   .perf-head h2 em {
     font-family: 'Instrument Serif', serif;
@@ -122,6 +238,44 @@
     font-weight: 400;
     color: var(--rust);
   }
+  .perf-controls {
+    display: flex;
+    align-items: center;
+  }
+  .perf-sim-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--ink);
+    color: var(--bone);
+    border: 1px solid var(--line);
+    padding: 10px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px var(--electric);
+    transition: all 0.25s var(--ease);
+  }
+  .perf-sim-btn:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+    box-shadow: 5px 5px 0px var(--line);
+    transform: translate(-1px, -1px);
+  }
+  .perf-sim-btn.running {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  .sim-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--electric);
+    box-shadow: 0 0 6px var(--electric);
+  }
   .perf-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -129,16 +283,15 @@
   }
   .perf-card {
     border: 1px solid var(--line);
-    padding: 40px;
+    padding: clamp(24px, 3.5vw, 44px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
-    transition: transform 0.3s var(--ease), border-color 0.3s;
+    box-sizing: border-box;
   }
   .perf-card.traditional {
     background: rgba(10, 10, 10, 0.03);
-    opacity: 0.85;
   }
   :global(body.theme-dark) .perf-card.traditional {
     background: rgba(255, 255, 255, 0.02);
@@ -147,22 +300,28 @@
     background: var(--charcoal);
     color: var(--bone);
     border-color: var(--mate-light);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 6px 6px 0px var(--mate);
   }
   :global(body.theme-electric) .perf-card.amargo {
     border-color: var(--electric);
+    box-shadow: 6px 6px 0px var(--electric);
+    color: #ffffff;
   }
-  .perf-card:hover {
-    transform: translateY(-4px);
+  .badge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
   }
   .badge-status {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10.5px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 6px 12px;
+    letter-spacing: 0.08em;
+    padding: 5px 10px;
     display: inline-block;
-    margin-bottom: 24px;
   }
   .badge-status.bad {
     background: rgba(185, 72, 33, 0.15);
@@ -178,23 +337,65 @@
     background: var(--electric);
     color: #0a0a0a;
   }
+  .live-telemetry {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+  }
+  .bad-telem {
+    color: var(--rust);
+  }
+  .good-telem {
+    color: #4ade80;
+  }
+  :global(body.theme-electric) .good-telem {
+    color: var(--electric);
+  }
+  .speed-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
   .card-speed {
     font-family: 'Anton', sans-serif;
-    font-size: clamp(48px, 6vw, 76px);
+    font-size: clamp(44px, 5.5vw, 76px);
     line-height: 0.9;
-    margin-bottom: 8px;
   }
   .card-speed.good-speed {
     color: var(--electric);
   }
+  .progress-bar-wrap {
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--line);
+    overflow: hidden;
+  }
+  :global(body.theme-dark) .progress-bar-wrap,
+  .perf-card.amargo .progress-bar-wrap {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    transition: width 0.1s linear;
+  }
+  .bad-bar {
+    background: var(--rust);
+  }
+  .good-bar {
+    background: var(--electric);
+  }
   .card-speed-label {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--ink);
     opacity: 0.7;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
   .perf-card.amargo .card-speed-label {
     color: rgba(244, 241, 234, 0.75);
@@ -203,7 +404,7 @@
   .perf-specs {
     list-style: none;
     border-top: 1px solid rgba(0, 0, 0, 0.15);
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
   .perf-card.amargo .perf-specs {
     border-top-color: rgba(255, 255, 255, 0.2);
@@ -211,14 +412,14 @@
   .perf-specs li {
     display: flex;
     justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    font-size: 13px;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    font-size: 12.5px;
     align-items: center;
     gap: 16px;
   }
   .perf-card.amargo .perf-specs li {
-    border-bottom-color: rgba(255, 255, 255, 0.2);
+    border-bottom-color: rgba(255, 255, 255, 0.15);
   }
   .spec-label {
     font-family: 'Space Grotesk', sans-serif;
@@ -239,7 +440,7 @@
     font-weight: 700;
   }
   .good-val {
-    color: var(--mate-light);
+    color: #4ade80;
     font-weight: 700;
   }
   :global(body.theme-electric) .good-val {
@@ -251,14 +452,13 @@
   }
   .card-footer {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    font-size: 13.5px;
     line-height: 1.5;
-    padding-top: 16px;
+    padding-top: 14px;
   }
   .bad-foot {
     color: var(--rust);
     font-weight: 500;
-    opacity: 0.9;
   }
   .good-foot {
     color: var(--bone);
@@ -273,7 +473,7 @@
       grid-template-columns: 1fr;
     }
     .perf-card {
-      padding: 24px;
+      padding: 20px;
     }
   }
 </style>

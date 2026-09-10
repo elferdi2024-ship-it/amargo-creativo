@@ -1,0 +1,458 @@
+---
+// filepath: src/pages/admin/finanzas/configuracion.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { getFiscalSettings, updateFiscalSettings, CFE_TYPES } from "../../../lib/invoices";
+
+let message = "";
+let errorMsg = "";
+
+if (Astro.request.method === "POST") {
+  try {
+    const form = await Astro.request.formData();
+    
+    updateFiscalSettings({
+      rut: (form.get("rut") as string) || "",
+      razon_social: (form.get("razon_social") as string) || "",
+      nombre_fantasia: (form.get("nombre_fantasia") as string) || "",
+      giro: (form.get("giro") as string) || "",
+      direccion: (form.get("direccion") as string) || "",
+      ciudad: (form.get("ciudad") as string) || "",
+      departamento: (form.get("departamento") as string) || "",
+      telefono: (form.get("telefono") as string) || "",
+      email: (form.get("email") as string) || "",
+      sucursal_dgi: (form.get("sucursal_dgi") as string) || "",
+      cae_numero: (form.get("cae_numero") as string) || "",
+      cae_rango_desde: Number(form.get("cae_rango_desde") || 1),
+      cae_rango_hasta: Number(form.get("cae_rango_hasta") || 10000),
+      cae_vencimiento: (form.get("cae_vencimiento") as string) || "",
+      brou_cuenta: (form.get("brou_cuenta") as string) || "",
+      itau_cuenta: (form.get("itau_cuenta") as string) || "",
+      santander_cuenta: (form.get("santander_cuenta") as string) || "",
+      mercadopago_link: (form.get("mercadopago_link") as string) || "",
+      nota_pie_defecto: (form.get("nota_pie_defecto") as string) || "",
+    });
+
+    message = "Configuración CFE y parámetros fiscales actualizados correctamente.";
+  } catch (err: any) {
+    errorMsg = err.message || "Error al actualizar la configuración.";
+  }
+}
+
+const settings = getFiscalSettings();
+---
+
+<AdminLayout title="Configuración CFE & Facturación" activeSection="finanzas">
+  <div class="cfg-page">
+    <div class="top-nav-bar">
+      <div class="nav-links">
+        <a href="/admin/finanzas" class="btn-back">← Dashboard Financiero</a>
+        <span class="sep">/</span>
+        <a href="/admin/finanzas/facturas" class="btn-back">Facturas</a>
+        <span class="sep">/</span>
+        <span class="curr-title">Configuración CFE & Fiscal</span>
+      </div>
+      <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">+ Emitir Factura</a>
+    </div>
+
+    {message && (
+      <div class="alert-success">
+        ✓ {message}
+      </div>
+    )}
+
+    {errorMsg && (
+      <div class="alert-error">
+        ⚠️ {errorMsg}
+      </div>
+    )}
+
+    <form method="POST" class="cfg-form">
+      <!-- SECCIÓN 1: EMISOR FISCAL -->
+      <div class="cfg-card">
+        <div class="cfg-card-header">
+          <div class="cfg-icon">🏢</div>
+          <div>
+            <h3>1. Datos de la Empresa Emisora (Uruguay)</h3>
+            <p>Información legal que se imprimirá en los encabezados de los Comprobantes Fiscales Electrónicos (CFE).</p>
+          </div>
+        </div>
+
+        <div class="cfg-grid-2">
+          <label class="form-field">
+            <span class="field-label">Razón Social *</span>
+            <input type="text" name="razon_social" value={settings.razon_social} required class="adm-input" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Nombre de Fantasía</span>
+            <input type="text" name="nombre_fantasia" value={settings.nombre_fantasia} required class="adm-input" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Número de RUT * (12 dígitos)</span>
+            <input type="text" name="rut" value={settings.rut} required class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Giro Comercial / Actividad Principal</span>
+            <input type="text" name="giro" value={settings.giro} class="adm-input" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Dirección Fiscal</span>
+            <input type="text" name="direccion" value={settings.direccion} class="adm-input" />
+          </label>
+
+          <div class="form-grid-2" style="margin: 0;">
+            <label class="form-field">
+              <span class="field-label">Ciudad</span>
+              <input type="text" name="ciudad" value={settings.ciudad} class="adm-input" />
+            </label>
+            <label class="form-field">
+              <span class="field-label">Departamento</span>
+              <input type="text" name="departamento" value={settings.departamento} class="adm-input" />
+            </label>
+          </div>
+
+          <label class="form-field">
+            <span class="field-label">Teléfono de Cobranzas / WhatsApp</span>
+            <input type="text" name="telefono" value={settings.telefono} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Email de Notificaciones Fiscales</span>
+            <input type="email" name="email" value={settings.email} class="adm-input" />
+          </label>
+        </div>
+      </div>
+
+      <!-- SECCIÓN 2: PARÁMETROS CFE DGI -->
+      <div class="cfg-card">
+        <div class="cfg-card-header">
+          <div class="cfg-icon">⚡</div>
+          <div>
+            <h3>2. Parámetros CFE & Constancia CAE (DGI)</h3>
+            <p>Configuración de series correlativas y rangos autorizados por la Dirección General Impositiva.</p>
+          </div>
+        </div>
+
+        <div class="cfg-grid-3">
+          <label class="form-field">
+            <span class="field-label">Sucursal DGI</span>
+            <input type="text" name="sucursal_dgi" value={settings.sucursal_dgi} class="adm-input" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Número de CAE Autorizado</span>
+            <input type="text" name="cae_numero" value={settings.cae_numero} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Vencimiento de CAE</span>
+            <input type="date" name="cae_vencimiento" value={settings.cae_vencimiento} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Rango CAE Desde</span>
+            <input type="number" name="cae_rango_desde" value={settings.cae_rango_desde} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Rango CAE Hasta</span>
+            <input type="number" name="cae_rango_hasta" value={settings.cae_rango_hasta} class="adm-input font-mono" />
+          </label>
+        </div>
+
+        <div class="cfe-types-list">
+          <span class="field-label" style="display:block; margin-bottom:8px;">Tipos CFE Homologados en el Sistema:</span>
+          <div class="cfe-chips-row">
+            {Object.values(CFE_TYPES).map(t => (
+              <div class="cfe-chip">
+                <span class="font-mono cfe-code">{t.code}</span>
+                <span class="cfe-name">{t.name}</span>
+                <span class="cfe-req">{t.requiresRut ? "Requiere RUT" : "Cons. Final / Ext"}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <label class="form-field" style="margin-top: 16px;">
+          <span class="field-label">Leyenda Legal al Pie del Comprobante</span>
+          <textarea name="nota_pie_defecto" rows="3" class="adm-input">{settings.nota_pie_defecto}</textarea>
+        </label>
+      </div>
+
+      <!-- SECCIÓN 3: CUENTAS BANCARIAS DE COBRANZA -->
+      <div class="cfg-card">
+        <div class="cfg-card-header">
+          <div class="cfg-icon">🏦</div>
+          <div>
+            <h3>3. Cuentas Bancarias para Depósitos (Cobranzas)</h3>
+            <p>Se mostrarán automáticamente en el portal del cliente y en los mensajes automáticos de cobro por WhatsApp.</p>
+          </div>
+        </div>
+
+        <div class="cfg-grid-2">
+          <label class="form-field">
+            <span class="field-label">Cuenta BROU (Banco República)</span>
+            <input type="text" name="brou_cuenta" value={settings.brou_cuenta} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Cuenta Banco Itaú</span>
+            <input type="text" name="itau_cuenta" value={settings.itau_cuenta} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Cuenta Banco Santander</span>
+            <input type="text" name="santander_cuenta" value={settings.santander_cuenta} class="adm-input font-mono" />
+          </label>
+
+          <label class="form-field">
+            <span class="field-label">Link o Alias Mercado Pago</span>
+            <input type="text" name="mercadopago_link" value={settings.mercadopago_link} class="adm-input" />
+          </label>
+        </div>
+      </div>
+
+      <!-- BOTÓN GUARDAR -->
+      <div class="cfg-actions-bottom">
+        <button type="submit" class="btn-save-cfg">
+          <span>💾 GUARDAR CONFIGURACIÓN FISCAL & CFE</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</AdminLayout>
+
+<style>
+  .cfg-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 1000px;
+  }
+
+  .top-nav-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+  }
+
+  .btn-back {
+    color: var(--adm-lime);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .sep {
+    color: var(--adm-mute);
+  }
+
+  .curr-title {
+    color: var(--adm-ink);
+    font-weight: 700;
+  }
+
+  .cfg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .cfg-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+  }
+
+  .cfg-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--adm-border);
+  }
+
+  .cfg-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+  }
+
+  .cfg-card-header h3 {
+    margin: 0 0 4px;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--adm-ink);
+  }
+
+  .cfg-card-header p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--adm-mute);
+    line-height: 1.45;
+  }
+
+  .cfg-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+
+  .cfg-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .field-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .adm-input {
+    background: rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    box-sizing: border-box;
+    width: 100%;
+    transition: border-color 0.15s ease;
+  }
+
+  .adm-input:focus {
+    outline: none;
+    border-color: var(--adm-lime);
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .cfe-types-list {
+    margin-top: 1.25rem;
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid var(--adm-border);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+
+  .cfe-chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cfe-chip {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+  }
+
+  .cfe-code {
+    background: var(--adm-lime);
+    color: #0a0a0a;
+    font-weight: 800;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .cfe-name {
+    font-weight: 700;
+    color: var(--adm-ink);
+  }
+
+  .cfe-req {
+    color: var(--adm-mute);
+    font-size: 0.75rem;
+  }
+
+  .cfg-actions-bottom {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .btn-save-cfg {
+    background: var(--adm-lime);
+    color: #0a0a0a;
+    border: 1px solid #0a0a0a;
+    border-radius: 6px;
+    padding: 0.85rem 1.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    box-shadow: 3px 3px 0px #0a0a0a;
+    transition: all 0.15s ease;
+  }
+
+  .btn-save-cfg:hover {
+    background: #ffffff;
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0px #0a0a0a;
+  }
+
+  .alert-success {
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid #4ade80;
+    color: #4ade80;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .alert-error {
+    background: rgba(248, 113, 113, 0.12);
+    border: 1px solid #f87171;
+    color: #f87171;
+    padding: 0.85rem 1.25rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .cfg-grid-2,
+    .cfg-grid-3 {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

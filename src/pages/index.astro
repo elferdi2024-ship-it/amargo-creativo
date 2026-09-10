@@ -13,8 +13,6 @@ import PerformanceComparison from '../components/PerformanceComparison.astro';
 import Showcase from '../components/Showcase.astro';
 import Metrics from '../components/Metrics.astro';
 import Testimonials from '../components/Testimonials.astro';
-import Process from '../components/Process.astro';
-import FAQ from '../components/FAQ.astro';
 import Contact from '../components/Contact.astro';
 import InstagramFeed from '../components/InstagramFeed.astro';
 import Footer from '../components/Footer.astro';
@@ -27,11 +25,9 @@ import Footer from '../components/Footer.astro';
     <Manifesto />
     <Capabilities />
     <PerformanceComparison />
-    <Showcase />
+    <Showcase limit={4} />
     <Metrics />
     <Testimonials />
-    <Process />
-    <FAQ />
     <Contact />
     <InstagramFeed />
   </main>

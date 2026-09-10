@@ -4,16 +4,29 @@
 <header class="hero" id="top">
   <!-- Contenedor de Video Cinemático a Máxima Nitidez y Calidad Original -->
   <div class="hero-media-container">
+    <picture class="hero-poster-pic">
+      <source media="(max-width: 768px)" srcset="/amargo-hero-mobile.webp" type="image/webp" />
+      <source media="(min-width: 769px)" srcset="/amargo-hero-pc.webp" type="image/webp" />
+      <img 
+        src="/amargo-hero-pc.webp" 
+        alt="Amargo Creativo — Hero Poster" 
+        class="hero-poster-img"
+        fetchpriority="high"
+        decoding="async"
+        width="2000" 
+        height="1116" 
+      />
+    </picture>
     <video 
       id="heroVideo" 
       class="hero-video" 
-      src="/new-hero.mp4" 
-      poster="/amargo-hero-pc.webp"
-      autoplay 
+      data-src="/new-hero.mp4" 
+      poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
       loop 
       muted 
       playsinline 
       webkit-playsinline
+      preload="none"
       aria-hidden="true"
     ></video>
     <div class="hero-gradient" id="heroGradient"></div>
@@ -121,9 +134,30 @@
     const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    function loadVideo() {
+      if (!video || !video.dataset.src || video.src.includes('new-hero.mp4')) return;
+      video.src = video.dataset.src;
+      video.load();
+      video.play().then(() => {
+        video.classList.add('is-playing');
+      }).catch(() => {});
+    }
+
     if (!isDesktop || prefersReducedMotion) {
-      video.play().catch(() => {});
+      const startMobileVideo = () => {
+        loadVideo();
+        window.removeEventListener('scroll', startMobileVideo);
+        window.removeEventListener('touchstart', startMobileVideo);
+      };
+      window.addEventListener('scroll', startMobileVideo, { passive: true, once: true });
+      window.addEventListener('touchstart', startMobileVideo, { passive: true, once: true });
       return;
+    } else {
+      if ('requestIdleCallback' in window) {
+        (window as any).requestIdleCallback(() => setTimeout(loadVideo, 400), { timeout: 2000 });
+      } else {
+        setTimeout(loadVideo, 500);
+      }
     }
 
     let targetTime = 0;
@@ -137,6 +171,9 @@
     let isSeeking = false;
 
     function onScrollUpdate() {
+      if (!video.src.includes('new-hero.mp4')) {
+        loadVideo();
+      }
       const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
       const heroHeight = hero.offsetHeight || window.innerHeight;
 
@@ -168,6 +205,14 @@
     const win = window as any;
     if (win.lenis?.on) {
       win.lenis.on('scroll', onScrollUpdate);
+    } else {
+      const checkLenisTimer = setInterval(() => {
+        if (win.lenis?.on) {
+          win.lenis.on('scroll', onScrollUpdate);
+          clearInterval(checkLenisTimer);
+        }
+      }, 50);
+      setTimeout(() => clearInterval(checkLenisTimer), 3000);
     }
 
     function renderLoop() {
@@ -234,6 +279,24 @@
     justify-content: center;
   }
 
+  .hero-poster-pic,
+  .hero-poster-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  @media (max-width: 900px) {
+    .hero-poster-img {
+      object-position: center 30%;
+    }
+  }
+
   /* Video con renderizado nativo sin estiramientos pixelados */
   .hero-video {
     position: absolute;
@@ -245,6 +308,13 @@
     filter: contrast(1.02);
     will-change: transform;
     pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  .hero-video.is-playing {
+    opacity: 1;
   }
 
   /* Viñeta sutil en la base para dar contraste sin oscurecer la ilustración */
@@ -255,7 +325,7 @@
     width: 100%;
     height: 40%;
     background: linear-gradient(to top, rgba(228, 225, 216, 0.95) 0%, rgba(228, 225, 216, 0.4) 50%, transparent 100%);
-    z-index: 2;
+    z-index: 3;
     pointer-events: none;
   }
 
@@ -399,16 +469,17 @@
     gap: 6px;
     background: var(--electric);
     color: #0a0a0a;
-    padding: 0 18px;
+    padding: 0 22px;
     text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 10.5px;
-    transition: transform 0.2s var(--ease), background 0.2s, color 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.03em;
+    font-size: 11.5px;
+    border-radius: 999px;
+    transition: transform 0.25s var(--ease), background 0.2s, color 0.2s, box-shadow 0.25s;
     will-change: transform;
-    height: 38px;
+    height: 40px;
     box-sizing: border-box;
     white-space: nowrap;
     border: 1px solid #0a0a0a;
@@ -418,8 +489,8 @@
   .hero-cta:hover {
     background: #0a0a0a;
     color: var(--electric);
-    transform: translate(-1px, -1px);
-    box-shadow: 4px 4px 0px var(--electric);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 4px 6px 0px var(--electric);
   }
 
   .hero-cta:active {
@@ -433,23 +504,25 @@
     gap: 6px;
     color: var(--ink);
     text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-size: 10.5px;
+    letter-spacing: 0.03em;
+    font-size: 11.5px;
     border: 1px solid var(--line);
+    border-radius: 999px;
     background: transparent;
-    padding: 0 16px;
-    height: 38px;
+    padding: 0 18px;
+    height: 40px;
     box-sizing: border-box;
     white-space: nowrap;
-    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s var(--ease);
+    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.25s var(--ease);
   }
 
   .hero-cta-secondary:hover {
     background: var(--ink);
     color: var(--bone);
+    transform: translateY(-2px);
   }
 
   .hero-cta-secondary:active {
@@ -497,11 +570,11 @@
   }
 
   .pillar-content strong {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: 'Space Grotesk', -apple-system, sans-serif;
+    font-size: 11.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.03em;
     color: var(--ink);
   }
 
@@ -555,6 +628,12 @@
     justify-content: center;
     pointer-events: none;
     color: var(--ink);
+    animation: floatBadge 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes floatBadge {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-7px) rotate(2deg); }
   }
 
   .hero-badge svg {

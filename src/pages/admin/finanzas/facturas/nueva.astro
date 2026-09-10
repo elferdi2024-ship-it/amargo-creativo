@@ -23,10 +23,11 @@ if (Astro.request.method === "POST") {
     const form = await Astro.request.formData();
     const clientId = form.get("client_id") as string;
     const proposalId = (form.get("proposal_id") as string) || undefined;
+    const cfeType = (form.get("cfe_type") as string) || "111";
     const currency = (form.get("currency") as string) || "UYU";
     const issueDate = (form.get("issue_date") as string) || new Date().toISOString().slice(0, 10);
     const dueDate = (form.get("due_date") as string) || undefined;
-    const paymentTerms = (form.get("payment_terms") as string) || "Pago al contado / Transferencia";
+    const paymentTerms = (form.get("payment_terms") as string) || "Pago por transferencia bancaria (BROU / Itaú / Santander)";
     const notes = (form.get("notes") as string) || undefined;
     const taxRate = Number(form.get("tax_rate") || 22);
 
@@ -56,6 +57,7 @@ if (Astro.request.method === "POST") {
       const invoice = await createInvoice({
         client_id: clientId,
         proposal_id: proposalId,
+        cfe_type: cfeType,
         items,
         issue_date: issueDate,
         due_date: dueDate,
@@ -119,7 +121,18 @@ if (Astro.request.method === "POST") {
             </label>
           </div>
 
-          <div class="form-grid-3">
+          <div class="form-grid-4">
+            <label class="form-field">
+              <span class="field-label">Tipo CFE (DGI) *</span>
+              <select name="cfe_type" required class="adm-input" id="cfe-type-select">
+                <option value="111">111 - e-Factura (Con RUT)</option>
+                <option value="101">101 - e-Ticket (Cons. Final)</option>
+                <option value="112">112 - e-Factura Export (Exterior)</option>
+                <option value="102">102 - NC e-Ticket</option>
+                <option value="113">113 - NC e-Factura</option>
+              </select>
+            </label>
+
             <label class="form-field">
               <span class="field-label">Moneda</span>
               <select name="currency" class="adm-input" id="currency-select">
@@ -153,6 +166,23 @@ if (Astro.request.method === "POST") {
             </h3>
             <button type="button" id="btn-add-item" class="btn-add-line">
               + Agregar Ítem
+            </button>
+          </div>
+
+          <!-- Presets rápidos -->
+          <div class="presets-bar">
+            <span class="presets-title">Carga Rápida:</span>
+            <button type="button" class="btn-preset" data-desc="Desarrollo Web Next.js 15 & Cloudflare Edge de Alto Rendimiento (<0.8s)" data-price="45000">
+              + Web Next.js
+            </button>
+            <button type="button" class="btn-preset" data-desc="Diseño de Identidad de Marca, Sistema Visual & UI/UX Táctil" data-price="32000">
+              + Branding
+            </button>
+            <button type="button" class="btn-preset" data-desc="Sistema Web B2B, Portal Extranet de Clientes & Módulo Facturación CFE" data-price="55000">
+              + Suite B2B
+            </button>
+            <button type="button" class="btn-preset" data-desc="Mantenimiento Mensual, Auditoría CRO & Posicionamiento SEO Local" data-price="18500">
+              + Mantenimiento
             </button>
           </div>
 
@@ -332,11 +362,78 @@ if (Astro.request.method === "POST") {
       }
     });
 
+    // Carga rápida de presets
+    document.querySelectorAll(".btn-preset").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const desc = (btn as HTMLElement).dataset.desc || "";
+        const price = (btn as HTMLElement).dataset.price || "0";
+        const container = document.getElementById("items-list");
+        if (!container) return;
+
+        const lastRowDesc = container.querySelector<HTMLInputElement>(".item-row:last-child .col-desc input");
+        const lastRowPrice = container.querySelector<HTMLInputElement>(".item-row:last-child .price-input");
+
+        if (lastRowDesc && !lastRowDesc.value.trim()) {
+          lastRowDesc.value = desc;
+          if (lastRowPrice) lastRowPrice.value = price;
+        } else {
+          document.getElementById("btn-add-item")?.click();
+          const newDesc = container.querySelector<HTMLInputElement>(".item-row:last-child .col-desc input");
+          const newPrice = container.querySelector<HTMLInputElement>(".item-row:last-child .price-input");
+          if (newDesc) newDesc.value = desc;
+          if (newPrice) newPrice.value = price;
+        }
+        recalc();
+      });
+    });
+
     recalc();
   </script>
 </AdminLayout>
 
 <style>
+  .form-grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .presets-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0 14px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px dashed var(--adm-border);
+    border-radius: 6px;
+  }
+
+  .presets-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--adm-mute);
+    text-transform: uppercase;
+  }
+
+  .btn-preset {
+    background: rgba(200, 255, 0, 0.08);
+    border: 1px solid rgba(200, 255, 0, 0.25);
+    color: var(--adm-lime);
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-preset:hover {
+    background: var(--adm-lime);
+    color: #0a0a0a;
+  }
+
   .new-invoice-page {
     display: flex;
     flex-direction: column;

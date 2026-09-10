@@ -1,20 +1,33 @@
 ---
 // filepath: src/components/Navbar.astro
+const pathname = Astro.url.pathname;
+const isProyectos = pathname.startsWith('/proyectos');
+const isServicios = pathname.startsWith('/servicios');
+const isFacturacion = pathname.startsWith('/facturacion');
+const isManifiesto = pathname.startsWith('/manifiesto');
 ---
 <nav id="nav">
   <a href="/" class="brand" id="brandBtn">AMARGO<span class="brand-dot">.</span></a>
   <ul class="nav-links">
-    <li><a href="#manifesto" data-text="Manifiesto">Manifiesto</a></li>
-    <li><a href="#capabilities" data-text="Servicios">Servicios</a></li>
-    <li><a href="#performance" data-text="Rendimiento">Rendimiento</a></li>
-    <li><a href="#showcase" data-text="Trabajo">Trabajo</a></li>
-    <li><a href="#testimonials" data-text="Clientes">Clientes</a></li>
-    <li><a href="#faq" data-text="FAQ">FAQ</a></li>
-    <li><a href="#contact" data-text="Contacto">Contacto</a></li>
-    <li><a href="#instagram" data-text="Instagram">Instagram</a></li>
+    <li><a href="/proyectos" class={isProyectos ? "active" : ""} data-text="Proyectos">Proyectos</a></li>
+    <li><a href="/servicios-crecimiento" class={isServicios ? "active" : ""} data-text="Servicios">Servicios</a></li>
+    <li><a href="/facturacion" class={isFacturacion ? "active" : ""} data-text="Sistemas B2B">Sistemas B2B</a></li>
+    <li><a href="/#performance" data-text="Rendimiento">Rendimiento</a></li>
+    <li><a href="/manifiesto" class={isManifiesto ? "active" : ""} data-text="Manifiesto">Manifiesto</a></li>
+    <li><a href="/#contact" data-text="Contacto">Contacto</a></li>
   </ul>
   <div class="nav-right">
-    <div class="status"><span>5 CUPOS • AGOSTO</span></div>
+    <div class="status">
+      <span class="status-live-pulse" aria-hidden="true"></span>
+      <span class="status-loc">ATLÁNTIDA <strong id="navClockUY">--:--:--</strong></span>
+      <span class="status-sep">|</span>
+      <button class="nav-sound-btn sound-toggle-btn" id="soundToggleBtn" aria-label="Alternar audio táctil" title="Efectos de sonido táctiles">
+        <span class="sound-wave-icon" aria-hidden="true"></span>
+        <span class="sound-text">AUDIO <strong class="sound-state-text">OFF</strong></span>
+      </button>
+      <span class="status-sep">|</span>
+      <span class="status-cupos">5 CUPOS</span>
+    </div>
     <a 
       href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
       target="_blank" 
@@ -35,16 +48,14 @@
 <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
   <div class="menu-grid">
     <ul class="menu-items">
-      <li><a href="#manifesto">01. <em>Manifiesto</em></a></li>
-      <li><a href="#capabilities">02. Servicios</a></li>
-      <li><a href="#performance">03. <em>Rendimiento</em></a></li>
-      <li><a href="#showcase">04. Trabajo</a></li>
-      <li><a href="#testimonials">05. <em>Clientes</em></a></li>
-      <li><a href="#process">06. Metodología</a></li>
-      <li><a href="#faq">07. FAQ</a></li>
-      <li><a href="#contact">08. <em>Contacto</em></a></li>
-      <li><a href="#instagram">09. <em>Instagram</em></a></li>
-      <li><a href="/servicios-crecimiento" class="menu-growth-link">★ <em>Crecimiento & CRO</em></a></li>
+      <li><a href="/">01. <em>Inicio</em></a></li>
+      <li><a href="/proyectos">02. Proyectos</a></li>
+      <li><a href="/servicios-crecimiento">03. <em>Servicios & CRO</em></a></li>
+      <li><a href="/facturacion">04. <em>Sistemas B2B & Cobros</em></a></li>
+      <li><a href="/manifiesto">05. Manifiesto</a></li>
+      <li><a href="/#performance">06. <em>Rendimiento</em></a></li>
+      <li><a href="/#contact">07. Contacto</a></li>
+      <li><a href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" target="_blank" rel="noopener noreferrer" class="menu-growth-link">★ <em>Hablar por WhatsApp</em></a></li>
     </ul>
     <div class="menu-aside">
       <h4>AGENCIA CREATIVA</h4>
@@ -139,9 +150,30 @@
     text-decoration: none;
     transition: color 0.2s;
     display: inline-block;
+    position: relative;
+    padding: 4px 0;
   }
   nav .nav-links a:hover {
     color: var(--rust);
+  }
+  nav .nav-links a.active {
+    color: var(--mate);
+    font-weight: 700;
+  }
+  nav .nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--mate);
+  }
+  :global(body.theme-electric) nav .nav-links a.active {
+    color: var(--electric);
+  }
+  :global(body.theme-electric) nav .nav-links a.active::after {
+    background: var(--electric);
   }
   nav .nav-right {
     display: flex;
@@ -158,16 +190,69 @@
     color: var(--bone);
     height: 100%;
     padding: 0 16px;
-    font-size: 11px;
+    font-size: 10.5px;
     border-left: 1px solid var(--line);
+    font-family: 'JetBrains Mono', monospace;
   }
-  nav .status::before {
-    content: '';
+  .status-live-pulse {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--electric);
+    box-shadow: 0 0 6px var(--electric);
     animation: pulse 2s infinite;
+  }
+  .status-loc strong {
+    color: var(--electric);
+    font-weight: 700;
+  }
+  .status-sep {
+    opacity: 0.3;
+  }
+  .nav-sound-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--bone);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s var(--ease);
+  }
+  .nav-sound-btn:hover {
+    border-color: var(--electric);
+    color: var(--electric);
+  }
+  .nav-sound-btn.active {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+  .nav-sound-btn.active .sound-state-text {
+    color: #0a0a0a;
+  }
+  .sound-wave-icon {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .nav-sound-btn.active .sound-wave-icon {
+    box-shadow: 0 0 6px #0a0a0a;
+    animation: soundPulse 1.2s infinite ease-in-out;
+  }
+  @keyframes soundPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+  }
+  .status-cupos {
+    color: #4ade80;
+    font-weight: 700;
   }
   .nav-cta {
     display: inline-flex;
@@ -388,3 +473,21 @@
     }
   }
 </style>
+
+<script>
+  const navClock = document.getElementById('navClockUY');
+  if (navClock) {
+    const fmt = new Intl.DateTimeFormat('es-UY', {
+      timeZone: 'America/Montevideo',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    });
+    const updateTime = () => {
+      navClock.textContent = fmt.format(new Date());
+    };
+    setInterval(updateTime, 1000);
+    updateTime();
+  }
+</script>

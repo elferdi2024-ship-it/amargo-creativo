@@ -2,403 +2,1698 @@
 // filepath: src/pages/facturacion.astro
 export const prerender = true;
 
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
 import { whatsappHref } from "../lib/format";
 
-const waMessage = "Hola Amargo Creativo, me interesa conocer más sobre el Sistema de Facturación & Cobros para agencias y estudios en Uruguay.";
+const waMessage = "Hola Amargo Creativo, quiero consultar por el desarrollo de un Sistema Web B2B / Portal de Clientes con Facturación CFE para mi empresa.";
 const waLink = whatsappHref(waMessage);
+
+const title = "Sistemas Web B2B, Portales de Clientes & Facturación CFE | Amargo Creativo";
+const description = "Desarrollo de software a medida para empresas y agencias en Uruguay: Portales de clientes extranet con Magic Link, facturación electrónica CFE DGI, conciliación bancaria y workflows automáticos por WhatsApp.";
 ---
 
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Facturación & Gestión de Cobros para Agencias y Estudios · AMARGO</title>
-    <meta name="description" content="Controlá facturas, automatizá recordatorios de cobro por WhatsApp y ofrecé portales con estado de cuenta en vivo. Diseñado para Uruguay, CFE-ready." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <style>
-      :root {
-        --bg-warm: #F4F3EE;
-        --ink: #0D1510;
-        --mute: #55665B;
-        --card-bg: #FFFFFF;
-        --border-subtle: #D8D6CD;
-        --brand-green: #2E5339;
-        --lime-accent: #D4FF00;
-      }
+<Layout title={title} description={description} canonicalUrl="https://amargo-creativo.pages.dev/facturacion">
+  <Navbar />
 
-      * { box-sizing: border-box; }
+  <main class="facturacion-page">
+    <!-- Header de Sección -->
+    <header class="fac-hero">
+      <div class="fac-container">
+        <div class="fac-top-bar">
+          <div class="section-label">
+            <span class="num">B2B SUITE</span>
+            <span>SOFTWARE A MEDIDA · PORTALES EXTRANET · URUGUAY & REGIONAL</span>
+          </div>
+          <div class="fac-telemetry-stamp">DGI CFE COMPLIANT // POSTGRESQL RLS // LCP &lt;0.8s</div>
+        </div>
 
-      body {
-        margin: 0;
-        background: var(--bg-warm);
-        color: var(--ink);
-        font-family: "Archivo", system-ui, sans-serif;
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-      }
+        <h1 class="fac-h1">
+          Sistemas Web B2B, Portales de Clientes y <em>Facturación CFE</em>
+        </h1>
 
-      .container {
-        max-width: 1080px;
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
-
-      /* Navbar */
-      .navbar {
-        padding: 1.5rem 0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--border-subtle);
-      }
-
-      .brand {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 1.5rem;
-        color: var(--ink);
-        text-decoration: none;
-        letter-spacing: -0.03em;
-      }
-
-      .nav-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        background: var(--brand-green);
-        color: #FFFFFF;
-        padding: 0.6rem 1.15rem;
-        border-radius: 8px;
-        font-weight: 700;
-        font-size: 0.85rem;
-        text-decoration: none;
-        transition: all 0.2s ease;
-      }
-
-      .nav-cta:hover {
-        background: #23402C;
-        transform: translateY(-1px);
-      }
-
-      /* Hero */
-      .hero {
-        padding: 5rem 0 3.5rem;
-        text-align: center;
-      }
-
-      .kicker {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        background: rgba(46, 83, 57, 0.1);
-        color: var(--brand-green);
-        padding: 0.35rem 0.85rem;
-        border-radius: 20px;
-        display: inline-block;
-        margin-bottom: 1.25rem;
-      }
-
-      .hero h1 {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: clamp(2.2rem, 5vw, 3.75rem);
-        line-height: 1.08;
-        letter-spacing: -0.03em;
-        margin: 0 auto 1.25rem;
-        max-width: 820px;
-      }
-
-      .hero p {
-        font-size: clamp(1rem, 2vw, 1.2rem);
-        color: var(--mute);
-        max-width: 640px;
-        margin: 0 auto 2.5rem;
-        line-height: 1.6;
-      }
-
-      .cta-group {
-        display: flex;
-        justify-content: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-      }
-
-      .btn-primary {
-        background: var(--brand-green);
-        color: #FFFFFF;
-        padding: 0.9rem 1.85rem;
-        border-radius: 10px;
-        font-weight: 700;
-        font-size: 1rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        box-shadow: 0 4px 14px rgba(46, 83, 57, 0.25);
-        transition: all 0.2s ease;
-      }
-
-      .btn-primary:hover {
-        background: #23402C;
-        transform: translateY(-2px);
-      }
-
-      .btn-outline {
-        background: transparent;
-        color: var(--ink);
-        border: 1px solid var(--border-subtle);
-        padding: 0.9rem 1.5rem;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 1rem;
-        text-decoration: none;
-      }
-
-      .btn-outline:hover {
-        border-color: var(--ink);
-      }
-
-      /* Mockup Card */
-      .hero-mockup {
-        background: #0D1510;
-        color: #F4F6F2;
-        border-radius: 16px;
-        padding: 2.5rem;
-        margin-top: 3.5rem;
-        text-align: left;
-        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
-        border: 1px solid #24352A;
-      }
-
-      .mockup-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #24352A;
-        padding-bottom: 1.25rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .mockup-title {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.85rem;
-        color: var(--lime-accent);
-      }
-
-      .mockup-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.25rem;
-      }
-
-      .mock-box {
-        background: #141E18;
-        border: 1px solid #24352A;
-        border-radius: 10px;
-        padding: 1.25rem;
-      }
-
-      .mock-label {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 0.7rem;
-        color: #85968B;
-        text-transform: uppercase;
-      }
-
-      .mock-val {
-        font-family: "JetBrains Mono", monospace;
-        font-size: 1.6rem;
-        font-weight: 800;
-        margin-top: 0.25rem;
-        color: #F4F6F2;
-      }
-
-      /* Features Grid */
-      .features {
-        padding: 5rem 0;
-      }
-
-      .features-title {
-        font-family: "Syne", sans-serif;
-        font-weight: 800;
-        font-size: 2.2rem;
-        text-align: center;
-        margin: 0 0 3rem;
-      }
-
-      .grid-3 {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1.5rem;
-      }
-
-      .feat-card {
-        background: var(--card-bg);
-        border: 1px solid var(--border-subtle);
-        border-radius: 14px;
-        padding: 2rem;
-        display: flex;
-        flex-direction: column;
-        gap: 0.85rem;
-      }
-
-      .feat-icon {
-        font-size: 1.8rem;
-      }
-
-      .feat-card h3 {
-        margin: 0;
-        font-size: 1.2rem;
-        font-weight: 800;
-      }
-
-      .feat-card p {
-        margin: 0;
-        color: var(--mute);
-        font-size: 0.92rem;
-        line-height: 1.5;
-      }
-
-      /* Bottom CTA */
-      .bottom-banner {
-        background: var(--brand-green);
-        color: #FFFFFF;
-        border-radius: 16px;
-        padding: 3.5rem 2rem;
-        text-align: center;
-        margin-bottom: 5rem;
-      }
-
-      .bottom-banner h2 {
-        font-family: "Syne", sans-serif;
-        font-size: clamp(1.8rem, 4vw, 2.6rem);
-        margin: 0 0 1rem;
-        font-weight: 800;
-      }
-
-      .bottom-banner p {
-        font-size: 1.05rem;
-        color: #D2DDD6;
-        max-width: 540px;
-        margin: 0 auto 2rem;
-      }
-
-      .btn-lime {
-        background: var(--lime-accent);
-        color: #0D1510;
-        padding: 0.9rem 2rem;
-        border-radius: 10px;
-        font-weight: 800;
-        font-size: 1rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s ease;
-      }
-
-      .btn-lime:hover {
-        background: #b5e600;
-        transform: translateY(-2px);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <!-- NAVBAR -->
-      <nav class="navbar">
-        <a href="/" class="brand">AMARGO.</a>
-        <a href={waLink} target="_blank" class="nav-cta">
-          Consultar por WhatsApp ↗
-        </a>
-      </nav>
-
-      <!-- HERO -->
-      <header class="hero">
-        <span class="kicker">MÓDULO FINANCIERO · URUGUAY</span>
-        <h1>Control de Facturas, Cobros y Estado de Cuenta en Tiempo Real</h1>
-        <p>
-          Dejá de perseguir pagos con planillas de Excel. Centralizá presupuestos, emití facturas con cálculo de IVA y ofrecé a tus clientes un portal transparente con comprobantes oficiales.
+        <p class="fac-lead">
+          Reemplazá planillas desactualizadas de Excel y ERPs lentos de los 90. Desarrollamos infraestructura digital a medida: portales de autoservicio para tus clientes con Magic Link, conciliación de transferencias bancarias (BROU, Itaú, Santander) y facturación electrónica CFE conectada en tiempo real.
         </p>
-        <div class="cta-group">
-          <a href={waLink} target="_blank" class="btn-primary">
-            💬 Agendar Demo por WhatsApp
+
+        <div class="fac-specs-chips">
+          <span class="spec-chip">⚡ NEXT.JS 15 & ASTRO RSC</span>
+          <span class="spec-chip">🔒 MAGIC LINK PASSWORDLESS</span>
+          <span class="spec-chip">🇺🇾 CFE DGI COMPLIANT</span>
+          <span class="spec-chip">💬 WHATSAPP CLOUD API</span>
+          <span class="spec-chip">⏱ TIEMPO DE CARGA &lt;0.8s</span>
+        </div>
+
+        <div class="fac-cta-row">
+          <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary" data-cursor="WHATSAPP">
+            <span>AGENDAR DEMO TÉCNICA</span> ↗
           </a>
-          <a href="/admin/login" class="btn-outline">
-            Acceso Clientes / Admin →
+          <a href="#simulator" class="fac-btn-secondary" data-cursor="SIMULADOR">
+            <span>PROBAR SIMULADOR EN VIVO</span> ↓
           </a>
         </div>
+      </div>
+    </header>
 
-        <!-- MOCKUP DISPLAY -->
-        <div class="hero-mockup">
-          <div class="mockup-header">
-            <span class="mockup-title">⚡ SISTEMA DE FINANZAS & COBROS (CFE-READY)</span>
-            <span style="font-size:0.75rem; color:#85968B;">DGI Uruguay · BROU · Santander · Mercado Pago</span>
+    <!-- Interactive Live Simulator Display -->
+    <section class="fac-mockup-section" id="simulator">
+      <div class="fac-container">
+        <div class="simulator-wrapper tactile-card">
+          <!-- Terminal Header -->
+          <div class="term-header">
+            <div class="term-dots">
+              <span class="dot dot-red"></span>
+              <span class="dot dot-yellow"></span>
+              <span class="dot dot-green"></span>
+            </div>
+            <div class="term-title">AMARGO_CORE // B2B CLIENT EXTRANET & ENGINE v3.2</div>
+            <div class="term-live-tag">● SISTEMA OPERATIVO ACTIVO</div>
           </div>
-          <div class="mockup-grid">
-            <div class="mock-box">
-              <span class="mock-label">Cobrado este Mes</span>
-              <div class="mock-val" style="color:#C8FF00;">$ 148.500</div>
+
+          <!-- Navigation Tabs -->
+          <div class="sim-nav-bar" role="tablist" aria-label="Simulador de Módulos B2B">
+            <button class="sim-tab active" data-tab="tab-extranet" role="tab" aria-selected="true" aria-controls="tab-extranet">
+              <span class="tab-icon">👤</span> 01. PORTAL CLIENTE (EXTRANET)
+            </button>
+            <button class="sim-tab" data-tab="tab-cfe" role="tab" aria-selected="false" aria-controls="tab-cfe">
+              <span class="tab-icon">🧾</span> 02. FACTURACIÓN CFE & DGI
+            </button>
+            <button class="sim-tab" data-tab="tab-whatsapp" role="tab" aria-selected="false" aria-controls="tab-whatsapp">
+              <span class="tab-icon">💬</span> 03. WORKFLOWS WHATSAPP
+            </button>
+            <button class="sim-tab" data-tab="tab-security" role="tab" aria-selected="false" aria-controls="tab-security">
+              <span class="tab-icon">🛡️</span> 04. TELEMETRÍA & SEGURIDAD
+            </button>
+          </div>
+
+          <div class="term-body">
+            <!-- TAB 1: Portal Cliente (Extranet) -->
+            <div class="sim-panel active" id="tab-extranet" role="tabpanel">
+              <div class="panel-banner">
+                <div class="pb-left">
+                  <span class="pb-tag">VISTA DEL CLIENTE FINAL</span>
+                  <h4>Portal de Autoservicio con Acceso Magic Link</h4>
+                  <p>Tus clientes entran sin contraseñas con un enlace firmado de un solo clic. Ven sus presupuestos aprobados, descargan facturas fiscales y abonan saldos pendientes.</p>
+                </div>
+                <div class="pb-right">
+                  <div class="client-auth-pill">
+                    <span class="auth-dot">●</span> SESIÓN SEGURA: <strong>estudio@barrio.uy</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="term-metrics-grid">
+                <div class="metric-card">
+                  <span class="mc-label">Saldo Pendiente</span>
+                  <div class="mc-val mc-green">$ 0,00 UYU</div>
+                  <span class="mc-sub">Al día · Próxima cuota 01 OCT</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">Presupuestos Aprobados</span>
+                  <div class="mc-val mc-bone">3 / 3</div>
+                  <span class="mc-sub">Firma digital registrada</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">Tiempo de Respuesta</span>
+                  <div class="mc-val mc-electric">0.42s</div>
+                  <span class="mc-sub">Cache Edge Cloudflare</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">Documentos Disponibles</span>
+                  <div class="mc-val mc-bone">18 PDFs</div>
+                  <span class="mc-sub">Descarga inmediata sin fricción</span>
+                </div>
+              </div>
+
+              <!-- Interactive Ledger Table Preview -->
+              <div class="term-table-wrap">
+                <table class="term-table">
+                  <thead>
+                    <tr>
+                      <th>DOCUMENTO</th>
+                      <th>CONCEPTO</th>
+                      <th>FECHA</th>
+                      <th>MONTO</th>
+                      <th>ESTADO</th>
+                      <th>ACCIÓN</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td class="font-mono">e-Factura #A-0492</td>
+                      <td>Desarrollo Plataforma Inmobiliaria Web (Fase 2)</td>
+                      <td>10 SEP 2026</td>
+                      <td class="font-mono"><strong>$ 54.000 UYU</strong></td>
+                      <td><span class="pill-paid">● PAGADO (BROU)</span></td>
+                      <td><a href={waLink} target="_blank" class="table-action-btn">Descargar PDF ↓</a></td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono">e-Factura #A-0480</td>
+                      <td>Infraestructura Cloudflare Edge & Optimización LCP</td>
+                      <td>15 AGO 2026</td>
+                      <td class="font-mono"><strong>$ 38.500 UYU</strong></td>
+                      <td><span class="pill-paid">● PAGADO (ITAÚ)</span></td>
+                      <td><a href={waLink} target="_blank" class="table-action-btn">Descargar PDF ↓</a></td>
+                    </tr>
+                    <tr>
+                      <td class="font-mono">Presupuesto #PR-2026-09</td>
+                      <td>Módulo de Conciliación Bancaria y Alertas WhatsApp</td>
+                      <td>01 SEP 2026</td>
+                      <td class="font-mono"><strong>$ 42.000 UYU</strong></td>
+                      <td><span class="pill-approved">✓ APROBADO</span></td>
+                      <td><a href={waLink} target="_blank" class="table-action-btn">Ver Detalle ↗</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="mock-box">
-              <span class="mock-label">Saldo por Cobrar</span>
-              <div class="mock-val" style="color:#60A5FA;">$ 42.000</div>
+
+            <!-- TAB 2: Facturación CFE & DGI -->
+            <div class="sim-panel" id="tab-cfe" role="tabpanel">
+              <div class="panel-banner">
+                <div class="pb-left">
+                  <span class="pb-tag">CUMPLIMIENTO TRIBUTARIO URUGUAY</span>
+                  <h4>Emisión de Comprobantes Fiscales Electrónicos (CFE)</h4>
+                  <p>Mapeo directo con DGI. Cálculo estricto de IVA básico (22%), IVA mínimo (10%) y operaciones exentas. Generación de firmas XML y representación gráfica oficial.</p>
+                </div>
+                <div class="pb-right">
+                  <div class="client-auth-pill">
+                    <span class="auth-dot" style="background:#4ade80;">●</span> CAE AUTORIZADO DGI N° 2026-90412
+                  </div>
+                </div>
+              </div>
+
+              <div class="term-metrics-grid">
+                <div class="metric-card">
+                  <span class="mc-label">Total Emitido (Mes)</span>
+                  <div class="mc-val mc-bone">$ 428.500</div>
+                  <span class="mc-sub">18 Comprobantes válidos</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">IVA 22% Liquidado</span>
+                  <div class="mc-val mc-yellow">$ 77.270</div>
+                  <span class="mc-sub">Discriminado automático</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">CFE Aprobados DGI</span>
+                  <div class="mc-val mc-green">100%</div>
+                  <span class="mc-sub">0 rechazos en validación</span>
+                </div>
+                <div class="metric-card">
+                  <span class="mc-label">Tiempo Firma Digital</span>
+                  <div class="mc-val mc-electric">320ms</div>
+                  <span class="mc-sub">Hash criptográfico RSA</span>
+                </div>
+              </div>
+
+              <div class="term-table-wrap">
+                <table class="term-table">
+                  <thead>
+                    <tr>
+                      <th>TIPO CFE</th>
+                      <th>SERIE & NÚMERO</th>
+                      <th>RECEPTOR (RUT)</th>
+                      <th>SUBTOTAL</th>
+                      <th>IVA 22%</th>
+                      <th>TOTAL FINAL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="cfe-badge">111 - e-Factura</span></td>
+                      <td class="font-mono">Serie A #0492</td>
+                      <td>Barrio Inmobiliaria (RUT 218903440012)</td>
+                      <td class="font-mono">$ 44.262</td>
+                      <td class="font-mono">$ 9.738</td>
+                      <td class="font-mono"><strong>$ 54.000 UYU</strong></td>
+                    </tr>
+                    <tr>
+                      <td><span class="cfe-badge">101 - e-Ticket</span></td>
+                      <td class="font-mono">Serie A #0493</td>
+                      <td>Consumidor Final (CI 4.892.110-3)</td>
+                      <td class="font-mono">$ 15.574</td>
+                      <td class="font-mono">$ 3.426</td>
+                      <td class="font-mono"><strong>$ 19.000 UYU</strong></td>
+                    </tr>
+                    <tr>
+                      <td><span class="cfe-badge">112 - e-Factura Export</span></td>
+                      <td class="font-mono">Serie B #0104</td>
+                      <td>Tech Studio LLC (Delaware, USA)</td>
+                      <td class="font-mono">US$ 2.400</td>
+                      <td class="font-mono">Exento (0%)</td>
+                      <td class="font-mono"><strong>US$ 2.400</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div class="mock-box">
-              <span class="mock-label">Tasa de Efectividad</span>
-              <div class="mock-val" style="color:#34D399;">96.8%</div>
+
+            <!-- TAB 3: Workflows WhatsApp -->
+            <div class="sim-panel" id="tab-whatsapp" role="tabpanel">
+              <div class="panel-banner">
+                <div class="pb-left">
+                  <span class="pb-tag">COBROS SIN LLAMADAS INCÓMODAS</span>
+                  <h4>Automatización de Mensajería & Conciliación por WhatsApp</h4>
+                  <p>Cuando emitís una factura o un pago ingresa en tu cuenta bancaria, el webhook dispara una alerta instantánea con el link directo para ver el recibo o pagar con QR.</p>
+                </div>
+                <div class="pb-right">
+                  <div class="client-auth-pill">
+                    <span class="auth-dot" style="background:#25d366;">●</span> META WHATSAPP CLOUD API ONLINE
+                  </div>
+                </div>
+              </div>
+
+              <div class="wa-chat-simulator">
+                <div class="wa-message-bubble incoming">
+                  <div class="wa-msg-meta">AMARGO B2B BOT · Hace 2 minutos</div>
+                  <p>👋 Hola <strong>Martín</strong>. Te confirmamos que se acreditó la transferencia bancaria (BROU) correspondiente a la <strong>e-Factura #A-0492</strong> por <strong>$ 54.000 UYU</strong>.</p>
+                  <p>Podés descargar tu comprobante fiscal firmado y ver tu estado de cuenta actualizado en tu portal:</p>
+                  <div class="wa-msg-card">
+                    <span class="wa-card-title">📄 e-Factura_A-0492_Barrio.pdf</span>
+                    <span class="wa-card-sub">DGI CFE · Descarga instantánea</span>
+                  </div>
+                  <span class="wa-time">14:32 ✓✓</span>
+                </div>
+
+                <div class="wa-message-bubble outgoing">
+                  <div class="wa-msg-meta">CLIENTE (BARRIO.UY)</div>
+                  <p>Excelente, muchas gracias por la rapidez. Descargada y archivada.</p>
+                  <span class="wa-time">14:33</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 4: Telemetría & Seguridad -->
+            <div class="sim-panel" id="tab-security" role="tabpanel">
+              <div class="panel-banner">
+                <div class="pb-left">
+                  <span class="pb-tag">ARQUITECTURA CLOUD A MEDIDA</span>
+                  <h4>Base de Datos Aislada & Registro Inmutable de Auditoría</h4>
+                  <p>A diferencia de sistemas monolíticos obsoletos, cada cliente opera con aislamiento Row-Level Security (RLS) sobre PostgreSQL. Trazabilidad completa de cada acción y cobro.</p>
+                </div>
+                <div class="pb-right">
+                  <div class="client-auth-pill">
+                    <span class="auth-dot" style="background:#38bdf8;">●</span> POSTGRESQL RLS ENCRYPTED
+                  </div>
+                </div>
+              </div>
+
+              <div class="security-log-terminal">
+                <div class="sec-log-row">
+                  <span class="log-time">[14:31:02.108]</span>
+                  <span class="log-code">POST /api/cfe/emit</span>
+                  <span class="log-status ok">200 OK</span>
+                  <span class="log-desc">CFE #A-0492 firmado digitalmente con certificado digital DGI (218ms).</span>
+                </div>
+                <div class="sec-log-row">
+                  <span class="log-time">[14:31:04.450]</span>
+                  <span class="log-code">WEBHOOK /bank/brou</span>
+                  <span class="log-status ok">MATCH</span>
+                  <span class="log-desc">Conciliación automática: Transferencia BROU #89104 coincide por $ 54.000.</span>
+                </div>
+                <div class="sec-log-row">
+                  <span class="log-time">[14:31:05.120]</span>
+                  <span class="log-code">QUEUE /wa/notify</span>
+                  <span class="log-status ok">SENT</span>
+                  <span class="log-desc">Mensaje de confirmación entregado al cliente via WhatsApp Cloud API.</span>
+                </div>
+                <div class="sec-log-row">
+                  <span class="log-time">[14:32:40.890]</span>
+                  <span class="log-code">AUTH /magic-link</span>
+                  <span class="log-status ok">VERIFIED</span>
+                  <span class="log-desc">Acceso concedido a estudio@barrio.uy. Token JWT revocado post-uso (RLS activo).</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </header>
+      </div>
+    </section>
 
-      <!-- FEATURES -->
-      <section class="features">
-        <h2 class="features-title">Diseñado para la operativa real de servicios</h2>
+    <!-- 02. Pilares de la Suite B2B -->
+    <section class="fac-features">
+      <div class="fac-container">
+        <div class="fac-section-head">
+          <div class="section-label"><span class="num">02</span> MÓDULOS DEL SISTEMA</div>
+          <h2>Ingeniería pensada para la <em>operativa real</em></h2>
+          <p class="section-lead-text">No vendemos software genérico enlatado. Diseñamos la solución exacta que se adapta a las reglas de tu negocio, tu equipo y tus clientes.</p>
+        </div>
 
-        <div class="grid-3">
-          <div class="feat-card">
-            <div class="feat-icon">🧾</div>
-            <h3>Comprobantes CFE Ready</h3>
-            <p>
-              Numeración correlativa por serie, discriminación automática de IVA 22% (Uruguay), identificación de RUT del cliente y formato oficial A4 membretado.
-            </p>
+        <div class="fac-features-grid">
+          <div class="feat-box tactile-card">
+            <div class="feat-top">
+              <span class="feat-num">01</span>
+              <span class="feat-badge">EXTRANET</span>
+            </div>
+            <h3>Portales de Clientes con Magic Link</h3>
+            <p>Tus clientes acceden con un enlace seguro a su estado de cuenta en vivo, historial de compras, presupuestos interactivos con firma digital y comprobantes fiscales descargables sin contraseñas.</p>
+            <div class="feat-tags">
+              <span>#PASSWORDLESS</span>
+              <span>#ESTADO EN VIVO</span>
+              <span>#FIRMA DIGITAL</span>
+            </div>
           </div>
 
-          <div class="feat-card">
-            <div class="feat-icon">📲</div>
-            <h3>Automatización por WhatsApp</h3>
-            <p>
-              Notificación inmediata al cliente cuando se emite una factura o se confirma un pago recibido, eliminando fricciones y demoras.
-            </p>
+          <div class="feat-box tactile-card">
+            <div class="feat-top">
+              <span class="feat-num">02</span>
+              <span class="feat-badge">CFE DGI</span>
+            </div>
+            <h3>Facturación Electrónica CFE (Uruguay)</h3>
+            <p>Módulo fiscal 100% homologable con DGI. Soporte para e-Factura, e-Ticket, e-Factura Exportación y Notas de Crédito, con cálculo de IVA 22% / 10% y emisión de PDFs oficiales con código QR.</p>
+            <div class="feat-tags">
+              <span>#CFE URUGUAY</span>
+              <span>#IVA 22%</span>
+              <span>#RUT EMPRESAS</span>
+            </div>
           </div>
 
-          <div class="feat-card">
-            <div class="feat-icon">🔒</div>
-            <h3>Portal Seguro con Magic Link</h3>
-            <p>
-              Tus clientes acceden en cualquier momento a su historial de facturas, saldo pendiente y comprobantes PDF sin contraseñas engorrosas.
-            </p>
+          <div class="feat-box tactile-card">
+            <div class="feat-top">
+              <span class="feat-num">03</span>
+              <span class="feat-badge">COBROS</span>
+            </div>
+            <h3>Conciliación Bancaria & Pasarelas</h3>
+            <p>Automatizá el registro de transferencias bancarias (BROU, Itaú, Santander, Scotiabank) y aceptá cobros inmediatos con Mercado Pago Checkout Pro o Stripe para clientes en el exterior.</p>
+            <div class="feat-tags">
+              <span>#BROU</span>
+              <span>#ITAÚ</span>
+              <span>#MERCADO PAGO</span>
+            </div>
+          </div>
+
+          <div class="feat-box tactile-card">
+            <div class="feat-top">
+              <span class="feat-num">04</span>
+              <span class="feat-badge">AUTOMATIZACIÓN</span>
+            </div>
+            <h3>Disparadores WhatsApp Cloud API</h3>
+            <p>Notificá automáticamente al cliente cuando un presupuesto fue emitido, un pago fue acreditado o una factura está próxima a vencer. Cero llamadas incómodas, cobranzas 100% fluidas.</p>
+            <div class="feat-tags">
+              <span>#WHATSAPP API</span>
+              <span>#WEBHOOKS</span>
+              <span>#RECORDATORIOS</span>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- BOTTOM BANNER -->
-      <section class="bottom-banner">
-        <h2>¿Querés implementar este sistema en tu empresa?</h2>
-        <p>
-          Te ayudamos a integrar tu flujo comercial, presupuestos interactivos y control de cobros con la identidad de tu marca.
-        </p>
-        <a href={waLink} target="_blank" class="btn-lime">
-          Hablar con el Equipo de AMARGO →
-        </a>
-      </section>
-    </div>
-  </body>
-</html>
+    <!-- 03. Comparativa Técnica (Amargo vs ERPs Tradicionales) -->
+    <section class="fac-comparison">
+      <div class="fac-container">
+        <div class="fac-section-head">
+          <div class="section-label"><span class="num">03</span> DIFERENCIACIÓN TÉCNICA</div>
+          <h2>Amargo a medida <em>vs</em> ERPs Tradicionales</h2>
+          <p class="section-lead-text">Por qué las empresas que buscan alta conversión y control eligen software propietario en vez de licencias mensuales infladas.</p>
+        </div>
+
+        <div class="comparison-table-wrap tactile-card">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>CRITERIO TÉCNICO & OPERATIVO</th>
+                <th class="col-amargo">SISTEMA AMARGO A MEDIDA</th>
+                <th class="col-generic">ERPS TRADICIONALES (SAP / ODOO / MEMORY)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Velocidad & Carga Móvil (LCP)</strong></td>
+                <td class="col-amargo"><span class="check">✓</span> <strong>&lt; 0.8 segundos</strong> (Next.js / Astro Edge)</td>
+                <td class="col-generic"><span class="cross">✕</span> 4.5s a 9s (Sistemas pesados basados en servidor)</td>
+              </tr>
+              <tr>
+                <td><strong>Experiencia del Cliente Final</strong></td>
+                <td class="col-amargo"><span class="check">✓</span> Portal moderno, Magic Link sin contraseñas, UI premium</td>
+                <td class="col-generic"><span class="cross">✕</span> Formularios complejos, captchas, UX anticuada</td>
+              </tr>
+              <tr>
+                <td><strong>Notificaciones & Cobros</strong></td>
+                <td class="col-amargo"><span class="check">✓</span> WhatsApp Cloud API nativo con link directo de pago</td>
+                <td class="col-generic"><span class="cross">✕</span> Emails genéricos que caen en la carpeta de Spam</td>
+              </tr>
+              <tr>
+                <td><strong>Costos Recurrentes de Licencia</strong></td>
+                <td class="col-amargo"><span class="check">✓</span> Código de tu propiedad. Sin cobro por usuario adicional</td>
+                <td class="col-generic"><span class="cross">✕</span> Pagos mensuales perpetuos que aumentan por usuario</td>
+              </tr>
+              <tr>
+                <td><strong>Adaptabilidad a tus Reglas</strong></td>
+                <td class="col-amargo"><span class="check">✓</span> 100% adaptable a tu flujo comercial específico</td>
+                <td class="col-generic"><span class="cross">✕</span> Tu empresa debe forzarse a la estructura del software</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. Ecosistema de Integraciones -->
+    <section class="fac-integrations">
+      <div class="fac-container">
+        <div class="fac-section-head">
+          <div class="section-label"><span class="num">04</span> INTEGRACIONES NATIVAS</div>
+          <h2>Conectado con tu <em>banca y herramientas</em></h2>
+        </div>
+
+        <div class="integrations-grid">
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>DGI CFE URUGUAY</h4>
+            <p>e-Factura, e-Ticket, CAE correlativo oficial y firma XML.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>BROU (BANCO REPÚBLICA)</h4>
+            <p>Conciliación de transferencias y depósitos bancarios locales.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>BANCO ITAÚ</h4>
+            <p>Integración de cuentas comerciales en pesos y dólares.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>SANTANDER URUGUAY</h4>
+            <p>Monitoreo de acreditaciones en cuentas corporativas.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>MERCADO PAGO</h4>
+            <p>Cobros online inmediatos con tarjetas y saldo digital.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>WHATSAPP CLOUD API</h4>
+            <p>Webhooks oficiales de Meta para alertas y comprobantes.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>STRIPE PAYMENTS</h4>
+            <p>Cobros internacionales en USD/EUR para clientes en el exterior.</p>
+          </div>
+          <div class="integ-pill">
+            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <h4>POSTGRESQL & SUPABASE</h4>
+            <p>Base de datos relacional con Row-Level Security y backups en caliente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05. Roadmap de Entrega en 15 Días -->
+    <section class="fac-roadmap">
+      <div class="fac-container">
+        <div class="fac-section-head">
+          <div class="section-label"><span class="num">05</span> METODOLOGÍA & SLA</div>
+          <h2>Despliegue operativo en <em>15 días hábiles</em></h2>
+          <p class="section-lead-text">Sin demoras burocráticas de meses. Trabajamos con sprints atómicos para que tu sistema esté produciendo valor de inmediato.</p>
+        </div>
+
+        <div class="roadmap-steps">
+          <div class="road-step tactile-card">
+            <div class="road-step-num">01</div>
+            <div class="road-step-days">DÍAS 1 AL 3</div>
+            <h4>Mapeo & Arquitectura</h4>
+            <p>Analizamos tu flujo actual de cotizaciones y facturas. Diseñamos el modelo relacional de datos en PostgreSQL y los permisos de acceso.</p>
+          </div>
+
+          <div class="road-step tactile-card">
+            <div class="road-step-num">02</div>
+            <div class="road-step-days">DÍAS 4 AL 8</div>
+            <h4>Frontend UI & Extranet</h4>
+            <p>Construcción del portal de clientes con diseño de alta gama, autenticación Magic Link y visualización instantánea de documentos.</p>
+          </div>
+
+          <div class="road-step tactile-card">
+            <div class="road-step-num">03</div>
+            <div class="road-step-days">DÍAS 9 AL 12</div>
+            <h4>CFE & Automatizaciones</h4>
+            <p>Conexión del emisor tributario CFE DGI, disparadores de cobro por WhatsApp Cloud API y pasarelas de pago bancarias.</p>
+          </div>
+
+          <div class="road-step tactile-card">
+            <div class="road-step-num">04</div>
+            <div class="road-step-days">DÍAS 13 AL 15</div>
+            <h4>Certificación & Lanzamiento</h4>
+            <p>Pruebas de estrés de seguridad, capacitación a tu equipo y pase oficial a producción sin interrumpir tu operativa diaria.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 06. Portal de Consulta Directa de Comprobantes -->
+    <section class="fac-lookup-section">
+      <div class="fac-container">
+        <div class="lookup-box tactile-card">
+          <div class="lookup-content">
+            <span class="lookup-badge">● EXTRANET DE AUTOSERVICIO EN VIVO</span>
+            <h3>¿Ya sos cliente de Amargo Creativo?</h3>
+            <p>Ingresá el código identificador de tu factura para acceder a tu estado de cuenta en tiempo real, descargar tu comprobante fiscal firmado o verificar datos bancarios.</p>
+          </div>
+          <form class="lookup-form" onsubmit="event.preventDefault(); const val = (document.getElementById('fac-lookup-input') as any).value.trim(); if(val) { window.location.href = '/comprobante/' + val; } else { alert('Por favor ingresá tu código identificador'); }">
+            <div class="lookup-row">
+              <input 
+                type="text" 
+                id="fac-lookup-input" 
+                placeholder="ID o código de comprobante..." 
+                class="lookup-input font-mono"
+              />
+              <button type="submit" class="lookup-btn">
+                <span>CONSULTAR FACTURA</span> ↗
+              </button>
+            </div>
+            <span class="lookup-note">Acceso instantáneo sin contraseñas · Compatible con e-Factura y e-Ticket CFE</span>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Banner Final de Conversión -->
+    <section class="fac-bottom-banner">
+      <div class="fac-container">
+        <div class="fac-banner-box tactile-card">
+          <span class="banner-tag">● CONSULTORÍA ARQUITECTURAL SIN CARGO</span>
+          <h2>¿Querés modernizar el sistema operativo de tu empresa?</h2>
+          <p>Coordiná una llamada técnica de 20 minutos con nuestros ingenieros. Revisamos tu flujo actual y te entregamos la propuesta de arquitectura exacta para tu negocio.</p>
+          <div class="banner-cta-group">
+            <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary" data-cursor="WHATSAPP">
+              <span>AGENDAR CONSULTA TÉCNICA VÍA WHATSAPP</span> ↗
+            </a>
+            <span class="banner-guarantee">Respuesta en menos de 2 horas hábiles · Soporte en Uruguay</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<script>
+  // Script para el switcher interactivo de Tabs en el simulador
+  document.addEventListener('DOMContentLoaded', () => {
+    const tabs = document.querySelectorAll<HTMLButtonElement>('.sim-tab');
+    const panels = document.querySelectorAll<HTMLElement>('.sim-panel');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const targetId = tab.getAttribute('data-tab');
+        if (!targetId) return;
+
+        // Actualizar estados de los botones
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.setAttribute('aria-selected', 'false');
+        });
+        tab.classList.add('active');
+        tab.setAttribute('aria-selected', 'true');
+
+        // Actualizar visibilidad de los paneles
+        panels.forEach(panel => {
+          if (panel.id === targetId) {
+            panel.classList.add('active');
+          } else {
+            panel.classList.remove('active');
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .facturacion-page {
+    padding-top: 100px;
+    background: var(--bone);
+    color: var(--ink);
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+
+  .fac-container {
+    max-width: var(--max);
+    margin: 0 auto;
+    padding: 0 var(--gut);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .fac-hero {
+    padding: 40px 0 60px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fac-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .section-label .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+  }
+
+  :global(body.theme-electric) .section-label .num {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .fac-telemetry-stamp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--mate);
+  }
+
+  :global(body.theme-electric) .fac-telemetry-stamp {
+    color: var(--electric);
+  }
+
+  .fac-h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(32px, 5.2vw, 80px);
+    line-height: 0.95;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0 0 24px;
+    max-width: 1200px;
+  }
+
+  .fac-h1 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    text-transform: lowercase;
+    font-weight: 400;
+    color: var(--rust);
+  }
+
+  .fac-lead {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(15px, 1.6vw, 18px);
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.88;
+    max-width: 860px;
+    margin-bottom: 28px;
+  }
+
+  .fac-specs-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 32px;
+  }
+
+  .spec-chip {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border: 1px solid var(--line);
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--ink);
+    letter-spacing: 0.04em;
+  }
+
+  :global(body.theme-electric) .spec-chip {
+    background: rgba(241, 255, 90, 0.06);
+    border-color: rgba(241, 255, 90, 0.2);
+  }
+
+  .fac-cta-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .fac-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--electric);
+    color: #0a0a0a;
+    padding: 14px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border: 1px solid #0a0a0a;
+    box-shadow: 3px 3px 0px #0a0a0a;
+    transition: all 0.2s var(--ease);
+  }
+
+  .fac-btn-primary:hover {
+    background: #0a0a0a;
+    color: var(--electric);
+    box-shadow: 5px 5px 0px var(--electric);
+    transform: translate(-1px, -1px);
+  }
+
+  .fac-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    transition: all 0.2s var(--ease);
+  }
+
+  .fac-btn-secondary:hover {
+    background: var(--ink);
+    color: var(--bone);
+  }
+
+  /* Simulator Section */
+  .fac-mockup-section {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .simulator-wrapper {
+    background: var(--charcoal);
+    color: var(--bone);
+    border: 1px solid var(--line);
+    box-shadow: 8px 8px 0px var(--mate);
+  }
+
+  :global(body.theme-electric) .simulator-wrapper {
+    box-shadow: 8px 8px 0px var(--electric);
+  }
+
+  .term-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  .term-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+
+  .term-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--electric);
+  }
+
+  .term-live-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #4ade80;
+  }
+
+  /* Navigation Tabs */
+  .sim-nav-bar {
+    display: flex;
+    overflow-x: auto;
+    background: rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .sim-tab {
+    background: transparent;
+    border: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    color: rgba(244, 241, 234, 0.65);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 14px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .sim-tab:hover {
+    color: var(--bone);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .sim-tab.active {
+    color: #0a0a0a;
+    background: var(--electric);
+    font-weight: 800;
+  }
+
+  .term-body {
+    padding: clamp(20px, 3vw, 36px);
+  }
+
+  .sim-panel {
+    display: none;
+  }
+
+  .sim-panel.active {
+    display: block;
+  }
+
+  /* Panel Banner */
+  .panel-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding-bottom: 24px;
+    margin-bottom: 28px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .pb-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--electric);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .pb-left h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--bone);
+  }
+
+  .pb-left p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: rgba(244, 241, 234, 0.75);
+    margin: 0;
+    max-width: 680px;
+  }
+
+  .client-auth-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--bone);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .auth-dot {
+    color: #4ade80;
+  }
+
+  .term-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .metric-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mc-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(244, 241, 234, 0.65);
+  }
+
+  .mc-val {
+    font-family: 'Anton', sans-serif;
+    font-size: clamp(26px, 2.8vw, 38px);
+    line-height: 1;
+    margin: 4px 0;
+  }
+
+  .mc-green { color: #4ade80; }
+  .mc-yellow { color: #facc15; }
+  .mc-electric { color: var(--electric); }
+  .mc-bone { color: var(--bone); }
+
+  .mc-sub {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11.5px;
+    color: rgba(244, 241, 234, 0.7);
+  }
+
+  .term-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .term-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .term-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    color: rgba(244, 241, 234, 0.75);
+  }
+
+  .term-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .term-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .pill-paid {
+    color: #4ade80;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .pill-approved {
+    color: var(--electric);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  .table-action-btn {
+    display: inline-block;
+    color: var(--electric);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border: 1px solid rgba(241, 255, 90, 0.3);
+    transition: all 0.2s ease;
+  }
+
+  .table-action-btn:hover {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .cfe-badge {
+    background: rgba(255, 255, 255, 0.08);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    padding: 3px 6px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+  }
+
+  /* WhatsApp Chat Simulator */
+  .wa-chat-simulator {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 680px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .wa-message-bubble {
+    padding: 16px 20px;
+    max-width: 85%;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .wa-message-bubble.incoming {
+    background: #005c4b;
+    color: #e9edef;
+    align-self: flex-start;
+    border-radius: 4px 12px 12px 12px;
+  }
+
+  .wa-message-bubble.outgoing {
+    background: #202c33;
+    color: #e9edef;
+    align-self: flex-end;
+    border-radius: 12px 4px 12px 12px;
+  }
+
+  .wa-msg-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #25d366;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+
+  .wa-msg-card {
+    margin-top: 10px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 14px;
+    border-left: 3px solid #25d366;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .wa-card-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .wa-card-sub {
+    font-size: 10.5px;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .wa-time {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    text-align: right;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 6px;
+  }
+
+  /* Security Log Terminal */
+  .security-log-terminal {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sec-log-row {
+    display: grid;
+    grid-template-columns: 140px 180px 80px 1fr;
+    gap: 14px;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 10px;
+  }
+
+  .sec-log-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .log-time { color: rgba(244, 241, 234, 0.5); }
+  .log-code { color: var(--electric); font-weight: 700; }
+  .log-status.ok { color: #4ade80; font-weight: 700; }
+  .log-desc { color: rgba(244, 241, 234, 0.85); }
+
+  /* 02. Features Grid */
+  .fac-features {
+    padding: clamp(60px, 10vh, 100px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fac-section-head {
+    margin-bottom: 48px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fac-section-head h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(28px, 4.2vw, 60px);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 12px 0 10px;
+  }
+
+  .fac-section-head h2 em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--rust);
+  }
+
+  .section-lead-text {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+    margin: 0;
+    max-width: 760px;
+  }
+
+  .fac-features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+
+  .feat-box {
+    padding: clamp(24px, 3vw, 36px);
+    background: var(--bone);
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .feat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .feat-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 38px;
+    line-height: 1;
+    color: var(--mate);
+  }
+
+  :global(body.theme-electric) .feat-num {
+    color: var(--electric);
+  }
+
+  .feat-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--line);
+  }
+
+  .feat-box h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px, 1.8vw, 22px);
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .feat-box p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14.5px;
+    line-height: 1.6;
+    color: var(--ink);
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .feat-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .feat-tags span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--mate);
+  }
+
+  :global(body.theme-electric) .feat-tags span {
+    color: var(--electric);
+  }
+
+  /* 03. Comparison Section */
+  .fac-comparison {
+    padding: clamp(60px, 10vh, 100px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .comparison-table-wrap {
+    background: var(--charcoal);
+    color: var(--bone);
+    overflow-x: auto;
+    border: 1px solid var(--line);
+  }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .comparison-table th {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .comparison-table td {
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .comparison-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .col-amargo {
+    background: rgba(241, 255, 90, 0.03);
+    color: var(--bone);
+  }
+
+  .col-generic {
+    color: rgba(244, 241, 234, 0.65);
+  }
+
+  .check {
+    color: #4ade80;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  .cross {
+    color: #ff5f56;
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  /* 04. Integrations Grid */
+  .fac-integrations {
+    padding: clamp(60px, 10vh, 100px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .integrations-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .integ-pill {
+    background: var(--bone);
+    border: 1px solid var(--line);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .integ-pill:hover {
+    transform: translateY(-2px);
+    border-color: var(--mate);
+  }
+
+  :global(body.theme-electric) .integ-pill:hover {
+    border-color: var(--electric);
+  }
+
+  .integ-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #4ade80;
+  }
+
+  .integ-pill h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    margin: 0;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .integ-pill p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--ink);
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  /* 05. Roadmap Steps */
+  .fac-roadmap {
+    padding: clamp(60px, 10vh, 100px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .roadmap-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .road-step {
+    background: var(--bone);
+    border: 1px solid var(--line);
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+  }
+
+  .road-step-num {
+    font-family: 'Anton', sans-serif;
+    font-size: 36px;
+    line-height: 1;
+    color: var(--mate);
+    opacity: 0.8;
+  }
+
+  :global(body.theme-electric) .road-step-num {
+    color: var(--electric);
+  }
+
+  .road-step-days {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+  }
+
+  .road-step h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  .road-step p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink);
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  /* 06. Lookup Section */
+  .fac-lookup-section {
+    padding: clamp(40px, 6vh, 60px) 0 0;
+  }
+
+  .lookup-box {
+    background: var(--bone);
+    border: 1px solid var(--line);
+    padding: clamp(28px, 4vw, 44px);
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .lookup-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--mate);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  :global(body.theme-electric) .lookup-badge {
+    color: var(--electric);
+  }
+
+  .lookup-content h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(20px, 2.2vw, 28px);
+    font-weight: 800;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+
+  .lookup-content p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .lookup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lookup-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .lookup-input {
+    flex: 1;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .lookup-input:focus {
+    border-color: var(--ink);
+  }
+
+  .lookup-btn {
+    background: var(--ink);
+    color: var(--bone);
+    border: 1px solid var(--ink);
+    padding: 12px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .lookup-btn:hover {
+    background: var(--mate);
+    border-color: var(--mate);
+    color: #ffffff;
+  }
+
+  :global(body.theme-electric) .lookup-btn {
+    background: var(--electric);
+    color: #0a0a0a;
+    border-color: var(--electric);
+  }
+
+  :global(body.theme-electric) .lookup-btn:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+  }
+
+  .lookup-note {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--mute);
+  }
+
+  @media (max-width: 860px) {
+    .lookup-box {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+    .lookup-row {
+      flex-direction: column;
+    }
+    .lookup-btn {
+      width: 100%;
+    }
+  }
+
+  /* Bottom Banner */
+  .fac-bottom-banner {
+    padding: clamp(60px, 10vh, 100px) 0;
+  }
+
+  .fac-banner-box {
+    background: var(--charcoal);
+    color: var(--bone);
+    padding: clamp(36px, 5vw, 64px);
+    border: 1px solid var(--line);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    box-shadow: 8px 8px 0px var(--electric);
+  }
+
+  .banner-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--electric);
+  }
+
+  .fac-banner-box h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(26px, 4vw, 50px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+    max-width: 800px;
+  }
+
+  .fac-banner-box p {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: rgba(244, 241, 234, 0.85);
+    max-width: 650px;
+    margin: 0 0 8px;
+  }
+
+  .banner-cta-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .banner-guarantee {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    color: rgba(244, 241, 234, 0.65);
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 1024px) {
+    .term-metrics-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .integrations-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .roadmap-steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .sec-log-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .fac-features-grid {
+      grid-template-columns: 1fr;
+    }
+    .integrations-grid {
+      grid-template-columns: 1fr;
+    }
+    .roadmap-steps {
+      grid-template-columns: 1fr;
+    }
+    .sim-tab {
+      padding: 12px 14px;
+      font-size: 10px;
+    }
+    .term-metrics-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+

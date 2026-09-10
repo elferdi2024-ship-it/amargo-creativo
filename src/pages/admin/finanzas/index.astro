@@ -29,6 +29,7 @@ const overdue = all.filter(
 const incomeThisMonth = paidThisMonth.reduce((sum, i) => sum + Number(i.total || 0), 0);
 const totalPending = pending.reduce((sum, i) => sum + Number(i.total || 0), 0);
 const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
+const taxThisMonth = paidThisMonth.reduce((sum, i) => sum + Number((i as any).tax_amount || 0), 0);
 ---
 
 <AdminLayout title="Finanzas & Cobros" activeSection="finanzas">
@@ -41,6 +42,9 @@ const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
         </p>
       </div>
       <div class="top-actions">
+        <a href="/admin/finanzas/configuracion" class="btn-sec-sm">
+          ⚙ Configuración CFE & Bancos
+        </a>
         <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
           + Nueva Factura
         </a>
@@ -68,9 +72,9 @@ const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
       </div>
 
       <div class="metric-card">
-        <span class="m-label">Total Emitidas</span>
-        <div class="m-value">{all.length}</div>
-        <span class="m-sub">Histórico registrado</span>
+        <span class="m-label">IVA 22% Liquidado</span>
+        <div class="m-value" style="color:#FBBF24;">{formatMoney(taxThisMonth, "UYU")}</div>
+        <span class="m-sub">Estimado fiscal DGI del mes</span>
       </div>
     </div>
 
@@ -133,7 +137,10 @@ const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
                 <td style="text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--adm-lime);">
                   {formatMoney(Number(inv.total), inv.currency)}
                 </td>
-                <td style="text-align: right;">
+                <td style="text-align: right; white-space: nowrap;">
+                  <a href={`/comprobante/${inv.id}`} target="_blank" class="btn-portal-sm" title="Ver cómo lo ve el cliente">
+                    Portal ↗
+                  </a>
                   <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">
                     Gestionar →
                   </a>
@@ -295,5 +302,44 @@ const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
   .btn-sm:hover {
     background: rgba(255, 255, 255, 0.12);
     border-color: var(--adm-lime);
+  }
+
+  .btn-sec-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 0.95rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--adm-border);
+    border-radius: 6px;
+    color: var(--adm-ink);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.15s ease;
+  }
+
+  .btn-sec-sm:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: var(--adm-lime);
+  }
+
+  .btn-portal-sm {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.65rem;
+    background: rgba(200, 255, 0, 0.08);
+    border: 1px solid rgba(200, 255, 0, 0.3);
+    border-radius: 6px;
+    color: var(--adm-lime);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+    margin-right: 6px;
+    transition: all 0.15s ease;
+  }
+
+  .btn-portal-sm:hover {
+    background: var(--adm-lime);
+    color: #0a0a0a;
   }
 </style>

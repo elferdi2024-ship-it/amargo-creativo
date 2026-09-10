@@ -11,9 +11,12 @@
       <div class="footer-phrase">
         <em>"Siempre es una buena hora para compartir un amargo"</em>
       </div>
-    </div>
     <div class="footer-nav">
-      <a href="/servicios-crecimiento" class="footer-nav-link">SERVICIOS DE CRECIMIENTO ↗</a>
+      <a href="/proyectos" class="footer-nav-link">PROYECTOS</a>
+      <a href="/servicios-crecimiento" class="footer-nav-link">SERVICIOS & CRO</a>
+      <a href="/facturacion" class="footer-nav-link">SISTEMAS B2B & COBROS</a>
+      <a href="/manifiesto" class="footer-nav-link">MANIFIESTO</a>
+      <a href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" target="_blank" rel="noopener noreferrer" class="footer-nav-link footer-cta-link">WHATSAPP ↗</a>
     </div>
     <div class="footer-copy">© 2026 AMARGO CREATIVO™ — ATLÁNTIDA, URUGUAY • ARGENTINA • ESPAÑA</div>
   </div>
@@ -123,6 +126,12 @@
   :global(body.theme-mate) .footer-copy {
     color: rgba(232, 230, 224, 0.75);
   }
+  .footer-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
   .footer-nav-link {
     color: var(--mate-light);
     text-decoration: none;
@@ -134,6 +143,12 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s var(--ease);
     display: inline-block;
+  }
+  .footer-cta-link {
+    background: var(--electric) !important;
+    color: #0a0a0a !important;
+    border-color: var(--electric) !important;
+    font-weight: 700 !important;
   }
   .footer-nav-link:hover {
     background: var(--mate-light);

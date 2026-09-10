@@ -1,0 +1,840 @@
+---
+// filepath: src/pages/comprobante/[id].astro
+export const prerender = false;
+
+import { supabaseAdmin } from "../../lib/supabase";
+import { formatMoney, formatDate, whatsappHref } from "../../lib/format";
+import { getFiscalSettings, getCFETypeMeta } from "../../lib/invoices";
+
+const { id } = Astro.params;
+
+if (!id) {
+  return Astro.redirect("/");
+}
+
+// Headers sin cache para reflejar pagos en tiempo real
+Astro.response.headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
+
+const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+let dbQuery = supabaseAdmin
+  .from("invoices")
+  .select("*, clients(*), payments(*), projects(title)");
+
+if (isUuid) {
+  dbQuery = dbQuery.eq("id", id);
+} else {
+  dbQuery = dbQuery.eq("number", id);
+}
+
+const { data: dbInvoice } = await dbQuery.maybeSingle();
+let invoice: any = dbInvoice;
+
+if (!invoice) {
+  if (id.toUpperCase().startsWith("INV-") || id.toUpperCase() === "DEMO" || id === "demo-inv-001") {
+    invoice = {
+      id: "demo-inv-001",
+      number: id.toUpperCase().startsWith("INV-") ? id.toUpperCase() : "INV-2026-001",
+      cfe_type: 111,
+      cfe_series: "A",
+      cfe_number: 1042,
+      cfe_signed: true,
+      cfe_hash: "3d9f8c2b1a0e4f5a6b7c8d9e0f1a2b3c",
+      issue_date: new Date().toISOString().slice(0, 10),
+      due_date: new Date(Date.now() + 15 * 86400000).toISOString().slice(0, 10),
+      status: "issued",
+      currency: "UYU",
+      subtotal: 34426,
+      tax_rate: 22,
+      tax_amount: 7574,
+      total: 42000,
+      notes: "Servicio de desarrollo de infraestructura web Next.js 15, integración CFE DGI y puesta en marcha.",
+      clients: {
+        name: "Estudio Jurídico Ferrere & Asoc.",
+        company: "Ferrere Consultores S.A.",
+        rut: "214890120018",
+        email: "administracion@estudio-demo.uy",
+        phone: "+59899123456",
+        address: "Plaza Independencia 812, Piso 4, Montevideo",
+      },
+      items: [
+        {
+          description: "Desarrollo Web Next.js 15 & Astro 5 Core de Submilisegundo",
+          quantity: 1,
+          rate: 28000,
+          amount: 28000,
+          taxRate: 22,
+        },
+        {
+          description: "Optimización de Edge CDN, LCP < 0.8s & Seguridad SSL",
+          quantity: 1,
+          rate: 6426,
+          amount: 6426,
+          taxRate: 22,
+        },
+      ],
+      payments: [],
+      projects: {
+        title: "Portal Corporativo & Plataforma Legal",
+      },
+    };
+  } else {
+    return Astro.redirect("/404");
+  }
+}
+
+const settings = getFiscalSettings();
+const client = (invoice.clients as any) || {};
+const items = Array.isArray(invoice.items) ? invoice.items : [];
+const payments = (invoice.payments as any[]) || [];
+const totalPaid = payments.reduce((sum: number, p: any) => sum + Number(p.amount || 0), 0);
+const remaining = Math.max(0, Number(invoice.total || 0) - totalPaid);
+const cfeMeta = getCFETypeMeta(invoice.cfe_type);
+
+const pageTitle = `${cfeMeta.shortName} ${invoice.number || "Borrador"} · ${client.name || "Cliente"} · Amargo Creativo`;
+
+const waConfirmMessage = `Hola Amargo Creativo, realizamos el pago correspondiente a la ${cfeMeta.shortName} ${invoice.number} por un importe de ${formatMoney(remaining > 0 ? remaining : Number(invoice.total), invoice.currency)}. Adjuntamos el comprobante de transferencia bancaria.`;
+const waConfirmLink = whatsappHref(waConfirmMessage);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{pageTitle}</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <!-- Action Toolbar (Hidden in Print) -->
+    <header class="client-toolbar no-print">
+      <div class="toolbar-inner">
+        <div class="tb-left">
+          <a href="/" class="tb-brand">AMARGO<span>.</span></a>
+          <span class="tb-divider">/</span>
+          <span class="tb-doc">{cfeMeta.shortName} {invoice.number}</span>
+        </div>
+        <div class="tb-right">
+          <button onclick="window.print()" class="btn-tb btn-print" title="Descargar en PDF o Imprimir">
+            <span>📄 DESCARGAR PDF / IMPRIMIR</span>
+          </button>
+          <a href={waConfirmLink} target="_blank" rel="noopener noreferrer" class="btn-tb btn-wa">
+            <span>AVISAR PAGO VÍA WHATSAPP ↗</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Document Canvas -->
+    <main class="invoice-canvas">
+      <div class="invoice-sheet">
+        <!-- Top Row: Emisor & CFE Box -->
+        <header class="sheet-header">
+          <div class="emitter-block">
+            <div class="emitter-logo">AMARGO CREATIVO<span>.</span></div>
+            <div class="emitter-legal">
+              <strong>{settings.razon_social}</strong><br />
+              RUT: <span class="font-mono">{settings.rut}</span><br />
+              {settings.giro}<br />
+              {settings.direccion} · {settings.ciudad}, {settings.departamento}<br />
+              Tel: {settings.telefono} · {settings.email}
+            </div>
+          </div>
+
+          <!-- Official CFE Box (DGI Standard) -->
+          <div class="cfe-official-box">
+            <div class="cfe-box-rut">RUT {settings.rut}</div>
+            <div class="cfe-box-type">{cfeMeta.name.toUpperCase()}</div>
+            <div class="cfe-box-num font-mono">{invoice.number || "N° PENDIENTE"}</div>
+            <div class="cfe-box-cae">
+              CONSTANCIA DGI CAE N° {invoice.cfe_cae || settings.cae_numero}<br />
+              SUCURSAL: {settings.sucursal_dgi}
+            </div>
+          </div>
+        </header>
+
+        <!-- Status Banner -->
+        <div class="status-banner">
+          <div class="sb-left">
+            <span class="sb-label">ESTADO DEL DOCUMENTO:</span>
+            {invoice.status === "paid" ? (
+              <span class="pill-status pill-paid">● PAGADA (SALDO $ 0,00)</span>
+            ) : invoice.status === "partial" ? (
+              <span class="pill-status pill-partial">◌ PAGO PARCIAL ACREDITADO (SALDO PENDIENTE)</span>
+            ) : invoice.status === "overdue" ? (
+              <span class="pill-status pill-overdue">▲ VENCIDA (PLAZO EXPIRADO)</span>
+            ) : (
+              <span class="pill-status pill-pending">◌ PENDIENTE DE PAGO</span>
+            )}
+          </div>
+          <div class="sb-right">
+            <span class="font-mono">FECHA EMISIÓN: {invoice.issue_date ? formatDate(invoice.issue_date) : "—"}</span>
+            {invoice.due_date && (
+              <span class="font-mono" style="margin-left: 16px;">VENCE: {formatDate(invoice.due_date)}</span>
+            )}
+          </div>
+        </div>
+
+        <!-- Client & Receptor Meta -->
+        <section class="receptor-section">
+          <div class="rec-col">
+            <span class="rec-title">RECEPTOR / CLIENTE</span>
+            <div class="rec-data">
+              <strong class="rec-name">{client.name || "Consumidor Final"}</strong>
+              {client.company && <div>{client.company}</div>}
+              {client.rut ? (
+                <div>RUT: <strong class="font-mono">{client.rut}</strong></div>
+              ) : (
+                <div>CONSUMIDOR FINAL</div>
+              )}
+              {client.address && <div>{client.address}</div>}
+              {client.city && <div>{client.city}{client.department ? `, ${client.department}` : ""}</div>}
+            </div>
+          </div>
+
+          <div class="rec-col">
+            <span class="rec-title">CONDICIONES COMERCIALES</span>
+            <div class="rec-data">
+              <div>Condición de Venta: <strong>{invoice.payment_terms || "Contado"}</strong></div>
+              <div>Moneda de Operación: <strong>{invoice.currency === "USD" ? "Dólares Americanos (US$)" : "Pesos Uruguayos ($ UYU)"}</strong></div>
+              {invoice.projects?.title && <div>Proyecto: <strong>{invoice.projects.title}</strong></div>}
+            </div>
+          </div>
+        </section>
+
+        <!-- Concept Items Table -->
+        <section class="items-section">
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th style="width: 50%;">DESCRIPCIÓN DEL CONCEPTO</th>
+                <th style="text-align: center; width: 12%;">CANT.</th>
+                <th style="text-align: right; width: 18%;">PRECIO UNITARIO</th>
+                <th style="text-align: right; width: 20%;">TOTAL LÍNEA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((it: any) => (
+                <tr>
+                  <td>
+                    <div class="item-desc">{it.description}</div>
+                  </td>
+                  <td style="text-align: center;" class="font-mono">{it.quantity || 1}</td>
+                  <td style="text-align: right;" class="font-mono">{formatMoney(Number(it.unit_price), invoice.currency)}</td>
+                  <td style="text-align: right; font-weight: 700;" class="font-mono">{formatMoney(Number(it.total), invoice.currency)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Bottom Row: Bank Accounts & Totals -->
+        <div class="totals-and-banks">
+          <div class="banks-block no-print-break">
+            <span class="block-title">CUENTAS BANCARIAS PARA TRANSFERENCIA</span>
+            <div class="bank-pill">
+              <strong>BROU (Banco República)</strong><br />
+              <span class="font-mono">{settings.brou_cuenta}</span>
+            </div>
+            <div class="bank-pill">
+              <strong>Banco Itaú</strong><br />
+              <span class="font-mono">{settings.itau_cuenta}</span>
+            </div>
+            <div class="bank-pill">
+              <strong>Banco Santander</strong><br />
+              <span class="font-mono">{settings.santander_cuenta}</span>
+            </div>
+            <span class="bank-note">Titular: {settings.razon_social} · Enviar comprobante una vez realizada la transferencia.</span>
+          </div>
+
+          <div class="totals-block">
+            <div class="tot-row">
+              <span>Subtotal Neto:</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.subtotal), invoice.currency)}</strong>
+            </div>
+            <div class="tot-row">
+              <span>IVA ({invoice.tax_rate}%):</span>
+              <strong class="font-mono">{formatMoney(Number(invoice.tax_amount), invoice.currency)}</strong>
+            </div>
+            <div class="tot-row tot-final">
+              <span>TOTAL FINAL:</span>
+              <strong class="font-mono tot-amount">{formatMoney(Number(invoice.total), invoice.currency)}</strong>
+            </div>
+
+            {totalPaid > 0 && (
+              <div class="tot-paid-row">
+                <span>Total Acreditado:</span>
+                <strong class="font-mono font-green">- {formatMoney(totalPaid, invoice.currency)}</strong>
+              </div>
+            )}
+
+            <div class="tot-balance-row">
+              <span>SALDO A ABONAR:</span>
+              <strong class="font-mono balance-amount">{formatMoney(remaining, invoice.currency)}</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payments Log (if any) -->
+        {payments.length > 0 && (
+          <section class="payments-history-section">
+            <span class="block-title">PAGOS REGISTRADOS Y ACREDITADOS</span>
+            <table class="payments-table">
+              <thead>
+                <tr>
+                  <th>FECHA</th>
+                  <th>MÉTODO</th>
+                  <th>REFERENCIA BANCARIA</th>
+                  <th style="text-align: right;">IMPORTE ACREDITADO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {payments.map((p: any) => (
+                  <tr>
+                    <td class="font-mono">{formatDate(p.paid_at)}</td>
+                    <td>{p.method || "Transferencia bancaria"}</td>
+                    <td class="font-mono">{p.reference || p.notes || "—"}</td>
+                    <td style="text-align: right; color: #15803d; font-weight: 700;" class="font-mono">
+                      + {formatMoney(Number(p.amount), p.currency || invoice.currency)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </section>
+        )}
+
+        <!-- Footer Legal DGI Stamp -->
+        <footer class="sheet-footer">
+          <div class="dgi-qr-mockup">
+            <div class="qr-box">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14 0h4v2h-4v-2zm0 4h2v2h-2v-2zm-4-4h2v6h-2v-6zm6-6h2v2h-2v-2zm-6 0h2v2h-2v-2zm4 2h2v4h-2v-4z"/>
+              </svg>
+            </div>
+            <div class="qr-info">
+              <span class="qr-verify-badge">VERIFICACIÓN CFE DGI URUGUAY</span>
+              <p>{settings.nota_pie_defecto}</p>
+              <div class="qr-hash font-mono">
+                COD: {invoice.id.slice(0, 8).toUpperCase()}-{invoice.cfe_type || "111"}-{invoice.number || "001"}
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </main>
+
+    <style>
+      :root {
+        --ink: #111814;
+        --mute: #526056;
+        --line: #D2DDD6;
+        --bone: #F7F6F2;
+        --paper: #FFFFFF;
+        --brand: #2E5339;
+        --lime: #C8FF00;
+        --radius: 8px;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: #1c2620;
+        font-family: 'Space Grotesk', -apple-system, sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+
+      /* Toolbar */
+      .client-toolbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(18, 26, 21, 0.95);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 12px 24px;
+        color: #ffffff;
+      }
+
+      .toolbar-inner {
+        max-width: 900px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .tb-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .tb-brand {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 16px;
+        color: #ffffff;
+        text-decoration: none;
+        letter-spacing: -0.02em;
+      }
+
+      .tb-brand span { color: var(--lime); }
+      .tb-divider { color: rgba(255, 255, 255, 0.3); }
+      .tb-doc {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.85);
+        font-weight: 700;
+      }
+
+      .tb-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-tb {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-decoration: none;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .btn-print {
+        background: var(--lime);
+        color: #0a0a0a;
+        border: 1px solid var(--lime);
+      }
+
+      .btn-print:hover {
+        background: #ffffff;
+        border-color: #ffffff;
+      }
+
+      .btn-wa {
+        background: #25d366;
+        color: #ffffff;
+        border: 1px solid #25d366;
+      }
+
+      .btn-wa:hover {
+        background: #1eb954;
+      }
+
+      /* Canvas & Sheet */
+      .invoice-canvas {
+        padding: 40px 16px 80px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .invoice-sheet {
+        background: var(--paper);
+        width: 100%;
+        max-width: 860px;
+        padding: clamp(32px, 5vw, 56px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+        border-radius: 2px;
+        box-sizing: border-box;
+      }
+
+      /* Sheet Header */
+      .sheet-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 24px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid var(--ink);
+      }
+
+      .emitter-logo {
+        font-family: 'Syne', sans-serif;
+        font-weight: 800;
+        font-size: 24px;
+        letter-spacing: -0.02em;
+        margin-bottom: 8px;
+      }
+
+      .emitter-logo span { color: var(--brand); }
+
+      .emitter-legal {
+        font-size: 12px;
+        line-height: 1.5;
+        color: var(--mute);
+      }
+
+      .emitter-legal strong { color: var(--ink); }
+
+      /* CFE Box */
+      .cfe-official-box {
+        border: 2px solid var(--ink);
+        padding: 12px 20px;
+        text-align: center;
+        min-width: 240px;
+        background: #fbfbfa;
+      }
+
+      .cfe-box-rut {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+
+      .cfe-box-type {
+        font-family: 'Syne', sans-serif;
+        font-size: 17px;
+        font-weight: 800;
+        margin: 4px 0;
+      }
+
+      .cfe-box-num {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--brand);
+        margin-bottom: 6px;
+      }
+
+      .cfe-box-cae {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        line-height: 1.35;
+        color: var(--mute);
+        border-top: 1px dashed rgba(0, 0, 0, 0.2);
+        padding-top: 4px;
+      }
+
+      /* Status Banner */
+      .status-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 12px 16px;
+        background: var(--bone);
+        margin: 20px 0;
+        font-size: 11.5px;
+      }
+
+      .sb-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sb-label {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        font-size: 10px;
+        color: var(--mute);
+      }
+
+      .pill-status {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10.5px;
+        font-weight: 800;
+        padding: 3px 8px;
+        letter-spacing: 0.04em;
+      }
+
+      .pill-paid { background: #dcfce7; color: #15803d; }
+      .pill-pending { background: #fef9c3; color: #854d0e; }
+      .pill-partial { background: #e0f2fe; color: #0369a1; }
+      .pill-overdue { background: #fee2e2; color: #b91c1c; }
+
+      /* Receptor */
+      .receptor-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        padding-bottom: 24px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .rec-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--mute);
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      .rec-data {
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .rec-name {
+        font-size: 15px;
+        color: var(--ink);
+      }
+
+      /* Items Table */
+      .items-section {
+        margin-bottom: 28px;
+      }
+
+      .items-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12.5px;
+      }
+
+      .items-table th {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 10px 12px;
+        background: #f1efe9;
+        border-top: 1px solid var(--ink);
+        border-bottom: 1px solid var(--ink);
+        color: var(--ink);
+        text-align: left;
+      }
+
+      .items-table td {
+        padding: 12px;
+        border-bottom: 1px solid #e8e6e0;
+      }
+
+      .item-desc {
+        font-weight: 500;
+        line-height: 1.45;
+      }
+
+      /* Totals & Banks */
+      .totals-and-banks {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 32px;
+        align-items: start;
+        margin-bottom: 32px;
+      }
+
+      .block-title {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--mute);
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      .banks-block {
+        background: var(--bone);
+        padding: 16px;
+        border-left: 3px solid var(--brand);
+      }
+
+      .bank-pill {
+        font-size: 11.5px;
+        line-height: 1.4;
+        margin-bottom: 8px;
+      }
+
+      .bank-pill strong { color: var(--ink); }
+      .bank-note {
+        display: block;
+        font-size: 10.5px;
+        color: var(--mute);
+        margin-top: 8px;
+        font-style: italic;
+      }
+
+      .totals-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .tot-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        padding: 4px 0;
+      }
+
+      .tot-final {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 8px 0;
+        margin: 4px 0;
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .tot-amount {
+        font-size: 18px;
+        color: var(--brand);
+      }
+
+      .tot-paid-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #15803d;
+      }
+
+      .tot-balance-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: var(--ink);
+        color: #ffffff;
+        padding: 10px 14px;
+        margin-top: 8px;
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .balance-amount {
+        font-size: 20px;
+        color: var(--lime);
+      }
+
+      /* Payments Table */
+      .payments-history-section {
+        margin-bottom: 32px;
+        padding-top: 16px;
+        border-top: 1px dashed var(--line);
+      }
+
+      .payments-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 11.5px;
+      }
+
+      .payments-table th {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        text-align: left;
+        padding: 6px 10px;
+        background: var(--bone);
+        color: var(--mute);
+      }
+
+      .payments-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #eeeeee;
+      }
+
+      /* Sheet Footer */
+      .sheet-footer {
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+      }
+
+      .dgi-qr-mockup {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+
+      .qr-box {
+        border: 1px solid var(--line);
+        padding: 6px;
+        background: #ffffff;
+      }
+
+      .qr-info {
+        font-size: 11px;
+        line-height: 1.45;
+        color: var(--mute);
+      }
+
+      .qr-verify-badge {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9.5px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        color: var(--brand);
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .qr-info p { margin: 0 0 4px; }
+      .qr-hash { font-size: 9px; color: #888888; }
+
+      /* Print Optimization */
+      @media print {
+        body {
+          background: #ffffff !important;
+          color: #000000 !important;
+        }
+
+        .no-print {
+          display: none !important;
+        }
+
+        .invoice-canvas {
+          padding: 0 !important;
+        }
+
+        .invoice-sheet {
+          box-shadow: none !important;
+          padding: 0 !important;
+          max-width: 100% !important;
+        }
+
+        .no-print-break {
+          page-break-inside: avoid;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .receptor-section {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .totals-and-banks {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+
+        .sheet-header {
+          flex-direction: column;
+        }
+
+        .cfe-official-box {
+          width: 100%;
+        }
+      }
+    </style>
+  </body>
+</html>
