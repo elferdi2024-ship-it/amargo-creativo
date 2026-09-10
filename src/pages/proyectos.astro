@@ -25,11 +25,9 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     <header class="page-head">
       <div class="page-head-container">
         <div class="header-top-meta">
-          <div class="section-badge-top">
-            <span class="pulse-dot" aria-hidden="true"></span>
-            <span>ARCHIVO TÉCNICO DE PRODUCCIÓN AMARGO™</span>
-            <span class="badge-separator">•</span>
-            <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+          <div class="section-label">
+            <span class="num">ARCHIVO</span>
+            <span>PRODUCCIÓN TÉCNICA // URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
           </div>
           <div class="header-stamp-row">
             <span class="geo-coord">COORD: -34.7719° S, 55.7594° W // ATLÁNTIDA, UY</span>
@@ -470,27 +468,8 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
     flex-wrap: wrap;
   }
 
-  .section-badge-top {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--mate);
-    background: rgba(45, 99, 53, 0.08);
-    padding: 6px 14px;
-    border: 1px solid rgba(45, 99, 53, 0.2);
-    border-radius: 999px;
-    flex-wrap: wrap;
-  }
-
-  :global(body.theme-electric) .section-badge-top {
-    color: var(--electric);
-    background: rgba(212, 255, 0, 0.08);
-    border-color: rgba(212, 255, 0, 0.25);
+  .header-top-meta .section-label {
+    margin-bottom: 0;
   }
 
   .header-stamp-row {
@@ -519,25 +498,6 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   :global(body.theme-electric) .live-counter {
     background: var(--electric);
     color: #0a0a0a;
-  }
-
-  .pulse-dot {
-    width: 7px;
-    height: 7px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #22c55e;
-    animation: pulseGlow 2s infinite;
-  }
-
-  @keyframes pulseGlow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.85); }
-  }
-
-  .badge-separator {
-    color: var(--mute);
-    opacity: 0.5;
   }
 
   .page-title {

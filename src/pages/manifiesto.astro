@@ -116,9 +116,9 @@ const comparisons = [
     <header class="man-hero">
       <div class="man-container">
         <div class="hero-kicker-row">
-          <span class="pulse-dot"></span>
+          <span class="num">ESTÁNDAR</span>
           <span class="hero-kicker-text">MANIFIESTO, CULTURA &amp; ESTÁNDARES DE PRODUCCIÓN</span>
-          <span class="sep">•</span>
+          <span class="sep">//</span>
           <span class="hero-kicker-loc">URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
         </div>
 
@@ -442,45 +442,47 @@ const comparisons = [
 
   /* KICKER ROW */
   .hero-kicker-row {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 12px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: var(--mate);
-    background: rgba(45, 99, 53, 0.08);
-    padding: 6px 14px;
-    border: 1px solid rgba(45, 99, 53, 0.2);
-    border-radius: 999px;
+    color: var(--mute);
     margin-bottom: 24px;
     flex-wrap: wrap;
+    line-height: 1.4;
   }
 
-  :global(body.theme-electric) .hero-kicker-row {
-    color: var(--electric);
-    background: rgba(212, 255, 0, 0.08);
-    border-color: rgba(212, 255, 0, 0.25);
+  .hero-kicker-row .num {
+    color: var(--bone);
+    font-weight: 700;
+    background: var(--mate);
+    padding: 4px 8px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
   }
 
-  .pulse-dot {
-    width: 7px;
-    height: 7px;
-    background: #22c55e;
-    border-radius: 50%;
-    box-shadow: 0 0 8px #22c55e;
-    animation: pulseGlow 2s infinite;
+  :global(body.theme-electric) .hero-kicker-row .num {
+    background: var(--electric);
+    color: #0a0a0a;
   }
 
-  @keyframes pulseGlow {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.85); }
+  .hero-kicker-text {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .hero-kicker-loc {
+    color: var(--mute);
+    font-weight: 500;
   }
 
   .sep {
-    opacity: 0.4;
+    color: var(--line);
+    opacity: 0.35;
   }
 
   .man-title {
