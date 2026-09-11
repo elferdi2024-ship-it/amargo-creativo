@@ -61,7 +61,7 @@ async function main() {
     investment: {
       type: "plans",
       currency: "USD",
-      paymentTerms: "Inversión transparente: Pago único de $250 USD por la entrega y puesta en producción de la web completa. La gestión mensual opcional ($1.800 UYU) y los nuevos módulos adicionales se contratan a demanda según lo que necesiten.",
+      paymentTerms: "Inversión transparente y directa: Pago único de $250 USD por la entrega y puesta en marcha de la web completa lista para recibir pedidos. El servicio de gestión semanal ($1.800 UYU/mes) es un plus 100% opcional sin permanencia, y cualquier futura funcionalidad nueva se cotiza a demanda.",
       plans: [
         {
           name: "Web Completa Lista para Usar",
@@ -74,32 +74,16 @@ async function main() {
           features: [
             "Web cinematográfica de alto rendimiento desarrollada a medida en Cloudflare Edge con renderizado a 60 FPS",
             "Personalización 100% de fotos, textos, tandas y precios antes de la entrega final",
-            "Catálogo y selector de pedidos para Cajas × 6, × 12 y × 24 (consumo personal, familiar y eventos)",
+            "Catálogo y selector interactivo de pedidos para Cajas × 6, × 12 y × 24",
             "Botón de pedido directo a su WhatsApp con mensaje y formato de caja precargados",
             "Optimización SEO para Google y motores de búsqueda con IA",
-            "1 año entero de hosting cloud de alta velocidad y certificado SSL",
-            "Mantenimiento técnico mínimo y soporte de puesta en marcha incluidos",
+            "1 año entero de hosting cloud de alta velocidad y certificado SSL incluido",
+            "Mantenimiento técnico de infraestructura y soporte de puesta en marcha incluidos",
             "Puesta en marcha, entrega de código y conexión a su dominio propio",
           ],
         },
         {
-          name: "Gestión & Contenido Semanal",
-          price: 1800,
-          currency: "UYU",
-          period: "UYU / mes",
-          badge: "OPCIONAL · GESTIÓN MENSUAL",
-          description: "Si prefieren delegar la administración técnica del sitio y la actualización periódica de tandas, fotos y stock.",
-          features: [
-            "Carga y actualización semanal de nuevas fotos y tandas de horneado",
-            "Ajustes periódicos de precios, promociones especiales o nuevos combos",
-            "Mantenimiento técnico continuo y optimización de velocidad",
-            "Monitoreo de disponibilidad y seguridad cloud 24/7",
-            "Soporte prioritario directo por WhatsApp para cualquier cambio express",
-            "Servicio mensual flexible: podés pausarlo o activarlo cuando quieras",
-          ],
-        },
-        {
-          name: "Nuevos Módulos & Ampliaciones",
+          name: "Futuras Ideas & Nuevos Módulos",
           price_display: "¿Charlamos?",
           period: "Ajustamos el precio según lo que necesites",
           badge: "A DEMANDA · SIN COSTOS FIJOS",
@@ -114,6 +98,22 @@ async function main() {
           ],
         },
       ],
+      addon: {
+        name: "Administración y Actualización Semanal",
+        price: 1800,
+        currency: "UYU",
+        period: "mes",
+        badge: "SERVICIO PLUS OPCIONAL",
+        description: "Si prefieren delegar la parte técnica y la actualización periódica de tandas, fotos y precios todas las semanas, nos encargamos de todo de forma continua.",
+        features: [
+          "Carga y actualización semanal de nuevas fotos y tandas de horneado",
+          "Cambios y ajustes express de precios, combos o promociones especiales",
+          "Mantenimiento técnico continuo y optimización de velocidad de carga",
+          "Monitoreo de seguridad y disponibilidad cloud 24/7",
+          "Soporte directo prioritario por WhatsApp para cualquier cambio",
+          "Sin permanencia forzada: podés sumarlo, pausarlo o darlo de baja cuando quieras",
+        ],
+      },
     },
     timeline: "La web ya está diseñada y lista para personalizar. Con los ajustes de contenido que coordinemos, la puesta en marcha y entrega final toma *48 a 72 horas hábiles*.",
     roi_table: {

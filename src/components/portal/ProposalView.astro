@@ -29,7 +29,8 @@ const stages = project?.stages || [
 
 const inv = proposal.investment || {};
 const plans = inv.plans || [];
-const recommended = plans.find((p: any) => p.recommended || p.featured || p.badge === "RECOMENDADO")?.name ?? plans[1]?.name ?? plans[0]?.name;
+const addon = inv.addon || (Array.isArray(inv.addons) ? inv.addons[0] : null);
+const recommended = plans.find((p: any) => p.recommended || p.featured || p.badge === "RECOMENDADO" || p.badge?.includes("TODO INCLUIDO"))?.name ?? plans[0]?.name;
 
 const waMessage = proposal.whatsapp_message || proposal.whatsappMessage || defaultWhatsappMessage(clientName, projectObjective);
 const wa = whatsappHref(waMessage);
@@ -302,12 +303,12 @@ function formatEditorial(text: string) {
     </div>
 
     {inv.type === "plans" && plans.length > 0 ? (
-      <div class="plans-grid-3" id="plans-grid">
+      <div class={`plans-grid ${plans.length === 2 ? "plans-grid-2" : "plans-grid-3"}`} id="plans-grid">
         {plans.map((plan: any) => {
           const isSelected = plan.name === recommended;
           const badgeText = plan.badge || (plan.recommended ? "RECOMENDADO" : null);
-          const isRec = badgeText === "RECOMENDADO" || badgeText?.includes("PAGO ÚNICO");
-          const isLimitless = badgeText === "SIN LÍMITES";
+          const isRec = badgeText === "RECOMENDADO" || badgeText?.includes("PAGO ÚNICO") || badgeText?.includes("TODO INCLUIDO");
+          const isLimitless = badgeText === "SIN LÍMITES" || badgeText?.includes("A DEMANDA");
           const hasDiscount = Boolean(plan.original_price || plan.originalPrice);
           const origPrice = plan.original_price || plan.originalPrice;
 
@@ -431,6 +432,59 @@ function formatEditorial(text: string) {
           <span class="fixed-badge">Llave en mano</span>
         </div>
         {inv.paymentTerms && <p class="terms">{inv.paymentTerms}</p>}
+      </div>
+    )}
+
+    {/* SERVICIO PLUS / AGREGADO OPCIONAL DEBAJO DEL PRICING */}
+    {addon && (
+      <div class="addon-service-container">
+        <div class="addon-header-strip">
+          <div class="addon-tag-pill">
+            <span class="addon-plus-symbol">＋</span>
+            <span>{addon.badge || "SERVICIO PLUS OPCIONAL"}</span>
+          </div>
+          <span class="addon-subtag">Podés sumarlo cuando gustes · Sin ataduras</span>
+        </div>
+
+        <div class="addon-main-card">
+          <div class="addon-col-info">
+            <div class="addon-title-group">
+              <h4 class="addon-title">{addon.name}</h4>
+              {addon.description && <p class="addon-desc">{addon.description}</p>}
+            </div>
+
+            <div class="addon-price-block">
+              <div class="addon-price-row font-mono">
+                <span class="addon-price-val">
+                  {addon.price_display || formatMoney(addon.price, addon.currency || "UYU")}
+                </span>
+                <span class="addon-price-period">
+                  {addon.period ? (addon.period.includes("/") ? addon.period : `/ ${addon.period}`) : "/ mes"}
+                </span>
+              </div>
+              <div class="addon-flexibility-badge">
+                <span class="addon-flex-dot"></span>
+                <span>Opcional · Pausá o cancelá cuando quieras</span>
+              </div>
+            </div>
+          </div>
+
+          {addon.features?.length > 0 && (
+            <div class="addon-col-features">
+              <div class="addon-features-kicker-wrap">
+                <span class="addon-features-kicker">¿QUÉ TAREAS CUBRE ESTE SERVICIO?</span>
+              </div>
+              <ul class="addon-features-list">
+                {addon.features.map((feat: string) => (
+                  <li>
+                    <span class="addon-check">✓</span>
+                    <span>{feat}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
     )}
 
@@ -1292,7 +1346,28 @@ function formatEditorial(text: string) {
     color: var(--mute);
   }
 
-  /* 3-COLUMN PRICING GRID & HIGH-IMPACT CARDS */
+  /* 2 AND 3 COLUMN PRICING GRID & HIGH-IMPACT CARDS */
+  .plans-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    align-items: stretch;
+  }
+
+  .plans-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.35rem;
+    align-items: stretch;
+  }
+
+  @media (min-width: 768px) {
+    .plans-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
   .plans-grid-3 {
     display: grid;
     grid-template-columns: 1fr;
@@ -1717,6 +1792,208 @@ function formatEditorial(text: string) {
     font-size: 0.85rem;
     color: #4A544D;
     line-height: 1.5;
+  }
+
+  /* ADDON SERVICE CARD (SEPARATED PLUS BELOW PRICING) */
+  .addon-service-container {
+    margin-top: 1.75rem;
+    position: relative;
+    background: #FAFBF9;
+    border: 1.5px dashed #B8C7BC;
+    border-radius: 18px;
+    padding: 1.65rem 1.65rem;
+    box-shadow: 0 4px 20px rgba(46, 83, 57, 0.05);
+    transition: all 0.25s ease;
+  }
+
+  .addon-service-container:hover {
+    border-color: var(--mate);
+    background: #FFFFFF;
+    box-shadow: 0 8px 28px rgba(46, 83, 57, 0.09);
+  }
+
+  .addon-header-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid #E6ECE8;
+  }
+
+  .addon-tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: rgba(46, 83, 57, 0.12);
+    color: var(--mate);
+    border: 1px solid rgba(46, 83, 57, 0.3);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    padding: 0.3rem 0.85rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  .addon-plus-symbol {
+    font-size: 0.95rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .addon-subtag {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 0.82rem;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .addon-main-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  @media (min-width: 860px) {
+    .addon-main-card {
+      grid-template-columns: 1.15fr 1.85fr;
+      gap: 2.25rem;
+    }
+  }
+
+  .addon-col-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+  }
+
+  .addon-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .addon-title {
+    font-family: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+  }
+
+  .addon-desc {
+    margin: 0;
+    font-size: 0.88rem;
+    color: #4A564E;
+    line-height: 1.48;
+  }
+
+  .addon-price-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    background: #FFFFFF;
+    padding: 0.9rem 1.15rem;
+    border-radius: 12px;
+    border: 1px solid #E2E8E4;
+    width: fit-content;
+  }
+
+  .addon-price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.45rem;
+  }
+
+  .addon-price-val {
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+  }
+
+  .addon-price-period {
+    font-size: 0.88rem;
+    color: var(--mate);
+    font-weight: 700;
+  }
+
+  .addon-flexibility-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.76rem;
+    color: var(--mute);
+    font-weight: 600;
+  }
+
+  .addon-flex-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #2E5339;
+  }
+
+  .addon-col-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .addon-features-kicker-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .addon-features-kicker {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--mate);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .addon-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  @media (min-width: 600px) {
+    .addon-features-list {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem 1.25rem;
+    }
+  }
+
+  .addon-features-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.86rem;
+    color: #2D3630;
+    line-height: 1.45;
+  }
+
+  .addon-check {
+    color: var(--mate);
+    font-weight: 800;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
   }
 
   /* Table */
