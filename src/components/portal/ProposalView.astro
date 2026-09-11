@@ -45,6 +45,9 @@ if (!previewUrl && proposal.slug === "deal-motors") {
 if (!previewUrl && (proposal.slug === "tsunami-dulce-de-leche" || proposal.slug === "tsunami-uruguay")) {
   previewUrl = "https://tsunami-uruguay.elferdi2024.workers.dev/";
 }
+if (!previewUrl && (proposal.slug === "yoyo-juanito" || proposal.slug === "juanito")) {
+  previewUrl = "https://yoyo-juanito.elferdi2024.workers.dev/";
+}
 if (!previewUrl && proposal.notes && proposal.notes.includes("http")) {
   const match = proposal.notes.match(/https?:\/\/[^\s]+/);
   if (match) previewUrl = match[0];
@@ -159,7 +162,7 @@ function formatEditorial(text: string) {
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
             <span class="browser-url font-mono">
-              {proposal.slug === "tsunami-dulce-de-leche" ? "tsunami.uy" : proposal.slug === "deal-motors" ? "dealmotors.uy" : proposal.slug === "mercado-atlantida" ? "mercadoatlantida.uy" : "demo.amargo.uy"}
+              {proposal.slug === "yoyo-juanito" ? "yoyojuanito.uy" : proposal.slug === "tsunami-dulce-de-leche" ? "tsunami.uy" : proposal.slug === "deal-motors" ? "dealmotors.uy" : proposal.slug === "mercado-atlantida" ? "mercadoatlantida.uy" : "demo.amargo.uy"}
             </span>
             <span class="live-pulse-badge font-mono">
               <span class="pulse-dot"></span> EN VIVO
@@ -184,7 +187,25 @@ function formatEditorial(text: string) {
           </div>
         </div>
 
-        {proposal.slug === "tsunami-dulce-de-leche" ? (
+        {proposal.slug === "yoyo-juanito" ? (
+          <!-- Showcase Screenshot HD con Link Directo a la Web -->
+          <div class="demo-screenshot-container">
+            <a href={previewUrl} target="_blank" rel="noopener noreferrer" class="demo-preview-link">
+              <img
+                src="/projects/yoyo-juanito-preview.png"
+                alt={`Web diseñada para ${clientName}`}
+                class="demo-screenshot-img"
+                loading="eager"
+              />
+              <div class="demo-screenshot-overlay">
+                <div class="demo-overlay-pill">
+                  <span>Ver Web en Vivo (yoyo-juanito.elferdi2024.workers.dev)</span>
+                  <span class="overlay-arr">↗</span>
+                </div>
+              </div>
+            </a>
+          </div>
+        ) : proposal.slug === "tsunami-dulce-de-leche" ? (
           <!-- Showcase Screenshot HD con Link Directo a la Web -->
           <div class="demo-screenshot-container">
             <a href={previewUrl} target="_blank" rel="noopener noreferrer" class="demo-preview-link">
@@ -219,7 +240,9 @@ function formatEditorial(text: string) {
         <div class="demo-footer-caption">
           <span class="demo-hint-icon">🧉</span>
           <span>
-            {proposal.slug === "tsunami-dulce-de-leche"
+            {proposal.slug === "yoyo-juanito"
+              ? "Tomamos la iniciativa de diseñar esta web para Yoyo Juanito: moderna, rápida, con catálogo visual y 100% personalizable antes de la entrega final. Hacé clic arriba para abrirla y probarla."
+              : proposal.slug === "tsunami-dulce-de-leche"
               ? "Tomamos la iniciativa de diseñar esta web para Tsunami: moderna, rápida, con catálogo interactivo y optimizada para Google y buscadores de IA. Hacé clic arriba para abrirla y probarla."
               : "Podés interactuar directamente con la plataforma aquí arriba o abrirla en pantalla completa para probar la experiencia en tiempo real."}
           </span>
