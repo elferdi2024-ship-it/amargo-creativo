@@ -7,6 +7,7 @@ interface Plan {
   price?: number;
   original_price?: number;
   price_display?: string;
+  currency?: string;
   period?: string;
   featured?: boolean;
   recommended?: boolean;
@@ -57,6 +58,7 @@ export default function AcceptButton({
   }, []);
 
   const currentPlanObj = plans.find((p) => p.name === selectedPlan) || plans[0];
+  const activeCurrency = currentPlanObj?.currency || currency;
 
   function handleSelectInModal(planNameSelected: string) {
     setSelectedPlan(planNameSelected);
@@ -142,7 +144,7 @@ export default function AcceptButton({
             {currentPlanObj?.price_display || currentPlanObj?.price ? (
               <div className="btn-sub-pricing font-mono">
                 <span>
-                  {currentPlanObj.price_display || formatMoney(currentPlanObj.price || 0, currency)}
+                  {currentPlanObj.price_display || formatMoney(currentPlanObj.price || 0, activeCurrency)}
                   {currentPlanObj.period ? ` (${currentPlanObj.period})` : ""}
                 </span>
                 {currentPlanObj.daily_equivalent && (
@@ -183,6 +185,7 @@ export default function AcceptButton({
                 <div className="modal-plans-list">
                   {plans.map((p) => {
                     const isPicked = p.name === selectedPlan;
+                    const itemCurr = p.currency || currency;
                     return (
                       <div
                         key={p.name}
@@ -202,7 +205,7 @@ export default function AcceptButton({
                         </div>
                         <div className="plan-row-right">
                           <span className="plan-row-price">
-                            {p.price_display || formatMoney(p.price || 0, currency)}
+                            {p.price_display || formatMoney(p.price || 0, itemCurr)}
                           </span>
                           {p.period && <span className="plan-row-period">{p.period}</span>}
                         </div>
@@ -218,7 +221,7 @@ export default function AcceptButton({
                 <div className="summary-col">
                   <span className="sum-label">INVERSIÓN ACORDADA</span>
                   <span className="sum-val font-mono">
-                    {currentPlanObj.price_display || `${formatMoney(currentPlanObj.price || 0, currency)} (${currentPlanObj.period || ""})`}
+                    {currentPlanObj.price_display || `${formatMoney(currentPlanObj.price || 0, activeCurrency)} (${currentPlanObj.period || ""})`}
                   </span>
                 </div>
                 {currentPlanObj.daily_equivalent && (

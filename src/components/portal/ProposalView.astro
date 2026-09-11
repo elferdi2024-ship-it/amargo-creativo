@@ -334,20 +334,20 @@ function formatEditorial(text: string) {
                 {plan.description && <p class="plan-pro-desc">{plan.description}</p>}
               </div>
 
-              <!-- Bloque de Precio con soporte para Precio Tachado, Descuento y Equivalente Diario -->
+              <!-- Bloque de Precio con soporte para Precio Tachado, Descuento, Moneda y Conversacional -->
               <div class="plan-pro-price-block">
                 {plan.price_display || !plan.price ? (
-                  <div class="normal-price-row">
+                  <div class="conversational-price-row">
                     <span class="plan-price-num">
-                      {plan.price_display || "¿Charlamos? 🧉"}
+                      {plan.price_display || "¿Charlamos?"}
                     </span>
-                    {plan.period && <span class="plan-price-period">{plan.period}</span>}
+                    {plan.period && <span class="conversational-price-sub">{plan.period}</span>}
                   </div>
                 ) : hasDiscount ? (
                   <div class="discount-price-container">
                     <div class="strikethrough-row">
                       <span class="strikethrough-val">
-                        {formatMoney(origPrice, inv.currency)}
+                        {formatMoney(origPrice, plan.currency || inv.currency)}
                       </span>
                       <span class="discount-chip">
                         {plan.discount_badge || "-7% Lanzamiento"}
@@ -355,7 +355,7 @@ function formatEditorial(text: string) {
                     </div>
                     <div class="final-price-row">
                       <span class="plan-price-num price-highlight">
-                        {formatMoney(plan.price, inv.currency)}
+                        {formatMoney(plan.price, plan.currency || inv.currency)}
                       </span>
                       {plan.period && <span class="plan-price-period">{plan.period}</span>}
                     </div>
@@ -363,7 +363,7 @@ function formatEditorial(text: string) {
                 ) : (
                   <div class="normal-price-row">
                     <span class="plan-price-num">
-                      {formatMoney(plan.price, inv.currency)}
+                      {formatMoney(plan.price, plan.currency || inv.currency)}
                     </span>
                     {plan.period && <span class="plan-price-period">{plan.period}</span>}
                   </div>
@@ -1413,6 +1413,20 @@ function formatEditorial(text: string) {
     display: flex;
     align-items: baseline;
     gap: 0.4rem;
+  }
+
+  .conversational-price-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
+  }
+
+  .conversational-price-sub {
+    font-size: 0.8rem;
+    color: var(--mute);
+    font-weight: 600;
+    line-height: 1.35;
   }
 
   .discount-price-container {

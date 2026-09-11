@@ -33,7 +33,7 @@ async function main() {
     client = newClient;
   }
 
-  console.log("2. Sincronizando propuesta actualizada con USD 250 y copys refinados...");
+  console.log("2. Sincronizando propuesta con las 3 opciones de inversión...");
 
   const proposalData = {
     client_id: client.id,
@@ -61,15 +61,16 @@ async function main() {
     investment: {
       type: "plans",
       currency: "USD",
-      paymentTerms: "Pago único de $250 USD por la entrega y puesta en producción de la web completa en su dominio propio. Los futuros desarrollos o ampliaciones se cotizan a demanda por separado, sin mensualidades forzadas.",
+      paymentTerms: "Inversión transparente: Pago único de $250 USD por la entrega y puesta en producción de la web completa. La gestión mensual opcional ($1.800 UYU) y los nuevos módulos adicionales se contratan a demanda según lo que necesiten.",
       plans: [
         {
-          name: "Web Completa Lista para Usar + Mantenimiento",
+          name: "Web Completa Lista para Usar",
           price: 250,
+          currency: "USD",
           period: "Pago Único",
           recommended: true,
           badge: "TODO INCLUIDO · LISTA PARA PUBLICAR",
-          description: "La web completa que ya diseñamos para ustedes, 100% personalizable antes de la entrega final, lista para conectar a su dominio y empezar a recibir pedidos.",
+          description: "La web completa ya diseñada para Yoyo Juanito, 100% personalizable antes de la entrega final, lista para conectar a su dominio y empezar a recibir pedidos.",
           features: [
             "Web cinematográfica de alto rendimiento desarrollada a medida en Cloudflare Edge con renderizado a 60 FPS",
             "Personalización 100% de fotos, textos, tandas y precios antes de la entrega final",
@@ -82,11 +83,27 @@ async function main() {
           ],
         },
         {
-          name: "Futuras Ideas & Nuevos Módulos",
-          price_display: "¿Charlamos? 🧉",
-          period: "A demanda · Sin mensualidades",
-          badge: "OPCIONAL · CUANDO LO NECESITEN",
-          description: "Si más adelante quieren sumar pagos online con tarjeta (MercadoPago), nuevas landing pages para fechas especiales o envíos automatizados, se cotiza puntual y con tarifa preferencial.",
+          name: "Gestión & Contenido Semanal",
+          price: 1800,
+          currency: "UYU",
+          period: "UYU / mes",
+          badge: "OPCIONAL · GESTIÓN MENSUAL",
+          description: "Si prefieren delegar la administración técnica del sitio y la actualización periódica de tandas, fotos y stock.",
+          features: [
+            "Carga y actualización semanal de nuevas fotos y tandas de horneado",
+            "Ajustes periódicos de precios, promociones especiales o nuevos combos",
+            "Mantenimiento técnico continuo y optimización de velocidad",
+            "Monitoreo de disponibilidad y seguridad cloud 24/7",
+            "Soporte prioritario directo por WhatsApp para cualquier cambio express",
+            "Servicio mensual flexible: podés pausarlo o activarlo cuando quieras",
+          ],
+        },
+        {
+          name: "Nuevos Módulos & Ampliaciones",
+          price_display: "¿Charlamos?",
+          period: "Ajustamos el precio según lo que necesites",
+          badge: "A DEMANDA · SIN COSTOS FIJOS",
+          description: "Si a futuro quieren sumar pagos online con tarjeta (MercadoPago), nuevas landing pages para fechas festivas o campañas de anuncios, se cotiza puntual.",
           features: [
             "Nuevas landing pages para lanzamientos o promociones especiales",
             "Integración de pasarela de pagos online (MercadoPago / POS digital)",
