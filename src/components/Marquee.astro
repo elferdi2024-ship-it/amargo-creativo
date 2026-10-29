@@ -1,24 +1,31 @@
 ---
 // filepath: src/components/Marquee.astro
+// Marquee infinito fluido a 120fps con CSS transform nativo en GPU (100% fail-safe y reactivo)
 ---
-<div class="marquee" aria-hidden="true">
+<div class="marquee" id="marqueeRoot" aria-hidden="true">
   <div class="marquee-track" id="marqueeTrack">
-    <span class="bone-block">STARTUPS<span class="star">/</span></span>
-    <span class="italic">crecimiento</span>
-    <span class="mate-block">PYMES<span class="star">/</span></span>
-    <span>APLICACIONES</span>
-    <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-    <span class="italic">ventas</span>
-    <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-    <span>RESULTADOS</span>
-    <span class="bone-block">STARTUPS<span class="star">/</span></span>
-    <span class="italic">crecimiento</span>
-    <span class="mate-block">PYMES<span class="star">/</span></span>
-    <span>APLICACIONES</span>
-    <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-    <span class="italic">ventas</span>
-    <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-    <span>RESULTADOS</span>
+    <!-- Grupo 1 -->
+    <div class="marquee-group">
+      <span class="bone-block">STARTUPS<span class="star">/</span></span>
+      <span class="italic">crecimiento</span>
+      <span class="mate-block">PYMES<span class="star">/</span></span>
+      <span>APLICACIONES</span>
+      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
+      <span class="italic">ventas</span>
+      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
+      <span>RESULTADOS</span>
+    </div>
+    <!-- Grupo 2 (Clon idéntico para loop perfecto de 0 a -50%) -->
+    <div class="marquee-group" aria-hidden="true">
+      <span class="bone-block">STARTUPS<span class="star">/</span></span>
+      <span class="italic">crecimiento</span>
+      <span class="mate-block">PYMES<span class="star">/</span></span>
+      <span>APLICACIONES</span>
+      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
+      <span class="italic">ventas</span>
+      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
+      <span>RESULTADOS</span>
+    </div>
   </div>
 </div>
 
@@ -33,22 +40,44 @@
     display: flex;
     width: 100%;
     contain: paint;
+    position: relative;
+    user-select: none;
   }
+
   .marquee-track {
     display: inline-flex;
     align-items: stretch;
+    width: max-content;
     will-change: transform;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(24px, 4vw, 52px);
-    line-height: 1;
-    text-transform: uppercase;
+    animation: marqueeContinuous 26s linear infinite;
   }
+
+  @keyframes marqueeContinuous {
+    0% {
+      transform: translate3d(0, 0, 0);
+    }
+    100% {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  .marquee-group {
+    display: inline-flex;
+    align-items: stretch;
+    flex-shrink: 0;
+  }
+
   .marquee-track span {
     padding: 16px 24px;
     display: flex;
     align-items: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: clamp(22px, 3.8vw, 48px);
+    line-height: 1;
+    text-transform: uppercase;
   }
+
   .marquee-track .italic {
     font-family: 'Instrument Serif', serif;
     font-style: italic;
@@ -56,21 +85,67 @@
     color: #0a0a0a;
     background: var(--electric);
   }
+
   .marquee-track .bone-block {
     background: var(--bone);
     color: #0a0a0a;
   }
+
   .marquee-track .mate-block {
     background: var(--mate);
     color: var(--bone);
   }
+
   .marquee-track .rust-block {
     background: var(--rust);
     color: var(--bone);
   }
+
   .marquee-track .star {
     font-size: 0.8em;
     padding: 0 0 0 8px;
     opacity: 0.5;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none !important;
+      transform: none !important;
+    }
+  }
 </style>
+
+<script>
+  // Control de aceleración por scroll suave (sin alterar el loop continuo base de CSS)
+  function initMarqueeVelocity() {
+    const track = document.getElementById('marqueeTrack');
+    if (!track) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let lastY = window.scrollY;
+    let boostTimeout: any;
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      const dy = Math.abs(y - lastY);
+      lastY = y;
+
+      if (dy > 4) {
+        // Aumenta la velocidad del marquee durante scroll
+        track.style.animationDuration = '12s';
+        clearTimeout(boostTimeout);
+        boostTimeout = setTimeout(() => {
+          track.style.animationDuration = '26s';
+        }, 150);
+      }
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMarqueeVelocity);
+  } else {
+    initMarqueeVelocity();
+  }
+</script>

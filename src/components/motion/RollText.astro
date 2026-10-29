@@ -1,0 +1,33 @@
+---
+// filepath: src/components/motion/RollText.astro
+// Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
+// Rolling label: renderiza las letras en build (cero JS, cero layout shift).
+interface Props {
+  text: string;
+  arrow?: 'diag' | 'right' | 'none';
+  class?: string;
+}
+
+const { text, arrow = 'none', class: className = '' } = Astro.props;
+const chars: string[] = Array.from(text);
+---
+<span class={`roll ${className}`.trim()}>
+  {chars.map((ch, i) => (
+    <span style={`--i:${i}`} data-c={ch === ' ' ? '\u00a0' : ch}>{ch === ' ' ? '\u00a0' : ch}</span>
+  ))}
+</span>
+{arrow !== 'none' && (
+  <span class={`roll-arrow ${arrow === 'right' ? 'is-right' : ''}`.trim()} aria-hidden="true">
+    {arrow === 'right' ? (
+      <>
+        <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+        <svg viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" /></svg>
+      </>
+    ) : (
+      <>
+        <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8" /></svg>
+        <svg viewBox="0 0 24 24"><path d="M7 17L17 7M9 7h8v8" /></svg>
+      </>
+    )}
+  </span>
+)}

@@ -46,7 +46,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
         <!-- Barra de Estadísticas Clave -->
         <div class="stats-strip">
           <div class="stat-cell">
-            <strong>07</strong>
+            <strong>{String(projects.length).padStart(2, '0')}</strong>
             <span>PROYECTOS EN VIVO</span>
           </div>
           <div class="stat-cell">
@@ -67,9 +67,9 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
         <div class="controls-bar">
           <div class="filter-controls" role="group" aria-label="Filtrar por categoría">
             <button type="button" class="filter-pill active" data-filter="all" aria-pressed="true">TODOS ({projects.length})</button>
-            <button type="button" class="filter-pill" data-filter="marketplace" aria-pressed="false">MARKETPLACES &amp; REAL ESTATE (3)</button>
-            <button type="button" class="filter-pill" data-filter="saas" aria-pressed="false">SAAS &amp; AUTOMOTRIZ (2)</button>
-            <button type="button" class="filter-pill" data-filter="ecommerce" aria-pressed="false">FOODTECH &amp; E-COMMERCE (2)</button>
+            <button type="button" class="filter-pill" data-filter="marketplace" aria-pressed="false">MARKETPLACES &amp; REAL ESTATE ({projects.filter(p => p.category === 'marketplace').length})</button>
+            <button type="button" class="filter-pill" data-filter="saas" aria-pressed="false">SAAS &amp; AUTOMOTRIZ ({projects.filter(p => p.category === 'saas').length})</button>
+            <button type="button" class="filter-pill" data-filter="ecommerce" aria-pressed="false">FOODTECH &amp; E-COMMERCE ({projects.filter(p => p.category === 'ecommerce').length})</button>
           </div>
 
           <div class="search-input-wrap">

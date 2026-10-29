@@ -1,6 +1,7 @@
 ---
 // filepath: src/layouts/Layout.astro
 import '../styles/global.css';
+import '../styles/motion.css';
 import Preloader from '../components/Preloader.astro';
 import CustomCursor from '../components/CustomCursor.astro';
 import ThemeSwitcher from '../components/ThemeSwitcher.astro';
@@ -217,34 +218,55 @@ const structuredData = {
         {
           "@type": "CreativeWork",
           "position": 2,
+          "name": "Canarios Ya!",
+          "description": "Super-App de delivery hiperlocal en Canelones, Juanicó y Santa Lucía con cálculo de cambio y pagos BROU.",
+          "url": "https://canarios-ya.pages.dev/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 3,
+          "name": "Yoyo Juanito",
+          "description": "Auténtico Yoyo artesanal uruguayo con landing de venta directa D2C a WhatsApp y micro-interacciones a 60fps.",
+          "url": "https://yoyo-juanito.elferdi2024.workers.dev/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 4,
+          "name": "Tsunami Dulce de Leche",
+          "description": "El Dulce de Leche Premium más cremoso y premiado de Uruguay (1er Premio Nacional). Elaboración 100% Sin TACC.",
+          "url": "https://tsunami-uruguay.elferdi2024.workers.dev/"
+        },
+        {
+          "@type": "CreativeWork",
+          "position": 5,
           "name": "LOMAX Propiedades",
           "description": "Inmobiliaria boutique y curaduría editorial de residencias de lujo en Montevideo y Punta del Este.",
           "url": "https://lomax-propiedades.elferdi2024.workers.dev/"
         },
         {
           "@type": "CreativeWork",
-          "position": 3,
+          "position": 6,
           "name": "Legendary Burger",
           "description": "Web app y burger builder en tiempo real con checkout directo a WhatsApp y backend en Supabase.",
           "url": "https://legendary-burger.vercel.app/"
         },
         {
           "@type": "CreativeWork",
-          "position": 4,
+          "position": 7,
           "name": "Deal Motors UY",
           "description": "Plataforma automotriz premium, representante oficial SHACMAN y cotizador inteligente de permutas.",
           "url": "https://driveprime-eta.vercel.app/"
         },
         {
           "@type": "CreativeWork",
-          "position": 5,
+          "position": 8,
           "name": "Distribuidora El Remate",
           "description": "Ecosistema digital mayorista y minorista con más de 1.900 productos activos en Canelones.",
           "url": "https://remate-psi.vercel.app/"
         },
         {
           "@type": "CreativeWork",
-          "position": 6,
+          "position": 9,
           "name": "Avícola Control",
           "description": "Software especializado en control operativo y trazabilidad avícola para plantas y productores.",
           "url": "https://faconeros-app.vercel.app/hub"
@@ -323,6 +345,17 @@ const structuredData = {
   <script is:inline>
     (function() {
       try {
+        var rm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var bot = /Lighthouse|PageSpeed|Chrome-Lighthouse|PTST/i.test(navigator.userAgent);
+        if (!rm && !bot) {
+          document.documentElement.classList.add('mx');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <script is:inline>
+    (function() {
+      try {
         var saved = localStorage.getItem('amargo_theme') || 'default';
         document.documentElement.setAttribute('data-theme', saved);
         if (saved !== 'default') {
@@ -357,43 +390,7 @@ const structuredData = {
   <script>
     import Lenis from 'lenis';
 
-    // --- 1. PRELOADER ---
-    const preloader = document.getElementById('preloader');
-    const preCounter = document.getElementById('preCounter');
-
-    const isBotOrAudit = 
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
-      navigator.userAgent.includes('Lighthouse') ||
-      navigator.userAgent.includes('PageSpeed') ||
-      navigator.userAgent.includes('Chrome-Lighthouse') ||
-      navigator.userAgent.includes('PTST');
-
-    function dismissPreloader() {
-      if (!preloader || preloader.classList.contains('done')) return;
-      if (preCounter) preCounter.textContent = '100';
-      preloader.classList.add('done');
-      document.body.classList.add('loaded');
-      checkAllReveals();
-    }
-
-    if (isBotOrAudit) {
-      dismissPreloader();
-    } else {
-      let loadProgress = 0;
-      const preloaderTimer = setInterval(() => {
-        loadProgress += 25;
-        if (loadProgress >= 100) {
-          clearInterval(preloaderTimer);
-          dismissPreloader();
-        } else if (preCounter) {
-          preCounter.textContent = String(loadProgress).padStart(2, '0');
-        }
-      }, 30);
-
-      window.addEventListener('load', () => {
-        loadProgress = Math.max(loadProgress, 85);
-      }, { once: true });
-    }
+    // --- 1. PRELOADER (Autocontenido en Preloader.astro) ---
 
     // --- 2. SMOOTH SCROLL (LENIS LOCAL BUNDLE CON FALLBACK TOTAL) ---
     const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -670,77 +667,7 @@ const structuredData = {
       });
     }
 
-    // --- 7. NAV SCROLL & MENU ---
-    const navEl = document.getElementById('nav');
-    const menuOverlay = document.getElementById('menuOverlay');
-    const menuBtn = document.getElementById('menuBtn');
-    const menuCloseBtn = document.getElementById('menuCloseBtn');
-    let lastScroll = 0;
-
-    function handleNavScroll(scrollY: number) {
-      if (!navEl) return;
-      if (scrollY <= 100) {
-        navEl.classList.remove('hide-nav');
-        return;
-      }
-      if (scrollY > lastScroll && (!menuOverlay || !menuOverlay.classList.contains('active'))) {
-        navEl.classList.add('hide-nav');
-      } else {
-        navEl.classList.remove('hide-nav');
-      }
-      lastScroll = scrollY;
-    }
-
-    if (isDesktop && lenis.on) {
-      lenis.on('scroll', (e: any) => handleNavScroll(e.actualScroll));
-    } else {
-      window.addEventListener('scroll', () => handleNavScroll(window.scrollY), { passive: true });
-    }
-
-    function openMenu() {
-      if (menuOverlay && menuCloseBtn && menuBtn) {
-        menuOverlay.classList.add('active');
-        menuOverlay.setAttribute('aria-hidden', 'false');
-        menuCloseBtn.classList.add('active');
-        menuBtn.setAttribute('aria-expanded', 'true');
-        lenis.stop();
-      }
-    }
-
-    function closeMenu() {
-      if (menuOverlay && menuCloseBtn && menuBtn) {
-        menuOverlay.classList.remove('active');
-        menuOverlay.setAttribute('aria-hidden', 'true');
-        menuCloseBtn.classList.remove('active');
-        menuBtn.setAttribute('aria-expanded', 'false');
-        lenis.start();
-      }
-    }
-
-    if (menuBtn) menuBtn.addEventListener('click', openMenu);
-    if (menuCloseBtn) menuCloseBtn.addEventListener('click', closeMenu);
-
-    if (menuOverlay) {
-      menuOverlay.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', (e) => {
-          const targetId = link.getAttribute('href');
-          if (!targetId) return;
-          closeMenu();
-          if (targetId.startsWith('#')) {
-            const targetEl = document.querySelector(targetId);
-            if (targetEl) {
-              e.preventDefault();
-              setTimeout(() => {
-                lenis.scrollTo(targetEl, { offset: -60, duration: 1.2 });
-              }, 400);
-            } else if (window.location.pathname !== '/' && window.location.pathname !== '') {
-              e.preventDefault();
-              window.location.href = '/' + targetId;
-            }
-          }
-        });
-      });
-    }
+    // --- 7. NAV SCROLL & MENU (Controlado directamente en Navbar.astro con física #212) ---
 
     // --- 8. REVEAL OBSERVER ---
     const revealObserver = new IntersectionObserver((entries) => {
@@ -886,57 +813,7 @@ const structuredData = {
       }
     });
 
-    // --- 12. MARQUEE ---
-    const marqueeTrack = document.getElementById('marqueeTrack');
-    if (marqueeTrack) {
-      let marqueeX = 0;
-      const marqueeBaseSpeed = 1.2;
-      let marqueeCurrentSpeed = 1.2;
-      let marqueeTargetSpeed = 1.2;
-      let halfWidth = 0;
-
-      function measureMarquee() {
-        if (marqueeTrack) halfWidth = marqueeTrack.scrollWidth / 2;
-      }
-      measureMarquee();
-      window.addEventListener('resize', measureMarquee, { passive: true });
-
-      if (isDesktop && !prefersReducedMotion) {
-        function animateMarquee() {
-          marqueeCurrentSpeed += (marqueeTargetSpeed - marqueeCurrentSpeed) * 0.1;
-          marqueeX -= marqueeCurrentSpeed;
-
-          if (halfWidth > 0) {
-            if (marqueeX < -halfWidth) {
-              marqueeX += halfWidth;
-            } else if (marqueeX > 0) {
-              marqueeX -= halfWidth;
-            }
-          }
-          if (marqueeTrack) {
-            marqueeTrack.style.transform = `translate3d(${marqueeX.toFixed(2)}px, 0, 0)`;
-          }
-          requestAnimationFrame(animateMarquee);
-        }
-        requestAnimationFrame(animateMarquee);
-
-        let scrollTimeout: any;
-        const handleVelocity = (velocity: number) => {
-          marqueeTargetSpeed = marqueeBaseSpeed - (velocity * 0.4);
-          marqueeTargetSpeed = Math.max(-12, Math.min(12, marqueeTargetSpeed));
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            marqueeTargetSpeed = marqueeBaseSpeed;
-          }, 120);
-        };
-
-        if (lenis.on) {
-          lenis.on('scroll', (e: any) => handleVelocity(e.velocity || 0));
-        }
-      } else {
-        marqueeTrack.style.animation = 'preMarquee 35s linear infinite';
-      }
-    }
+    // --- 12. MARQUEE (Controlado directamente en Marquee.astro con física #394) ---
 
     // --- 13. HERO PARALLAX ---
     const heroBg = document.getElementById('heroBg');

@@ -1,89 +1,129 @@
 ---
 // filepath: src/components/Hero.astro
+// Motion: ver src/styles/motion.css (springs + gating html.mx).
+// Lucian UX/UI Prompt #237 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#237
+// Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
+import RollText from './motion/RollText.astro';
+
+const titleWords: string[] = ['MOTORES', 'DE', 'CRECIMIENTO', 'DIGITAL', 'EN', 'URUGUAY'];
+const lastIndex = titleWords.length - 1;
 ---
 <header class="hero" id="top">
   <!-- Contenedor de Video Cinemático a Máxima Nitidez y Calidad Original -->
   <div class="hero-media-container">
-    <picture class="hero-poster-pic">
-      <source media="(max-width: 768px)" srcset="/amargo-hero-mobile.webp" type="image/webp" />
-      <source media="(min-width: 769px)" srcset="/amargo-hero-pc.webp" type="image/webp" />
-      <img 
-        src="/amargo-hero-pc.webp" 
-        alt="Amargo Creativo — Hero Poster" 
-        class="hero-poster-img"
-        fetchpriority="high"
-        decoding="async"
-        width="2000" 
-        height="1116" 
-      />
-    </picture>
-    <video 
-      id="heroVideo" 
-      class="hero-video" 
-      data-src="/new-hero.mp4" 
-      poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-      loop 
-      muted 
-      playsinline 
-      webkit-playsinline
-      preload="none"
-      aria-hidden="true"
-    ></video>
+    <!-- Capa de parallax (puntero + scroll, JS) -->
+    <div class="hero-media-inner" id="heroMediaInner">
+      <!-- Capa de entrada (zoom-out de cámara, CSS) -->
+      <div class="hero-media-zoom">
+        <picture class="hero-poster-pic">
+          <source media="(max-width: 768px)" srcset="/amargo-hero-mobile.webp" type="image/webp" />
+          <source media="(min-width: 769px)" srcset="/amargo-hero-pc.webp" type="image/webp" />
+          <img 
+            src="/amargo-hero-pc.webp" 
+            alt="Amargo Creativo — Hero Poster" 
+            class="hero-poster-img"
+            fetchpriority="high"
+            decoding="async"
+            width="2000" 
+            height="1116" 
+          />
+        </picture>
+        <video 
+          id="heroVideo" 
+          class="hero-video" 
+          data-src="/new-hero.mp4" 
+          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          loop 
+          muted 
+          playsinline 
+          webkit-playsinline
+          preload="none"
+          aria-hidden="true"
+        ></video>
+      </div>
+    </div>
     <div class="hero-gradient" id="heroGradient"></div>
   </div>
 
   <!-- Barra Superior del Hero -->
   <div class="hero-top">
-    <div class="hero-live-badge"><span>● EN VIVO</span><span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span></div>
-    <div class="hero-location-badge"><span>ATLÁNTIDA, CANELONES</span><span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span></div>
+    <div class="hero-live-badge hx" style="--d:150ms;--hx-y:-10px">
+      <span class="live-label"><span class="live-dot" aria-hidden="true"></span>EN VIVO</span>
+      <span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span>
+    </div>
+    <div class="hero-location-badge hx" style="--d:230ms;--hx-y:-10px">
+      <span>ATLÁNTIDA, CANELONES</span>
+      <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+    </div>
   </div>
 
   <!-- Área Central Abierta: El arte original del mate luce al 100% sin solapamientos -->
   <div class="hero-spacer" aria-hidden="true"></div>
 
   <!-- Barra Inferior Editorial Equilibrada en 3 Columnas (Titular • Pilares • Métricas) -->
-  <div class="hero-bottom" id="heroBottom">
+  <div class="hero-bottom hx" id="heroBottom" style="--d:200ms;--hx-y:36px">
     <!-- Columna 1: Titular Semántico, Propuesta de Valor & Acciones -->
     <div class="hero-sub-wrap">
       <h1 class="hero-h1">
-        <span class="h1-sub">CREACIÓN DE PÁGINAS WEB &bull; APPS &bull; SEO &bull; CONVERSIÓN</span>
-        <span class="h1-title">MOTORES DE CRECIMIENTO DIGITAL EN URUGUAY</span>
+        <span class="h1-sub hx" style="--d:380ms;--hx-y:8px">CREACIÓN DE PÁGINAS WEB &bull; APPS &bull; SEO &bull; CONVERSIÓN</span>
+        <span class="h1-title" style="--d:420ms">
+          {titleWords.map((word, i) => (
+            i === lastIndex ? (
+              <span class="hw-u">
+                <span class="hw"><span class="hwi" style={`--i:${i}`}>{word}</span></span>
+                <svg class="h1-underline" viewBox="0 0 210 22" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+                  <path d="M3 14c30-8 62-9 96-5s70 6 108-4" />
+                </svg>
+              </span>
+            ) : (
+              <><span class="hw"><span class="hwi" style={`--i:${i}`}>{word}</span></span>{' '}</>
+            )
+          ))}
+        </span>
       </h1>
-      <p class="hero-sub">Desarrollamos páginas web ultrarrápidas (&lt;0.8s), tiendas online y aplicaciones a medida que transforman visitas en clientes reales y ventas directas por WhatsApp.</p>
+      <p class="hero-sub hx" style="--d:620ms;--hx-y:12px">Desarrollamos páginas web ultrarrápidas (&lt;0.8s), tiendas online y aplicaciones a medida que transforman visitas en clientes reales y ventas directas por WhatsApp.</p>
       <div class="hero-cta-wrap">
-        <a 
-          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="hero-cta magnetic-btn" 
-          data-cursor="WHATSAPP"
-          aria-label="Hablar directamente por WhatsApp para cotizar proyecto"
-        >
-          <span>HABLAR POR WHATSAPP</span> ↗
-        </a>
-        <a href="#showcase" class="hero-cta-secondary" aria-label="Ver proyectos y casos de éxito">
-          <span>VER TRABAJOS</span> →
-        </a>
+        <span class="hero-cta-slot hx-pop" style="--d:760ms">
+          <span class="magnetic-btn hero-cta-mag">
+            <a 
+              href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="hero-cta ink-fill" 
+              data-cursor="WHATSAPP"
+              aria-label="Hablar directamente por WhatsApp para cotizar proyecto"
+            >
+              <span class="ink" aria-hidden="true"></span>
+              <RollText text="HABLAR POR WHATSAPP" arrow="diag" />
+            </a>
+          </span>
+        </span>
+        <span class="hero-cta-slot hx-pop" style="--d:840ms">
+          <a href="#showcase" class="hero-cta-secondary ink-fill" aria-label="Ver proyectos y casos de éxito">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="VER TRABAJOS" arrow="right" />
+          </a>
+        </span>
       </div>
     </div>
 
     <!-- Columna 2: Pilares de Alto Rendimiento (Ocupa el espacio central con valor editorial) -->
     <div class="hero-pillars" aria-label="Pilares de Alto Rendimiento">
-      <div class="pillar-item">
+      <div class="pillar-item hx" style="--d:600ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">01</span>
         <div class="pillar-content">
           <strong>CERO PLANTILLAS</strong>
           <span>Arquitectura limpia a medida en Astro 5 y Next.js</span>
         </div>
       </div>
-      <div class="pillar-item">
+      <div class="pillar-item hx" style="--d:680ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">02</span>
         <div class="pillar-content">
           <strong>CONVERSIÓN DIRECTA</strong>
           <span>Embudos optimizados a WhatsApp y máxima retención</span>
         </div>
       </div>
-      <div class="pillar-item">
+      <div class="pillar-item hx" style="--d:760ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">03</span>
         <div class="pillar-content">
           <strong>POSICIONAMIENTO IA</strong>
@@ -95,18 +135,18 @@
     <!-- Columna 3: Métricas de Autoridad & Badge Giratorio -->
     <div class="hero-right-wrap">
       <div class="hero-stats">
-        <div class="hero-meta">
-          <strong>100%</strong>
+        <div class="hero-meta hx" style="--d:700ms;--hx-y:10px">
+          <strong data-count-from="0" data-count-to="100" data-count-suffix="%">100%</strong>
           <span>ENFOCADO EN VENTAS</span>
         </div>
-        <div class="hero-meta">
-          <strong>&lt; 0.8s</strong>
+        <div class="hero-meta hx" style="--d:780ms;--hx-y:10px">
+          <strong data-count-from="4.8" data-count-to="0.8" data-count-decimals="1" data-count-prefix="< " data-count-suffix="s">&lt; 0.8s</strong>
           <span>CARGA INSTANTÁNEA</span>
         </div>
       </div>
 
       <!-- Badge Giratorio Brutalista Integrado -->
-      <div class="hero-badge" id="heroBadge" aria-hidden="true">
+      <div class="hero-badge hx-pop" id="heroBadge" style="--d:900ms" aria-hidden="true">
         <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" id="badgeSvg">
           <defs><path id="circle" d="M 50, 50 m -38, 0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" /></defs>
           <text font-family="JetBrains Mono" font-size="9" font-weight="700" letter-spacing="1.5" fill="currentColor">
@@ -126,7 +166,6 @@
   function initPolishedHero() {
     const hero = document.getElementById('top');
     const video = document.getElementById('heroVideo') as HTMLVideoElement | null;
-    const heroGradient = document.getElementById('heroGradient');
     const badgeSvg = document.getElementById('badgeSvg');
 
     if (!hero || !video) return;
@@ -154,7 +193,7 @@
       return;
     } else {
       if ('requestIdleCallback' in window) {
-        (window as any).requestIdleCallback(() => setTimeout(loadVideo, 400), { timeout: 2000 });
+        window.requestIdleCallback(() => setTimeout(loadVideo, 400), { timeout: 2000 });
       } else {
         setTimeout(loadVideo, 500);
       }
@@ -165,19 +204,20 @@
     let targetProgress = 0;
     let currentProgress = 0;
     let isUserScrolling = false;
-    let scrollTimeout: any;
+    let scrollTimeout: ReturnType<typeof setTimeout> | undefined;
     let lastScrollY = 0;
     let badgeRotation = 0;
     let isSeeking = false;
 
     function onScrollUpdate() {
+      if (!video || !hero) return;
       if (!video.src.includes('new-hero.mp4')) {
         loadVideo();
       }
       const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
       const heroHeight = hero.offsetHeight || window.innerHeight;
 
-      if (scrollY <= heroHeight * 1.5 && video && video.duration) {
+      if (scrollY <= heroHeight * 1.5 && video.duration) {
         // Mapeo suave y progresivo: solo scrubbea en la primera fase del scroll
         targetProgress = Math.min(Math.max(scrollY / (heroHeight * 1.2), 0), 1);
         targetTime = targetProgress * video.duration;
@@ -201,19 +241,8 @@
       }
     }
 
+    // Lenis scrollea la ventana de forma nativa: un único listener de scroll alcanza.
     window.addEventListener('scroll', onScrollUpdate, { passive: true });
-    const win = window as any;
-    if (win.lenis?.on) {
-      win.lenis.on('scroll', onScrollUpdate);
-    } else {
-      const checkLenisTimer = setInterval(() => {
-        if (win.lenis?.on) {
-          win.lenis.on('scroll', onScrollUpdate);
-          clearInterval(checkLenisTimer);
-        }
-      }, 50);
-      setTimeout(() => clearInterval(checkLenisTimer), 3000);
-    }
 
     function renderLoop() {
       if (video && video.duration) {
@@ -231,7 +260,7 @@
           video.addEventListener('seeked', () => { isSeeking = false; }, { once: true });
         }
 
-        // Rotación continua del badge
+        // Rotación continua del badge (acelera con la velocidad del scroll)
         if (badgeSvg) {
           badgeRotation += 0.35 + (Math.abs(diffProgress) * 15);
           badgeSvg.style.transform = `rotate(${badgeRotation.toFixed(1)}deg)`;
@@ -244,10 +273,129 @@
     requestAnimationFrame(renderLoop);
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initPolishedHero);
-  } else {
+  // =========================================================================
+  // PARALLAX DE CÁMARA (puntero + scroll) — spring semi-implícito, duerme en reposo
+  // k=0.075 / c=0.78 por frame ≈ k=270 c=13 a 60fps: peso de papel, sin rebote visible
+  // =========================================================================
+  function initHeroParallax() {
+    const hero = document.getElementById('top');
+    const layer = document.getElementById('heroMediaInner');
+    if (!hero || !layer) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const K = 0.075;
+    const C = 0.78;
+    let tx = 0, ty = 0, x = 0, y = 0, vx = 0, vy = 0;
+    let pointerX = 0, pointerY = 0, scrollOffset = 0;
+    let raf = 0;
+    let heroVisible = true;
+
+    const tick = () => {
+      raf = 0;
+      tx = pointerX;
+      ty = pointerY + scrollOffset;
+      vx = (vx + (tx - x) * K) * C;
+      vy = (vy + (ty - y) * K) * C;
+      x += vx;
+      y += vy;
+      layer.style.transform = `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0) scale(1.04)`;
+      const settled = Math.abs(tx - x) < 0.05 && Math.abs(ty - y) < 0.05 && Math.abs(vx) < 0.02 && Math.abs(vy) < 0.02;
+      if (!settled && heroVisible) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => { if (!raf && heroVisible) raf = requestAnimationFrame(tick); };
+
+    const onScroll = () => {
+      const h = hero.offsetHeight || window.innerHeight;
+      scrollOffset = Math.min(window.scrollY, h) * 0.12;
+      kick();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    if (isDesktop) {
+      hero.addEventListener('pointermove', (e: PointerEvent) => {
+        const r = hero.getBoundingClientRect();
+        const nx = (e.clientX - r.left) / r.width - 0.5;
+        const ny = (e.clientY - r.top) / r.height - 0.5;
+        pointerX = nx * -18;
+        pointerY = ny * -10;
+        kick();
+      }, { passive: true });
+      hero.addEventListener('pointerleave', () => {
+        pointerX = 0;
+        pointerY = 0;
+        kick();
+      });
+    }
+
+    new IntersectionObserver((entries) => {
+      heroVisible = entries[0]?.isIntersecting ?? true;
+      if (heroVisible) kick();
+    }).observe(hero);
+
+    layer.style.transform = 'translate3d(0, 0, 0) scale(1.04)';
+  }
+
+  // =========================================================================
+  // CONTADORES — 100% sube desde 0, la carga BAJA de 4.8s (web tradicional) a 0.8s
+  // easeOutExpo, 1100ms, sincronizado con la coreografía de entrada
+  // =========================================================================
+  function initCounters() {
+    const nodes = document.querySelectorAll<HTMLElement>('.hero [data-count-to]');
+    if (!nodes.length) return;
+    if (!document.documentElement.classList.contains('mx')) return;
+
+    const easeOutExpo = (t: number): number => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+
+    nodes.forEach((el, idx) => {
+      const from = parseFloat(el.dataset.countFrom ?? '0');
+      const to = parseFloat(el.dataset.countTo ?? '0');
+      const decimals = parseInt(el.dataset.countDecimals ?? '0', 10);
+      const prefix = el.dataset.countPrefix ?? '';
+      const suffix = el.dataset.countSuffix ?? '';
+      const finalText = el.textContent ?? '';
+      const format = (v: number): string => `${prefix}${v.toFixed(decimals)}${suffix}`;
+      const duration = 1100;
+      const delay = 700 + idx * 80;
+
+      el.textContent = format(from);
+      window.setTimeout(() => {
+        const start = performance.now();
+        const step = (now: number) => {
+          const t = Math.min(1, (now - start) / duration);
+          el.textContent = format(from + (to - from) * easeOutExpo(t));
+          if (t < 1) requestAnimationFrame(step);
+          else el.textContent = finalText;
+        };
+        requestAnimationFrame(step);
+      }, delay);
+    });
+  }
+
+  function onSiteLoaded(cb: () => void) {
+    if (document.body.classList.contains('loaded')) {
+      cb();
+      return;
+    }
+    const mo = new MutationObserver(() => {
+      if (document.body.classList.contains('loaded')) {
+        mo.disconnect();
+        cb();
+      }
+    });
+    mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  function bootHero() {
     initPolishedHero();
+    initHeroParallax();
+    onSiteLoaded(initCounters);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootHero);
+  } else {
+    bootHero();
   }
 </script>
 
@@ -274,9 +422,26 @@
     overflow: hidden;
     z-index: 1;
     background: #e4e1d8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  }
+
+  .hero-media-inner,
+  .hero-media-zoom {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+  }
+
+  .hero-media-inner {
+    transform: scale(1.04);
+  }
+
+  /* Entrada: la cámara se aleja del grabado mientras el preloader se levanta */
+  @keyframes heroZoomOut {
+    from { transform: scale(1.12); }
+  }
+
+  :global(html.mx body.loaded) .hero-media-zoom {
+    animation: heroZoomOut 1.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
 
   .hero-poster-pic,
@@ -306,7 +471,6 @@
     object-fit: cover;
     object-position: center 38%;
     filter: contrast(1.02);
-    will-change: transform;
     pointer-events: none;
     z-index: 2;
     opacity: 0;
@@ -342,6 +506,7 @@
     padding: calc(75px + env(safe-area-inset-top)) var(--gut) 16px;
     font-size: 11px;
     text-transform: uppercase;
+    letter-spacing: 0.04em;
     flex-wrap: wrap;
     gap: 8px;
     background: linear-gradient(to bottom, rgba(228, 225, 216, 0.85) 0%, transparent 100%);
@@ -355,11 +520,18 @@
   .hero-top > div {
     display: flex;
     gap: 16px;
+    align-items: center;
   }
 
   .hero-top span:first-child {
     color: var(--mate);
     font-weight: 700;
+  }
+
+  .live-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
   }
 
   :global(body.theme-electric) .hero-top span:first-child {
@@ -440,14 +612,52 @@
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--ink);
+    font-kerning: normal;
+  }
+
+  /* Subrayado a mano bajo URUGUAY — Lucian #237 (.7s cubic-bezier(.6,0,.2,1)) */
+  .hw-u {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+  }
+
+  .h1-underline {
+    position: absolute;
+    left: -3%;
+    bottom: -0.32em;
+    width: 106%;
+    height: 0.42em;
+    overflow: visible;
+    fill: none;
+    stroke: var(--mx-accent);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 240;
+    stroke-dashoffset: 0;
+    pointer-events: none;
+  }
+
+  @keyframes heroUnderlineDraw {
+    from { stroke-dashoffset: 240; }
+  }
+
+  :global(html.mx body:not(.loaded)) .h1-underline {
+    stroke-dashoffset: 240;
+  }
+
+  :global(html.mx body.loaded) .h1-underline {
+    animation: heroUnderlineDraw 0.7s cubic-bezier(0.6, 0, 0.2, 1) 1.45s both;
   }
 
   .hero-sub {
     font-family: 'Space Grotesk', sans-serif;
     font-size: 13px;
-    line-height: 1.48;
+    line-height: 1.5;
     color: var(--ink);
     opacity: 0.88;
+    max-width: 52ch;
+    text-wrap: pretty;
   }
 
   :global(body.theme-dark) .hero-sub,
@@ -462,11 +672,18 @@
     margin-top: 4px;
   }
 
+  .hero-cta-slot,
+  .hero-cta-mag {
+    display: inline-flex;
+  }
+
+  /* CTA PRIMARIO — lima, tinta que sube, letras que ruedan, flecha que dispara */
   .hero-cta {
+    --mx-fill-ink: #0a0a0a;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     background: var(--electric);
     color: #0a0a0a;
     padding: 0 22px;
@@ -477,8 +694,10 @@
     letter-spacing: 0.03em;
     font-size: 11.5px;
     border-radius: 999px;
-    transition: transform 0.25s var(--ease), background 0.2s, color 0.2s, box-shadow 0.25s;
-    will-change: transform;
+    transition:
+      transform var(--spring-snap-dur) var(--spring-snap),
+      color 0.45s var(--ux-ease),
+      box-shadow var(--spring-snap-dur) var(--spring-snap);
     height: 40px;
     box-sizing: border-box;
     white-space: nowrap;
@@ -486,22 +705,32 @@
     box-shadow: 2px 2px 0px #0a0a0a;
   }
 
-  .hero-cta:hover {
-    background: #0a0a0a;
+  .hero-cta:hover,
+  .hero-cta:focus-visible {
     color: var(--electric);
-    transform: translateY(-2px) scale(1.02);
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 4px 6px 0px var(--mate);
+  }
+
+  :global(body.theme-dark) .hero-cta:hover,
+  :global(body.theme-electric) .hero-cta:hover,
+  :global(body.theme-mate) .hero-cta:hover {
     box-shadow: 4px 6px 0px var(--electric);
   }
 
   .hero-cta:active {
-    transform: scale(0.97);
+    transform: translate3d(1px, 1px, 0) scale(0.97);
+    box-shadow: 0 0 0 #0a0a0a;
+    transition-duration: 90ms;
   }
 
+  /* CTA SECUNDARIO — misma gramática, tinta del tema */
   .hero-cta-secondary {
+    --mx-fill-ink: var(--ink);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 8px;
     color: var(--ink);
     text-decoration: none;
     font-family: 'Space Grotesk', -apple-system, sans-serif;
@@ -516,17 +745,20 @@
     height: 40px;
     box-sizing: border-box;
     white-space: nowrap;
-    transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.25s var(--ease);
+    transition:
+      color 0.45s var(--ux-ease),
+      transform var(--spring-snap-dur) var(--spring-snap);
   }
 
-  .hero-cta-secondary:hover {
-    background: var(--ink);
+  .hero-cta-secondary:hover,
+  .hero-cta-secondary:focus-visible {
     color: var(--bone);
-    transform: translateY(-2px);
+    transform: translate3d(0, -2px, 0);
   }
 
   .hero-cta-secondary:active {
     transform: scale(0.97);
+    transition-duration: 90ms;
   }
 
   /* PILARES CENTRALES DE ALTO RENDIMIENTO */
@@ -556,6 +788,11 @@
     line-height: 1;
     margin-top: 1px;
     flex-shrink: 0;
+    transition: transform var(--spring-bounce-dur) var(--spring-bounce);
+  }
+
+  .pillar-item:hover .pillar-num {
+    transform: rotate(-6deg) scale(1.12);
   }
 
   :global(body.theme-electric) .pillar-num {
@@ -616,6 +853,8 @@
     margin-bottom: 2px;
     color: var(--ink);
     line-height: 1;
+    font-variant-numeric: tabular-nums;
+    min-width: 4.2ch;
   }
 
   .hero-badge {
@@ -628,18 +867,18 @@
     justify-content: center;
     pointer-events: none;
     color: var(--ink);
-    animation: floatBadge 5s ease-in-out infinite alternate;
-  }
-
-  @keyframes floatBadge {
-    0% { transform: translateY(0px) rotate(0deg); }
-    100% { transform: translateY(-7px) rotate(2deg); }
   }
 
   .hero-badge svg {
     width: 100%;
     height: 100%;
     will-change: transform;
+    animation: floatBadge 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes floatBadge {
+    0% { translate: 0 0; }
+    100% { translate: 0 -7px; }
   }
 
   .hero-badge .badge-inner {
@@ -717,11 +956,18 @@
       width: 100%;
     }
 
+    .hero-cta-slot,
+    .hero-cta-mag {
+      display: flex;
+      width: 100%;
+    }
+
     .hero-cta, .hero-cta-secondary {
       width: 100%;
       height: 38px;
       padding: 0 8px;
       font-size: 10px;
+      gap: 6px;
     }
 
     .hero-right-wrap {
@@ -759,5 +1005,15 @@
       padding: 0 4px;
     }
   }
-</style>
 
+  @media (prefers-reduced-motion: reduce) {
+    .hero-badge svg {
+      animation: none;
+    }
+    .hero-media-zoom,
+    .h1-underline {
+      animation: none !important;
+      stroke-dashoffset: 0 !important;
+    }
+  }
+</style>

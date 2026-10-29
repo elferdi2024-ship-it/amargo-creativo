@@ -1,25 +1,57 @@
 ---
 // filepath: src/components/Navbar.astro
+// Lucian UX/UI Prompt #212 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#212
+// Lucian UX/UI Prompt #205 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#205
+// Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
+import RollText from './motion/RollText.astro';
+
+interface NavLink {
+  href: string;
+  label: string;
+  active: boolean;
+}
+
 const pathname = Astro.url.pathname;
 const isProyectos = pathname.startsWith('/proyectos');
 const isServicios = pathname.startsWith('/servicios');
 const isFacturacion = pathname.startsWith('/facturacion');
 const isManifiesto = pathname.startsWith('/manifiesto');
+
+const links: NavLink[] = [
+  { href: '/proyectos', label: 'Proyectos', active: isProyectos },
+  { href: '/servicios-crecimiento', label: 'Servicios', active: isServicios },
+  { href: '/facturacion', label: 'Sistemas B2B', active: isFacturacion },
+  { href: '/manifiesto', label: 'Manifiesto', active: isManifiesto },
+  { href: '/#contact', label: 'Contacto', active: false },
+];
+
+const brandLetters: string[] = Array.from('AMARGO');
 ---
-<nav id="nav">
-  <a href="/" class="brand" id="brandBtn">AMARGO<span class="brand-dot">.</span></a>
-  <ul class="nav-links">
-    <li><a href="/proyectos" class={isProyectos ? "active" : ""} data-text="Proyectos">Proyectos</a></li>
-    <li><a href="/servicios-crecimiento" class={isServicios ? "active" : ""} data-text="Servicios">Servicios</a></li>
-    <li><a href="/facturacion" class={isFacturacion ? "active" : ""} data-text="Sistemas B2B">Sistemas B2B</a></li>
-    <li><a href="/#performance" data-text="Rendimiento">Rendimiento</a></li>
-    <li><a href="/manifiesto" class={isManifiesto ? "active" : ""} data-text="Manifiesto">Manifiesto</a></li>
-    <li><a href="/#contact" data-text="Contacto">Contacto</a></li>
+<nav id="nav" class="is-top">
+  <a href="/" class="brand" id="brandBtn" aria-label="Amargo Creativo — Inicio">
+    <span class="brand-word" id="brandWord" aria-hidden="true">
+      {brandLetters.map((ch) => <span class="brand-l">{ch}</span>)}
+    </span><span class="brand-dot" aria-hidden="true">.</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    {links.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          class={link.active ? 'active' : ''}
+          aria-current={link.active ? 'page' : undefined}
+          data-text={link.label}
+        >
+          <RollText text={link.label} />
+        </a>
+      </li>
+    ))}
+    <li class="nav-ink" id="navInk" role="presentation" aria-hidden="true"></li>
   </ul>
   <div class="nav-right">
     <div class="status">
       <span class="status-live-pulse" aria-hidden="true"></span>
-      <span class="status-loc">ATLÁNTIDA <strong id="navClockUY">--:--:--</strong></span>
+      <span class="status-loc">ATLÁNTIDA <strong id="navClockUY" class="clock" aria-live="off">--:--:--</strong></span>
       <span class="status-sep">|</span>
       <button class="nav-sound-btn sound-toggle-btn" id="soundToggleBtn" aria-label="Alternar audio táctil" title="Efectos de sonido táctiles">
         <span class="sound-wave-icon" aria-hidden="true"></span>
@@ -32,17 +64,19 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
       target="_blank" 
       rel="noopener noreferrer" 
-      class="nav-cta" 
+      class="nav-cta ink-fill" 
       data-cursor="WHATSAPP"
       aria-label="Hablar por WhatsApp con Amargo Creativo"
     >
-      HABLEMOS ↗
+      <span class="ink" aria-hidden="true"></span>
+      <RollText text="HABLEMOS" arrow="diag" />
     </a>
     <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="menuOverlay">
       <span>MENÚ</span>
-      <svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 2h8M2 6h8M2 10h8" stroke="currentColor" stroke-width="1.5"/></svg>
+      <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 2h8M2 6h8M2 10h8" stroke="currentColor" stroke-width="1.5"/></svg>
     </button>
   </div>
+  <span class="nav-progress" id="navProgress" aria-hidden="true"></span>
 </nav>
 
 <div class="menu-overlay" id="menuOverlay" aria-hidden="true">
@@ -53,8 +87,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       <li><a href="/servicios-crecimiento">03. <em>Servicios & CRO</em></a></li>
       <li><a href="/facturacion">04. <em>Sistemas B2B & Cobros</em></a></li>
       <li><a href="/manifiesto">05. Manifiesto</a></li>
-      <li><a href="/#performance">06. <em>Rendimiento</em></a></li>
-      <li><a href="/#contact">07. Contacto</a></li>
+      <li><a href="/#contact">06. Contacto</a></li>
       <li><a href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" target="_blank" rel="noopener noreferrer" class="menu-growth-link">★ <em>Hablar por WhatsApp</em></a></li>
     </ul>
     <div class="menu-aside">
@@ -78,7 +111,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   </div>
 </div>
 <button class="menu-close-btn" id="menuCloseBtn" aria-label="Cerrar menú">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
 </button>
 
 <style>
@@ -102,8 +135,20 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     text-transform: uppercase;
     letter-spacing: 0.05em;
     font-weight: 500;
-    transition: transform 0.4s var(--ease), background 0.4s var(--ease);
+    transition:
+      transform 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+      background-color 0.3s var(--ease),
+      border-color 0.3s var(--ease),
+      box-shadow 0.3s var(--ease);
     will-change: transform;
+  }
+  /* #212 — en el tope: papel casi transparente sobre el hero; al scrollear: sólido con sombra */
+  nav:global(.is-top) {
+    background: rgba(232, 230, 224, 0.35);
+    border-bottom-color: rgba(10, 10, 10, 0.12);
+  }
+  nav:global(.is-solid) {
+    box-shadow: 0 1px 0 rgba(10, 10, 10, 0.06), 0 10px 24px -18px rgba(10, 10, 10, 0.45);
   }
   :global(body.theme-dark) nav {
     background: rgba(20, 20, 19, 0.92);
@@ -114,9 +159,34 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   :global(body.theme-mate) nav {
     background: rgba(18, 30, 21, 0.92);
   }
-  nav:global(.hide-nav) {
-    transform: translateY(-100%);
+  :global(body.theme-dark) nav:global(.is-top),
+  :global(body.theme-electric) nav:global(.is-top),
+  :global(body.theme-mate) nav:global(.is-top) {
+    background: rgba(10, 10, 10, 0.45);
   }
+  nav:global(.hide-nav) {
+    transform: translate3d(0, -110%, 0);
+  }
+
+  /* Barra de lectura (#212) — scaleX, nunca width */
+  .nav-progress {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 100%;
+    height: 2px;
+    background: var(--mx-accent);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+    pointer-events: none;
+  }
+  nav:global(.is-solid) .nav-progress {
+    opacity: 1;
+  }
+
+  /* BRAND — letras con resorte propio (#205) */
   nav .brand {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
@@ -128,27 +198,46 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     border: none;
     cursor: pointer;
     transition: color 0.2s;
+    display: inline-flex;
+    align-items: baseline;
+    line-height: 1;
+    padding: 8px 0;
+  }
+  .brand-word {
+    display: inline-flex;
+  }
+  .brand-l {
+    display: inline-block;
+    transform: translate3d(0, var(--y, 0px), 0) scaleY(var(--sy, 1));
+    transform-origin: 50% 100%;
+    color: color-mix(in oklab, var(--rust) calc(var(--t, 0) * 100%), var(--ink));
   }
   .brand-dot {
     color: var(--mate);
-    transition: color 0.2s;
+    transition: color 0.2s, transform var(--spring-bounce-dur) var(--spring-bounce);
+    display: inline-block;
+  }
+  nav .brand:hover .brand-dot {
+    transform: scale(1.6) translate3d(0, -1px, 0);
   }
   :global(body.theme-dark) .brand-dot,
   :global(body.theme-electric) .brand-dot,
   :global(body.theme-mate) .brand-dot {
     color: var(--electric);
   }
-  nav .brand:hover {
-    color: var(--rust);
-  }
   nav .brand:active {
     transform: scale(0.95);
   }
+
+  /* LINKS — rolling label (#009) + indicador de tinta compartido */
   nav .nav-links {
+    position: relative;
     display: flex;
-    gap: 20px;
+    gap: 22px;
     list-style: none;
     height: 100%;
+    margin: 0;
+    padding: 0;
   }
   nav .nav-links li {
     height: 100%;
@@ -158,8 +247,8 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   nav .nav-links a {
     color: inherit;
     text-decoration: none;
-    transition: color 0.2s;
-    display: inline-block;
+    transition: color 0.25s var(--ease);
+    display: inline-flex;
     position: relative;
     padding: 4px 0;
   }
@@ -170,6 +259,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     color: var(--mate);
     font-weight: 700;
   }
+  /* Fallback sin JS: subrayado estático en el activo */
   nav .nav-links a.active::after {
     content: '';
     position: absolute;
@@ -179,12 +269,43 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     height: 2px;
     background: var(--mate);
   }
+  nav .nav-links:global(.has-ink) a.active::after {
+    display: none;
+  }
+  nav .nav-links li.nav-ink {
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: calc(50% - 15px);
+    width: 100px;
+    height: 2px;
+    background: var(--rust);
+    transform-origin: 0 50%;
+    transform: translate3d(var(--ink-x, 0px), 0, 0) scaleX(var(--ink-s, 0));
+    opacity: 0;
+    transition:
+      transform var(--spring-snap-dur) var(--spring-snap),
+      opacity 0.25s var(--ease),
+      background-color 0.25s var(--ease);
+    pointer-events: none;
+  }
+  .nav-links:global(.has-ink) .nav-ink {
+    opacity: 1;
+  }
+  .nav-links:global(.ink-rest) .nav-ink {
+    background: var(--mate);
+  }
+  .nav-links:global(.ink-hidden) .nav-ink {
+    opacity: 0;
+  }
   :global(body.theme-electric) nav .nav-links a.active {
     color: var(--electric);
   }
-  :global(body.theme-electric) nav .nav-links a.active::after {
+  :global(body.theme-electric) nav .nav-links a.active::after,
+  :global(body.theme-electric) .nav-links:global(.ink-rest) .nav-ink {
     background: var(--electric);
   }
+
   nav .nav-right {
     display: flex;
     align-items: center;
@@ -205,16 +326,38 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     font-family: 'JetBrains Mono', monospace;
   }
   .status-live-pulse {
+    position: relative;
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--electric);
     box-shadow: 0 0 6px var(--electric);
-    animation: pulse 2s infinite;
+  }
+  .status-live-pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--electric);
+    animation: navLiveRing 2.2s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  }
+  @keyframes navLiveRing {
+    0% { transform: scale(1); opacity: 0.6; }
+    70%, 100% { transform: scale(3); opacity: 0; }
   }
   .status-loc strong {
     color: var(--electric);
     font-weight: 700;
+  }
+  /* Reloj: cada dígito rueda solo cuando cambia */
+  .clock {
+    display: inline-flex;
+    font-variant-numeric: tabular-nums;
+  }
+  .clock :global(.clock-d) {
+    display: inline-block;
+    min-width: 1ch;
+    text-align: center;
   }
   .status-sep {
     opacity: 0.3;
@@ -231,11 +374,15 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    transition: all 0.2s var(--ease);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background-color 0.2s var(--ease), transform var(--spring-snap-dur) var(--spring-snap);
   }
   .nav-sound-btn:hover {
     border-color: var(--electric);
     color: var(--electric);
+  }
+  .nav-sound-btn:active {
+    transform: scale(0.94);
+    transition-duration: 90ms;
   }
   .nav-sound-btn.active {
     background: var(--electric);
@@ -264,10 +411,14 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     color: #4ade80;
     font-weight: 700;
   }
+
+  /* CTA — tinta que sube (#009) */
   .nav-cta {
+    --mx-fill-ink: #0a0a0a;
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     background: var(--electric);
     color: #0a0a0a;
     font-family: 'JetBrains Mono', monospace;
@@ -278,18 +429,19 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     text-decoration: none;
     padding: 8px 16px;
     border: 1px solid var(--ink);
-    transition: transform 0.2s var(--ease), background 0.2s, color 0.2s;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.45s var(--ux-ease);
     height: 36px;
     box-sizing: border-box;
     white-space: nowrap;
   }
-  .nav-cta:hover {
-    background: var(--bone);
-    color: var(--ink);
-    transform: translate(-1px, -1px);
+  .nav-cta:hover,
+  .nav-cta:focus-visible {
+    color: var(--electric);
+    transform: translate3d(-1px, -1px, 0);
   }
   .nav-cta:active {
     transform: scale(0.96);
+    transition-duration: 90ms;
   }
   .menu-btn {
     background: none;
@@ -304,6 +456,11 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     gap: 8px;
     height: 36px;
     color: var(--ink);
+    transition: transform var(--spring-snap-dur) var(--spring-snap), background-color 0.2s, color 0.2s;
+  }
+  .menu-btn:active {
+    transform: scale(0.94);
+    transition-duration: 90ms;
   }
   @media (max-width: 980px) {
     nav .nav-links {
@@ -324,10 +481,6 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       font-size: 10px;
     }
   }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
   .menu-overlay {
     position: fixed;
     inset: 0;
@@ -339,7 +492,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     justify-content: center;
     padding: calc(80px + env(safe-area-inset-top)) var(--gut) calc(40px + env(safe-area-inset-bottom));
     transform: translateY(-100%);
-    transition: transform 0.8s var(--ease-emphasis);
+    transition: transform 0.8s var(--ease-emphasis), visibility 0s linear 0.8s;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     visibility: hidden;
@@ -349,6 +502,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   .menu-overlay:global(.active) {
     transform: translateY(0);
     visibility: visible;
+    transition: transform 0.8s var(--ease-emphasis), visibility 0s;
   }
   .menu-grid {
     display: grid;
@@ -363,7 +517,9 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   .menu-items li {
     margin-bottom: 16px;
     overflow: hidden;
+    padding-bottom: 0.06em;
   }
+  /* Entrada línea a línea con máscara (#237: 108% + rotate 4deg) */
   .menu-items a {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
@@ -372,26 +528,33 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     text-decoration: none;
     text-transform: uppercase;
     line-height: 1;
-    transition: color 0.3s, transform 0.3s;
+    transition: color 0.3s, transform 0.55s cubic-bezier(0.6, 0, 0.4, 1);
     display: inline-block;
     word-break: break-word;
-    transform: translateY(100%);
-    opacity: 0;
+    transform: translate3d(0, 108%, 0) rotate(4deg);
+    transform-origin: 0 100%;
   }
   .menu-overlay:global(.active) .menu-items a {
-    transform: translateY(0);
-    opacity: 1;
+    transform: none;
+    transition: color 0.3s, transform 0.9s cubic-bezier(0.2, 0.9, 0.2, 1);
   }
-  .menu-overlay:global(.active) .menu-items li:nth-child(1) a { transition-delay: 0.06s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(2) a { transition-delay: 0.12s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(3) a { transition-delay: 0.18s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(4) a { transition-delay: 0.24s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(5) a { transition-delay: 0.30s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(6) a { transition-delay: 0.36s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(7) a { transition-delay: 0.42s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(8) a { transition-delay: 0.48s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(9) a { transition-delay: 0.54s; }
-  .menu-overlay:global(.active) .menu-items li:nth-child(10) a { transition-delay: 0.60s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(1) a { transition-delay: 0s, 0.18s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(2) a { transition-delay: 0s, 0.24s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(3) a { transition-delay: 0s, 0.30s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(4) a { transition-delay: 0s, 0.36s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(5) a { transition-delay: 0s, 0.42s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(6) a { transition-delay: 0s, 0.48s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(7) a { transition-delay: 0s, 0.54s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(8) a { transition-delay: 0s, 0.60s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(9) a { transition-delay: 0s, 0.66s; }
+  .menu-overlay:global(.active) .menu-items li:nth-child(10) a { transition-delay: 0s, 0.72s; }
+  @media (hover: hover) {
+    .menu-overlay:global(.active) .menu-items a:hover {
+      color: var(--electric);
+      transform: translate3d(14px, 0, 0);
+      transition: color 0.3s, transform var(--spring-snap-dur) var(--spring-snap);
+    }
+  }
   .menu-growth-link {
     color: var(--electric) !important;
   }
@@ -404,11 +567,18 @@ const isManifiesto = pathname.startsWith('/manifiesto');
   }
   .menu-items a:active {
     color: var(--electric);
-    transform: scale(0.98);
   }
   .menu-aside {
     border-left: 1px solid rgba(255, 255, 255, 0.2);
     padding-left: 24px;
+    opacity: 0;
+    transform: translate3d(0, 16px, 0);
+    transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
+  }
+  .menu-overlay:global(.active) .menu-aside {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.6s var(--ease) 0.5s, transform 0.9s var(--spring-soft) 0.5s;
   }
   :global(body.theme-electric) .menu-aside {
     border-left: 1px solid rgba(241, 255, 90, 0.2);
@@ -454,17 +624,21 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     justify-content: center;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s var(--ease);
+    transform: scale(0.6) rotate(-90deg);
+    transition: opacity 0.25s ease, transform var(--spring-bounce-dur) var(--spring-bounce);
   }
   .menu-close-btn:global(.active) {
     opacity: 1;
     pointer-events: auto;
+    transform: none;
+    transition-delay: 0.35s;
   }
-  .menu-close-btn:hover {
+  .menu-close-btn:global(.active):hover {
     transform: rotate(90deg) scale(1.05);
+    transition-delay: 0s;
   }
   .menu-close-btn:active {
-    transform: scale(0.95);
+    transform: scale(0.92);
   }
   .menu-close-btn svg {
     width: 24px;
@@ -495,6 +669,14 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     border: 1px solid rgba(255, 255, 255, 0.6);
     cursor: pointer;
     padding: 0;
+    transition: transform var(--spring-bounce-dur) var(--spring-bounce);
+  }
+  .menu-theme-dots .theme-dot:hover {
+    transform: scale(1.2) rotate(8deg);
+  }
+  .menu-theme-dots .theme-dot:active {
+    transform: scale(0.85);
+    transition-duration: 90ms;
   }
   .menu-theme-dots .theme-dot[data-theme="default"] { background: #e8e6e0; }
   .menu-theme-dots .theme-dot[data-theme="dark"] { background: #1a1a18; }
@@ -530,7 +712,6 @@ const isManifiesto = pathname.startsWith('/manifiesto');
 
     .menu-items li {
       margin-bottom: 0 !important;
-      overflow: visible !important;
     }
 
     .menu-items a {
@@ -581,9 +762,31 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       height: 20px !important;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    nav,
+    .nav-ink,
+    .menu-items a,
+    .menu-aside,
+    .menu-close-btn,
+    .menu-overlay {
+      transition-duration: 0.001ms !important;
+      transition-delay: 0s !important;
+    }
+    .status-live-pulse::after {
+      animation: none;
+    }
+  }
 </style>
 
 <script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const springEase = getComputedStyle(document.documentElement).getPropertyValue('--spring-snap').trim() || 'cubic-bezier(0.34, 1.3, 0.64, 1)';
+
+  // ===========================================================================
+  // 1. RELOJ — cada dígito que cambia rueda desde abajo (WAAPI, sin reflow)
+  // ===========================================================================
   const navClock = document.getElementById('navClockUY');
   if (navClock) {
     const fmt = new Intl.DateTimeFormat('es-UY', {
@@ -593,14 +796,213 @@ const isManifiesto = pathname.startsWith('/manifiesto');
       second: '2-digit',
       hour12: false
     });
+    let digitEls: HTMLSpanElement[] = [];
+    let prev = '';
+
+    const build = (text: string) => {
+      navClock.textContent = '';
+      digitEls = Array.from(text).map((ch) => {
+        const s = document.createElement('span');
+        s.className = 'clock-d';
+        s.textContent = ch;
+        navClock.appendChild(s);
+        return s;
+      });
+    };
+
     const updateTime = () => {
-      navClock.textContent = fmt.format(new Date());
+      const next = fmt.format(new Date());
+      if (next.length !== prev.length || digitEls.length !== next.length) {
+        build(next);
+        prev = next;
+        return;
+      }
+      for (let i = 0; i < next.length; i++) {
+        if (next[i] !== prev[i]) {
+          const el = digitEls[i];
+          el.textContent = next[i];
+          if (!reduceMotion && typeof el.animate === 'function') {
+            el.animate(
+              [
+                { transform: 'translate3d(0, 60%, 0)', opacity: 0 },
+                { transform: 'translate3d(0, 0, 0)', opacity: 1 }
+              ],
+              { duration: 420, easing: springEase }
+            );
+          }
+        }
+      }
+      prev = next;
     };
     setInterval(updateTime, 1000);
     updateTime();
   }
 
-  // Safe Self-Contained Mobile Menu Controller
+  // ===========================================================================
+  // 2. HEADER (#212) — tope transparente → sólido; se oculta con delta acumulado
+  //    (acc > 8 oculta, acc < -6 muestra) + barra de lectura en scaleX
+  // ===========================================================================
+  const navEl = document.getElementById('nav');
+  const navProgress = document.getElementById('navProgress');
+  const menuOverlayEl = document.getElementById('menuOverlay');
+  if (navEl) {
+    let last = window.scrollY;
+    let acc = 0;
+    let raf = 0;
+
+    const draw = () => {
+      raf = 0;
+      const y = window.scrollY;
+      const d = y - last;
+      last = y;
+      acc = (d > 0) === (acc > 0) ? acc + d : d;
+
+      const solid = y > 20;
+      navEl.classList.toggle('is-solid', solid);
+      navEl.classList.toggle('is-top', !solid);
+
+      const menuOpen = !!menuOverlayEl && menuOverlayEl.classList.contains('active');
+      if (y < 60 || menuOpen) navEl.classList.remove('hide-nav');
+      else if (acc > 8) navEl.classList.add('hide-nav');
+      else if (acc < -6) navEl.classList.remove('hide-nav');
+
+      if (navProgress) {
+        const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        navProgress.style.transform = `scaleX(${Math.min(1, y / max).toFixed(4)})`;
+      }
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!raf) raf = requestAnimationFrame(draw);
+    }, { passive: true });
+    draw();
+
+    // Al enfocar con teclado, el header siempre vuelve
+    navEl.addEventListener('focusin', () => navEl.classList.remove('hide-nav'));
+  }
+
+  // ===========================================================================
+  // 3. INDICADOR DE TINTA — sigue al hover entre links, descansa en el activo
+  // ===========================================================================
+  const navLinks = document.getElementById('navLinks');
+  const navInk = document.getElementById('navInk');
+  if (navLinks && navInk && finePointer) {
+    const anchors = Array.from(navLinks.querySelectorAll<HTMLAnchorElement>('a'));
+    const activeLink = anchors.find((a) => a.classList.contains('active')) ?? null;
+
+    const moveTo = (a: HTMLAnchorElement, instant = false) => {
+      const ulRect = navLinks.getBoundingClientRect();
+      const r = a.getBoundingClientRect();
+      if (instant) navInk.style.transition = 'none';
+      navInk.style.setProperty('--ink-x', `${(r.left - ulRect.left).toFixed(1)}px`);
+      navInk.style.setProperty('--ink-s', (r.width / 100).toFixed(4));
+      if (instant) {
+        void navInk.offsetWidth;
+        navInk.style.transition = '';
+      }
+    };
+
+    const rest = () => {
+      if (activeLink) {
+        navLinks.classList.add('ink-rest');
+        navLinks.classList.remove('ink-hidden');
+        moveTo(activeLink);
+      } else {
+        navLinks.classList.add('ink-hidden');
+      }
+    };
+
+    navLinks.classList.add('has-ink');
+    if (activeLink) moveTo(activeLink, true);
+    rest();
+
+    anchors.forEach((a) => {
+      a.addEventListener('mouseenter', () => {
+        navLinks.classList.remove('ink-rest', 'ink-hidden');
+        moveTo(a);
+      });
+      a.addEventListener('focus', () => {
+        navLinks.classList.remove('ink-rest', 'ink-hidden');
+        moveTo(a);
+      });
+    });
+    navLinks.addEventListener('mouseleave', rest);
+    navLinks.addEventListener('focusout', (e: FocusEvent) => {
+      if (!navLinks.contains(e.relatedTarget as Node | null)) rest();
+    });
+    window.addEventListener('resize', () => { if (activeLink) moveTo(activeLink, true); }, { passive: true });
+    document.fonts?.ready.then(() => { if (activeLink) moveTo(activeLink, true); });
+  }
+
+  // ===========================================================================
+  // 4. BRAND (#205) — cada letra con su resorte; ola gaussiana alrededor del cursor
+  //    v += (tgt - y) * 0.16; v *= 0.8  (valores originales de Lucian)
+  // ===========================================================================
+  const brandWord = document.getElementById('brandWord');
+  if (brandWord && finePointer && !reduceMotion) {
+    interface Letter { el: HTMLElement; x: number; y: number; v: number; }
+    const AMP = 7;
+    const SIG = 14;
+    const letters: Letter[] = Array.from(brandWord.querySelectorAll<HTMLElement>('.brand-l')).map((el) => ({ el, x: 0, y: 0, v: 0 }));
+    let px: number | null = null;
+    let pulse: number | null = null;
+    let raf = 0;
+
+    const measure = () => {
+      letters.forEach((l) => { l.x = l.el.offsetLeft + l.el.offsetWidth / 2; });
+    };
+    const gauss = (d: number, s: number): number => Math.exp(-(d * d) / (2 * s * s));
+
+    const tick = (now: number) => {
+      raf = 0;
+      let moving = false;
+      let pc: number | null = null;
+      if (pulse !== null) {
+        const k = (now - pulse) / 900;
+        if (k >= 1) pulse = null;
+        else pc = -30 + (brandWord.offsetWidth + 60) * k;
+      }
+      letters.forEach((l) => {
+        let tgt = 0;
+        if (px !== null) tgt -= AMP * gauss(l.x - px, SIG);
+        if (pc !== null) tgt -= AMP * 1.35 * gauss(l.x - pc, SIG * 1.2);
+        l.v += (tgt - l.y) * 0.16;
+        l.v *= 0.8;
+        l.y += l.v;
+        if (Math.abs(l.v) > 0.02 || Math.abs(tgt - l.y) > 0.05) moving = true;
+        const t = Math.min(1, Math.max(0, -l.y / AMP));
+        l.el.style.setProperty('--y', `${l.y.toFixed(2)}px`);
+        l.el.style.setProperty('--sy', (1 + Math.max(-0.08, Math.min(0.14, -l.v * 0.05))).toFixed(3));
+        l.el.style.setProperty('--t', t.toFixed(3));
+      });
+      if (moving || pulse !== null || px !== null) raf = requestAnimationFrame(tick);
+    };
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    const brandLink = brandWord.parentElement;
+
+    brandLink?.addEventListener('pointermove', (e: PointerEvent) => {
+      if (!letters[0]?.x) measure();
+      const r = brandWord.getBoundingClientRect();
+      px = e.clientX - r.left;
+      kick();
+    });
+    brandLink?.addEventListener('pointerleave', () => { px = null; kick(); });
+    brandLink?.addEventListener('click', () => { measure(); pulse = performance.now(); kick(); });
+
+    // Una ola de bienvenida cuando el preloader termina
+    const welcome = () => window.setTimeout(() => { measure(); pulse = performance.now(); kick(); }, 1200);
+    if (document.body.classList.contains('loaded')) welcome();
+    else {
+      const mo = new MutationObserver(() => {
+        if (document.body.classList.contains('loaded')) { mo.disconnect(); welcome(); }
+      });
+      mo.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    }
+  }
+
+  // ===========================================================================
+  // 5. MENÚ MOBILE — controlador autocontenido
+  // ===========================================================================
   const menuBtn = document.getElementById('menuBtn');
   const menuCloseBtn = document.getElementById('menuCloseBtn');
   const menuOverlay = document.getElementById('menuOverlay');
@@ -612,8 +1014,9 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     if (menuCloseBtn) menuCloseBtn.classList.add('active');
     if (menuBtn) menuBtn.setAttribute('aria-expanded', 'true');
     document.body.classList.add('no-scroll');
-    const scrollCtl = (window as any).lenis;
+    const scrollCtl = (window as Window & { lenis?: { stop?: () => void } }).lenis;
     if (scrollCtl && typeof scrollCtl.stop === 'function') scrollCtl.stop();
+    window.setTimeout(() => menuCloseBtn?.focus({ preventScroll: true }), 400);
   }
 
   function closeMenuDirect() {
@@ -623,7 +1026,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     if (menuCloseBtn) menuCloseBtn.classList.remove('active');
     if (menuBtn) menuBtn.setAttribute('aria-expanded', 'false');
     document.body.classList.remove('no-scroll');
-    const scrollCtl = (window as any).lenis;
+    const scrollCtl = (window as Window & { lenis?: { start?: () => void } }).lenis;
     if (scrollCtl && typeof scrollCtl.start === 'function') scrollCtl.start();
   }
 
@@ -638,6 +1041,7 @@ const isManifiesto = pathname.startsWith('/manifiesto');
     menuCloseBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       closeMenuDirect();
+      menuBtn?.focus({ preventScroll: true });
     });
   }
 

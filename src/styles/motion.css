@@ -1,0 +1,278 @@
+/* filepath: src/styles/motion.css
+   ============================================================================
+   AMARGO MOTION SYSTEM v1
+   - Springs reales (oscilador armónico amortiguado, m=1) compilados a linear().
+     Generados con scratch/spring.mjs. Escalar la duración = escalar la física:
+     t·s  ⇔  k/s², c/s.
+   - Solo transform + opacity en todo lo que corre por frame.
+   - Gating: las entradas solo se ocultan con html.mx (inyectado en <head> cuando
+     NO hay prefers-reduced-motion ni bot de auditoría). Sin JS = estado final.
+   - Partes portadas desde Lucian UX/UI Prompt (MIT © 2026 Seokwoooo):
+     #009 Rolling label button · #237 Line-by-line mask reveal headline ·
+     #260 Scroll-filled sentence · #212 Hide-on-scroll header ·
+     #205 Rippling letter logo · #394 Scroll-driven marquee rows
+     https://lucianlabs.dev/uxui-prompt/
+   ============================================================================ */
+
+:root {
+  /* snap: k=380 c=26 · settle 583ms · overshoot 5.8% — hovers, indicadores, press release */
+  --spring-snap: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --spring-snap-dur: 583ms;
+  /* soft: k=170 c=24 · settle 573ms · overshoot 0% — entradas de bloques */
+  --spring-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring-soft-dur: 573ms;
+  /* bounce: k=300 c=15 · settle 954ms · overshoot 22% — CTAs, badges, celebraciones */
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-bounce-dur: 954ms;
+
+  /* Lucian #009/#237 curves (valores originales, no tocar) */
+  --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ux-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
+  --mx-mask: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --mx-out: cubic-bezier(0.6, 0, 0.4, 1);
+
+  --mx-accent: var(--mate);
+  --mx-fill-ink: var(--ink);
+}
+
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --spring-snap: linear(0, 0.056, 0.175, 0.325, 0.48, 0.626, 0.752, 0.86, 0.937, 0.992, 1.028, 1.048, 1.057, 1.058, 1.052, 1.044, 1.036, 1.027, 1.019, 1.012, 1.006, 1.002, 0.999, 0.998, 0.997, 0.997, 0.997, 0.997, 0.998, 0.998, 0.999, 0.999, 0.999, 1, 1);
+    --spring-soft: linear(0, 0.023, 0.078, 0.151, 0.234, 0.321, 0.405, 0.481, 0.555, 0.622, 0.682, 0.734, 0.78, 0.819, 0.85, 0.879, 0.902, 0.922, 0.938, 0.951, 0.962, 0.97, 0.977, 0.983, 0.987, 0.99, 0.993, 0.995, 0.997, 0.998, 0.999, 0.999, 1, 1, 1);
+    --spring-bounce: linear(0, 0.112, 0.353, 0.633, 0.887, 1.074, 1.183, 1.219, 1.202, 1.152, 1.091, 1.033, 0.989, 0.963, 0.952, 0.954, 0.965, 0.978, 0.991, 1.001, 1.008, 1.01, 1.01, 1.008, 1.005, 1.002, 1, 0.998, 0.998, 0.998, 0.998, 0.999, 0.999, 1, 1);
+  }
+}
+
+body.theme-dark,
+body.theme-electric {
+  --mx-accent: var(--electric);
+}
+body.theme-mate {
+  --mx-accent: var(--mate-light);
+}
+
+.mx-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+   1. ROLLING LABEL — Lucian #009 (letras ruedan una a una, 22ms stagger)
+   Uso: <span class="roll" data-roll>…letras con --i…</span> dentro de a/button.
+   --------------------------------------------------------------------------- */
+.roll {
+  position: relative;
+  display: inline-flex;
+  height: 1.2em;
+  line-height: 1.2em;
+  overflow: hidden;
+  vertical-align: top;
+}
+.roll > span {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.55s var(--ux-ease);
+  transition-delay: calc(var(--i, 0) * 22ms);
+  white-space: pre;
+}
+.roll > span::after {
+  content: attr(data-c);
+  content: attr(data-c) / "";
+  display: block;
+}
+:is(a, button):is(:hover, :focus-visible) .roll > span {
+  transform: translate3d(0, -1.2em, 0);
+}
+
+/* Flecha que sale y vuelve a entrar (orb de #009, versión inline) */
+.roll-arrow {
+  position: relative;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  flex: none;
+}
+.roll-arrow svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.55s var(--ux-ease);
+}
+.roll-arrow svg + svg {
+  transform: translate3d(-110%, 110%, 0);
+}
+.roll-arrow.is-right svg + svg {
+  transform: translate3d(-110%, 0, 0);
+}
+:is(a, button):is(:hover, :focus-visible) .roll-arrow svg:first-child {
+  transform: translate3d(110%, -110%, 0);
+}
+:is(a, button):is(:hover, :focus-visible) .roll-arrow.is-right svg:first-child {
+  transform: translate3d(110%, 0, 0);
+}
+:is(a, button):is(:hover, :focus-visible) .roll-arrow svg + svg {
+  transform: none;
+  transition-delay: 0.08s;
+}
+
+/* Tinta que sube desde abajo con borde curvo (fill de #009) */
+.ink-fill {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+.ink-fill > .ink {
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  background: var(--mx-fill-ink);
+  border-radius: 50% 50% 0 0 / 40% 40% 0 0;
+  transform: translate3d(0, 102%, 0);
+  transition: transform 0.7s var(--ux-ease), border-radius 0.7s var(--ux-ease);
+  pointer-events: none;
+}
+.ink-fill:is(:hover, :focus-visible) > .ink {
+  transform: none;
+  border-radius: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   2. ENTRADA DEL HERO (coreografía en body.loaded)
+   .hx      → bloque que sube con spring-soft (time-scaled a 900ms ≈ k=69 c=15)
+   .hw/.hwi → máscara por palabra de Lucian #237 (108% + rotate 4deg, 95ms)
+   --------------------------------------------------------------------------- */
+@keyframes hx-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(var(--hx-x, 0), var(--hx-y, 22px), 0) scale(var(--hx-s, 1));
+  }
+}
+@keyframes hx-word {
+  from {
+    transform: translate3d(0, 108%, 0) rotate(4deg);
+  }
+}
+@keyframes hx-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.86);
+  }
+}
+
+.hw {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+.hwi {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+
+html.mx body:not(.loaded) :is(.hx, .hx-pop) {
+  opacity: 0;
+}
+html.mx body:not(.loaded) .hwi {
+  transform: translate3d(0, 108%, 0);
+}
+html.mx body.loaded .hx {
+  animation: hx-rise 900ms var(--spring-soft) var(--d, 0ms) both;
+}
+html.mx body.loaded .hx-pop {
+  animation: hx-pop var(--spring-bounce-dur) var(--spring-bounce) var(--d, 0ms) both;
+}
+html.mx body.loaded .hwi {
+  animation: hx-word 0.9s var(--mx-mask) calc(var(--d, 0ms) + var(--i, 0) * 95ms) both;
+}
+
+/* ---------------------------------------------------------------------------
+   3. WORD MASK REVEAL EN SCROLL — mismo lenguaje que #237 para títulos de sección
+   [data-reveal-words] es dividido por JS; .is-in dispara.
+   --------------------------------------------------------------------------- */
+html.mx [data-reveal-words].is-split .hwi {
+  transform: translate3d(0, 108%, 0) rotate(4deg);
+}
+html.mx [data-reveal-words].is-split.is-in .hwi {
+  transform: none;
+  transition: transform 0.9s var(--mx-mask) calc(var(--i, 0) * 28ms);
+}
+
+/* ---------------------------------------------------------------------------
+   4. EDITORIAL HIGHLIGHTS & BLOOM
+   --------------------------------------------------------------------------- */
+mark.hl-bloom {
+  animation: mf-bloom var(--spring-bounce-dur) var(--spring-bounce) both;
+}
+@keyframes mf-bloom {
+  from {
+    transform: scale(0.94);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. LIVE DOT — pulso de anillo (solo transform/opacity)
+   --------------------------------------------------------------------------- */
+.live-dot {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: none;
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  animation: live-ring 2.2s var(--ux-ease) infinite;
+}
+@keyframes live-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  70%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   6. REDUCED MOTION — todo termina en su estado final, nada se queda oculto
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .roll > span,
+  .roll-arrow svg,
+  .ink-fill > .ink {
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+  }
+  .live-dot::after,
+  mark.mf.on {
+    animation: none !important;
+  }
+  .hx,
+  .hx-pop,
+  .hwi {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -16,8 +16,9 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
       <h2>TRABAJOS <em>seleccionados</em></h2>
       <div class="showcase-filters" role="group" aria-label="Filtrar proyectos">
         <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">TODOS ({displayedProjects.length})</button>
-        <button type="button" class="filter-btn" data-filter="marketplace" aria-pressed="false">MARKETPLACE</button>
-        <button type="button" class="filter-btn" data-filter="saas" aria-pressed="false">SAAS & APPS</button>
+        <button type="button" class="filter-btn" data-filter="marketplace" aria-pressed="false">MARKETPLACE ({displayedProjects.filter(p => p.category === 'marketplace').length})</button>
+        <button type="button" class="filter-btn" data-filter="saas" aria-pressed="false">SAAS & APPS ({displayedProjects.filter(p => p.category === 'saas').length})</button>
+        <button type="button" class="filter-btn" data-filter="ecommerce" aria-pressed="false">E-COMMERCE ({displayedProjects.filter(p => p.category === 'ecommerce').length})</button>
       </div>
     </div>
     <div class="showcase-head-right">
@@ -88,8 +89,8 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
         <a href="/proyectos" class="see-all-box" data-cursor="VER TODOS">
           <span class="see-all-tag">● ARCHIVO COMPLETO</span>
           <h3 class="see-all-heading">EXPLORAR TODOS LOS PROYECTOS</h3>
-          <p class="see-all-text">Marketplaces inmobiliarios, burger builder interactivo, plataformas de permutas y trazabilidad agro.</p>
-          <span class="see-all-cta-btn">VER 7 PROYECTOS ↗</span>
+          <p class="see-all-text">Super-App de delivery, D2C artesanal, marketplaces inmobiliarios y software SaaS de alto rendimiento.</p>
+          <span class="see-all-cta-btn">VER {projects.length} PROYECTOS ↗</span>
         </a>
       </div>
     )}
