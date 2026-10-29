@@ -1,5 +1,6 @@
 ---
 // filepath: src/components/Capabilities.astro
+// Servicios & Capacidades: Contenido destilado sin saturación, tipografía de autor y espaciado generoso
 
 interface Service {
   num: string;
@@ -15,54 +16,62 @@ const services: Service[] = [
   {
     num: "01",
     title: "Creación y Diseño Web de Élite",
-    desc: "Páginas web y tiendas online ultrarrápidas (<mark class=\"hl-yellow\">&lt;0.8s</mark>), responsivas en cualquier celular y diseñadas para convertir visitas en clientes reales en Uruguay, Argentina y España.",
+    desc: "Páginas y tiendas online de carga inmediata (<mark class=\"hl-yellow\">&lt;0.8s</mark>) diseñadas para convertir visitas en ventas reales en Uruguay, Argentina y España.",
     tags: ["DISEÑO WEB", "TIENDAS ONLINE", "ALTO RENDIMIENTO"],
     iconType: 1
   },
   {
     num: "02",
-    title: "Desarrollo de Aplicaciones & SaaS",
-    desc: "Sistemas a medida, portales de clientes extranet, cotizadores inteligentes y plataformas web con <mark class=\"hl-yellow\">Astro & Next.js</mark> que automatizan tus cobros y ventas.",
+    title: "Desarrollo de Software & SaaS",
+    desc: "Portales B2B a medida, cotizadores inteligentes y aplicaciones escalables con <mark class=\"hl-yellow\">Astro 5 & Next.js</mark> que automatizan tus ventas y cobros.",
     tags: ["PORTALES B2B", "FACTURACIÓN CFE", "SAAS A MEDIDA"],
     iconType: 2,
     link: "/facturacion",
-    linkText: "EXPLORAR SUITE B2B & COBROS ↗"
+    linkText: "EXPLORAR SUITE B2B ↗"
   },
   {
     num: "03",
     title: "Posicionamiento SEO & Búsquedas IA",
-    desc: "Optimizamos tu sitio con <mark class=\"hl-yellow\">SEO técnico & Schema</mark> local y arquitectura semántica para liderar en Google y motores de inteligencia artificial.",
-    tags: ["SEO TÉCNICO", "GOOGLE URUGUAY / AR", "SCHEMA RICH SNIPPETS"],
+    desc: "Arquitectura semántica y <mark class=\"hl-yellow\">Schema Rich Snippets</mark> para liderar orgánicamente en Google y motores de inteligencia artificial.",
+    tags: ["SEO TÉCNICO", "GOOGLE URUGUAY / AR", "SCHEMA IA"],
     iconType: 4
   },
   {
     num: "04",
-    title: "Estrategia Comercial & WhatsApp Commerce",
-    desc: "Embudos directos a <mark class=\"hl-yellow\">WhatsApp 1-click</mark>, checkout simplificado y branding de alto impacto para maximizar la tasa de conversión y cerrar ventas en minutos.",
+    title: "Estrategia & WhatsApp Commerce",
+    desc: "Embudos directos a <mark class=\"hl-yellow\">WhatsApp 1-click</mark> sin intermediarios ni carritos abandonados para cerrar compras en menos de un minuto.",
     tags: ["WHATSAPP DIRECTO", "VENTAS SIN FRICCIÓN", "CRO"],
     iconType: 2
   }
 ];
 ---
 <section class="capabilities" id="capabilities">
-  <!-- Marca de Agua Ambiental Decorativa -->
-  <div class="capabilities-ambient-bg" aria-hidden="true"></div>
+  <!-- Crosshairs decorativos de plano de arquitectura -->
+  <div class="cap-mark mark-tl" aria-hidden="true">+</div>
+  <div class="cap-mark mark-tr" aria-hidden="true">+</div>
+
   <div class="cap-head">
-    <div class="section-label"><span class="num">02</span> SERVICIOS</div>
-    <h2>Lo que <em>hacemos</em> <span class="no-orphan">por ti</span></h2>
+    <div class="section-label">
+      <span class="num">02</span>
+      <span>CAPACIDADES &bull; SERVICIOS</span>
+    </div>
+    <h2>Lo que <em>hacemos</em> <span class="no-orphan">por tu marca</span></h2>
   </div>
+
   <div class="cap-list">
     {services.map(service => (
       <div class="cap-item">
         <div class="cap-num">{service.num}</div>
-        <div class="cap-title">{service.title}</div>
-        <div class="cap-desc">
-          <span set:html={service.desc} />
-          {service.link && (
-            <div class="cap-service-link-wrap">
-              <a href={service.link} class="cap-service-link">{service.linkText}</a>
-            </div>
-          )}
+        <div class="cap-title-wrap">
+          <div class="cap-title">{service.title}</div>
+          <div class="cap-desc">
+            <span set:html={service.desc} />
+            {service.link && (
+              <div class="cap-service-link-wrap">
+                <a href={service.link} class="cap-service-link">{service.linkText}</a>
+              </div>
+            )}
+          </div>
         </div>
         <div class="cap-tags">
           {service.tags.map(tag => (
@@ -82,12 +91,6 @@ const services: Service[] = [
               <path d="M7 14l4-4 4 4 5-5"/>
             </svg>
           )}
-          {service.iconType === 3 && (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M12 3a9 9 0 0 0 0 18M3 12h18"/>
-            </svg>
-          )}
           {service.iconType === 4 && (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="11" cy="11" r="8"/>
@@ -99,15 +102,14 @@ const services: Service[] = [
     ))}
   </div>
 
-  <!-- Bridge a Servicios de Crecimiento -->
+  <!-- Bridge a Servicios de Crecimiento: Diseño limpio y sintético -->
   <div class="growth-banner">
     <div class="growth-content">
       <div class="growth-tag">
         <span class="growth-tag-dot"></span>
-        <span>¿YA TIENES WEB ACTIVA?</span>
+        <span>OPTIMIZACIÓN DE SITIOS ACTIVOS</span>
       </div>
-      <h3 class="growth-title">Hacemos que tu sitio actual cargue en &lt;0.8s y multiplique sus conversiones.</h3>
-      <p class="growth-desc">Mantenimiento continuo, auditorías de fricción CRO, SEO local y flujos automatizados de WhatsApp para empresas en Uruguay, Argentina y España.</p>
+      <h3 class="growth-title">¿Ya tienes web? La aceleramos a &lt;0.8s y multiplicamos conversiones.</h3>
     </div>
     <div class="growth-action">
       <a href="/servicios-crecimiento" class="growth-btn" data-cursor="EXPLORAR">
@@ -125,81 +127,69 @@ const services: Service[] = [
   .capabilities {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 10vh, 120px) var(--gut);
+    padding: clamp(90px, 13vh, 160px) var(--gut);
     border-bottom: 1px solid var(--line);
     width: 100%;
     position: relative;
-    overflow: hidden;
+    box-sizing: border-box;
   }
-  .capabilities-ambient-bg {
+
+  .cap-mark {
     position: absolute;
-    bottom: -5%;
-    left: -5%;
-    width: clamp(320px, 50vw, 750px);
-    height: 85%;
-    background-image: url('/backgrounds/bg-ambient-2.webp');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: bottom left;
-    opacity: 0.22;
-    mix-blend-mode: multiply;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--line);
+    opacity: 0.35;
     pointer-events: none;
-    z-index: 0;
-    filter: contrast(1.1) brightness(0.98);
-    transition: opacity 0.5s var(--ease);
+    line-height: 1;
   }
-  :global(body.theme-electric) .capabilities-ambient-bg {
-    opacity: 0.20;
-    mix-blend-mode: screen;
-    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
-  }
-  :global(body.theme-dark) .capabilities-ambient-bg {
-    opacity: 0.18;
-    mix-blend-mode: screen;
-  }
-  :global(body.theme-mate) .capabilities-ambient-bg {
-    opacity: 0.22;
-    mix-blend-mode: multiply;
-    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
-  }
+  .mark-tl { top: 24px; left: var(--gut); }
+  .mark-tr { top: 24px; right: var(--gut); }
+
   .cap-head {
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 48px;
-    margin-bottom: 64px;
+    margin-bottom: clamp(48px, 7vw, 80px);
     align-items: start;
-    padding-bottom: 24px;
+    padding-bottom: 28px;
     border-bottom: 1px solid var(--line);
   }
+
   .section-label {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: var(--mute);
     display: flex;
     gap: 12px;
     align-items: center;
+    font-family: 'JetBrains Mono', monospace;
   }
+
   .section-label .num {
     color: var(--bone);
     font-weight: 700;
     background: var(--mate);
-    padding: 4px 8px;
-    border-radius: 0;
+    padding: 3px 8px;
+    border-radius: 2px;
   }
+
   :global(body.theme-electric) .section-label .num {
     background: var(--electric);
     color: #0a0a0a;
   }
+
   .cap-head h2 {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(26px, 5vw, 96px);
-    line-height: 0.95;
-    letter-spacing: -0.02em;
+    font-size: clamp(28px, 4.5vw, 68px);
+    line-height: 1;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
-    text-wrap: balance;
+    margin: 0;
   }
+
   .cap-head h2 em {
     font-family: 'Instrument Serif', serif;
     font-style: italic;
@@ -207,84 +197,97 @@ const services: Service[] = [
     font-weight: 400;
     color: var(--rust);
   }
+
   .cap-list {
     display: flex;
     flex-direction: column;
   }
+
   .cap-item {
     display: grid;
-    grid-template-columns: 80px 1fr 2fr auto 40px;
-    gap: 32px;
-    padding: 48px 0;
+    grid-template-columns: 80px 2.2fr auto 48px;
+    gap: clamp(24px, 3.5vw, 48px);
+    padding: clamp(32px, 4.5vw, 56px) 16px;
     border-bottom: 1px solid var(--line);
-    align-items: start;
+    align-items: center;
     transition: background 0.4s var(--ease), padding 0.4s var(--ease);
     cursor: pointer;
   }
+
   .cap-item:last-child {
     border-bottom: none;
   }
+
   .cap-item:hover {
-    background: var(--hover-bg);
-    color: var(--hover-text);
-    padding-left: 24px;
-    padding-right: 24px;
+    background: var(--paper);
+    padding-left: 28px;
+    padding-right: 28px;
   }
+
   .cap-item:hover .cap-num {
-    color: var(--mate-light);
+    color: var(--rust);
+    opacity: 1;
   }
-  .cap-item:hover .cap-desc {
-    color: rgba(255, 255, 255, 0.7);
-  }
-  .cap-item:hover .cap-icon svg {
-    color: var(--mate-light);
-    transform: rotate(45deg);
-  }
-  .cap-item:hover .cap-tag {
-    border-color: var(--mate-light);
-    color: var(--mate-light);
-  }
-  :global(body.theme-electric) .cap-item:hover .cap-desc {
-    color: rgba(10, 10, 10, 0.7);
-  }
+
   :global(body.theme-electric) .cap-item:hover .cap-num {
     color: var(--electric);
   }
+
+  .cap-item:hover .cap-icon svg {
+    color: var(--rust);
+    transform: rotate(45deg);
+  }
+
   :global(body.theme-electric) .cap-item:hover .cap-icon svg {
     color: var(--electric);
   }
-  .cap-item:active {
-    transform: scale(0.99);
-  }
+
   .cap-num {
     font-family: 'Anton', sans-serif;
-    font-size: 48px;
+    font-size: clamp(36px, 4.2vw, 54px);
     color: var(--ink);
-    opacity: 0.55;
+    opacity: 0.4;
     line-height: 1;
     transition: color 0.3s var(--ease), opacity 0.3s;
   }
+
+  .cap-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .cap-title {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(24px, 3vw, 36px);
+    font-size: clamp(20px, 2.4vw, 32px);
     text-transform: uppercase;
     letter-spacing: -0.02em;
-    line-height: 1;
+    line-height: 1.1;
     color: var(--ink);
   }
+
   .cap-desc {
     font-family: 'Space Grotesk', sans-serif;
-    font-size: 14.5px;
-    line-height: 1.6;
+    font-size: clamp(14px, 1.4vw, 16px);
+    line-height: 1.5;
     color: var(--ink);
-    opacity: 0.85;
-    max-width: 420px;
-    transition: color 0.3s var(--ease), opacity 0.3s;
+    opacity: 0.82;
+    max-width: 60ch;
   }
+
+  .cap-desc :global(mark.hl-yellow) {
+    background: var(--electric);
+    color: #0a0a0a !important;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
   .cap-service-link-wrap {
-    margin-top: 10px;
+    margin-top: 8px;
   }
+
   .cap-service-link {
     display: inline-flex;
     align-items: center;
@@ -294,157 +297,115 @@ const services: Service[] = [
     font-weight: 700;
     color: var(--mate);
     text-decoration: none;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     transition: color 0.2s ease;
   }
+
   .cap-service-link:hover {
     color: var(--rust);
   }
+
   :global(body.theme-electric) .cap-service-link {
     color: var(--electric);
   }
-  .cap-item:hover .cap-service-link {
-    color: var(--mate-light);
-  }
-  :global(body.theme-electric) .cap-item:hover .cap-service-link {
-    color: var(--electric);
-  }
+
   .cap-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     justify-content: flex-end;
   }
+
   .cap-tag {
-    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 4px 8px;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
     border: 1px solid var(--line);
     color: var(--ink);
-    opacity: 0.85;
+    background: var(--paper);
     transition: all 0.3s var(--ease);
   }
+
   .cap-icon {
     display: flex;
     align-items: center;
     justify-content: center;
   }
+
   .cap-icon svg {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     color: var(--ink);
-    opacity: 0.6;
+    opacity: 0.5;
     transition: color 0.3s var(--ease), transform 0.4s var(--ease), opacity 0.3s;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  @media (max-width: 900px) {
-    .cap-head {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-    .cap-head h2 {
-      font-size: clamp(22px, 6.8vw, 36px);
-      line-height: 1.05;
-    }
-    .cap-item {
-      grid-template-columns: 1fr;
-      gap: 16px;
-      padding: 32px 0;
-    }
-    .cap-item:hover {
-      padding-left: 0;
-      padding-right: 0;
-      background: transparent;
-      color: var(--ink);
-    }
-    .cap-item:hover .cap-num {
-      color: var(--mate);
-    }
-    .cap-item:hover .cap-desc {
-      color: var(--mute);
-    }
-    .cap-item:hover .cap-icon svg {
-      color: var(--mate);
-      transform: rotate(0deg);
-    }
-    .cap-tags {
-      justify-content: flex-start;
-    }
-    .cap-icon {
-      display: none;
-    }
   }
 
-  /* Growth Banner Styling */
+  /* Growth Banner: Reducido, aireado y sin párrafo largo */
   .growth-banner {
-    border-top: 1px solid var(--line);
-    margin-top: 56px;
-    padding-top: 48px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 4px 4px 0px var(--line);
+    margin-top: clamp(48px, 7vw, 80px);
+    padding: clamp(24px, 3.5vw, 36px) clamp(20px, 3.5vw, 40px);
     display: grid;
     grid-template-columns: 1fr auto;
-    gap: 40px;
+    gap: 32px;
     align-items: center;
     position: relative;
     z-index: 2;
   }
+
   .growth-tag {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--mate);
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
     font-weight: 700;
   }
+
   :global(body.theme-electric) .growth-tag {
     color: var(--electric);
   }
+
   .growth-tag-dot {
     width: 7px;
     height: 7px;
     background: var(--rust);
     border-radius: 50%;
-    animation: pulseDot 2s infinite ease-in-out;
   }
-  @keyframes pulseDot {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.4; transform: scale(0.85); }
-  }
+
   .growth-title {
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: clamp(20px, 2.6vw, 34px);
-    line-height: 1.15;
+    font-size: clamp(17px, 2vw, 24px);
+    line-height: 1.25;
     color: var(--ink);
-    margin-bottom: 12px;
-    letter-spacing: -0.02em;
+    margin: 0;
+    letter-spacing: -0.015em;
   }
-  .growth-desc {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--ink);
-    opacity: 0.85;
-    max-width: 680px;
-  }
+
   .growth-action {
     display: flex;
     align-items: center;
   }
+
   .growth-btn {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     background: var(--ink);
     color: var(--bone);
-    padding: 16px 28px;
+    padding: 14px 24px;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.08em;
     text-decoration: none;
@@ -452,47 +413,67 @@ const services: Service[] = [
     border: 1px solid var(--ink);
     transition: all 0.3s var(--ease);
     white-space: nowrap;
+    box-shadow: 2px 2px 0px var(--line);
   }
+
   .growth-btn svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     transition: transform 0.3s var(--ease);
   }
+
   .growth-btn:hover {
     background: var(--mate);
     border-color: var(--mate);
     color: #ffffff;
-    box-shadow: 0 8px 24px rgba(45, 99, 53, 0.25);
+    box-shadow: 4px 4px 0px var(--electric);
+    transform: translate3d(-1px, -1px, 0);
   }
+
   .growth-btn:hover svg {
     transform: translateX(4px);
   }
+
   :global(body.theme-electric) .growth-btn {
     background: var(--electric);
     color: #0a0a0a;
     border-color: var(--electric);
   }
-  :global(body.theme-electric) .growth-btn:hover {
-    background: #ffffff;
-    border-color: #ffffff;
-    color: #0a0a0a;
-  }
-  :global(body.theme-mate) .growth-btn:hover {
-    background: var(--mate-light);
-    border-color: var(--mate-light);
-    color: #0a0a0a;
-  }
+
   @media (max-width: 900px) {
+    .capabilities {
+      padding: clamp(64px, 10vh, 100px) var(--gut);
+    }
+    .cap-head {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .cap-item {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 28px 0;
+    }
+    .cap-item:hover {
+      padding-left: 0;
+      padding-right: 0;
+      background: transparent;
+    }
+    .cap-tags {
+      justify-content: flex-start;
+    }
+    .cap-icon {
+      display: none;
+    }
     .growth-banner {
       grid-template-columns: 1fr;
-      gap: 28px;
-      margin-top: 40px;
-      padding-top: 36px;
+      gap: 20px;
+      margin-top: 36px;
+      padding: 24px 18px;
     }
     .growth-btn {
       width: 100%;
       justify-content: center;
-      padding: 14px 20px;
     }
   }
 </style>

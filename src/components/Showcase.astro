@@ -101,17 +101,18 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
   .showcase {
     max-width: var(--max);
     margin: 0 auto;
-    padding: 0 var(--gut) clamp(60px, 10vh, 120px);
+    padding: 0 var(--gut) clamp(90px, 13vh, 160px);
     width: 100%;
     overflow: hidden;
+    box-sizing: border-box;
   }
   .showcase-head {
     display: flex;
     justify-content: space-between;
     align-items: end;
-    padding: 80px 0 40px;
+    padding: clamp(80px, 11vh, 120px) 0 clamp(32px, 5vw, 48px);
     border-bottom: 1px solid var(--line);
-    margin-bottom: 40px;
+    margin-bottom: clamp(36px, 5vw, 56px);
     flex-wrap: wrap;
     gap: 24px;
   }

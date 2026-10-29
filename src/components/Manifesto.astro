@@ -1,57 +1,103 @@
 ---
 // filepath: src/components/Manifesto.astro
-// Editorial Manifesto con tipografía visible de alto contraste y revelado escalonado seguro
+// Editorial Manifesto de Alto Impacto: Tipografía destilada, cero saturación, placa de arte clásico y aire generoso
 import RollText from './motion/RollText.astro';
 
-const manifestoLines = [
+const manifestoPoints = [
   {
-    html: 'Unimos <em>estrategia comercial, diseño radical y software</em> <mark class="hl-yellow">sin intermediarios</mark>.'
+    num: "I",
+    lead: "ESTRATEGIA & SOFTWARE",
+    text: "Unimos <em>estrategia comercial, diseño radical</em> y software <mark class=\"hl-yellow\">sin intermediarios</mark>."
   },
   {
-    html: 'Construimos webs que cargan en <mark class="hl-yellow">&lt;0.8s</mark> y transforman visitas en clientes reales.'
+    num: "II",
+    lead: "VELOCIDAD & CONVERSIÓN",
+    text: "Páginas web que abren en <mark class=\"hl-yellow\">&lt;0.8s</mark> y convierten visitas en <em>clientes reales</em>."
   },
   {
-    html: 'Desde <strong>Atlántida, Uruguay</strong>, potenciamos marcas en <em>Argentina y España</em>.'
-  },
-  {
-    html: 'Cero plantillas infladas, cero dependencias cautivas: <mark class="hl-yellow">código propio</mark> que es <em>100% tuyo</em>.'
-  },
-  {
-    html: 'Pensamos con estrategia de negocio y <em>ejecutamos con precisión milimétrica</em>.'
-  },
-  {
-    html: 'Como un buen mate: <em>cercano, intenso y que deja huella</em>.'
+    num: "III",
+    lead: "SOBERANÍA DIGITAL",
+    text: "Cero plantillas infladas: <mark class=\"hl-yellow\">código propio</mark>, veloz y <em>100% tuyo</em>."
   }
 ];
 ---
 <section class="manifesto" id="manifesto">
-  <!-- Marca de Agua Ambiental Decorativa -->
-  <div class="manifesto-ambient-bg" id="manifestoBg" aria-hidden="true"></div>
-  <div class="manifesto-bg-text" id="manifestoWatermark" aria-hidden="true">AMARGO</div>
+  <!-- Crosshairs decorativos de plano editorial -->
+  <div class="editorial-mark mark-tl" aria-hidden="true">+</div>
+  <div class="editorial-mark mark-tr" aria-hidden="true">+</div>
 
-  <div class="manifesto-head">
-    <div class="section-label"><span class="num">01</span> MANIFIESTO</div>
-    <h2 class="manifesto-title" id="manifestoTitle">
-      <span class="m-title-lead">Más que una agencia creativa:</span>
-      <em class="m-title-highlight">una fuerza que amplifica voces y genera vínculos reales.</em>
-    </h2>
-  </div>
-
-  <div class="manifesto-body" id="manifestoBody">
-    <div class="manifesto-lines">
-      {manifestoLines.map((line, index) => (
-        <div class="m-line-item" style={`--line-delay: ${index * 80}ms;`}>
-          <p class="m-line-content" set:html={line.html}></p>
+  <div class="manifesto-grid">
+    <!-- Columna Izquierda: Manifiesto Tipográfico Puro -->
+    <div class="manifesto-copy">
+      <div class="manifesto-head">
+        <div class="section-label">
+          <span class="num">01</span>
+          <span>MANIFIESTO &bull; ATLÁNTIDA</span>
         </div>
-      ))}
-    </div>
-  </div>
+        <h2 class="manifesto-title">
+          Más que una agencia creativa:
+          <em>un motor de crecimiento para marcas que van en serio.</em>
+        </h2>
+      </div>
 
-  <div class="manifesto-action">
-    <a href="/manifiesto" class="manifesto-cta-link ink-fill" data-cursor="METODOLOGÍA" aria-label="Explorar nuestra metodología y proceso">
-      <span class="ink" aria-hidden="true"></span>
-      <RollText text="EXPLORAR NUESTRA METODOLOGÍA & PROCESO" arrow="right" />
-    </a>
+      <div class="manifesto-points">
+        {manifestoPoints.map((point, index) => (
+          <div class="m-point-item" style={`--item-delay: ${index * 90}ms;`}>
+            <div class="m-point-meta">
+              <span class="point-num">{point.num}</span>
+              <span class="point-lead">{point.lead}</span>
+            </div>
+            <p class="m-point-text" set:html={point.text}></p>
+          </div>
+        ))}
+      </div>
+
+      <div class="manifesto-action">
+        <a href="/manifiesto" class="manifesto-cta-link ink-fill" data-cursor="MÉTODO" aria-label="Explorar nuestro método y filosofía">
+          <span class="ink" aria-hidden="true"></span>
+          <RollText text="CONOCER NUESTRO MÉTODO" arrow="right" />
+        </a>
+        <div class="manifesto-origin-badge">
+          <span class="origin-dot">●</span>
+          <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Placa de Arte Editorial con Grabado Clásico (Detalle de Diseño tangible) -->
+    <div class="manifesto-visual" aria-hidden="true">
+      <div class="editorial-plate">
+        <div class="plate-top-bar">
+          <span class="plate-badge">● ARCHIVO AMARGO</span>
+          <span class="plate-coord">34°46'S 55°45'W</span>
+        </div>
+        
+        <div class="plate-artwork-wrap">
+          <img 
+            src="/backgrounds/bg-ambient-1.webp" 
+            alt="Grabado clásico Amargo Creativo" 
+            class="plate-artwork-img"
+            loading="lazy"
+            decoding="async"
+            width="580"
+            height="720"
+          />
+          <div class="plate-stamp">
+            <span class="stamp-ring"></span>
+            <span class="stamp-text">AMARGO &bull; ARTISANAL CODE &bull; 2026 &bull; </span>
+            <span class="stamp-icon">🧉</span>
+          </div>
+        </div>
+
+        <div class="plate-footer">
+          <div class="plate-caption">
+            <strong>FIG. 01 &mdash; EL RITUAL DEL AMARGO</strong>
+            <span>Tradición artesanal y rendimiento digital extremo.</span>
+          </div>
+          <span class="plate-seal">EST. ATLÁNTIDA</span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -59,77 +105,69 @@ const manifestoLines = [
   .manifesto {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 9vh, 120px) var(--gut);
+    padding: clamp(90px, 13vh, 160px) var(--gut);
     border-bottom: 1px solid var(--line);
     position: relative;
-    overflow: hidden;
     width: 100%;
     background: var(--bone);
+    overflow: hidden;
+    box-sizing: border-box;
   }
 
-  /* Fondo Ambiental Texturizado detrás del texto */
-  .manifesto-ambient-bg {
+  /* Crosshairs tipográficos en esquinas */
+  .editorial-mark {
     position: absolute;
-    top: 5%;
-    right: -2%;
-    width: clamp(280px, 45vw, 680px);
-    height: 90%;
-    background-image: url('/backgrounds/bg-ambient-1.webp');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center right;
-    opacity: 0.16;
-    mix-blend-mode: multiply;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--line);
+    opacity: 0.35;
     pointer-events: none;
-    z-index: 1;
-    filter: contrast(1.1) brightness(0.98);
-    transition: opacity 0.5s var(--ease);
+    line-height: 1;
+    z-index: 3;
+  }
+  .mark-tl { top: 24px; left: var(--gut); }
+  .mark-tr { top: 24px; right: var(--gut); }
+
+  .manifesto-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+    position: relative;
+    z-index: 2;
   }
 
-  :global(body.theme-electric) .manifesto-ambient-bg {
-    opacity: 0.18;
-    mix-blend-mode: screen;
-    filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
-  }
-
-  :global(body.theme-dark) .manifesto-ambient-bg {
-    opacity: 0.14;
-    mix-blend-mode: screen;
-  }
-
-  :global(body.theme-mate) .manifesto-ambient-bg {
-    opacity: 0.18;
-    mix-blend-mode: multiply;
-    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
+  .manifesto-copy {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(32px, 4.5vw, 48px);
   }
 
   .manifesto-head {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    gap: 48px;
-    margin-bottom: 48px;
-    align-items: start;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--line);
-    position: relative;
-    z-index: 2;
   }
 
   .section-label {
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     color: var(--mute);
     display: flex;
     gap: 12px;
     align-items: center;
+    font-family: 'JetBrains Mono', monospace;
   }
 
   .section-label .num {
     color: var(--bone);
     font-weight: 700;
     background: var(--mate);
-    padding: 4px 8px;
+    padding: 3px 8px;
+    border-radius: 2px;
   }
 
   :global(body.theme-electric) .section-label .num {
@@ -137,74 +175,83 @@ const manifestoLines = [
     color: #0a0a0a;
   }
 
-  .manifesto-head h2 {
+  .manifesto-title {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 600;
-    font-size: clamp(24px, 4.2vw, 56px);
-    line-height: 1.05;
+    font-size: clamp(26px, 3.8vw, 48px);
+    line-height: 1.12;
     letter-spacing: -0.025em;
     color: var(--ink);
+    margin: 0;
   }
 
-  .m-title-lead {
-    display: block;
-    color: var(--ink);
-  }
-
-  .m-title-highlight {
+  .manifesto-title em {
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     font-weight: 400;
     color: var(--rust);
     display: block;
-    margin-top: 4px;
+    margin-top: 6px;
   }
 
-  /* CUERPO DEL MANIFIESTO: 100% VISIBLE Y LEGIBLE SIEMPRE */
-  .manifesto-body {
-    max-width: 1040px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-  }
-
-  .manifesto-lines {
+  /* Puntos del Manifiesto: Grandes, aireados, directos al grano */
+  .manifesto-points {
     display: flex;
     flex-direction: column;
-    gap: clamp(14px, 2.2vw, 24px);
+    gap: clamp(24px, 3.2vw, 36px);
   }
 
-  .m-line-item {
+  .m-point-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
     position: relative;
-    opacity: 1;
-    transform: none;
-    transition: opacity 0.7s var(--spring-soft), transform 0.7s var(--spring-soft);
-    transition-delay: var(--line-delay, 0ms);
+    padding-left: 0;
   }
 
-  .m-line-content {
+  .m-point-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+  }
+
+  .point-num {
+    color: var(--rust);
+    font-weight: 700;
+  }
+
+  :global(body.theme-electric) .point-num {
+    color: var(--electric);
+  }
+
+  .point-lead {
+    text-transform: uppercase;
+    font-weight: 600;
+    opacity: 0.8;
+  }
+
+  .m-point-text {
     font-family: 'Space Grotesk', sans-serif;
-    font-weight: 400;
-    font-size: clamp(18px, 2.8vw, 34px);
-    line-height: 1.35;
+    font-weight: 500;
+    font-size: clamp(19px, 2.4vw, 30px);
+    line-height: 1.32;
     letter-spacing: -0.015em;
     color: var(--ink);
     margin: 0;
   }
 
-  .m-line-content :global(em) {
+  .m-point-text :global(em) {
     font-family: 'Instrument Serif', serif;
     font-style: italic;
     font-weight: 400;
     color: var(--rust);
   }
 
-  .m-line-content :global(strong) {
-    font-weight: 700;
-    color: var(--ink);
-  }
-
-  .m-line-content :global(mark.hl-yellow) {
+  .m-point-text :global(mark.hl-yellow) {
     background: var(--electric);
     color: #0a0a0a !important;
     font-weight: 700;
@@ -214,34 +261,12 @@ const manifestoLines = [
     line-height: 1.15;
   }
 
-  .manifesto-bg-text {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 20vw;
-    color: var(--mate);
-    opacity: 0.04;
-    pointer-events: none;
-    z-index: 1;
-    text-transform: uppercase;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  :global(body.theme-electric) .manifesto-bg-text {
-    opacity: 0.06;
-    color: var(--rust);
-  }
-
   .manifesto-action {
-    margin-top: clamp(32px, 5vw, 56px);
     display: flex;
-    position: relative;
-    z-index: 2;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding-top: 8px;
   }
 
   .manifesto-cta-link {
@@ -256,10 +281,10 @@ const manifestoLines = [
     text-transform: uppercase;
     color: var(--ink);
     text-decoration: none;
-    padding: 12px 24px;
+    padding: 14px 28px;
     border: 1px solid var(--line);
     background: var(--paper);
-    box-shadow: 2px 2px 0px var(--line);
+    box-shadow: 3px 3px 0px var(--line);
     transition:
       transform var(--spring-snap-dur) var(--spring-snap),
       color 0.45s var(--ux-ease),
@@ -270,7 +295,7 @@ const manifestoLines = [
   .manifesto-cta-link:focus-visible {
     color: var(--bone);
     transform: translate3d(-2px, -2px, 0);
-    box-shadow: 4px 4px 0px var(--electric);
+    box-shadow: 5px 5px 0px var(--electric);
   }
 
   .manifesto-cta-link:active {
@@ -278,30 +303,211 @@ const manifestoLines = [
     box-shadow: 0 0 0 var(--line);
   }
 
-  @media (max-width: 768px) {
-    .manifesto-head {
-      grid-template-columns: 1fr;
-      gap: 16px;
-      margin-bottom: 28px;
-      padding-bottom: 16px;
-    }
-    .m-line-content {
-      font-size: clamp(16px, 4.6vw, 22px);
-      line-height: 1.45;
-    }
-    .manifesto-lines {
-      gap: 16px;
-    }
-    .manifesto-ambient-bg {
-      width: 70vw;
-      right: -8%;
-      opacity: 0.12;
-    }
+  .manifesto-origin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--mute);
+    text-transform: uppercase;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .m-line-item {
-      transition: none !important;
+  .origin-dot {
+    color: var(--mate);
+    font-size: 8px;
+  }
+
+  :global(body.theme-electric) .origin-dot {
+    color: var(--electric);
+  }
+
+  /* PLACA DE ARTE EDITORIAL (Detalle Visual de Colección) */
+  .manifesto-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .editorial-plate {
+    width: 100%;
+    max-width: 440px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: 6px 6px 0px var(--line);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    position: relative;
+    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
+  }
+
+  .editorial-plate:hover {
+    transform: translate3d(-3px, -3px, 0);
+    box-shadow: 10px 10px 0px var(--mate);
+  }
+
+  :global(body.theme-electric) .editorial-plate:hover {
+    box-shadow: 10px 10px 0px var(--electric);
+  }
+
+  .plate-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--mute);
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .plate-badge {
+    color: var(--mate);
+  }
+
+  :global(body.theme-electric) .plate-badge {
+    color: var(--electric);
+  }
+
+  .plate-artwork-wrap {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    background: #dfdbd2;
+    overflow: hidden;
+    border: 1px solid rgba(10, 10, 10, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .plate-artwork-img {
+    width: 90%;
+    height: 90%;
+    object-fit: contain;
+    mix-blend-mode: multiply;
+    filter: contrast(1.15) brightness(0.96);
+    transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .editorial-plate:hover .plate-artwork-img {
+    transform: scale(1.05);
+  }
+
+  :global(body.theme-dark) .plate-artwork-wrap,
+  :global(body.theme-electric) .plate-artwork-wrap,
+  :global(body.theme-mate) .plate-artwork-wrap {
+    background: #1c1c1b;
+  }
+
+  :global(body.theme-dark) .plate-artwork-img,
+  :global(body.theme-electric) .plate-artwork-img,
+  :global(body.theme-mate) .plate-artwork-img {
+    mix-blend-mode: screen;
+    filter: invert(1) contrast(1.2);
+    opacity: 0.85;
+  }
+
+  /* Sello Postal / Monograma circular */
+  .plate-stamp {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(244, 242, 236, 0.92);
+    border: 1.5px dashed var(--rust);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .stamp-text {
+    display: none;
+  }
+
+  .stamp-icon {
+    font-size: 24px;
+    line-height: 1;
+  }
+
+  .plate-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-top: 8px;
+    border-top: 1px dashed var(--line);
+  }
+
+  .plate-caption {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .plate-caption strong {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--ink);
+  }
+
+  .plate-caption span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    color: var(--mute);
+  }
+
+  .plate-seal {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--bone);
+    background: var(--ink);
+    padding: 3px 6px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+  }
+
+  :global(body.theme-electric) .plate-seal {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  @media (max-width: 960px) {
+    .manifesto {
+      padding: clamp(64px, 10vh, 100px) var(--gut);
+    }
+    .manifesto-grid {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    .editorial-plate {
+      max-width: 100%;
+    }
+    .plate-artwork-wrap {
+      aspect-ratio: 16 / 11;
+    }
+    .m-point-text {
+      font-size: clamp(17px, 4.4vw, 22px);
+    }
+    .manifesto-action {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .manifesto-cta-link {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
