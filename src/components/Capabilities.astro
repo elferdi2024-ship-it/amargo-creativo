@@ -46,6 +46,9 @@ const services: Service[] = [
 ];
 ---
 <section class="capabilities" id="capabilities">
+  <!-- Fondo Ambiental del Personaje con Mate -->
+  <div class="capabilities-ambient-bg" aria-hidden="true"></div>
+
   <!-- Crosshairs decorativos de plano de arquitectura -->
   <div class="cap-mark mark-tl" aria-hidden="true">+</div>
   <div class="cap-mark mark-tr" aria-hidden="true">+</div>
@@ -131,7 +134,45 @@ const services: Service[] = [
     border-bottom: 1px solid var(--line);
     width: 100%;
     position: relative;
+    overflow: hidden;
     box-sizing: border-box;
+  }
+
+  /* Fondo Ambiental del Personaje con Mate */
+  .capabilities-ambient-bg {
+    position: absolute;
+    bottom: -4%;
+    left: -4%;
+    width: clamp(340px, 48vw, 750px);
+    height: 85%;
+    background-image: url('/backgrounds/bg-ambient-2.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+    filter: contrast(1.15) brightness(0.96);
+    transition: opacity 0.5s var(--ease);
+  }
+
+  :global(body.theme-dark) .capabilities-ambient-bg {
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    filter: invert(1) contrast(1.25);
+  }
+
+  :global(body.theme-electric) .capabilities-ambient-bg {
+    opacity: 0.22;
+    mix-blend-mode: screen;
+    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+  }
+
+  :global(body.theme-mate) .capabilities-ambient-bg {
+    opacity: 0.24;
+    mix-blend-mode: multiply;
+    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
 
   .cap-mark {
@@ -154,6 +195,8 @@ const services: Service[] = [
     align-items: start;
     padding-bottom: 28px;
     border-bottom: 1px solid var(--line);
+    position: relative;
+    z-index: 2;
   }
 
   .section-label {
@@ -201,6 +244,8 @@ const services: Service[] = [
   .cap-list {
     display: flex;
     flex-direction: column;
+    position: relative;
+    z-index: 2;
   }
 
   .cap-item {

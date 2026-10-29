@@ -10,6 +10,9 @@ const { limit } = Astro.props;
 const displayedProjects = limit ? projects.slice(0, limit) : projects;
 ---
 <section class="showcase" id="showcase">
+  <!-- Fondo Ambiental del Personaje con Mate -->
+  <div class="showcase-ambient-bg" aria-hidden="true"></div>
+
   <div class="showcase-head">
     <div>
       <div class="section-label"><span class="num">03</span> CASOS DE ÉXITO</div>
@@ -104,8 +107,47 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     padding: 0 var(--gut) clamp(90px, 13vh, 160px);
     width: 100%;
     overflow: hidden;
+    position: relative;
     box-sizing: border-box;
   }
+
+  /* Fondo Ambiental Texturizado del Personaje con Mate */
+  .showcase-ambient-bg {
+    position: absolute;
+    top: 5%;
+    right: -2%;
+    width: clamp(320px, 45vw, 680px);
+    height: 70%;
+    background-image: url('/backgrounds/bg-ambient-3.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: top right;
+    opacity: 0.18;
+    mix-blend-mode: multiply;
+    pointer-events: none;
+    z-index: 1;
+    filter: contrast(1.15) brightness(0.96);
+    transition: opacity 0.5s var(--ease);
+  }
+
+  :global(body.theme-dark) .showcase-ambient-bg {
+    opacity: 0.16;
+    mix-blend-mode: screen;
+    filter: invert(1) contrast(1.25);
+  }
+
+  :global(body.theme-electric) .showcase-ambient-bg {
+    opacity: 0.20;
+    mix-blend-mode: screen;
+    filter: grayscale(80%) contrast(1.3) sepia(1) hue-rotate(40deg);
+  }
+
+  :global(body.theme-mate) .showcase-ambient-bg {
+    opacity: 0.22;
+    mix-blend-mode: multiply;
+    filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
+  }
+
   .showcase-head {
     display: flex;
     justify-content: space-between;
@@ -115,6 +157,8 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     margin-bottom: clamp(36px, 5vw, 56px);
     flex-wrap: wrap;
     gap: 24px;
+    position: relative;
+    z-index: 2;
   }
   .section-label {
     font-size: 11px;
@@ -206,6 +250,8 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-y pan-x;
+    position: relative;
+    z-index: 2;
   }
   .projects-drag::-webkit-scrollbar {
     display: none;

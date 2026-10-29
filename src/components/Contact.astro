@@ -3,6 +3,8 @@
 ---
 <section class="contact" id="contact">
   <div class="contact-bg"></div>
+  <!-- Fondo Ambiental del Personaje Clásico con Mate -->
+  <div class="contact-ambient-statue" aria-hidden="true"></div>
   <div class="contact-content">
     <span class="contact-label">DISPONIBLE PARA NUEVOS PROYECTOS EN URUGUAY, ARGENTINA Y ESPAÑA</span>
     <h2 class="contact-title">
@@ -64,6 +66,25 @@
     background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
     z-index: 1;
     pointer-events: none;
+  }
+
+  /* Fondo Ambiental de la Estatua con Mate */
+  .contact-ambient-statue {
+    position: absolute;
+    bottom: -5%;
+    right: 2%;
+    width: clamp(280px, 40vw, 560px);
+    height: 90%;
+    background-image: url('/backgrounds/bg-ambient-4.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    opacity: 0.18;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 1;
+    filter: brightness(1.1) contrast(1.2);
+    transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .contact-bg {
     background-image: radial-gradient(circle at 50% 50%, rgba(212, 255, 0, 0.1) 0%, transparent 60%);
