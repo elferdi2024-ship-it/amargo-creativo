@@ -31,12 +31,17 @@ const lastIndex = titleWords.length - 1;
         <video 
           id="heroVideo" 
           class="hero-video" 
-          data-src="/new-hero.mp4" 
-          poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          data-webm="/hero-cinema.webm"
+          data-mp4="/hero-cinema.mp4" 
+          width="848"
+          height="480"
+          autoplay
           loop 
           muted 
           playsinline 
           webkit-playsinline
+          disablepictureinpicture
+          disableremoteplayback
           preload="none"
           aria-hidden="true"
         ></video>
@@ -161,116 +166,109 @@ const lastIndex = titleWords.length - 1;
 
 <script>
   // =========================================================================
-  // CONTROLADOR CINEMATOGRÁFICO DE SCROLL SUAVE (BUTTERY VIDEO SCRUBBER)
+  // REPRODUCTOR CINEMATOGRÁFICO NATIVO (SIN SCRUBBING MANUAL / 0 STUTTER)
   // =========================================================================
-  function initPolishedHero() {
+  function initHeroVideo() {
     const hero = document.getElementById('top');
     const video = document.getElementById('heroVideo') as HTMLVideoElement | null;
-    const badgeSvg = document.getElementById('badgeSvg');
-
     if (!hero || !video) return;
 
-    const isDesktop = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const conn = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+    if (prefersReducedMotion || conn?.saveData) return;
 
-    function loadVideo() {
-      if (!video || !video.dataset.src || video.src.includes('new-hero.mp4')) return;
-      video.src = video.dataset.src;
-      video.load();
-      video.play().then(() => {
+    let mounted = false;
+    let heroInView = true;
+
+    const revealVideo = () => {
+      if (video.readyState >= 2) {
         video.classList.add('is-playing');
-      }).catch(() => {});
-    }
-
-    if (!isDesktop || prefersReducedMotion) {
-      const startMobileVideo = () => {
-        loadVideo();
-        window.removeEventListener('scroll', startMobileVideo);
-        window.removeEventListener('touchstart', startMobileVideo);
-      };
-      window.addEventListener('scroll', startMobileVideo, { passive: true, once: true });
-      window.addEventListener('touchstart', startMobileVideo, { passive: true, once: true });
-      return;
-    } else {
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(() => setTimeout(loadVideo, 400), { timeout: 2000 });
-      } else {
-        setTimeout(loadVideo, 500);
       }
-    }
+    };
 
-    let targetTime = 0;
-    let currentTime = 0;
-    let targetProgress = 0;
-    let currentProgress = 0;
-    let isUserScrolling = false;
-    let scrollTimeout: ReturnType<typeof setTimeout> | undefined;
-    let lastScrollY = 0;
-    let badgeRotation = 0;
-    let isSeeking = false;
-
-    function onScrollUpdate() {
-      if (!video || !hero) return;
-      if (!video.src.includes('new-hero.mp4')) {
-        loadVideo();
+    const safePlay = () => {
+      if (!mounted || !heroInView || document.hidden) return;
+      video.muted = true;
+      video.defaultMuted = true;
+      const playPromise = video.play();
+      if (playPromise) {
+        playPromise.then(revealVideo).catch(() => {
+          // Si el navegador (ej. ahorro de batería iOS/Android) bloquea autoplay,
+          // reintentar silenciosamente al primer gesto del usuario.
+          const unlock = () => {
+            if (!heroInView || document.hidden) return;
+            video.muted = true;
+            video.play().then(revealVideo).catch(() => {});
+          };
+          window.addEventListener('pointerdown', unlock, { passive: true, once: true });
+          window.addEventListener('touchstart', unlock, { passive: true, once: true });
+        });
       }
-      const scrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
-      const heroHeight = hero.offsetHeight || window.innerHeight;
+    };
 
-      if (scrollY <= heroHeight * 1.5 && video.duration) {
-        // Mapeo suave y progresivo: solo scrubbea en la primera fase del scroll
-        targetProgress = Math.min(Math.max(scrollY / (heroHeight * 1.2), 0), 1);
-        targetTime = targetProgress * video.duration;
+    const mountVideo = () => {
+      if (mounted) return;
+      mounted = true;
 
-        const delta = Math.abs(scrollY - lastScrollY);
-        lastScrollY = scrollY;
+      const webmSrc = video.dataset.webm;
+      const mp4Src = video.dataset.mp4;
 
-        if (delta > 0.5) {
-          isUserScrolling = true;
-          if (!video.paused) video.pause();
-
-          clearTimeout(scrollTimeout);
-          scrollTimeout = setTimeout(() => {
-            isUserScrolling = false;
-            const currentScroll = window.pageYOffset || document.documentElement.scrollTop || 0;
-            if (currentScroll < 30 && video.paused) {
-              video.play().catch(() => {});
-            }
-          }, 180);
-        }
+      if (webmSrc) {
+        const sWebm = document.createElement('source');
+        sWebm.src = webmSrc;
+        sWebm.type = 'video/webm';
+        video.appendChild(sWebm);
       }
-    }
-
-    // Lenis scrollea la ventana de forma nativa: un único listener de scroll alcanza.
-    window.addEventListener('scroll', onScrollUpdate, { passive: true });
-
-    function renderLoop() {
-      if (video && video.duration) {
-        // Lerping ultrasuave con amortiguación sedosa (0.07)
-        const diffProgress = targetProgress - currentProgress;
-        currentProgress += diffProgress * 0.07;
-
-        const diffTime = targetTime - currentTime;
-        currentTime += diffTime * 0.09;
-
-        // Búsqueda amortiguada para evitar caídas de frames en el decodificador de video
-        if (isUserScrolling && Math.abs(video.currentTime - currentTime) > 0.02 && !isSeeking) {
-          isSeeking = true;
-          video.currentTime = currentTime;
-          video.addEventListener('seeked', () => { isSeeking = false; }, { once: true });
-        }
-
-        // Rotación continua del badge (acelera con la velocidad del scroll)
-        if (badgeSvg) {
-          badgeRotation += 0.35 + (Math.abs(diffProgress) * 15);
-          badgeSvg.style.transform = `rotate(${badgeRotation.toFixed(1)}deg)`;
-        }
+      if (mp4Src) {
+        const sMp4 = document.createElement('source');
+        sMp4.src = mp4Src;
+        sMp4.type = 'video/mp4';
+        video.appendChild(sMp4);
       }
 
-      requestAnimationFrame(renderLoop);
+      video.addEventListener('playing', revealVideo);
+      video.addEventListener('canplay', revealVideo, { once: true });
+
+      video.preload = 'auto';
+      video.muted = true;
+      video.defaultMuted = true;
+      video.load();
+      safePlay();
+    };
+
+    // Deja pintar primero el póster WebP (LCP instantáneo) y monta el stream enseguida
+    requestAnimationFrame(() => {
+      window.setTimeout(mountVideo, 80);
+    });
+
+    // Pausa al salir del viewport del Hero (0% GPU debajo del pliegue) y retoma al volver
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          heroInView = entries[0]?.isIntersecting ?? true;
+          if (!mounted) {
+            if (heroInView) mountVideo();
+            return;
+          }
+          if (heroInView && !document.hidden) {
+            if (video.paused) safePlay();
+          } else if (!video.paused) {
+            video.pause();
+          }
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(hero);
     }
 
-    requestAnimationFrame(renderLoop);
+    document.addEventListener('visibilitychange', () => {
+      if (!mounted) return;
+      if (document.hidden) {
+        if (!video.paused) video.pause();
+      } else if (heroInView && video.paused) {
+        safePlay();
+      }
+    });
   }
 
   // =========================================================================
@@ -387,7 +385,7 @@ const lastIndex = titleWords.length - 1;
   }
 
   function bootHero() {
-    initPolishedHero();
+    initHeroVideo();
     initHeroParallax();
     onSiteLoaded(initCounters);
   }
@@ -462,7 +460,7 @@ const lastIndex = titleWords.length - 1;
     }
   }
 
-  /* Video con renderizado nativo sin estiramientos pixelados */
+  /* Video con renderizado nativo acelerado por hardware (sin filter pass por frame) */
   .hero-video {
     position: absolute;
     inset: 0;
@@ -470,11 +468,12 @@ const lastIndex = titleWords.length - 1;
     height: 100%;
     object-fit: cover;
     object-position: center 26%;
-    filter: contrast(1.02);
     pointer-events: none;
     z-index: 2;
     opacity: 0;
-    transition: opacity 0.5s ease;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    transition: opacity 0.45s ease-out;
   }
 
   .hero-video.is-playing {
@@ -873,7 +872,11 @@ const lastIndex = titleWords.length - 1;
     width: 100%;
     height: 100%;
     will-change: transform;
-    animation: floatBadge 5s ease-in-out infinite alternate;
+    animation: badgeSpin 24s linear infinite, floatBadge 5s ease-in-out infinite alternate;
+  }
+
+  @keyframes badgeSpin {
+    to { transform: rotate(360deg); }
   }
 
   @keyframes floatBadge {
@@ -914,7 +917,7 @@ const lastIndex = titleWords.length - 1;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 30%;
+      object-position: center 34%;
     }
 
     .hero-top {
