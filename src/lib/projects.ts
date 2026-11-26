@@ -103,7 +103,7 @@ export const projects: Project[] = [
     keyResult: "+3 ciudades cubiertas • -30% comisiones abusivas • Pagos BROU y efectivo",
     url: "https://canarios-ya.pages.dev/",
     liveUrlLabel: "canarios-ya.pages.dev",
-    img: "/projects/canarios-ya.png",
+    img: "/projects/canarios-ya-mobile.png",
     aspectWidth: 1200,
     aspectHeight: 900,
     tags: ["CLOUDFLARE PAGES", "DELIVERY HIPERLOCAL", "WHATSAPP LOGISTICS", "BROU"],
