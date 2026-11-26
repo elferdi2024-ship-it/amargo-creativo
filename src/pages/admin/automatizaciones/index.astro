@@ -4,7 +4,12 @@ export const prerender = false;
 
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { supabaseAdmin } from "../../../lib/supabase";
-import { formatDate } from "../../../lib/format";
+import { formatDate, whatsappHref } from "../../../lib/format";
+
+const runtimeEnv = (Astro.locals as { runtime?: { env?: Record<string, string> } })?.runtime?.env || {};
+const webhookConfigured = Boolean(
+  runtimeEnv.AUTOMATION_WEBHOOK_URL || import.meta.env.AUTOMATION_WEBHOOK_URL
+);
 
 const { data: notifications } = await supabaseAdmin
   .from("notifications")
@@ -12,114 +17,237 @@ const { data: notifications } = await supabaseAdmin
   .order("created_at", { ascending: false });
 
 const all = notifications || [];
+const pendingCount = all.filter((n) => n.status === "pending").length;
+
+function eventLabel(type: string): string {
+  switch (type) {
+    case "proposal_accepted": return "⭐ Propuesta Aceptada";
+    case "document_uploaded": return "📄 Entregable Subido";
+    case "stage_changed": return "🚀 Etapa Avanzada";
+    case "project_finished": return "🏆 Proyecto Finalizado";
+    case "payment_received": return "💰 Cobro Recibido";
+    default: return type;
+  }
+}
 ---
 
-<AdminLayout title="Automatizaciones & Notificaciones" activeSection="automatizaciones">
+<AdminLayout title="Automatizaciones & Webhooks" activeSection="automatizaciones">
   <div class="auto-page">
     <div class="top-banner">
       <div>
-        <h2>Centro de Automatizaciones & Mensajería</h2>
+        <h2>Centro de Automatizaciones &amp; WhatsApp 1-Click</h2>
         <p>
-          Historial de eventos automáticos generados por el sistema (aceptación de propuestas, subida de entregables, avance de etapas y confirmación de cobros).
+          Enviá notificaciones pendientes directo por WhatsApp en 1 clic (se marcan automáticamente como enviadas) o conectá un webhook saliente a n8n / Make / Resend.
         </p>
       </div>
-      <div class="status-summary">
-        <span class="badge-tag">⚡ {all.length} Eventos disparados</span>
+      <div class="banner-actions">
+        <span class={`webhook-pill ${webhookConfigured ? "is-on" : ""}`}>
+          {webhookConfigured ? "● WEBHOOK CONECTADO" : "○ WEBHOOK OPCIONAL"}
+        </span>
+        <span class="badge-tag tabular">⚡ {pendingCount} pendientes · {all.length} total</span>
+        <button type="button" id="btn-test-webhook" class="btn-outline-sm">
+          Probar Webhook
+        </button>
       </div>
     </div>
 
-    <!-- NOTIFICATIONS LOG -->
     <div class="card-box">
       <div class="box-header">
-        <h3>Registro de Actividad y Webhooks</h3>
-        <span class="sub-text">Payloads listos para WhatsApp Business API, n8n, Make y Resend</span>
+        <h3>Cola de Mensajería y Webhooks</h3>
+        <span class="sub-text">Configurá <code>AUTOMATION_WEBHOOK_URL</code> en Cloudflare Pages para despacho automático en segundo plano</span>
       </div>
 
-      <div class="adm-table-wrap">
-        <table class="adm-table">
-          <thead>
-            <tr>
-              <th>Evento / Tipo</th>
-              <th>Destinatario / Cliente</th>
-              <th>Canal</th>
-              <th>Mensaje Formateado</th>
-              <th>Estado</th>
-              <th>Fecha y Hora</th>
-            </tr>
-          </thead>
-          <tbody>
-            {all.map((n) => {
-              const client = n.clients as any;
-              const projectTitle = (n.projects as any)?.title || (n.proposals as any)?.project_title || "General";
+      <!-- Mobile Stacked Cards -->
+      <div class="mobile-notif-list">
+        {all.map((n) => {
+          const client = n.clients as { name?: string; phone?: string } | null;
+          const projectTitle = (n.projects as { title?: string } | null)?.title || (n.proposals as { project_title?: string } | null)?.project_title || "General";
+          const waUrl = whatsappHref(n.message || "", client?.phone);
 
-              return (
+          return (
+            <div class="notif-card-mobile" data-notif-id={n.id}>
+              <div class="ncm-top">
+                <span class="event-badge font-mono">{eventLabel(n.type)}</span>
+                <span class={`badge-status status-${n.status}`} data-status-badge>
+                  {n.status === "sent" ? "Enviado" : n.status === "pending" ? "Pendiente" : "Fallido"}
+                </span>
+              </div>
+              <div class="ncm-client">
+                <strong>{client?.name || "Cliente"}</strong> · <span>{projectTitle}</span>
+              </div>
+              <p class="msg-preview">{n.message}</p>
+              <div class="ncm-actions">
+                <a href={waUrl} target="_blank" rel="noopener noreferrer" class="btn-wa-send" data-send-wa={n.id}>
+                  💬 Enviar WhatsApp ↗
+                </a>
+                {webhookConfigured && (
+                  <button type="button" class="btn-wh-resend" data-resend-wh={n.id}>
+                    Webhook
+                  </button>
+                )}
+                <span class="date-cell font-mono">{formatDate(n.created_at)}</span>
+              </div>
+            </div>
+          );
+        })}
+        {all.length === 0 && (
+          <div class="empty-mobile">No hay eventos generados todavía.</div>
+        )}
+      </div>
+
+      <!-- Desktop Table -->
+      <div class="desktop-notif-table">
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
+              <tr>
+                <th>Evento / Proyecto</th>
+                <th>Destinatario</th>
+                <th>Mensaje</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th style="text-align:right;">Acción 1-Click</th>
+              </tr>
+            </thead>
+            <tbody>
+              {all.map((n) => {
+                const client = n.clients as { name?: string; phone?: string } | null;
+                const projectTitle = (n.projects as { title?: string } | null)?.title || (n.proposals as { project_title?: string } | null)?.project_title || "General";
+                const waUrl = whatsappHref(n.message || "", client?.phone);
+
+                return (
+                  <tr data-notif-id={n.id}>
+                    <td>
+                      <span class="event-badge font-mono">{eventLabel(n.type)}</span>
+                      <div class="proj-ref">{projectTitle}</div>
+                    </td>
+                    <td>
+                      <strong>{client?.name || "Cliente"}</strong>
+                      {client?.phone && <div class="font-mono client-phone">{client.phone}</div>}
+                    </td>
+                    <td class="msg-cell">
+                      <p class="msg-preview">{n.message}</p>
+                    </td>
+                    <td>
+                      <span class={`badge-status status-${n.status}`} data-status-badge>
+                        {n.status === "sent" ? "Enviado" : n.status === "pending" ? "Pendiente" : "Fallido"}
+                      </span>
+                    </td>
+                    <td class="date-cell font-mono">{formatDate(n.created_at)}</td>
+                    <td style="text-align:right; white-space:nowrap;">
+                      <a href={waUrl} target="_blank" rel="noopener noreferrer" class="btn-wa-send" data-send-wa={n.id}>
+                        💬 WhatsApp ↗
+                      </a>
+                      {webhookConfigured && (
+                        <button type="button" class="btn-wh-resend" data-resend-wh={n.id}>
+                          Webhook
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {all.length === 0 && (
                 <tr>
-                  <td>
-                    <span class="event-badge font-mono">
-                      {n.type === "proposal_accepted"
-                        ? "⭐ Propuesta Aceptada"
-                        : n.type === "document_uploaded"
-                        ? "📄 Entregable Subido"
-                        : n.type === "stage_changed"
-                        ? "🚀 Etapa Avanzada"
-                        : n.type === "project_finished"
-                        ? "🏆 Proyecto Finalizado"
-                        : n.type === "payment_received"
-                        ? "💰 Cobro Recibido"
-                        : n.type}
-                    </span>
-                    <div class="proj-ref">{projectTitle}</div>
-                  </td>
-                  <td>
-                    <strong>{client?.name || "Cliente"}</strong>
-                    {client?.phone && <div class="font-mono client-phone">{client.phone}</div>}
-                  </td>
-                  <td>
-                    <span class="channel-tag font-mono">
-                      {n.channel === "whatsapp" ? "🟢 WhatsApp" : n.channel === "email" ? "✉️ Email" : "🔄 Ambos"}
-                    </span>
-                  </td>
-                  <td class="msg-cell">
-                    <p class="msg-preview">{n.message}</p>
-                  </td>
-                  <td>
-                    <span class={`badge-status status-${n.status}`}>
-                      {n.status === "sent" ? "Enviado" : n.status === "pending" ? "Pendiente" : "Fallido"}
-                    </span>
-                  </td>
-                  <td class="date-cell font-mono">
-                    {formatDate(n.created_at)}
+                  <td colspan="6" style="text-align:center; padding:3rem; color:var(--adm-mute);">
+                    No hay notificaciones generadas todavía.
                   </td>
                 </tr>
-              );
-            })}
-
-            {all.length === 0 && (
-              <tr>
-                <td colspan="6" style="text-align:center; padding:3.5rem; color:var(--adm-mute);">
-                  No hay notificaciones generadas todavía. A medida que los clientes acepten propuestas o avances etapas, aparecerán aquí automáticamente.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
+
+  <script>
+    const toast = (msg: string, type: "success" | "error" | "info" = "success") => {
+      (window as unknown as { adminToast?: (m: string, t?: string) => void }).adminToast?.(msg, type);
+    };
+
+    // Marcar como enviada automáticamente al abrir WhatsApp
+    document.querySelectorAll<HTMLAnchorElement>("[data-send-wa]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-send-wa");
+        if (!id) return;
+        try {
+          const res = await fetch("/api/admin/notifications", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "mark_sent", id }),
+          });
+          if (res.ok) {
+            document.querySelectorAll(`[data-notif-id="${id}"] [data-status-badge]`).forEach((b) => {
+              b.textContent = "Enviado";
+              b.className = "badge-status status-sent";
+            });
+            toast("✓ WhatsApp abierto y marcado como enviado");
+          }
+        } catch {}
+      });
+    });
+
+    // Reenviar webhook
+    document.querySelectorAll<HTMLButtonElement>("[data-resend-wh]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        const id = btn.getAttribute("data-resend-wh");
+        if (!id) return;
+        btn.disabled = true;
+        try {
+          const res = await fetch("/api/admin/notifications", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: "resend_webhook", id }),
+          });
+          const data = await res.json();
+          if (data.ok) {
+            toast("✓ Webhook entregado correctamente");
+            document.querySelectorAll(`[data-notif-id="${id}"] [data-status-badge]`).forEach((b) => {
+              b.textContent = "Enviado";
+              b.className = "badge-status status-sent";
+            });
+          } else {
+            toast(data.skipped ? "Configurá AUTOMATION_WEBHOOK_URL en Cloudflare" : "Error al despachar webhook", "error");
+          }
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    });
+
+    // Probar webhook
+    const testBtn = document.getElementById("btn-test-webhook") as HTMLButtonElement | null;
+    testBtn?.addEventListener("click", async () => {
+      testBtn.disabled = true;
+      try {
+        const res = await fetch("/api/admin/notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "test_webhook" }),
+        });
+        const data = await res.json();
+        if (data.ok) toast(`✓ Webhook OK (HTTP ${data.status})`);
+        else if (data.skipped) toast("Agregá AUTOMATION_WEBHOOK_URL en Cloudflare Pages para activar webhooks", "info");
+        else toast(`Fallo de webhook (${data.error || data.status})`, "error");
+      } catch {
+        toast("Error de red al probar webhook", "error");
+      } finally {
+        testBtn.disabled = false;
+      }
+    });
+  </script>
 </AdminLayout>
 
 <style>
-  .auto-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+  .auto-page { display: flex; flex-direction: column; gap: 1.25rem; }
 
   .top-banner {
     background: var(--adm-card);
     border: 1px solid var(--adm-border);
-    border-radius: 12px;
-    padding: 1.5rem;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -127,85 +255,108 @@ const all = notifications || [];
     gap: 1rem;
   }
 
-  .top-banner h2 {
-    margin: 0 0 0.25rem;
-    font-size: 1.35rem;
-    font-weight: 800;
+  .top-banner h2 { font-family: var(--adm-font-display); margin: 0 0 0.25rem; font-size: 1.22rem; font-weight: 800; }
+  .top-banner p { margin: 0; font-size: 0.84rem; color: var(--adm-mute); max-width: 650px; }
+
+  .banner-actions { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+
+  .webhook-pill {
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
+    color: var(--adm-mute);
   }
 
-  .top-banner p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--adm-mute);
-    max-width: 680px;
-    line-height: 1.45;
+  .webhook-pill.is-on {
+    background: rgba(16, 185, 129, 0.14);
+    border-color: rgba(16, 185, 129, 0.38);
+    color: #34d399;
   }
 
   .badge-tag {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.8rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.74rem;
     font-weight: 700;
     color: var(--adm-lime);
-    background: rgba(200, 255, 0, 0.1);
-    border: 1px solid rgba(200, 255, 0, 0.3);
-    padding: 0.4rem 0.75rem;
-    border-radius: 20px;
+    background: rgba(212, 255, 51, 0.1);
+    border: 1px solid rgba(212, 255, 51, 0.3);
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
   }
 
-  .box-header {
-    margin-bottom: 1.25rem;
-  }
-
-  .box-header h3 {
-    margin: 0 0 0.2rem;
-    font-size: 1.05rem;
-  }
-
-  .sub-text {
-    font-size: 0.8rem;
-    color: var(--adm-mute);
-  }
+  .box-header { margin-bottom: 1rem; }
+  .box-header h3 { font-family: var(--adm-font-display); margin: 0 0 0.2rem; font-size: 1.02rem; }
+  .sub-text { font-size: 0.78rem; color: var(--adm-mute); }
+  .sub-text code { color: var(--adm-lime); font-family: var(--adm-font-mono); font-size: 0.74rem; }
 
   .event-badge {
     display: inline-block;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--adm-lime);
-    background: rgba(200, 255, 0, 0.1);
-    padding: 0.15rem 0.45rem;
-    border-radius: 4px;
+    background: rgba(212, 255, 51, 0.1);
+    padding: 0.16rem 0.5rem;
+    border-radius: 999px;
     margin-bottom: 0.2rem;
   }
 
-  .proj-ref {
-    font-size: 0.75rem;
-    color: var(--adm-mute);
+  .proj-ref, .client-phone { font-size: 0.74rem; color: var(--adm-mute); }
+  .msg-cell { max-width: 340px; }
+  .msg-preview { margin: 0; font-size: 0.82rem; color: #d2ddd6; line-height: 1.45; }
+  .date-cell { font-size: 0.74rem; color: var(--adm-mute); }
+
+  .btn-wa-send {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.36rem 0.72rem;
+    border-radius: 999px;
+    background: rgba(37, 211, 102, 0.16);
+    border: 1px solid rgba(37, 211, 102, 0.42);
+    color: #4ade80;
+    font-family: var(--adm-font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-decoration: none;
   }
 
-  .client-phone {
-    font-size: 0.75rem;
-    color: var(--adm-mute);
-  }
-
-  .channel-tag {
-    font-size: 0.75rem;
+  .btn-wh-resend {
+    margin-left: 6px;
+    padding: 0.34rem 0.65rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--adm-border);
     color: var(--adm-ink);
+    font-family: var(--adm-font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
   }
 
-  .msg-cell {
-    max-width: 340px;
+  .mobile-notif-list { display: none; flex-direction: column; gap: 0.75rem; }
+  .desktop-notif-table { display: block; }
+
+  .notif-card-mobile {
+    background: #101913;
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 
-  .msg-preview {
-    margin: 0;
-    font-size: 0.82rem;
-    color: #D2DDD6;
-    line-height: 1.4;
-  }
+  .ncm-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .ncm-client { font-size: 0.82rem; color: var(--adm-mute); }
+  .ncm-client strong { color: var(--adm-ink); }
+  .ncm-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; padding-top: 0.5rem; border-top: 1px solid var(--adm-border); }
+  .empty-mobile { text-align: center; padding: 2rem; color: var(--adm-mute); }
 
-  .date-cell {
-    font-size: 0.78rem;
-    color: var(--adm-mute);
-    white-space: nowrap;
+  @media (max-width: 768px) {
+    .mobile-notif-list { display: flex; }
+    .desktop-notif-table { display: none; }
   }
 </style>

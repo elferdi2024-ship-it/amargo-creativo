@@ -3,25 +3,29 @@
 export const prerender = false;
 
 import { isAuthenticated } from "../../lib/auth";
+import { resolveTotpSecret } from "../../lib/totp";
 
-// Si ya está autenticado, redirigir al admin
-if (await isAuthenticated(Astro.cookies, Astro.request)) {
+const runtimeEnv = (Astro.locals as { runtime?: { env?: Record<string, string> } })?.runtime?.env || {};
+if (await isAuthenticated(Astro.cookies, Astro.request, runtimeEnv.ADMIN_SESSION_SECRET)) {
   return Astro.redirect("/admin");
 }
 
-const redirectUrl = Astro.url.searchParams.get("redirect") || "/admin";
+const totpEnabled = Boolean(resolveTotpSecret(runtimeEnv));
+const rawRedirect = Astro.url.searchParams.get("redirect") || "/admin";
+const redirectUrl = rawRedirect.startsWith("/admin") ? rawRedirect : "/admin";
 ---
 
 <!doctype html>
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Acceso Admin · Amargo Creativo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Acceso · Amargo Studio OS</title>
     <meta name="robots" content="noindex, nofollow" />
+    <meta name="theme-color" content="#0b110d" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
@@ -29,74 +33,172 @@ const redirectUrl = Astro.url.searchParams.get("redirect") || "/admin";
       <div class="login-card">
         <header class="card-header">
           <span class="brand">AMARGO.</span>
-          <span class="badge">PANEL INTERNO</span>
+          <span class="badge">{totpEnabled ? "2FA ACTIVO" : "STUDIO OS v2"}</span>
         </header>
 
-        <h1>Acceso Seguro</h1>
-        <p class="desc">Ingresá la clave de administrador para gestionar propuestas, contratos y clientes.</p>
+        <h1 id="login-heading">Acceso Seguro</h1>
+        <p id="login-desc" class="desc">
+          Ingresá tu clave para administrar clientes, propuestas, facturación CFE y automatizaciones.
+        </p>
 
         <form id="login-form">
-          <label for="password">Clave de Acceso</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="••••••••••••"
-            required
-            autocomplete="current-password"
-            autofocus
-          />
+          <div id="step-password">
+            <label for="password">Clave de Acceso</label>
+            <div class="pass-wrap">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="••••••••••••"
+                required
+                autocomplete="current-password"
+                autofocus
+              />
+              <button type="button" id="toggle-pass" class="toggle-pass" aria-label="Mostrar u ocultar clave">
+                Ver
+              </button>
+            </div>
+          </div>
 
-          <div id="error-msg" class="error-msg" style="display: none;"></div>
+          <div id="step-totp" class="totp-box" hidden>
+            <div class="totp-head">
+              <span class="totp-pill">🛡️ GOOGLE AUTHENTICATOR</span>
+              <button type="button" id="back-to-pass" class="link-mini">Cambiar clave</button>
+            </div>
+            <label for="totp-code">Código de 6 dígitos</label>
+            <input
+              type="text"
+              id="totp-code"
+              name="totpCode"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              maxlength="6"
+              placeholder="000 000"
+              autocomplete="one-time-code"
+              class="totp-input"
+            />
+          </div>
+
+          <div id="error-msg" class="error-msg" role="alert" hidden></div>
 
           <button type="submit" id="submit-btn" class="btn-submit">
-            <span>Ingresar al panel</span>
+            <span>{totpEnabled ? "Continuar con 2FA" : "Ingresar a Studio OS"}</span>
             <span class="arrow">→</span>
           </button>
         </form>
 
         <footer class="card-footer">
-          <a href="/" class="back-link">← Volver al sitio web</a>
-          <span class="version">v30.0 Secure</span>
+          <a href="/" class="back-link">← Volver al sitio</a>
+          <span class="version">{totpEnabled ? "HMAC + TOTP" : "HMAC-SHA256"}</span>
         </footer>
       </div>
     </div>
 
     <script define:vars={{ redirectUrl }}>
       const form = document.getElementById("login-form");
+      const stepPassword = document.getElementById("step-password");
+      const stepTotp = document.getElementById("step-totp");
       const passwordInput = document.getElementById("password");
+      const totpInput = document.getElementById("totp-code");
+      const toggleBtn = document.getElementById("toggle-pass");
+      const backBtn = document.getElementById("back-to-pass");
       const errorMsg = document.getElementById("error-msg");
       const submitBtn = document.getElementById("submit-btn");
+      const heading = document.getElementById("login-heading");
+      const desc = document.getElementById("login-desc");
+
+      let awaitingTotp = false;
+
+      toggleBtn?.addEventListener("click", () => {
+        if (!passwordInput) return;
+        const isHidden = passwordInput.type === "password";
+        passwordInput.type = isHidden ? "text" : "password";
+        toggleBtn.textContent = isHidden ? "Ocultar" : "Ver";
+      });
+
+      backBtn?.addEventListener("click", () => {
+        awaitingTotp = false;
+        if (stepTotp) stepTotp.hidden = true;
+        if (stepPassword) stepPassword.hidden = false;
+        if (totpInput) totpInput.value = "";
+        if (errorMsg) errorMsg.hidden = true;
+        if (heading) heading.textContent = "Acceso Seguro";
+        if (desc) desc.textContent = "Ingresá tu clave para administrar clientes, propuestas, facturación CFE y automatizaciones.";
+        if (submitBtn) submitBtn.querySelector("span").textContent = "Continuar";
+        passwordInput?.focus();
+      });
+
+      // Solo dígitos + auto-submit al completar 6 números
+      totpInput?.addEventListener("input", () => {
+        totpInput.value = totpInput.value.replace(/\D/g, "").slice(0, 6);
+        if (totpInput.value.length === 6) {
+          form?.requestSubmit();
+        }
+      });
 
       form?.addEventListener("submit", async (e) => {
         e.preventDefault();
-        errorMsg.style.display = "none";
-        submitBtn.disabled = true;
-        submitBtn.querySelector("span").textContent = "Verificando...";
+        if (errorMsg) errorMsg.hidden = true;
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.querySelector("span").textContent = "Verificando...";
+        }
 
         try {
           const res = await fetch("/api/admin/auth", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ password: passwordInput.value }),
+            body: JSON.stringify({
+              password: passwordInput?.value || "",
+              totpCode: awaitingTotp ? (totpInput?.value || "") : "",
+            }),
           });
 
           const data = await res.json();
 
           if (data.ok) {
             window.location.href = redirectUrl;
-          } else {
-            errorMsg.textContent = data.message || "Clave inválida";
-            errorMsg.style.display = "block";
-            passwordInput.focus();
-            passwordInput.select();
+            return;
           }
-        } catch (err) {
-          errorMsg.textContent = "Error de red. Intenta nuevamente.";
-          errorMsg.style.display = "block";
+
+          if (data.requireTotp) {
+            const firstPrompt = !awaitingTotp;
+            awaitingTotp = true;
+            if (stepPassword) stepPassword.hidden = true;
+            if (stepTotp) stepTotp.hidden = false;
+            if (heading) heading.textContent = "Verificación 2FA";
+            if (desc) desc.textContent = "Abrí Google Authenticator en tu teléfono e ingresá el código de 6 dígitos.";
+            if (submitBtn) submitBtn.querySelector("span").textContent = "Confirmar Código";
+
+            if (!firstPrompt && errorMsg) {
+              errorMsg.textContent = data.message || "Código inválido";
+              errorMsg.hidden = false;
+            }
+            totpInput?.focus();
+            totpInput?.select();
+            return;
+          }
+
+          if (errorMsg) {
+            errorMsg.textContent = data.message || "Clave inválida";
+            errorMsg.hidden = false;
+          }
+          passwordInput?.focus();
+          passwordInput?.select();
+        } catch {
+          if (errorMsg) {
+            errorMsg.textContent = "Error de red. Intentá nuevamente.";
+            errorMsg.hidden = false;
+          }
         } finally {
-          submitBtn.disabled = false;
-          submitBtn.querySelector("span").textContent = "Ingresar al panel";
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            if (!awaitingTotp) {
+              submitBtn.querySelector("span").textContent = "Ingresar a Studio OS";
+            } else {
+              submitBtn.querySelector("span").textContent = "Confirmar Código";
+            }
+          }
         }
       });
     </script>
@@ -105,172 +207,205 @@ const redirectUrl = Astro.url.searchParams.get("redirect") || "/admin";
 
 <style>
   :root {
-    --bg: #141E18;
-    --card-bg: #1C2B22;
-    --ink: #F8F9F6;
-    --mute: #8E9C92;
-    --mate: #3A7D44;
-    --lime: #C8FF00;
-    --border: #2D4034;
-    --error: #FF6B6B;
+    --bg: #0b110d;
+    --card-bg: #141f18;
+    --ink: #f4f6f2;
+    --mute: #889b8e;
+    --lime: #d4ff33;
+    --border: rgba(255, 255, 255, 0.11);
+    --error: #ff6b6b;
   }
 
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: var(--bg);
+    background: radial-gradient(circle at 50% 0%, rgba(47, 111, 60, 0.24), transparent 52%), var(--bg);
     color: var(--ink);
-    font-family: "Archivo", system-ui, -apple-system, sans-serif;
-    min-height: 100vh;
+    font-family: "Space Grotesk", system-ui, sans-serif;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 1.25rem;
   }
 
-  .login-wrapper {
-    width: 100%;
-    max-width: 420px;
-  }
+  .login-wrapper { width: 100%; max-width: 430px; }
 
   .login-card {
     background: var(--card-bg);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 2.5rem 2rem;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border-radius: 20px;
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+    box-shadow: 0 28px 64px -16px rgba(0, 0, 0, 0.65);
   }
 
   .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
   }
 
   .brand {
+    font-family: "Syne", sans-serif;
     font-weight: 800;
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     letter-spacing: -0.03em;
     color: var(--ink);
   }
 
   .badge {
     font-family: "JetBrains Mono", monospace;
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     letter-spacing: 0.12em;
-    padding: 0.25rem 0.6rem;
-    background: rgba(200, 255, 0, 0.15);
+    padding: 0.25rem 0.65rem;
+    background: rgba(212, 255, 51, 0.14);
+    border: 1px solid rgba(212, 255, 51, 0.3);
     color: var(--lime);
-    border-radius: 4px;
-    font-weight: 600;
+    border-radius: 999px;
+    font-weight: 700;
   }
 
   h1 {
+    font-family: "Syne", sans-serif;
     font-size: 1.75rem;
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin: 0 0 0.5rem;
+    letter-spacing: -0.025em;
+    margin: 0 0 0.45rem;
   }
 
-  .desc {
-    font-size: 0.9rem;
-    color: var(--mute);
-    line-height: 1.45;
-    margin: 0 0 2rem;
-  }
+  .desc { font-size: 0.9rem; color: var(--mute); line-height: 1.5; margin: 0 0 1.65rem; }
 
   label {
     display: block;
-    font-size: 0.8rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--mute);
-    font-weight: 600;
+    font-weight: 700;
     margin-bottom: 0.5rem;
   }
 
+  .pass-wrap { position: relative; margin-bottom: 1.15rem; }
+
   input {
     width: 100%;
-    background: #111A14;
+    background: #0c140f;
     border: 1px solid var(--border);
     color: var(--ink);
-    padding: 0.85rem 1rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
+    padding: 0.88rem 4.6rem 0.88rem 1rem;
+    border-radius: 12px;
+    font-size: 1rem;
     font-family: inherit;
-    transition: border-color 0.2s ease;
-    margin-bottom: 1.25rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
   input:focus {
     outline: none;
     border-color: var(--lime);
-    box-shadow: 0 0 0 2px rgba(200, 255, 0, 0.2);
+    box-shadow: 0 0 0 3px rgba(212, 255, 51, 0.16);
+  }
+
+  .toggle-pass {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--mute);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+  }
+
+  .totp-box[hidden], #step-password[hidden] { display: none; }
+
+  .totp-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+  }
+
+  .totp-pill {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--lime);
+  }
+
+  .link-mini {
+    background: transparent;
+    border: none;
+    color: var(--mute);
+    font-size: 0.76rem;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
+
+  .totp-input {
+    padding: 0.95rem 1rem;
+    text-align: center;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.65rem;
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    margin-bottom: 1.15rem;
   }
 
   .error-msg {
     background: rgba(255, 107, 107, 0.12);
-    border: 1px solid var(--error);
+    border: 1px solid rgba(255, 107, 107, 0.45);
     color: var(--error);
-    font-size: 0.85rem;
-    padding: 0.65rem 0.85rem;
-    border-radius: 6px;
-    margin-bottom: 1.25rem;
+    font-size: 0.84rem;
+    padding: 0.65rem 0.9rem;
+    border-radius: 10px;
+    margin-bottom: 1.15rem;
   }
+
+  .error-msg[hidden] { display: none; }
 
   .btn-submit {
     width: 100%;
     background: var(--lime);
-    color: #141E18;
+    color: #0b110d;
     border: none;
-    padding: 0.95rem 1.25rem;
+    height: 48px;
+    padding: 0 1.25rem;
+    font-family: "JetBrains Mono", monospace;
     font-weight: 700;
-    font-size: 0.95rem;
-    border-radius: 8px;
+    font-size: 0.86rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 999px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    transition: background 0.15s ease, transform 0.1s ease;
+    transition: background-color 0.15s ease, transform 0.12s ease;
   }
 
-  .btn-submit:hover {
-    background: #b5e600;
-    transform: translateY(-1px);
-  }
-
-  .btn-submit:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
+  .btn-submit:active { transform: scale(0.97); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .card-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 2.5rem;
-    padding-top: 1.25rem;
+    margin-top: 2rem;
+    padding-top: 1.15rem;
     border-top: 1px solid var(--border);
-    font-size: 0.8rem;
+    font-size: 0.78rem;
   }
 
-  .back-link {
-    color: var(--mute);
-    text-decoration: none;
-    transition: color 0.15s ease;
-  }
-
-  .back-link:hover {
-    color: var(--ink);
-  }
-
-  .version {
-    font-family: "JetBrains Mono", monospace;
-    color: var(--mute);
-    font-size: 0.7rem;
-  }
+  .back-link { color: var(--mute); text-decoration: none; }
+  .version { font-family: "JetBrains Mono", monospace; color: var(--mute); font-size: 0.68rem; }
 </style>

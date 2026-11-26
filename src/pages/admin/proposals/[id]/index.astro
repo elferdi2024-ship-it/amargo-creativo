@@ -7,7 +7,7 @@ import CopyButton from "../../../../components/admin/CopyButton";
 import ProjectStageManager from "../../../../components/admin/ProjectStageManager";
 import DocumentUploader from "../../../../components/admin/DocumentUploader";
 import { supabaseAdmin } from "../../../../lib/supabase";
-import { formatMoney, formatDate } from "../../../../lib/format";
+import { formatMoney, formatDate, whatsappHref } from "../../../../lib/format";
 
 const { id } = Astro.params;
 
@@ -41,6 +41,8 @@ const { data: documents } = await supabaseAdmin
   .order("uploaded_at", { ascending: false });
 
 const magicUrl = `${Astro.url.origin}/p/${proposal.slug}`;
+const waProposalMsg = `Hola ${proposal.clients?.name || ""}, te comparto la propuesta interactiva de "${proposal.project_title}". Podés revisarla y aprobarla desde acá:\n${magicUrl}`;
+const waProposalLink = whatsappHref(waProposalMsg, proposal.clients?.phone);
 const inv = proposal.investment || {};
 const amountDisplay =
   inv.type === "plans"
@@ -71,14 +73,17 @@ const amountDisplay =
       </div>
 
       <div class="header-actions">
+        <button type="button" id="btn-invoice-50" class="btn-outline-sm btn-inv-50">
+          🧾 Factura Anticipo 50%
+        </button>
         <button type="button" id="btn-save-template" class="btn-outline-sm btn-tpl">
-          ★ Guardar como Plantilla
+          ★ Plantilla
         </button>
         <a href={`/admin/proposals/${proposal.id}/edit`} class="btn-outline-sm">
-          ✏️ Editar Propuesta
+          ✏️ Editar
         </a>
         <a href={`/admin/contracts?proposal_id=${proposal.id}`} class="btn-primary-sm">
-          📄 Generar Contrato
+          📄 Contrato
         </a>
       </div>
     </div>
@@ -91,8 +96,11 @@ const amountDisplay =
       </div>
       <div class="ml-actions">
         <CopyButton client:load text={magicUrl} label="Copiar Magic Link" />
-        <a href={`/p/${proposal.slug}`} target="_blank" class="btn-visit">
-          Abrir Portal del Cliente ↗
+        <a href={waProposalLink} target="_blank" rel="noopener noreferrer" class="btn-wa-sm">
+          💬 Enviar WhatsApp ↗
+        </a>
+        <a href={`/p/${proposal.slug}`} target="_blank" rel="noopener noreferrer" class="btn-visit">
+          Portal ↗
         </a>
       </div>
     </div>
@@ -349,6 +357,34 @@ const amountDisplay =
   </div>
 
   <script define:vars={{ proposalId: proposal.id, proposalTitle: proposal.project_title }}>
+    // 1-Click Factura Anticipo 50%
+    const inv50Btn = document.getElementById("btn-invoice-50");
+    inv50Btn?.addEventListener("click", async () => {
+      inv50Btn.disabled = true;
+      const prevText = inv50Btn.textContent;
+      inv50Btn.textContent = "Generando factura...";
+      try {
+        const res = await fetch("/api/admin/invoices", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "create_from_proposal", proposalId, percentage: 50 }),
+        });
+        const data = await res.json();
+        if (data.ok && data.invoice?.id) {
+          window.adminToast?.("✓ Factura de anticipo 50% creada", "success");
+          window.location.href = `/admin/finanzas/facturas/${data.invoice.id}`;
+        } else {
+          window.adminToast?.(data.message || data.error || "No se pudo crear la factura", "error");
+          inv50Btn.disabled = false;
+          inv50Btn.textContent = prevText;
+        }
+      } catch {
+        window.adminToast?.("Error de conexión al generar factura", "error");
+        inv50Btn.disabled = false;
+        inv50Btn.textContent = prevText;
+      }
+    });
+
     // Status Switcher
     const buttons = document.querySelectorAll("#status-controls .btn-status-toggle");
     buttons.forEach((btn) => {

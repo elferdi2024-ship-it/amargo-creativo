@@ -6,8 +6,57 @@ import { supabaseAdmin } from "../../lib/supabase";
 import { CONTENT_PROMPTS } from "../../lib/content-templates";
 import { isAuthenticated } from "../../lib/auth";
 
-export const POST: APIRoute = async ({ request, cookies }) => {
-  if (!(await isAuthenticated(cookies, request))) {
+const CONTENT_TYPES = ["case_study", "linkedin", "instagram", "web", "email"] as const;
+type ContentType = (typeof CONTENT_TYPES)[number];
+
+async function generateWithGemini(
+  apiKey: string,
+  payload: { title: string; client_name: string; challenge?: string; solution?: string }
+): Promise<Partial<Record<ContentType, string>> | null> {
+  try {
+    const prompt = `Sos el director creativo de Amargo Creativo (Product Studio de Uruguay que construye Apps PWA, software con IA, plataformas SaaS y comercio propio sin comisiones).
+Tono: directo, rioplatense profesional (sin humo corporativo ni frases genéricas de IA).
+Proyecto: ${payload.title}
+Cliente: ${payload.client_name}
+Desafío: ${payload.challenge || "Modernizar la operación y construir un producto digital propio."}
+Solución: ${payload.solution || "Desarrollo a medida con arquitectura moderna y UX móvil real."}
+
+Devolvé ÚNICAMENTE un JSON válido con estas 5 claves exactas (valores en texto Markdown limpio, español rioplatense):
+- "case_study": caso de estudio estructurado (contexto, problema, arquitectura, resultado).
+- "linkedin": post de LinkedIn con gancho fuerte, 3 bullets concretos y cierre conversacional.
+- "instagram": guion de carrusel de 5 slides (Slide 1 gancho .. Slide 5 CTA).
+- "web": bloque corto listo para portafolio web (titular + 2 líneas + resultado clave).
+- "email": correo breve de prospección para enviar a clientes del mismo rubro.`;
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            temperature: 0.7,
+          },
+        }),
+      }
+    );
+
+    if (!res.ok) return null;
+    const json = await res.json();
+    const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!rawText) return null;
+    return JSON.parse(rawText) as Partial<Record<ContentType, string>>;
+  } catch (err) {
+    console.warn("[Content Engine] Gemini fallback to templates:", err);
+    return null;
+  }
+}
+
+export const POST: APIRoute = async ({ request, cookies, locals }) => {
+  const runtimeEnv = (locals as { runtime?: { env?: Record<string, string> } })?.runtime?.env || {};
+  if (!(await isAuthenticated(cookies, request, runtimeEnv.ADMIN_SESSION_SECRET))) {
     return new Response(JSON.stringify({ ok: false, message: "No autorizado" }), {
       status: 401,
       headers: { "Content-Type": "application/json" },
@@ -43,19 +92,25 @@ export const POST: APIRoute = async ({ request, cookies }) => {
 
     const payload = {
       title: project.title,
-      client_name: (project.clients as any)?.name || "Cliente",
-      challenge: (project.proposals as any)?.challenge,
-      solution: (project.proposals as any)?.solution,
+      client_name: (project.clients as { name?: string } | null)?.name || "Cliente",
+      challenge: (project.proposals as { challenge?: string } | null)?.challenge,
+      solution: (project.proposals as { solution?: string } | null)?.solution,
     };
 
-    const types = ["case_study", "linkedin", "instagram", "web", "email"] as const;
+    const geminiKey =
+      runtimeEnv.GEMINI_API_KEY?.trim() ||
+      (import.meta.env.GEMINI_API_KEY as string | undefined)?.trim();
+
+    const aiDrafts = geminiKey ? await generateWithGemini(geminiKey, payload) : null;
+    const aiPowered = Boolean(aiDrafts);
+
     const created = [];
 
-    for (const type of types) {
-      const promptGenerator = CONTENT_PROMPTS[type];
-      if (!promptGenerator) continue;
+    for (const type of CONTENT_TYPES) {
+      const fallbackGenerator = CONTENT_PROMPTS[type];
+      const content = aiDrafts?.[type] || (fallbackGenerator ? fallbackGenerator(payload) : "");
+      if (!content) continue;
 
-      const content = promptGenerator(payload);
       const title = `${type.replace("_", " ").toUpperCase()} – ${project.title}`;
 
       const { data: piece, error: insertError } = await supabaseAdmin
@@ -79,7 +134,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
       }
     }
 
-    return new Response(JSON.stringify({ ok: true, pieces: created }), {
+    return new Response(JSON.stringify({ ok: true, aiPowered, pieces: created }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

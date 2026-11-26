@@ -1,29 +1,34 @@
 // filepath: src/middleware.ts
 import { defineMiddleware } from "astro:middleware";
-import { checkAdminPassword } from "./lib/auth";
+import { isAuthenticated } from "./lib/auth";
 
 export const onRequest = defineMiddleware(async (context, next) => {
-  const { pathname } = context.url;
+  const { pathname, search } = context.url;
 
-  // Proteger todas las rutas /admin excepto /admin/login
-  if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
-    const cookie = context.cookies.get("amargo_admin");
-    const sessionCookie = context.cookies.get("amargo_admin_session");
-    const cfUser = context.request.headers.get("cf-access-authenticated-user-email");
-    const cfJwt = context.request.headers.get("cf-access-jwt-assertion");
+  const isAdminPage = pathname === "/admin" || pathname.startsWith("/admin/");
+  const isAdminLogin = pathname === "/admin/login" || pathname === "/admin/login/";
+  const isProtectedApi =
+    pathname.startsWith("/api/admin/") && !pathname.startsWith("/api/admin/auth");
 
-    const runtimeEnv = (context.locals as any)?.runtime?.env || {};
-    const runtimePass = runtimeEnv.ADMIN_PASSWORD;
+  if ((isAdminPage && !isAdminLogin) || isProtectedApi) {
+    const runtimeEnv =
+      (context.locals as { runtime?: { env?: Record<string, string> } })?.runtime?.env || {};
+    const authed = await isAuthenticated(
+      context.cookies,
+      context.request,
+      runtimeEnv.ADMIN_SESSION_SECRET
+    );
 
-    // Si tiene sesión activa o Cloudflare Access o cookie válida
-    const isAuthed =
-      Boolean(cfUser || cfJwt) ||
-      Boolean(sessionCookie?.value) ||
-      cookie?.value === "authenticated" ||
-      checkAdminPassword(cookie?.value || "", runtimePass);
+    if (!authed) {
+      if (isProtectedApi) {
+        return new Response(
+          JSON.stringify({ ok: false, message: "No autorizado" }),
+          { status: 401, headers: { "Content-Type": "application/json" } }
+        );
+      }
 
-    if (!isAuthed) {
-      return context.redirect(`/admin/login?redirect=${encodeURIComponent(pathname + context.url.search)}`);
+      const redirectTarget = encodeURIComponent(pathname + search);
+      return context.redirect(`/admin/login?redirect=${redirectTarget}`, 302);
     }
   }
 

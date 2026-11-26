@@ -1,0 +1,461 @@
+---
+// filepath: src/pages/admin/seguridad/index.astro
+export const prerender = false;
+
+import AdminLayout from "../../../layouts/AdminLayout.astro";
+import { resolveTotpSecret } from "../../../lib/totp";
+
+const runtimeEnv = (Astro.locals as { runtime?: { env?: Record<string, string> } })?.runtime?.env || {};
+const totpActive = Boolean(resolveTotpSecret(runtimeEnv));
+const customPassword = Boolean(runtimeEnv.ADMIN_PASSWORD || import.meta.env.ADMIN_PASSWORD);
+const customSessionSecret = Boolean(runtimeEnv.ADMIN_SESSION_SECRET || import.meta.env.ADMIN_SESSION_SECRET);
+const geminiActive = Boolean(runtimeEnv.GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY);
+const webhookActive = Boolean(runtimeEnv.AUTOMATION_WEBHOOK_URL || import.meta.env.AUTOMATION_WEBHOOK_URL);
+---
+
+<AdminLayout title="Seguridad & Google Authenticator" activeSection="seguridad">
+  <div class="sec-page">
+    <!-- STATUS GRID -->
+    <div class="status-grid">
+      <div class="stat-card">
+        <span class="st-label">Google Authenticator (2FA)</span>
+        <strong class={`st-val ${totpActive ? "ok" : "warn"}`}>
+          {totpActive ? "● ACTIVO" : "○ PENDIENTE"}
+        </strong>
+        <span class="st-sub">Variable: <code>ADMIN_TOTP_SECRET</code></span>
+      </div>
+
+      <div class="stat-card">
+        <span class="st-label">Clave de Acceso</span>
+        <strong class={`st-val ${customPassword ? "ok" : "warn"}`}>
+          {customPassword ? "● PERSONALIZADA" : "○ FALLBACK"}
+        </strong>
+        <span class="st-sub">Variable: <code>ADMIN_PASSWORD</code></span>
+      </div>
+
+      <div class="stat-card">
+        <span class="st-label">Firma HMAC Sesiones</span>
+        <strong class={`st-val ${customSessionSecret ? "ok" : "warn"}`}>
+          {customSessionSecret ? "● PROPIA" : "○ DEFAULT"}
+        </strong>
+        <span class="st-sub">Variable: <code>ADMIN_SESSION_SECRET</code></span>
+      </div>
+
+      <div class="stat-card">
+        <span class="st-label">IA &amp; Webhooks</span>
+        <strong class="st-val info">
+          {geminiActive ? "IA ON" : "IA OFF"} · {webhookActive ? "WH ON" : "WH OFF"}
+        </strong>
+        <span class="st-sub"><code>GEMINI_API_KEY</code> / <code>AUTOMATION_WEBHOOK_URL</code></span>
+      </div>
+    </div>
+
+    <!-- GOOGLE AUTHENTICATOR WIZARD -->
+    <div class="card-box wizard-card">
+      <div class="wiz-head">
+        <div>
+          <span class="wiz-kicker">RFC 6238 · TOTP 6 DÍGITOS · 100% LOCAL</span>
+          <h2>Configurar Google Authenticator</h2>
+          <p>
+            Generá tu código QR sin enviarlo a servidores externos, escanealo con <strong>Google Authenticator</strong> (o Authy / Apple Passwords), validá el código en vivo y guardá el secreto en Cloudflare Pages.
+          </p>
+        </div>
+        <button type="button" id="btn-gen-totp" class="btn-primary-sm">
+          🛡️ Generar Nuevo QR 2FA
+        </button>
+      </div>
+
+      <div id="totp-setup-panel" class="setup-panel" hidden>
+        <div class="setup-grid">
+          <!-- QR Column -->
+          <div class="qr-col">
+            <span class="step-badge">PASO 1 · ESCANEÁ CON TU TELÉFONO</span>
+            <div id="qr-container" class="qr-box"></div>
+            <div class="manual-key-box">
+              <span class="mk-label">O ingresá esta clave manual (Base32):</span>
+              <div class="mk-row">
+                <code id="secret-text" class="mk-code"></code>
+                <button type="button" id="btn-copy-secret" class="btn-copy-mini">Copiar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Verify & Cloudflare Column -->
+          <div class="verify-col">
+            <div class="step-block">
+              <span class="step-badge">PASO 2 · VERIFICÁ EL CÓDIGO ANTES DE ACTIVAR</span>
+              <p class="step-desc">
+                Ingresá los 6 dígitos que aparecen ahora en Google Authenticator para confirmar sincronización exacta antes de activar 2FA (así nunca te bloqueás).
+              </p>
+              <form id="verify-totp-form" class="verify-row">
+                <input
+                  type="text"
+                  id="verify-code-input"
+                  inputmode="numeric"
+                  maxlength="6"
+                  placeholder="000000"
+                  class="verify-input"
+                  autocomplete="one-time-code"
+                />
+                <button type="submit" id="btn-verify-code" class="btn-primary-sm">
+                  Validar Código
+                </button>
+              </form>
+              <div id="verify-status" class="verify-status" hidden></div>
+            </div>
+
+            <div class="step-block cf-block">
+              <span class="step-badge">PASO 3 · ACTIVAR EN CLOUDFLARE PAGES</span>
+              <ol class="cf-steps">
+                <li>Abrí <strong>Cloudflare Dashboard → Workers &amp; Pages → amargo-creativo → Settings → Variables and Secrets</strong>.</li>
+                <li>Agregá la variable secreta <code>ADMIN_TOTP_SECRET</code> con el valor generado arriba.</li>
+                <li>Guardá y hacé <strong>Retry deployment</strong> (o un push). Desde ese instante, <code>/admin/login</code> exigirá contraseña + Google Authenticator.</li>
+              </ol>
+              <button type="button" id="btn-copy-env" class="btn-outline-sm">
+                📋 Copiar línea ADMIN_TOTP_SECRET=...
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {totpActive && (
+        <div class="active-test-box">
+          <div>
+            <strong>✓ Google Authenticator ya está activo en producción.</strong>
+            <p>Podés probar un código actual de tu teléfono para verificar que la sincronización funciona correctamente.</p>
+          </div>
+          <form id="test-active-form" class="verify-row">
+            <input type="text" id="active-code-input" inputmode="numeric" maxlength="6" placeholder="000000" class="verify-input" />
+            <button type="submit" class="btn-outline-sm">Probar 2FA Activo</button>
+          </form>
+        </div>
+      )}
+    </div>
+  </div>
+
+  <script>
+    const genBtn = document.getElementById("btn-gen-totp") as HTMLButtonElement | null;
+    const panel = document.getElementById("totp-setup-panel");
+    const qrContainer = document.getElementById("qr-container");
+    const secretText = document.getElementById("secret-text");
+    const copySecretBtn = document.getElementById("btn-copy-secret");
+    const copyEnvBtn = document.getElementById("btn-copy-env");
+    const verifyForm = document.getElementById("verify-totp-form");
+    const verifyInput = document.getElementById("verify-code-input") as HTMLInputElement | null;
+    const verifyStatus = document.getElementById("verify-status");
+    const activeForm = document.getElementById("test-active-form");
+    const activeInput = document.getElementById("active-code-input") as HTMLInputElement | null;
+
+    const toast = (msg: string, type: "success" | "error" | "info" = "success") => {
+      (window as unknown as { adminToast?: (m: string, t?: string) => void }).adminToast?.(msg, type);
+    };
+
+    let currentSecret = "";
+
+    genBtn?.addEventListener("click", async () => {
+      genBtn.disabled = true;
+      const orig = genBtn.textContent;
+      genBtn.textContent = "Generando...";
+      try {
+        const res = await fetch("/api/admin/totp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "generate" }),
+        });
+        const data = await res.json();
+        if (data.ok && data.secret) {
+          currentSecret = data.secret;
+          if (qrContainer) qrContainer.innerHTML = data.qrSvg;
+          if (secretText) secretText.textContent = data.secret;
+          if (panel) panel.hidden = false;
+          if (verifyStatus) verifyStatus.hidden = true;
+          if (verifyInput) verifyInput.value = "";
+          toast("✓ QR generado localmente. Escanealo con Google Authenticator.");
+        } else {
+          toast(data.message || "Error al generar QR", "error");
+        }
+      } catch {
+        toast("Error de conexión", "error");
+      } finally {
+        genBtn.disabled = false;
+        genBtn.textContent = orig;
+      }
+    });
+
+    copySecretBtn?.addEventListener("click", async () => {
+      if (!currentSecret) return;
+      await navigator.clipboard.writeText(currentSecret);
+      toast("✓ Secreto Base32 copiado");
+    });
+
+    copyEnvBtn?.addEventListener("click", async () => {
+      if (!currentSecret) return;
+      await navigator.clipboard.writeText(`ADMIN_TOTP_SECRET=${currentSecret}`);
+      toast("✓ Variable ADMIN_TOTP_SECRET copiada");
+    });
+
+    verifyInput?.addEventListener("input", () => {
+      verifyInput.value = verifyInput.value.replace(/\D/g, "").slice(0, 6);
+    });
+
+    verifyForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!currentSecret || !verifyInput) return;
+      const res = await fetch("/api/admin/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", secret: currentSecret, code: verifyInput.value }),
+      });
+      const data = await res.json();
+      if (verifyStatus) {
+        verifyStatus.textContent = data.message;
+        verifyStatus.className = `verify-status ${data.ok ? "is-ok" : "is-err"}`;
+        verifyStatus.hidden = false;
+      }
+      toast(data.message, data.ok ? "success" : "error");
+    });
+
+    activeForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!activeInput) return;
+      const res = await fetch("/api/admin/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "verify", code: activeInput.value }),
+      });
+      const data = await res.json();
+      toast(data.message, data.ok ? "success" : "error");
+    });
+  </script>
+</AdminLayout>
+
+<style>
+  .sec-page { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--adm-card);
+    border: 1px solid var(--adm-border);
+    border-radius: 16px;
+    padding: 1.15rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .st-label {
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--adm-mute);
+    font-weight: 700;
+  }
+
+  .st-val { font-family: var(--adm-font-mono); font-size: 0.92rem; font-weight: 800; }
+  .st-val.ok { color: #34d399; }
+  .st-val.warn { color: #fbbf24; }
+  .st-val.info { color: var(--adm-lime); }
+
+  .st-sub { font-size: 0.72rem; color: var(--adm-mute); }
+  .st-sub code { font-family: var(--adm-font-mono); color: var(--adm-ink); font-size: 0.68rem; }
+
+  .wizard-card { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .wiz-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .wiz-kicker {
+    display: block;
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--adm-lime);
+    margin-bottom: 0.35rem;
+  }
+
+  .wiz-head h2 {
+    font-family: var(--adm-font-display);
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+    font-weight: 800;
+  }
+
+  .wiz-head p { margin: 0; font-size: 0.86rem; color: var(--adm-mute); max-width: 68ch; }
+
+  .setup-panel[hidden] { display: none; }
+
+  .setup-grid {
+    display: grid;
+    grid-template-columns: 310px 1fr;
+    gap: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--adm-border);
+  }
+
+  .step-badge {
+    display: inline-block;
+    font-family: var(--adm-font-mono);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--adm-lime);
+    background: rgba(212, 255, 51, 0.1);
+    border: 1px solid rgba(212, 255, 51, 0.28);
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+    margin-bottom: 0.85rem;
+  }
+
+  .qr-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .qr-box {
+    background: #ffffff;
+    padding: 12px;
+    border-radius: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .qr-box :global(svg) {
+    width: 210px;
+    height: 210px;
+    display: block;
+  }
+
+  .manual-key-box { width: 100%; }
+  .mk-label { display: block; font-size: 0.74rem; color: var(--adm-mute); margin-bottom: 0.35rem; }
+
+  .mk-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #0d1510;
+    border: 1px solid var(--adm-border);
+    border-radius: 10px;
+    padding: 0.5rem 0.65rem;
+  }
+
+  .mk-code {
+    flex: 1;
+    font-family: var(--adm-font-mono);
+    font-size: 0.74rem;
+    color: var(--adm-lime);
+    word-break: break-all;
+  }
+
+  .btn-copy-mini {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--adm-border);
+    border-radius: 7px;
+    color: var(--adm-ink);
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .verify-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .step-block {
+    background: #101913;
+    border: 1px solid var(--adm-border);
+    border-radius: 14px;
+    padding: 1.15rem 1.25rem;
+  }
+
+  .step-desc { margin: 0 0 0.85rem; font-size: 0.84rem; color: var(--adm-mute); }
+
+  .verify-row {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .verify-input {
+    width: 150px;
+    background: #0b110d;
+    border: 1px solid var(--adm-border-light);
+    border-radius: 999px;
+    color: var(--adm-ink);
+    font-family: var(--adm-font-mono);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-align: center;
+    height: 38px;
+    padding: 0 0.75rem;
+    outline: none;
+  }
+
+  .verify-input:focus { border-color: var(--adm-lime); }
+
+  .verify-status {
+    margin-top: 0.75rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.55rem 0.85rem;
+    border-radius: 10px;
+  }
+
+  .verify-status[hidden] { display: none; }
+  .verify-status.is-ok { background: rgba(16, 185, 129, 0.14); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+  .verify-status.is-err { background: rgba(239, 68, 68, 0.14); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+
+  .cf-steps {
+    margin: 0 0 1rem;
+    padding-left: 1.25rem;
+    font-size: 0.84rem;
+    color: #d2ddd6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .cf-steps code {
+    font-family: var(--adm-font-mono);
+    color: var(--adm-lime);
+    font-size: 0.78rem;
+  }
+
+  .active-test-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.28);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+  }
+
+  .active-test-box p { margin: 0.2rem 0 0; font-size: 0.82rem; color: var(--adm-mute); }
+
+  @media (max-width: 960px) {
+    .status-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .setup-grid { grid-template-columns: 1fr; }
+  }
+</style>

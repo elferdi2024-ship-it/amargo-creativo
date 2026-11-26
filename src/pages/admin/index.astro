@@ -7,126 +7,154 @@ import CopyButton from "../../components/admin/CopyButton";
 import ClientModal from "../../components/admin/ClientModal";
 import ProjectHealth from "../../components/admin/ProjectHealth";
 import { supabaseAdmin } from "../../lib/supabase";
-import { formatMoney, formatDate } from "../../lib/format";
+import { formatMoney, formatDate, whatsappHref } from "../../lib/format";
 import { calculateHealth } from "../../lib/health";
 
-// 1. Obtener métricas y listados
-const { data: proposals } = await supabaseAdmin
-  .from("proposals")
-  .select("*, clients(name, company)")
-  .order("created_at", { ascending: false });
+// 1. Consultas paralelas (mayor velocidad SSR)
+const [proposalsRes, projectsRes, clientsRes, contentRes, invoicesRes] = await Promise.all([
+  supabaseAdmin.from("proposals").select("*, clients(name, company, phone)").order("created_at", { ascending: false }),
+  supabaseAdmin.from("projects").select("*, clients(name, company)").order("created_at", { ascending: false }),
+  supabaseAdmin.from("clients").select("id, name, company, email, phone").order("name", { ascending: true }),
+  supabaseAdmin.from("content_pieces").select("id, type, title, status, created_at, projects(title)").order("created_at", { ascending: false }).limit(4),
+  supabaseAdmin.from("invoices").select("id, total, currency, status, issue_date").order("issue_date", { ascending: false }),
+]);
 
-const { data: projects } = await supabaseAdmin
-  .from("projects")
-  .select("*, clients(name, company)")
-  .order("created_at", { ascending: false });
+const allProposals = proposalsRes.data || [];
+const allProjects = projectsRes.data || [];
+const allClients = clientsRes.data || [];
+const contentPieces = contentRes.data || [];
+const allInvoices = invoicesRes.data || [];
 
-const { data: clients } = await supabaseAdmin
-  .from("clients")
-  .select("id, name, company, email, phone")
-  .order("name", { ascending: true });
-
-const { data: contentPieces } = await supabaseAdmin
-  .from("content_pieces")
-  .select("id, type, title, status, created_at, projects(title)")
-  .order("created_at", { ascending: false })
-  .limit(4);
-
-const allProposals = proposals || [];
-const allProjects = projects || [];
-const allClients = clients || [];
-
-// Métricas calculadas
+// 2. KPIs con separación estricta de monedas (USD vs UYU)
 const totalProposalsCount = allProposals.length;
+const draftProposalsCount = allProposals.filter((p) => p.status === "draft").length;
 const activeProposalsCount = allProposals.filter((p) => p.status === "active").length;
 const acceptedProposalsCount = allProposals.filter((p) => p.status === "accepted").length;
 const activeProjectsCount = allProjects.filter((p) => p.status === "active").length;
+const finishedProjectsCount = allProjects.filter((p) => p.status === "finished").length;
 
-const totalAcceptedValue = allProposals
-  .filter((p) => p.status === "accepted")
-  .reduce((acc, p) => {
-    const amt = p.investment?.amount || (p.investment?.plans?.[0]?.price) || 0;
-    return acc + Number(amt);
-  }, 0);
+const conversionRate =
+  totalProposalsCount > 0 ? Math.round((acceptedProposalsCount / totalProposalsCount) * 100) : 0;
 
-// Proyectos que requieren atención (salud amarilla o roja)
+function extractProposalAmount(p: any): { amount: number; currency: string } {
+  const inv = p.investment || {};
+  const currency = (inv.currency || "USD").toUpperCase();
+  if (inv.type === "plans" && Array.isArray(inv.plans)) {
+    const matched = inv.plans.find((pl: any) => pl.name === p.accepted_plan) || inv.plans[0];
+    return { amount: Number(matched?.price || 0), currency };
+  }
+  return { amount: Number(inv.amount || 0), currency };
+}
+
+let acceptedUSD = 0;
+let acceptedUYU = 0;
+for (const p of allProposals.filter((pr) => pr.status === "accepted")) {
+  const { amount, currency } = extractProposalAmount(p);
+  if (currency === "UYU") acceptedUYU += amount;
+  else acceptedUSD += amount;
+}
+
+const pendingInvoicesCount = allInvoices.filter((i) => ["issued", "sent", "partial", "overdue"].includes(i.status)).length;
+
+// 3. Serie últimos 6 meses (Propuestas creadas vs Aceptadas) para gráfico nativo SVG
+const now = new Date();
+const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const monthlySeries = Array.from({ length: 6 }, (_, idx) => {
+  const d = new Date(now.getFullYear(), now.getMonth() - (5 - idx), 1);
+  const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const created = allProposals.filter((p) => (p.created_at || "").startsWith(ym)).length;
+  const accepted = allProposals.filter((p) => p.status === "accepted" && ((p.accepted_at || p.created_at || "").startsWith(ym))).length;
+  return { label: monthNames[d.getMonth()], created, accepted };
+});
+const maxMonthly = Math.max(1, ...monthlySeries.map((m) => Math.max(m.created, m.accepted)));
+
+// 4. Proyectos que requieren atención
 const attentionNeededProjects = allProjects.filter((pr) => {
   if (pr.status !== "active") return false;
   const h = pr.health_status || calculateHealth(pr.last_checkin_at, pr.updated_at);
   return h === "yellow" || h === "red";
 });
+
+const funnelSteps = [
+  { label: "Borradores", count: draftProposalsCount, color: "#94a3b8" },
+  { label: "En decisión", count: activeProposalsCount, color: "#97bc62" },
+  { label: "Aceptadas", count: acceptedProposalsCount, color: "#d4ff33" },
+  { label: "En desarrollo", count: activeProjectsCount, color: "#38bdf8" },
+  { label: "Finalizados", count: finishedProjectsCount, color: "#34d399" },
+];
+const maxFunnel = Math.max(1, ...funnelSteps.map((s) => s.count));
 ---
 
 <AdminLayout title="Dashboard General" activeSection="dashboard">
-  <!-- METRICS CARDS -->
+  <!-- KPI BENTO GRID -->
   <div class="metrics-grid">
     <div class="metric-card">
-      <span class="m-label">Propuestas Aceptadas</span>
+      <div class="m-top">
+        <span class="m-label">Tasa de Cierre</span>
+        <span class="m-pill tabular">{conversionRate}%</span>
+      </div>
       <div class="m-value-row">
-        <span class="m-num text-lime">{acceptedProposalsCount}</span>
-        <span class="m-sub">de {totalProposalsCount} creadas</span>
+        <span class="m-num text-lime tabular">{acceptedProposalsCount}</span>
+        <span class="m-sub">de {totalProposalsCount} propuestas</span>
       </div>
       <div class="m-bar">
-        <div
-          class="m-bar-fill bg-lime"
-          style={`width: ${totalProposalsCount > 0 ? (acceptedProposalsCount / totalProposalsCount) * 100 : 0}%;`}
-        ></div>
+        <div class="m-bar-fill bg-lime" style={`width: ${conversionRate}%;`}></div>
       </div>
     </div>
 
     <div class="metric-card">
-      <span class="m-label">Facturación Confirmada</span>
-      <div class="m-value-row">
-        <span class="m-num">{formatMoney(totalAcceptedValue, "USD")}</span>
+      <div class="m-top">
+        <span class="m-label">Aprobado (USD)</span>
+        {acceptedUYU > 0 && <span class="m-pill-alt tabular">+ {formatMoney(acceptedUYU, "UYU")}</span>}
       </div>
-      <span class="m-foot">Total en propuestas aprobadas</span>
+      <div class="m-value-row">
+        <span class="m-num tabular">{formatMoney(acceptedUSD, "USD")}</span>
+      </div>
+      <span class="m-foot">Propuestas confirmadas (monedas separadas)</span>
     </div>
 
     <div class="metric-card">
-      <span class="m-label">Magic Links Activos</span>
+      <div class="m-top">
+        <span class="m-label">Magic Links Activos</span>
+      </div>
       <div class="m-value-row">
-        <span class="m-num text-mate-light">{activeProposalsCount}</span>
+        <span class="m-num text-mate-light tabular">{activeProposalsCount}</span>
         <span class="m-sub">en decisión</span>
       </div>
-      <span class="m-foot">Clientes revisando propuesta</span>
+      <span class="m-foot">{pendingInvoicesCount} facturas por cobrar</span>
     </div>
 
     <div class="metric-card">
-      <span class="m-label">Proyectos en Desarrollo</span>
-      <div class="m-value-row">
-        <span class="m-num">{activeProjectsCount}</span>
-        <span class="m-sub">activos</span>
+      <div class="m-top">
+        <span class="m-label">Producción Activa</span>
       </div>
-      <span class="m-foot">{allClients.length} clientes en base</span>
+      <div class="m-value-row">
+        <span class="m-num tabular">{activeProjectsCount}</span>
+        <span class="m-sub">proyectos</span>
+      </div>
+      <span class="m-foot">{allClients.length} clientes en CRM</span>
     </div>
   </div>
 
   <!-- QUICK ACTIONS BAR -->
   <div class="quick-actions-bar">
-    <span class="qa-title">Acciones directas:</span>
+    <span class="qa-title">Accesos rápidos:</span>
     <div class="qa-buttons">
-      <a href="/admin/proposals/new" class="btn-primary-sm">
-        + Crear Propuesta
-      </a>
-      <a href="/admin/pipeline" class="btn-outline-sm">
-        📊 Pipeline Kanban
-      </a>
-      <a href="/admin/contenido" class="btn-outline-sm">
-        ✨ Content Engine
-      </a>
-      <ClientModal client:load buttonLabel="+ Nuevo Cliente" />
-      <a href="/admin/contracts" class="btn-outline-sm">
-        Generar Contrato
-      </a>
+      <a href="/admin/proposals/new" class="btn-primary-sm">+ Propuesta</a>
+      <a href="/admin/finanzas/facturas/nueva" class="btn-outline-sm">🧾 Nueva Factura</a>
+      <a href="/admin/pipeline" class="btn-outline-sm">📊 Pipeline</a>
+      <a href="/admin/contenido" class="btn-outline-sm">✨ Content IA</a>
+      <ClientModal client:load buttonLabel="+ Cliente" />
+      <a href="/admin/contracts" class="btn-outline-sm">📄 Contrato</a>
     </div>
   </div>
 
-  <!-- ATTENTION NEEDED BANNER IF ANY -->
+  <!-- ATTENTION NEEDED BANNER -->
   {attentionNeededProjects.length > 0 && (
     <div class="attention-banner">
       <div class="att-header">
         <span class="att-icon">⚠️</span>
-        <strong>{attentionNeededProjects.length} proyecto(s) requieren atención o check-in:</strong>
+        <strong>{attentionNeededProjects.length} proyecto(s) requieren check-in o atención:</strong>
       </div>
       <div class="att-list">
         {attentionNeededProjects.map((pr) => (
@@ -148,80 +176,172 @@ const attentionNeededProjects = allProjects.filter((pr) => {
     </div>
   )}
 
+  <!-- ANALYTICS ROW: 6-MONTH ACTIVITY + CONVERSION FUNNEL -->
+  <div class="analytics-grid">
+    <div class="card-box">
+      <div class="box-header">
+        <div>
+          <h2 class="box-title">Pulso Comercial (6 Meses)</h2>
+          <span class="box-sub">Propuestas creadas vs aceptadas por mes</span>
+        </div>
+        <div class="chart-legend">
+          <span class="lg-item"><i class="lg-dot lg-created"></i> Creadas</span>
+          <span class="lg-item"><i class="lg-dot lg-accepted"></i> Aceptadas</span>
+        </div>
+      </div>
+
+      <div class="svg-chart-wrap">
+        <svg viewBox="0 0 360 130" class="bar-chart-svg" role="img" aria-label="Gráfico de propuestas de los últimos 6 meses">
+          {monthlySeries.map((m, i) => {
+            const groupX = 18 + i * 56;
+            const hCreated = Math.max(4, Math.round((m.created / maxMonthly) * 84));
+            const hAccepted = Math.max(4, Math.round((m.accepted / maxMonthly) * 84));
+            return (
+              <g>
+                <rect x={groupX} y={100 - hCreated} width="14" height={hCreated} rx="4" fill="rgba(151, 188, 98, 0.35)" />
+                <rect x={groupX + 18} y={100 - hAccepted} width="14" height={hAccepted} rx="4" fill="#d4ff33" />
+                <text x={groupX + 16} y="118" text-anchor="middle" fill="#889b8e" font-size="9.5" font-family="JetBrains Mono">{m.label}</text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+
+    <div class="card-box">
+      <div class="box-header">
+        <div>
+          <h2 class="box-title">Embudo Operativo</h2>
+          <span class="box-sub">Distribución actual del estudio</span>
+        </div>
+        <a href="/admin/pipeline" class="link-more">Kanban →</a>
+      </div>
+
+      <div class="funnel-list">
+        {funnelSteps.map((step) => (
+          <div class="funnel-row">
+            <div class="funnel-meta">
+              <span>{step.label}</span>
+              <strong class="tabular">{step.count}</strong>
+            </div>
+            <div class="funnel-track">
+              <div
+                class="funnel-fill"
+                style={`width: ${Math.max(step.count > 0 ? 12 : 0, Math.round((step.count / maxFunnel) * 100))}%; background: ${step.color};`}
+              ></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN 2-COLUMN SECTION -->
   <div class="dashboard-grid-2">
     <!-- RECENT PROPOSALS -->
     <div class="card-box section-box">
       <div class="box-header">
         <div>
           <h2 class="box-title">Propuestas Recientes</h2>
-          <span class="box-sub">Últimos links generados para clientes</span>
+          <span class="box-sub">Magic links con envío directo a WhatsApp</span>
         </div>
         <a href="/admin/proposals" class="link-more">Ver todas →</a>
       </div>
 
-      <div class="adm-table-wrap">
-        <table class="adm-table">
-          <thead>
-            <tr>
-              <th>Cliente / Proyecto</th>
-              <th>Estado</th>
-              <th>Monto</th>
-              <th>Magic Link</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-          <tbody>
-            {allProposals.slice(0, 6).map((p) => {
-              const amount = p.investment?.type === "plans"
-                ? `Planes (${p.investment.plans?.length || 0})`
-                : formatMoney(p.investment?.amount || 0, p.investment?.currency);
-              const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+      <!-- Mobile Stacked Cards (< 768px) -->
+      <div class="dash-mobile-cards">
+        {allProposals.slice(0, 6).map((p) => {
+          const amount = p.investment?.type === "plans"
+            ? `Planes (${p.investment.plans?.length || 0})`
+            : formatMoney(p.investment?.amount || 0, p.investment?.currency);
+          const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+          const waMsg = `Hola ${p.clients?.name || ""}, te comparto la propuesta interactiva de "${p.project_title}": ${magicUrl}`;
+          const waLink = whatsappHref(waMsg, p.clients?.phone);
 
-              return (
-                <tr>
-                  <td>
-                    <strong>{p.project_title}</strong>
-                    <div class="cell-sub">{p.clients?.name || "Sin cliente"} {p.clients?.company ? `(${p.clients.company})` : ""}</div>
-                  </td>
-                  <td>
-                    <span class={`badge-status status-${p.status}`}>
-                      {p.status === "accepted" ? "Aceptada" : p.status === "active" ? "Activa" : p.status === "draft" ? "Borrador" : p.status}
-                    </span>
-                  </td>
-                  <td>
-                    <span class="font-mono">{amount}</span>
-                  </td>
-                  <td>
-                    <CopyButton client:load text={magicUrl} label="Copiar Link" />
-                  </td>
-                  <td>
-                    <a href={`/admin/proposals/${p.id}`} class="btn-table-action">
-                      Detalle
-                    </a>
-                  </td>
-                </tr>
-              );
-            })}
-            {allProposals.length === 0 && (
+          return (
+            <div class="mini-prop-card">
+              <div class="mpc-top">
+                <span class={`badge-status status-${p.status}`}>
+                  {p.status === "accepted" ? "Aceptada" : p.status === "active" ? "Activa" : p.status === "draft" ? "Borrador" : p.status}
+                </span>
+                <span class="font-mono mpc-amount tabular">{amount}</span>
+              </div>
+              <a href={`/admin/proposals/${p.id}`} class="mpc-title">{p.project_title}</a>
+              <span class="mpc-client">{p.clients?.name || "Sin cliente"}{p.clients?.company ? ` · ${p.clients.company}` : ""}</span>
+              <div class="mpc-actions">
+                <CopyButton client:load text={magicUrl} label="Link" />
+                <a href={waLink} target="_blank" rel="noopener noreferrer" class="btn-wa-mini">WhatsApp ↗</a>
+                <a href={`/admin/proposals/${p.id}`} class="btn-table-action">Detalle</a>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <!-- Desktop Table (>= 768px) -->
+      <div class="dash-desktop-table">
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
               <tr>
-                <td colspan="5" class="empty-cell">
-                  No hay propuestas creadas todavía.
-                </td>
+                <th>Cliente / Proyecto</th>
+                <th>Estado</th>
+                <th>Monto</th>
+                <th>Compartir</th>
+                <th>Acción</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {allProposals.slice(0, 6).map((p) => {
+                const amount = p.investment?.type === "plans"
+                  ? `Planes (${p.investment.plans?.length || 0})`
+                  : formatMoney(p.investment?.amount || 0, p.investment?.currency);
+                const magicUrl = `${Astro.url.origin}/p/${p.slug}`;
+                const waMsg = `Hola ${p.clients?.name || ""}, te comparto la propuesta interactiva de "${p.project_title}": ${magicUrl}`;
+                const waLink = whatsappHref(waMsg, p.clients?.phone);
+
+                return (
+                  <tr>
+                    <td>
+                      <strong>{p.project_title}</strong>
+                      <div class="cell-sub">{p.clients?.name || "Sin cliente"} {p.clients?.company ? `(${p.clients.company})` : ""}</div>
+                    </td>
+                    <td>
+                      <span class={`badge-status status-${p.status}`}>
+                        {p.status === "accepted" ? "Aceptada" : p.status === "active" ? "Activa" : p.status === "draft" ? "Borrador" : p.status}
+                      </span>
+                    </td>
+                    <td><span class="font-mono tabular">{amount}</span></td>
+                    <td>
+                      <div class="share-row">
+                        <CopyButton client:load text={magicUrl} label="Copiar" />
+                        <a href={waLink} target="_blank" rel="noopener noreferrer" class="btn-wa-mini" title="Enviar por WhatsApp">WA ↗</a>
+                      </div>
+                    </td>
+                    <td>
+                      <a href={`/admin/proposals/${p.id}`} class="btn-table-action">Detalle</a>
+                    </td>
+                  </tr>
+                );
+              })}
+              {allProposals.length === 0 && (
+                <tr>
+                  <td colspan="5" class="empty-cell">No hay propuestas creadas todavía.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <!-- ACTIVE PROJECTS & CONTENT ENGINE -->
+    <!-- SIDE SECTIONS -->
     <div class="side-sections">
-      <!-- Active Projects -->
       <div class="card-box section-box">
         <div class="box-header">
           <div>
             <h2 class="box-title">Proyectos en Marcha</h2>
-            <span class="box-sub">Seguimiento de etapas & salud</span>
+            <span class="box-sub">Etapas activas y semáforo de salud</span>
           </div>
           <a href="/admin/projects" class="link-more">Ver todos →</a>
         </div>
@@ -229,7 +349,7 @@ const attentionNeededProjects = allProjects.filter((pr) => {
         <div class="projects-mini-list">
           {allProjects.slice(0, 4).map((pr) => {
             const stages = Array.isArray(pr.stages) ? pr.stages : [];
-            const currentStageObj = stages.find((s: any) => s.status === "current") || stages[pr.current_stage - 1];
+            const currentStageObj = stages.find((s: any) => s.status === "current") || stages[(pr.current_stage || 1) - 1];
             const health = pr.health_status || calculateHealth(pr.last_checkin_at, pr.updated_at);
 
             return (
@@ -258,18 +378,17 @@ const attentionNeededProjects = allProjects.filter((pr) => {
         </div>
       </div>
 
-      <!-- Recent Marketing Content -->
       <div class="card-box section-box">
         <div class="box-header">
           <div>
-            <h2 class="box-title">Content Engine Reciente</h2>
-            <span class="box-sub">Piezas listas para publicar</span>
+            <h2 class="box-title">Content Engine IA</h2>
+            <span class="box-sub">Borradores recientes listos para publicar</span>
           </div>
           <a href="/admin/contenido" class="link-more">Ver todas →</a>
         </div>
 
         <ul class="docs-mini-list">
-          {(contentPieces || []).map((cp) => (
+          {contentPieces.map((cp) => (
             <li class="doc-mini-item">
               <span class="doc-icon">✨</span>
               <div class="doc-meta">
@@ -278,13 +397,11 @@ const attentionNeededProjects = allProjects.filter((pr) => {
                   {cp.type} · {formatDate(cp.created_at)} · <span class={`badge-status status-${cp.status}`}>{cp.status}</span>
                 </span>
               </div>
-              <a href={`/admin/contenido/${cp.id}`} class="btn-doc-down">
-                Editar →
-              </a>
+              <a href={`/admin/contenido/${cp.id}`} class="btn-doc-down">Editar →</a>
             </li>
           ))}
-          {(contentPieces || []).length === 0 && (
-            <p class="empty-text">Genera contenidos de marketing desde el detalle de cualquier proyecto.</p>
+          {contentPieces.length === 0 && (
+            <p class="empty-text">Generá piezas con IA desde el detalle de cualquier proyecto.</p>
           )}
         </ul>
       </div>
@@ -295,37 +412,67 @@ const attentionNeededProjects = allProjects.filter((pr) => {
 <style>
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
-    margin-bottom: 1.75rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
 
   .metric-card {
     background: var(--adm-card);
     border: 1px solid var(--adm-border);
-    border-radius: 12px;
-    padding: 1.35rem 1.5rem;
+    border-radius: 16px;
+    padding: 1.15rem 1.25rem;
     display: flex;
     flex-direction: column;
   }
 
+  .m-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
   .m-label {
-    font-size: 0.72rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     color: var(--adm-mute);
     font-weight: 700;
+  }
+
+  .m-pill {
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #0b110d;
+    background: var(--adm-lime);
+    padding: 0.12rem 0.48rem;
+    border-radius: 999px;
+  }
+
+  .m-pill-alt {
+    font-family: var(--adm-font-mono);
+    font-size: 0.64rem;
+    font-weight: 700;
+    color: var(--adm-mate-light);
+    background: rgba(151, 188, 98, 0.14);
+    padding: 0.12rem 0.45rem;
+    border-radius: 999px;
   }
 
   .m-value-row {
     display: flex;
     align-items: baseline;
-    gap: 0.5rem;
-    margin: 0.5rem 0 0.4rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: 0.5rem 0 0.35rem;
   }
 
   .m-num {
-    font-size: 1.85rem;
+    font-family: var(--adm-font-display);
+    font-size: clamp(1.35rem, 2.2vw, 1.85rem);
     font-weight: 800;
     letter-spacing: -0.03em;
     color: var(--adm-ink);
@@ -335,47 +482,37 @@ const attentionNeededProjects = allProjects.filter((pr) => {
   .text-lime { color: var(--adm-lime); }
   .text-mate-light { color: var(--adm-mate-light); }
 
-  .m-sub {
-    font-size: 0.8rem;
-    color: var(--adm-mute);
-  }
-
-  .m-foot {
-    font-size: 0.75rem;
-    color: var(--adm-mute);
-  }
+  .m-sub { font-size: 0.78rem; color: var(--adm-mute); }
+  .m-foot { font-size: 0.74rem; color: var(--adm-mute); }
 
   .m-bar {
-    height: 4px;
+    height: 5px;
     background: rgba(255, 255, 255, 0.08);
-    border-radius: 2px;
-    margin-top: 0.5rem;
+    border-radius: 999px;
+    margin-top: 0.45rem;
     overflow: hidden;
   }
 
-  .m-bar-fill {
-    height: 100%;
-    border-radius: 2px;
-  }
-
+  .m-bar-fill { height: 100%; border-radius: 999px; }
   .bg-lime { background: var(--adm-lime); }
 
   /* Quick Actions Bar */
   .quick-actions-bar {
-    background: #142018;
+    background: rgba(21, 33, 25, 0.78);
     border: 1px solid var(--adm-border);
-    border-radius: 10px;
-    padding: 0.85rem 1.25rem;
+    border-radius: 14px;
+    padding: 0.75rem 1.1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
   }
 
   .qa-title {
-    font-size: 0.82rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.72rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -385,240 +522,250 @@ const attentionNeededProjects = allProjects.filter((pr) => {
   .qa-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.6rem;
+    gap: 0.5rem;
+    align-items: center;
   }
 
   /* Attention Banner */
   .attention-banner {
     background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    margin-bottom: 1.75rem;
+    border: 1px solid rgba(245, 158, 11, 0.32);
+    border-radius: 14px;
+    padding: 0.95rem 1.15rem;
+    margin-bottom: 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.6rem;
   }
 
   .att-header {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.88rem;
-    color: #FBBF24;
+    font-size: 0.86rem;
+    color: #fbbf24;
   }
 
-  .att-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-  }
+  .att-list { display: flex; flex-wrap: wrap; gap: 0.65rem; }
 
   .att-item {
-    background: #111C14;
+    background: #101913;
     border: 1px solid var(--adm-border);
-    border-radius: 6px;
+    border-radius: 10px;
     padding: 0.4rem 0.75rem;
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    gap: 0.65rem;
   }
 
-  .att-link {
-    font-size: 0.82rem;
+  .att-link { font-size: 0.82rem; color: var(--adm-ink); text-decoration: none; font-weight: 600; }
+
+  /* Analytics Grid */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .chart-legend {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    color: var(--adm-mute);
+  }
+
+  .lg-item { display: inline-flex; align-items: center; gap: 5px; }
+  .lg-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .lg-created { background: rgba(151, 188, 98, 0.55); }
+  .lg-accepted { background: var(--adm-lime); }
+
+  .svg-chart-wrap {
+    margin-top: 0.85rem;
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 0.75rem 0.5rem 0.35rem;
+  }
+
+  .bar-chart-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .funnel-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-top: 0.85rem;
+  }
+
+  .funnel-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
     color: var(--adm-ink);
-    text-decoration: none;
-    font-weight: 600;
+    margin-bottom: 4px;
   }
 
-  .att-link:hover {
-    color: var(--adm-lime);
+  .funnel-meta strong { font-family: var(--adm-font-mono); color: var(--adm-lime); }
+
+  .funnel-track {
+    height: 7px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.07);
+    overflow: hidden;
+  }
+
+  .funnel-fill {
+    height: 100%;
+    border-radius: 999px;
+    transition: width 0.35s ease;
   }
 
   /* Grid 2 */
   .dashboard-grid-2 {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1.75rem;
-  }
-
-  @media (min-width: 1024px) {
-    .dashboard-grid-2 {
-      grid-template-columns: 1.55fr 1fr;
-    }
-  }
-
-  .section-box {
-    display: flex;
-    flex-direction: column;
     gap: 1.25rem;
   }
+
+  @media (min-width: 1080px) {
+    .dashboard-grid-2 { grid-template-columns: 1.55fr 1fr; }
+  }
+
+  .section-box { display: flex; flex-direction: column; gap: 1rem; }
 
   .box-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 0.75rem;
   }
 
   .box-title {
-    margin: 0 0 0.15rem;
-    font-size: 1.1rem;
+    font-family: var(--adm-font-display);
+    margin: 0 0 0.12rem;
+    font-size: 1.05rem;
     font-weight: 800;
     color: var(--adm-ink);
   }
 
-  .box-sub {
-    font-size: 0.8rem;
-    color: var(--adm-mute);
-  }
+  .box-sub { font-size: 0.78rem; color: var(--adm-mute); }
+  .link-more { font-family: var(--adm-font-mono); font-size: 0.76rem; font-weight: 700; color: var(--adm-lime); text-decoration: none; white-space: nowrap; }
+  .cell-sub { font-size: 0.76rem; color: var(--adm-mute); margin-top: 0.15rem; }
+  .font-mono { font-family: var(--adm-font-mono); font-size: 0.8rem; }
 
-  .link-more {
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--adm-lime);
+  .share-row { display: flex; align-items: center; gap: 0.4rem; }
+
+  .btn-wa-mini {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.32rem 0.62rem;
+    border-radius: 999px;
+    background: rgba(37, 211, 102, 0.16);
+    border: 1px solid rgba(37, 211, 102, 0.4);
+    color: #4ade80;
+    font-family: var(--adm-font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
     text-decoration: none;
-  }
-
-  .cell-sub {
-    font-size: 0.78rem;
-    color: var(--adm-mute);
-    margin-top: 0.15rem;
-  }
-
-  .font-mono {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.82rem;
+    white-space: nowrap;
   }
 
   .btn-table-action {
-    display: inline-block;
-    padding: 0.35rem 0.65rem;
+    display: inline-flex;
+    align-items: center;
+    padding: 0.34rem 0.68rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--adm-border);
-    border-radius: 6px;
+    border-radius: 999px;
     color: var(--adm-ink);
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.15s ease;
   }
 
-  .btn-table-action:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--adm-ink);
+  .empty-cell, .empty-text { text-align: center; color: var(--adm-mute); font-size: 0.84rem; padding: 1.5rem; }
+
+  /* Mobile Proposals Cards */
+  .dash-mobile-cards { display: none; }
+  .dash-desktop-table { display: block; }
+
+  .mini-prop-card {
+    background: #101913;
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
   }
 
-  .empty-cell, .empty-text {
-    text-align: center;
-    color: var(--adm-mute);
-    font-size: 0.85rem;
-    padding: 1.5rem;
-  }
+  .mpc-top { display: flex; justify-content: space-between; align-items: center; }
+  .mpc-amount { color: var(--adm-lime); font-weight: 700; }
+  .mpc-title { font-weight: 700; color: var(--adm-ink); text-decoration: none; font-size: 0.95rem; }
+  .mpc-client { font-size: 0.78rem; color: var(--adm-mute); }
+  .mpc-actions { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding-top: 0.45rem; border-top: 1px solid var(--adm-border); }
 
   /* Side Sections */
-  .side-sections {
-    display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-  }
+  .side-sections { display: flex; flex-direction: column; gap: 1.25rem; }
+  .projects-mini-list, .docs-mini-list { display: flex; flex-direction: column; gap: 0.55rem; list-style: none; padding: 0; margin: 0; }
 
-  .projects-mini-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
-
-  .project-mini-item {
-    background: #111C14;
+  .project-mini-item,
+  .doc-mini-item {
+    background: #101913;
     border: 1px solid var(--adm-border);
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
+    border-radius: 11px;
+    padding: 0.72rem 0.9rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: border-color 0.15s ease;
+    gap: 0.65rem;
   }
 
-  .project-mini-item:hover {
-    border-color: var(--adm-lime);
-  }
-
-  .pr-info {
-    text-decoration: none;
-  }
-
-  .pr-info strong {
-    display: block;
-    font-size: 0.88rem;
-    color: var(--adm-ink);
-  }
-
-  .pr-client {
-    font-size: 0.75rem;
-    color: var(--adm-mute);
-  }
-
-  .pr-stage {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
+  .pr-info { text-decoration: none; min-width: 0; }
+  .pr-info strong { display: block; font-size: 0.86rem; color: var(--adm-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pr-client { font-size: 0.74rem; color: var(--adm-mute); }
+  .pr-stage { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
 
   .stage-tag {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
-    background: rgba(200, 255, 0, 0.12);
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
+    background: rgba(212, 255, 51, 0.12);
     color: var(--adm-lime);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-weight: 600;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 700;
   }
 
-  /* Docs Mini List */
-  .docs-mini-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+  .doc-meta { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+  .doc-meta strong { font-size: 0.84rem; color: var(--adm-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .doc-sub { font-size: 0.72rem; color: var(--adm-mute); }
+  .btn-doc-down { font-family: var(--adm-font-mono); font-size: 0.74rem; color: var(--adm-lime); text-decoration: none; font-weight: 700; flex-shrink: 0; }
+
+  @media (max-width: 960px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+    .analytics-grid { grid-template-columns: 1fr; }
   }
 
-  .doc-mini-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.65rem 0.85rem;
-    background: #111C14;
-    border: 1px solid var(--adm-border);
-    border-radius: 8px;
-  }
-
-  .doc-icon {
-    font-size: 1.1rem;
-  }
-
-  .doc-meta {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-  }
-
-  .doc-meta strong {
-    font-size: 0.85rem;
-    color: var(--adm-ink);
-  }
-
-  .doc-sub {
-    font-size: 0.72rem;
-    color: var(--adm-mute);
-  }
-
-  .btn-doc-down {
-    font-size: 0.75rem;
-    color: var(--adm-lime);
-    text-decoration: none;
-    font-weight: 600;
+  @media (max-width: 768px) {
+    .metric-card { padding: 0.95rem; }
+    .qa-title { display: none; }
+    .quick-actions-bar { padding: 0.6rem 0.75rem; }
+    .qa-buttons {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      width: 100%;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+    .qa-buttons::-webkit-scrollbar { display: none; }
+    .dash-mobile-cards { display: flex; flex-direction: column; gap: 0.75rem; }
+    .dash-desktop-table { display: none; }
   }
 </style>

@@ -5,76 +5,140 @@ export const prerender = false;
 import AdminLayout from "../../../layouts/AdminLayout.astro";
 import { supabaseAdmin } from "../../../lib/supabase";
 import { formatMoney, formatDate } from "../../../lib/format";
+import { generateWhatsAppInvoiceLink, generateWhatsAppReminderLink, type Invoice } from "../../../lib/invoices";
 
 const now = new Date();
+const todayIso = now.toISOString().slice(0, 10);
 const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10);
 
+// FIX: incluir tax_amount, subtotal, cfe_type y phone del cliente en la consulta
 const { data: invoices } = await supabaseAdmin
   .from("invoices")
-  .select("id, number, series, status, total, currency, issue_date, due_date, client_id, clients(name, company)")
+  .select("id, number, series, status, subtotal, tax_amount, total, currency, issue_date, due_date, cfe_type, client_id, clients(name, company, phone)")
   .order("issue_date", { ascending: false });
 
-const all = invoices || [];
+const all = (invoices || []) as unknown as Invoice[];
 
-const paidThisMonth = all.filter(
-  (i) => i.status === "paid" && i.issue_date && i.issue_date >= firstDayOfMonth
-);
+const paidThisMonth = all.filter((i) => i.status === "paid" && i.issue_date && i.issue_date >= firstDayOfMonth);
 const pending = all.filter((i) => ["issued", "sent", "partial", "draft"].includes(i.status));
 const overdue = all.filter(
-  (i) =>
-    i.status === "overdue" ||
-    (i.due_date && i.due_date < now.toISOString().slice(0, 10) && !["paid", "cancelled"].includes(i.status))
+  (i) => i.status === "overdue" || (i.due_date && i.due_date < todayIso && !["paid", "cancelled"].includes(i.status))
 );
 
-const incomeThisMonth = paidThisMonth.reduce((sum, i) => sum + Number(i.total || 0), 0);
-const totalPending = pending.reduce((sum, i) => sum + Number(i.total || 0), 0);
-const totalOverdue = overdue.reduce((sum, i) => sum + Number(i.total || 0), 0);
-const taxThisMonth = paidThisMonth.reduce((sum, i) => sum + Number((i as any).tax_amount || 0), 0);
+function sumByCurrency(list: Invoice[], field: "total" | "tax_amount") {
+  let uyu = 0;
+  let usd = 0;
+  for (const inv of list) {
+    const val = Number(inv[field] || 0);
+    if ((inv.currency || "UYU").toUpperCase() === "USD") usd += val;
+    else uyu += val;
+  }
+  return { uyu, usd };
+}
+
+const incomeSum = sumByCurrency(paidThisMonth, "total");
+const pendingSum = sumByCurrency(pending, "total");
+const overdueSum = sumByCurrency(overdue, "total");
+const taxSum = sumByCurrency(paidThisMonth, "tax_amount");
+
+// Gráfico últimos 6 meses (cantidad de facturas cobradas vs pendientes)
+const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
+const finSeries = Array.from({ length: 6 }, (_, idx) => {
+  const d = new Date(now.getFullYear(), now.getMonth() - (5 - idx), 1);
+  const ym = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+  const inMonth = all.filter((i) => (i.issue_date || "").startsWith(ym));
+  const paidCount = inMonth.filter((i) => i.status === "paid").length;
+  const openCount = inMonth.filter((i) => !["paid", "cancelled"].includes(i.status)).length;
+  return { label: monthNames[d.getMonth()], paidCount, openCount };
+});
+const maxFinBar = Math.max(1, ...finSeries.map((s) => Math.max(s.paidCount, s.openCount)));
+
+function statusText(status: string): string {
+  switch (status) {
+    case "paid": return "✓ Pagada";
+    case "issued": return "Emitida";
+    case "partial": return "Pago Parcial";
+    case "overdue": return "Vencida";
+    case "draft": return "Borrador";
+    default: return status;
+  }
+}
 ---
 
 <AdminLayout title="Finanzas & Cobros" activeSection="finanzas">
   <div class="finanzas-page">
     <div class="top-header-banner">
       <div>
-        <h2>Control de Facturación & Cobros (Uruguay)</h2>
+        <h2>Control de Facturación CFE &amp; Cobros (UY)</h2>
         <p>
-          Administrá facturas, estados de cuenta de clientes y registro de pagos. Preparado con estructura CFE (Comprobantes Fiscales Electrónicos).
+          Gestión de comprobantes fiscales, conciliación bancaria y seguimiento en 1 clic por WhatsApp con monedas separadas (UYU / USD).
         </p>
       </div>
       <div class="top-actions">
-        <a href="/admin/finanzas/configuracion" class="btn-sec-sm">
-          ⚙ Configuración CFE & Bancos
-        </a>
-        <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">
-          + Nueva Factura
-        </a>
+        <a href="/admin/finanzas/configuracion" class="btn-outline-sm">⚙ Config. CFE</a>
+        <a href="/admin/finanzas/facturas/nueva" class="btn-primary-sm">+ Nueva Factura</a>
       </div>
     </div>
 
-    <!-- METRICS CARDS -->
+    <!-- KPI BENTO 2x2 / 4-COL -->
     <div class="metrics-grid">
       <div class="metric-card">
-        <span class="m-label">Ingresos del Mes</span>
-        <div class="m-value m-income">{formatMoney(incomeThisMonth, "UYU")}</div>
-        <span class="m-sub">Facturas cobradas en el período</span>
+        <span class="m-label">Cobrado (Mes)</span>
+        <div class="m-value m-income tabular">{formatMoney(incomeSum.uyu, "UYU")}</div>
+        {incomeSum.usd > 0 && <div class="m-secondary tabular">+ {formatMoney(incomeSum.usd, "USD")}</div>}
+        <span class="m-sub">{paidThisMonth.length} facturas pagas</span>
       </div>
 
       <div class="metric-card">
         <span class="m-label">Por Cobrar</span>
-        <div class="m-value m-pending">{formatMoney(totalPending, "UYU")}</div>
-        <span class="m-sub">{pending.length} facturas activas</span>
+        <div class="m-value m-pending tabular">{formatMoney(pendingSum.uyu, "UYU")}</div>
+        {pendingSum.usd > 0 && <div class="m-secondary tabular">+ {formatMoney(pendingSum.usd, "USD")}</div>}
+        <span class="m-sub">{pending.length} comprobantes activos</span>
       </div>
 
       <div class="metric-card">
         <span class="m-label">Vencidas</span>
-        <div class="m-value m-overdue">{formatMoney(totalOverdue, "UYU")}</div>
-        <span class="m-sub">{overdue.length} facturas fuera de fecha</span>
+        <div class="m-value m-overdue tabular">{formatMoney(overdueSum.uyu, "UYU")}</div>
+        {overdueSum.usd > 0 && <div class="m-secondary tabular">+ {formatMoney(overdueSum.usd, "USD")}</div>}
+        <span class="m-sub">{overdue.length} fuera de fecha</span>
       </div>
 
       <div class="metric-card">
-        <span class="m-label">IVA 22% Liquidado</span>
-        <div class="m-value" style="color:#FBBF24;">{formatMoney(taxThisMonth, "UYU")}</div>
-        <span class="m-sub">Estimado fiscal DGI del mes</span>
+        <span class="m-label">IVA 22% (Mes)</span>
+        <div class="m-value m-tax tabular">{formatMoney(taxSum.uyu, "UYU")}</div>
+        {taxSum.usd > 0 && <div class="m-secondary tabular">+ {formatMoney(taxSum.usd, "USD")}</div>}
+        <span class="m-sub">Liquidación DGI real</span>
+      </div>
+    </div>
+
+    <!-- 6-MONTH BILLING VOLUME CHART -->
+    <div class="card-box">
+      <div class="invoices-box-header compact-head">
+        <div>
+          <h3>Actividad de Cobranza (Últimos 6 Meses)</h3>
+          <span class="sub-text">Comprobantes cobrados vs abiertos por mes</span>
+        </div>
+        <div class="chart-legend">
+          <span class="lg-item"><i class="lg-dot lg-paid"></i> Cobradas</span>
+          <span class="lg-item"><i class="lg-dot lg-open"></i> Abiertas</span>
+        </div>
+      </div>
+
+      <div class="svg-chart-wrap">
+        <svg viewBox="0 0 360 116" class="bar-chart-svg" role="img" aria-label="Evolución de facturas últimos 6 meses">
+          {finSeries.map((m, i) => {
+            const x = 18 + i * 56;
+            const hPaid = Math.max(4, Math.round((m.paidCount / maxFinBar) * 72));
+            const hOpen = Math.max(4, Math.round((m.openCount / maxFinBar) * 72));
+            return (
+              <g>
+                <rect x={x} y={88 - hPaid} width="14" height={hPaid} rx="4" fill="#34d399" />
+                <rect x={x + 18} y={88 - hOpen} width="14" height={hOpen} rx="4" fill="rgba(96, 165, 250, 0.55)" />
+                <text x={x + 16} y="106" text-anchor="middle" fill="#889b8e" font-size="9.5" font-family="JetBrains Mono">{m.label}</text>
+              </g>
+            );
+          })}
+        </svg>
       </div>
     </div>
 
@@ -83,97 +147,123 @@ const taxThisMonth = paidThisMonth.reduce((sum, i) => sum + Number((i as any).ta
       <div class="invoices-box-header">
         <div>
           <h3>Facturas Recientes</h3>
-          <span class="sub-text">Comprobantes emitidos y borradores</span>
+          <span class="sub-text">Comprobantes emitidos con envío directo por WhatsApp</span>
         </div>
-        <a href="/admin/finanzas/facturas" class="btn-link">
-          Ver todas las facturas →
-        </a>
+        <a href="/admin/finanzas/facturas" class="btn-link">Ver todas →</a>
       </div>
 
-      <div class="adm-table-wrap">
-        <table class="adm-table">
-          <thead>
-            <tr>
-              <th>Número / Serie</th>
-              <th>Cliente</th>
-              <th>Estado</th>
-              <th>Emisión</th>
-              <th>Vencimiento</th>
-              <th style="text-align: right;">Total</th>
-              <th style="text-align: right;">Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {all.slice(0, 10).map((inv) => (
-              <tr>
-                <td>
-                  <a href={`/admin/finanzas/facturas/${inv.id}`} class="inv-num-link">
-                    {inv.number || `Borrador (${inv.series || "A"})`}
-                  </a>
-                </td>
-                <td>
-                  <strong>{(inv.clients as any)?.name || "Sin cliente"}</strong>
-                  {(inv.clients as any)?.company && (
-                    <span class="client-sub"> · {(inv.clients as any).company}</span>
-                  )}
-                </td>
-                <td>
-                  <span class={`badge-status status-${inv.status}`}>
-                    {inv.status === "paid"
-                      ? "✓ Pagada"
-                      : inv.status === "issued"
-                      ? "Emitida"
-                      : inv.status === "partial"
-                      ? "Pago Parcial"
-                      : inv.status === "overdue"
-                      ? "Vencida"
-                      : inv.status === "draft"
-                      ? "Borrador"
-                      : inv.status}
-                  </span>
-                </td>
-                <td>{inv.issue_date ? formatDate(inv.issue_date) : "—"}</td>
-                <td>{inv.due_date ? formatDate(inv.due_date) : "—"}</td>
-                <td style="text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--adm-lime);">
-                  {formatMoney(Number(inv.total), inv.currency)}
-                </td>
-                <td style="text-align: right; white-space: nowrap;">
-                  <a href={`/comprobante/${inv.id}`} target="_blank" class="btn-portal-sm" title="Ver cómo lo ve el cliente">
-                    Portal ↗
-                  </a>
-                  <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">
-                    Gestionar →
-                  </a>
-                </td>
-              </tr>
-            ))}
+      <!-- Mobile Stacked Cards (< 768px) -->
+      <div class="mobile-inv-list">
+        {all.slice(0, 10).map((inv) => {
+          const isOverdue = inv.status === "overdue" || (inv.due_date && inv.due_date < todayIso && !["paid", "cancelled"].includes(inv.status));
+          const waHref = isOverdue
+            ? generateWhatsAppReminderLink(inv, inv.clients?.name, Astro.url.origin)
+            : generateWhatsAppInvoiceLink(inv, inv.clients?.name, Astro.url.origin);
 
-            {all.length === 0 && (
+          return (
+            <div class="inv-card-mobile">
+              <div class="icm-top">
+                <a href={`/admin/finanzas/facturas/${inv.id}`} class="inv-num-link">
+                  {inv.number || `Borrador (${inv.series || "A"})`}
+                </a>
+                <span class={`badge-status status-${inv.status}`}>{statusText(inv.status)}</span>
+              </div>
+              <div class="icm-client">
+                <strong>{inv.clients?.name || "Sin cliente"}</strong>
+                {inv.clients?.company ? ` · ${inv.clients.company}` : ""}
+              </div>
+              <div class="icm-meta">
+                <span>Emisión: {inv.issue_date ? formatDate(inv.issue_date) : "—"}</span>
+                <strong class="icm-total tabular">{formatMoney(Number(inv.total), inv.currency)}</strong>
+              </div>
+              <div class="icm-actions">
+                <a href={waHref} target="_blank" rel="noopener noreferrer" class="btn-wa-sm">
+                  {isOverdue ? "Recordar WA ↗" : "Cobrar WA ↗"}
+                </a>
+                <a href={`/comprobante/${inv.id}`} target="_blank" rel="noopener noreferrer" class="btn-portal-sm">Portal ↗</a>
+                <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">Gestionar</a>
+              </div>
+            </div>
+          );
+        })}
+        {all.length === 0 && (
+          <div class="empty-mobile">Todavía no hay facturas registradas.</div>
+        )}
+      </div>
+
+      <!-- Desktop Table (>= 768px) -->
+      <div class="desktop-inv-table">
+        <div class="adm-table-wrap">
+          <table class="adm-table">
+            <thead>
               <tr>
-                <td colspan="7" style="text-align:center; padding:3rem; color:var(--adm-mute);">
-                  Todavía no hay facturas registradas. Hacé clic en "+ Nueva Factura" para crear la primera.
-                </td>
+                <th>Número / Serie</th>
+                <th>Cliente</th>
+                <th>Estado</th>
+                <th>Emisión</th>
+                <th>Vencimiento</th>
+                <th style="text-align: right;">Total</th>
+                <th style="text-align: right;">Acciones</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {all.slice(0, 10).map((inv) => {
+                const isOverdue = inv.status === "overdue" || (inv.due_date && inv.due_date < todayIso && !["paid", "cancelled"].includes(inv.status));
+                const waHref = isOverdue
+                  ? generateWhatsAppReminderLink(inv, inv.clients?.name, Astro.url.origin)
+                  : generateWhatsAppInvoiceLink(inv, inv.clients?.name, Astro.url.origin);
+
+                return (
+                  <tr>
+                    <td>
+                      <a href={`/admin/finanzas/facturas/${inv.id}`} class="inv-num-link">
+                        {inv.number || `Borrador (${inv.series || "A"})`}
+                      </a>
+                    </td>
+                    <td>
+                      <strong>{inv.clients?.name || "Sin cliente"}</strong>
+                      {inv.clients?.company && <span class="client-sub"> · {inv.clients.company}</span>}
+                    </td>
+                    <td>
+                      <span class={`badge-status status-${inv.status}`}>{statusText(inv.status)}</span>
+                    </td>
+                    <td>{inv.issue_date ? formatDate(inv.issue_date) : "—"}</td>
+                    <td>{inv.due_date ? formatDate(inv.due_date) : "—"}</td>
+                    <td class="total-cell tabular">{formatMoney(Number(inv.total), inv.currency)}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                      <a href={waHref} target="_blank" rel="noopener noreferrer" class="btn-wa-sm" title="Enviar comprobante por WhatsApp">
+                        {isOverdue ? "Recordar WA" : "WA ↗"}
+                      </a>
+                      <a href={`/comprobante/${inv.id}`} target="_blank" rel="noopener noreferrer" class="btn-portal-sm">Portal ↗</a>
+                      <a href={`/admin/finanzas/facturas/${inv.id}`} class="btn-sm">Gestionar</a>
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {all.length === 0 && (
+                <tr>
+                  <td colspan="7" style="text-align:center; padding:3rem; color:var(--adm-mute);">
+                    Todavía no hay facturas registradas. Hacé clic en "+ Nueva Factura" para crear la primera.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 </AdminLayout>
 
 <style>
-  .finanzas-page {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
+  .finanzas-page { display: flex; flex-direction: column; gap: 1.25rem; }
 
   .top-header-banner {
     background: var(--adm-card);
     border: 1px solid var(--adm-border);
-    border-radius: 12px;
-    padding: 1.5rem;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -181,165 +271,138 @@ const taxThisMonth = paidThisMonth.reduce((sum, i) => sum + Number((i as any).ta
     gap: 1rem;
   }
 
-  .top-header-banner h2 {
-    margin: 0 0 0.25rem;
-    font-size: 1.25rem;
-    font-weight: 800;
-  }
-
-  .top-header-banner p {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--adm-mute);
-    max-width: 680px;
-    line-height: 1.45;
-  }
+  .top-header-banner h2 { font-family: var(--adm-font-display); margin: 0 0 0.2rem; font-size: 1.2rem; font-weight: 800; }
+  .top-header-banner p { margin: 0; font-size: 0.84rem; color: var(--adm-mute); max-width: 660px; }
+  .top-actions { display: flex; gap: 0.55rem; flex-wrap: wrap; }
 
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1.25rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
   }
 
   .metric-card {
     background: var(--adm-card);
     border: 1px solid var(--adm-border);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    padding: 1.15rem 1.25rem;
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
+    gap: 0.25rem;
   }
 
   .m-label {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.72rem;
+    font-family: var(--adm-font-mono);
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     color: var(--adm-mute);
     font-weight: 700;
   }
 
   .m-value {
-    font-family: "JetBrains Mono", monospace;
-    font-size: 1.75rem;
+    font-family: var(--adm-font-display);
+    font-size: clamp(1.2rem, 2vw, 1.65rem);
     font-weight: 800;
     color: var(--adm-ink);
   }
 
-  .m-income { color: var(--adm-lime); }
-  .m-pending { color: #60A5FA; }
-  .m-overdue { color: #F87171; }
-
-  .m-sub {
+  .m-secondary {
+    font-family: var(--adm-font-mono);
     font-size: 0.78rem;
-    color: var(--adm-mute);
+    font-weight: 700;
+    color: var(--adm-mate-light);
   }
+
+  .m-income { color: var(--adm-lime); }
+  .m-pending { color: #60a5fa; }
+  .m-overdue { color: #f87171; }
+  .m-tax { color: #fbbf24; }
+  .m-sub { font-size: 0.74rem; color: var(--adm-mute); }
+
+  .compact-head { padding: 0 0 0.85rem !important; border-bottom: none !important; }
+  .chart-legend { display: flex; gap: 0.85rem; font-family: var(--adm-font-mono); font-size: 0.68rem; color: var(--adm-mute); }
+  .lg-item { display: inline-flex; align-items: center; gap: 5px; }
+  .lg-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+  .lg-paid { background: #34d399; }
+  .lg-open { background: rgba(96, 165, 250, 0.7); }
+
+  .svg-chart-wrap {
+    background: rgba(0, 0, 0, 0.22);
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 0.6rem 0.5rem 0.25rem;
+  }
+  .bar-chart-svg { width: 100%; max-height: 150px; display: block; }
 
   .invoices-box {
     background: var(--adm-card);
     border: 1px solid var(--adm-border);
-    border-radius: 12px;
+    border-radius: 16px;
     overflow: hidden;
   }
 
   .invoices-box-header {
-    padding: 1.25rem 1.5rem;
+    padding: 1.15rem 1.35rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
     border-bottom: 1px solid var(--adm-border);
   }
 
-  .invoices-box-header h3 {
-    margin: 0;
-    font-size: 1.05rem;
-    font-weight: 800;
-  }
+  .invoices-box-header h3 { font-family: var(--adm-font-display); margin: 0; font-size: 1.02rem; font-weight: 800; }
+  .sub-text { font-size: 0.78rem; color: var(--adm-mute); }
+  .btn-link { font-family: var(--adm-font-mono); color: var(--adm-lime); font-size: 0.78rem; font-weight: 700; text-decoration: none; }
+  .inv-num-link { font-family: var(--adm-font-mono); font-weight: 700; color: var(--adm-ink); text-decoration: none; font-size: 0.84rem; }
+  .client-sub { font-size: 0.78rem; color: var(--adm-mute); }
+  .total-cell { text-align: right; font-family: var(--adm-font-mono); font-weight: 700; color: var(--adm-lime); }
 
-  .sub-text {
-    font-size: 0.8rem;
-    color: var(--adm-mute);
-  }
-
-  .btn-link {
-    color: var(--adm-lime);
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-  }
-
-  .inv-num-link {
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 700;
-    color: var(--adm-ink);
-    text-decoration: none;
-  }
-
-  .inv-num-link:hover {
-    color: var(--adm-lime);
-  }
-
-  .client-sub {
-    font-size: 0.8rem;
-    color: var(--adm-mute);
-  }
-
-  .btn-sm {
+  .btn-sm, .btn-portal-sm, .btn-wa-sm {
     display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.75rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--adm-border);
-    border-radius: 6px;
-    color: var(--adm-ink);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-
-  .btn-sm:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: var(--adm-lime);
-  }
-
-  .btn-sec-sm {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.45rem 0.95rem;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid var(--adm-border);
-    border-radius: 6px;
-    color: var(--adm-ink);
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.15s ease;
-  }
-
-  .btn-sec-sm:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: var(--adm-lime);
-  }
-
-  .btn-portal-sm {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.35rem 0.65rem;
-    background: rgba(200, 255, 0, 0.08);
-    border: 1px solid rgba(200, 255, 0, 0.3);
-    border-radius: 6px;
-    color: var(--adm-lime);
-    font-size: 0.75rem;
+    padding: 0.32rem 0.65rem;
+    border-radius: 999px;
+    font-family: var(--adm-font-mono);
+    font-size: 0.72rem;
     font-weight: 700;
     text-decoration: none;
-    margin-right: 6px;
-    transition: all 0.15s ease;
+    margin-left: 4px;
   }
 
-  .btn-portal-sm:hover {
-    background: var(--adm-lime);
-    color: #0a0a0a;
+  .btn-sm { background: rgba(255, 255, 255, 0.05); border: 1px solid var(--adm-border); color: var(--adm-ink); }
+  .btn-portal-sm { background: rgba(212, 255, 51, 0.1); border: 1px solid rgba(212, 255, 51, 0.3); color: var(--adm-lime); }
+  .btn-wa-sm { background: rgba(37, 211, 102, 0.14); border: 1px solid rgba(37, 211, 102, 0.36); color: #4ade80; }
+
+  .mobile-inv-list { display: none; padding: 0.85rem; flex-direction: column; gap: 0.75rem; }
+  .desktop-inv-table { display: block; }
+
+  .inv-card-mobile {
+    background: #101913;
+    border: 1px solid var(--adm-border);
+    border-radius: 12px;
+    padding: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .icm-top, .icm-meta { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; }
+  .icm-client { font-size: 0.82rem; color: var(--adm-mute); }
+  .icm-client strong { color: var(--adm-ink); }
+  .icm-meta { font-size: 0.76rem; color: var(--adm-mute); }
+  .icm-total { font-family: var(--adm-font-mono); font-size: 0.92rem; color: var(--adm-lime); }
+  .icm-actions { display: flex; gap: 0.4rem; flex-wrap: wrap; padding-top: 0.5rem; border-top: 1px solid var(--adm-border); }
+  .icm-actions a { margin-left: 0; }
+  .empty-mobile { text-align: center; padding: 2rem; color: var(--adm-mute); font-size: 0.85rem; }
+
+  @media (max-width: 960px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+  }
+
+  @media (max-width: 768px) {
+    .metric-card { padding: 0.9rem; }
+    .mobile-inv-list { display: flex; }
+    .desktop-inv-table { display: none; }
   }
 </style>
