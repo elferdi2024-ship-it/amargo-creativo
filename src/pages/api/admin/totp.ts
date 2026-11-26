@@ -23,15 +23,16 @@ export const POST: APIRoute = async ({ request, cookies, locals }) => {
       const newSecret = generateTotpSecret();
       const uri = buildOtpAuthUri(
         newSecret,
-        typeof account === "string" && account.trim() ? account.trim() : "admin@amargocreativo.uy",
-        "Amargo Studio OS"
+        typeof account === "string" && account.trim() ? account.trim() : "admin",
+        "Amargo"
       );
       const qrSvg = await QRCode.toString(uri, {
         type: "svg",
-        margin: 2,
-        width: 220,
+        errorCorrectionLevel: "M",
+        margin: 4,
+        width: 240,
         color: {
-          dark: "#0b110d",
+          dark: "#000000",
           light: "#ffffff",
         },
       });

@@ -52,21 +52,17 @@ export function generateTotpSecret(): string {
 
 /**
  * Builds standard otpauth:// URI compatible with Google Authenticator, Authy, 1Password, Apple Passwords.
+ * Uses encodeURIComponent (never '+' for spaces) and concise labels for low-density, instant-scan QR codes.
  */
 export function buildOtpAuthUri(
   secret: string,
-  account = "admin@amargocreativo.uy",
-  issuer = "Amargo Studio OS"
+  account = "admin",
+  issuer = "Amargo"
 ): string {
-  const label = `${encodeURIComponent(issuer)}:${encodeURIComponent(account)}`;
-  const params = new URLSearchParams({
-    secret: secret.replace(/\s+/g, "").toUpperCase(),
-    issuer,
-    algorithm: "SHA1",
-    digits: "6",
-    period: "30",
-  });
-  return `otpauth://totp/${label}?${params.toString()}`;
+  const cleanSecret = secret.replace(/\s+/g, "").toUpperCase();
+  const encIssuer = encodeURIComponent(issuer);
+  const encAccount = encodeURIComponent(account);
+  return `otpauth://totp/${encIssuer}:${encAccount}?secret=${cleanSecret}&issuer=${encIssuer}&algorithm=SHA1&digits=6&period=30`;
 }
 
 /**
