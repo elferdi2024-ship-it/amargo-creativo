@@ -10,14 +10,23 @@ import { whatsappHref } from "../lib/format";
 const waMessage = "Hola Amargo Creativo, quiero consultar por el desarrollo de un Sistema Web B2B / Portal de Clientes con Facturación CFE para mi empresa.";
 const waLink = whatsappHref(waMessage);
 
-const title = "Sistemas Web B2B, Portales de Clientes & Facturación CFE | Amargo Creativo";
-const description = "Desarrollo de software a medida para empresas y agencias en Uruguay: Portales de clientes extranet con Magic Link, facturación electrónica CFE DGI, conciliación bancaria y workflows automáticos por WhatsApp.";
+const title = "Sistemas B2B, Portales & Facturación CFE | Amargo Creativo";
+const description = "Software B2B a medida en Uruguay: portales extranet con Magic Link, facturación electrónica CFE DGI, conciliación bancaria y WhatsApp.";
+const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 ---
 
-<Layout title={title} description={description} canonicalUrl="https://amargo-creativo.pages.dev/facturacion">
+<Layout
+  title={title}
+  description={description}
+  canonicalUrl={canonicalUrl}
+  breadcrumbs={[
+    { name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' },
+    { name: 'Sistemas B2B', url: canonicalUrl }
+  ]}
+>
   <Navbar />
 
-  <main class="facturacion-page">
+  <main id="main-content" class="facturacion-page">
     <!-- Header de Sección -->
     <header class="fac-hero">
       <div class="fac-container">

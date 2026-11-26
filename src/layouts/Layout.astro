@@ -18,33 +18,53 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   canonicalUrl?: string;
   preloadHero?: boolean;
   includeFaqSchema?: boolean;
   includeShowcaseSchema?: boolean;
   noindex?: boolean;
   breadcrumbs?: BreadcrumbItem[];
+  extraSchema?: Record<string, unknown>[];
 }
 
 const SITE_URL = 'https://amargo-creativo.pages.dev';
 
 const {
-  title = 'Amargo Creativo™ | Diseño Web de Élite, Apps & SEO en Uruguay, Argentina y España',
-  description = 'Agencia creativa de ingeniería web de alto rendimiento (<0.8s), aplicaciones a medida, SEO técnico y conversión directa a WhatsApp desde Atlántida, Uruguay para UY, AR y ES.',
-  image = `${SITE_URL}/og-image.jpg`,
+  title = 'Amargo Creativo™ | Diseño Web <0.8s, Apps y SEO (UY·AR·ES)',
+  description = 'Agencia de ingeniería web (<0.8s), apps a medida, SEO técnico y WhatsApp Commerce desde Atlántida, Uruguay para UY, AR y ES. Sin plantillas.',
+  image = `${SITE_URL}/og-image-v2.jpg`,
+  imageAlt = 'Amargo Creativo™ — Diseño radical y código propio <0.8s en Uruguay, Argentina y España',
   canonicalUrl,
   preloadHero = false,
   includeFaqSchema = false,
   includeShowcaseSchema = false,
   noindex = false,
   breadcrumbs,
+  extraSchema = [],
 } = Astro.props;
 
-const resolvedCanonical =
-  canonicalUrl ||
-  new URL(Astro.url.pathname === '/' ? '/' : Astro.url.pathname.replace(/\/$/, ''), SITE_URL).href;
+const rawPath = Astro.url.pathname;
+const normalizedPath = rawPath === '/' ? '/' : `${rawPath.replace(/\/$/, '')}/`;
+const resolvedCanonical = canonicalUrl || new URL(normalizedPath, SITE_URL).href;
 
 const graph: Record<string, unknown>[] = [
+  {
+    '@type': 'WebPage',
+    '@id': `${resolvedCanonical}#webpage`,
+    url: resolvedCanonical,
+    name: title,
+    description,
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    about: { '@id': `${SITE_URL}/#organization` },
+    primaryImageOfPage: {
+      '@type': 'ImageObject',
+      url: image,
+      width: 1200,
+      height: 630,
+    },
+    inLanguage: 'es',
+  },
   {
     '@type': 'WebSite',
     '@id': `${SITE_URL}/#website`,
@@ -229,6 +249,10 @@ if (includeFaqSchema) {
   });
 }
 
+if (extraSchema.length > 0) {
+  graph.push(...extraSchema);
+}
+
 const structuredData = {
   '@context': 'https://schema.org',
   '@graph': graph,
@@ -244,7 +268,9 @@ const structuredData = {
   <meta name="author" content="Amargo Creativo">
   <meta name="theme-color" content="#152e1a">
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="apple-touch-icon" href="/favicon.svg">
   <link rel="manifest" href="/site.webmanifest">
+  <link rel="alternate" type="text/plain" href="/llms.txt" title="LLMs.txt">
   <link rel="canonical" href={resolvedCanonical}>
   <meta name="robots" content={noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}>
 
@@ -278,14 +304,14 @@ const structuredData = {
   <meta property="og:image:type" content="image/jpeg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Amargo Creativo — Ingeniería Web de Alto Rendimiento en Uruguay, Argentina y España">
+  <meta property="og:image:alt" content={imageAlt}>
 
   <!-- Twitter / X Cards -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content={title}>
   <meta name="twitter:description" content={description}>
   <meta name="twitter:image" content={image}>
-  <meta name="twitter:image:alt" content="Amargo Creativo — Agencia Digital de Alto Rendimiento">
+  <meta name="twitter:image:alt" content={imageAlt}>
 
   <!-- Conditional LCP Hero Poster Preload (Home only, avoids bandwidth waste on subpages) -->
   {preloadHero && (

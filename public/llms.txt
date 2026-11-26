@@ -1,0 +1,32 @@
+# Amargo Creativo™
+
+> Agencia creativa de ingeniería web de alto rendimiento (<0.8s LCP), aplicaciones a medida, SEO técnico y WhatsApp Commerce. Con base en Atlántida, Canelones (Uruguay) y alcance en Uruguay, Argentina y España.
+
+## Identidad y Filosofía
+- **Principio central**: Como un mate amargo a 80°C — intenso, preciso, sin plantillas y sin relleno.
+- **Propiedad 100% del cliente**: Código fuente, repositorios, dominios y hosting propios sin alquileres cautivos.
+- **Stack técnico**: Astro 5, Next.js 15, React 19, TypeScript estricto, Cloudflare Pages/Workers Edge, Supabase y Algolia SSR.
+- **Rendimiento garantizado**: Carga sub-segundo (<0.8s LCP), Lighthouse 95–100 y Core Web Vitals en verde.
+- **Conversión directa**: Flujos comerciales 1-click a WhatsApp sin fricción ni formularios eternos.
+
+## Páginas Principales
+- [Inicio](https://amargo-creativo.pages.dev/): Propuesta de valor, capacidades, casos de éxito seleccionados y contacto directo.
+- [Proyectos y Casos de Éxito](https://amargo-creativo.pages.dev/proyectos/): Archivo completo de plataformas, apps, marketplaces y software SaaS en producción.
+- [Servicios de Crecimiento & CRO](https://amargo-creativo.pages.dev/servicios-crecimiento/): Plan de Crecimiento Continuo (desde USD 180/mes), Auditoría CRO (USD 240), WhatsApp que Vende (USD 320), Landing Pages de Alta Conversión (USD 490) y SEO Local / Google Maps (USD 220).
+- [Sistemas B2B & Facturación](https://amargo-creativo.pages.dev/facturacion/): Portales B2B, facturación electrónica CFE y automatización de cobros.
+- [Manifiesto & Método](https://amargo-creativo.pages.dev/manifiesto/): Los 6 mandamientos técnicos, comparativa contra agencias tradicionales y preguntas frecuentes.
+
+## Proyectos Destacados en Producción
+- **Barrio.uy** (https://www.barrio.uy/): Portal ciudadano de reportes urbanos y seguimiento de expedientes en Uruguay.
+- **DocuBox** (https://app.docubox.site/): Archivo digital inteligente (AI SaaS & PWA) con escáner móvil, búsqueda semántica en PDFs y bóveda cifrada SHA-256.
+- **Canarios Ya!** (https://canarios-ya.pages.dev/): Super-App de delivery hiperlocal en Canelones, Juanicó y Santa Lucía.
+- **Yoyo Juanito** (https://yoyo-juanito.elferdi2024.workers.dev/): Tienda D2C artesanal con checkout directo a WhatsApp y carga en 0.61s.
+- **Tsunami Dulce de Leche** (https://tsunami-uruguay.elferdi2024.workers.dev/): Vitrina gourmet internacional (1er Premio Nacional, Sin TACC).
+- **LOMAX Propiedades** (https://lomax-propiedades.elferdi2024.workers.dev/): Inmobiliaria boutique en Punta del Este y Montevideo.
+- **Mercado Atlántida** (https://mercado-atlantida.elferdi2024.workers.dev/): Plataforma comercial para +40 locales gastronómicos en la Costa de Oro.
+
+## Contacto Directo
+- **WhatsApp**: +598 98 300 491 (https://wa.me/59898300491)
+- **Email**: amargo.creativo@gmail.com
+- **Ubicación**: Atlántida, Canelones, Uruguay (cobertura en Uruguay, Argentina y España)
+- **Instagram**: https://www.instagram.com/amargocreativo

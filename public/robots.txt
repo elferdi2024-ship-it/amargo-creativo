@@ -1,5 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /finanzas/
+Disallow: /comprobante/
+Disallow: /p/
 
 # Motores de Búsqueda Generativa e Inteligencia Artificial (AEO / GEO)
 User-agent: Googlebot
@@ -14,6 +19,9 @@ Allow: /
 User-agent: ChatGPT-User
 Allow: /
 
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
@@ -24,4 +32,4 @@ User-agent: Applebot
 Allow: /
 
 Sitemap: https://amargo-creativo.pages.dev/sitemap-index.xml
-
+# LLMs & AI Discovery: https://amargo-creativo.pages.dev/llms.txt

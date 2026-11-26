@@ -1,11 +1,12 @@
 {
-  "name": "Amargo Creativo",
+  "name": "Amargo Creativo™",
   "short_name": "Amargo",
-  "description": "Estudio creativo digital en Atlántida, Canelones, Uruguay. Creadores de páginas web y aplicaciones de alto rendimiento.",
+  "description": "Ingeniería web de alto rendimiento (<0.8s), aplicaciones a medida, SEO técnico y WhatsApp Commerce en Uruguay, Argentina y España.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0a",
-  "theme_color": "#3a7d44",
+  "background_color": "#11120f",
+  "theme_color": "#152e1a",
+  "lang": "es-UY",
   "icons": [
     {
       "src": "/favicon.svg",

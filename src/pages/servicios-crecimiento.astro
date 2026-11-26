@@ -6,85 +6,58 @@ import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 
-const pageTitle = "Servicios de Crecimiento Web, CRO, Velocidad & WhatsApp | Amargo Creativo";
-const pageDescription = "Mantenimiento continuo, auditorías de conversión CRO, velocidad <0.8s, automatizaciones de WhatsApp y SEO local. Hacemos que tu web venda más en Uruguay, Argentina y España.";
-const canonicalUrl = "https://amargo-creativo.pages.dev/servicios-crecimiento";
-const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
+const pageTitle = "Servicios Web, CRO, Velocidad <0.8s & SEO | Amargo Creativo";
+const pageDescription = "Mantenimiento continuo, auditoría CRO, automatización WhatsApp, Landing Pages (<0.8s) y SEO local en Uruguay, Argentina y España.";
+const canonicalUrl = "https://amargo-creativo.pages.dev/servicios-crecimiento/";
+const ogImage = "https://amargo-creativo.pages.dev/og-image-v2.jpg";
 
-const growthSchema = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebPage",
-      "@id": `${canonicalUrl}#webpage`,
-      "url": canonicalUrl,
-      "name": pageTitle,
-      "description": pageDescription,
-      "isPartOf": {
-        "@id": "https://amargo-creativo.pages.dev/#website"
-      },
-      "about": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "inLanguage": "es"
-    },
-    {
-      "@type": "Service",
-      "@id": `${canonicalUrl}#plan-crecimiento`,
-      "name": "Plan de Crecimiento Continuo",
-      "serviceType": "Mantenimiento y Optimización Web",
-      "provider": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "areaServed": ["UY", "AR", "ES"],
-      "description": "Plan mensual de mantenimiento técnico, optimización de velocidad, parches de seguridad, mejoras de conversión y ajustes continuos de SEO."
-    },
-    {
-      "@type": "Service",
-      "@id": `${canonicalUrl}#auditoria-cro`,
-      "name": "Auditoría de Conversión (CRO)",
-      "serviceType": "Optimización de Conversión y UX",
-      "provider": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "areaServed": ["UY", "AR", "ES"],
-      "description": "Diagnóstico integral de puntos de fricción, velocidad LCP y embudos de venta para multiplicar las consultas recibidas."
-    },
-    {
-      "@type": "Service",
-      "@id": `${canonicalUrl}#whatsapp-commerce`,
-      "name": "WhatsApp que Vende",
-      "serviceType": "Automatización y Flujos Comerciales",
-      "provider": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "areaServed": ["UY", "AR", "ES"],
-      "description": "Configuración profesional de WhatsApp Business, respuestas inmediatas, catalogación e integración directa con formularios de tu web."
-    },
-    {
-      "@type": "Service",
-      "@id": `${canonicalUrl}#landing-pages`,
-      "name": "Landing Pages de Alta Conversión",
-      "serviceType": "Diseño y Desarrollo de Landing Pages",
-      "provider": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "areaServed": ["UY", "AR", "ES"],
-      "description": "Páginas ultrarrápidas (<0.8s) orientadas a un objetivo unificado, ideales para campañas de Meta Ads y Google Ads."
-    },
-    {
-      "@type": "Service",
-      "@id": `${canonicalUrl}#seo-local`,
-      "name": "Visibilidad Local & Google Business",
-      "serviceType": "SEO Local y Presencia en Maps",
-      "provider": {
-        "@id": "https://amargo-creativo.pages.dev/#organization"
-      },
-      "areaServed": ["UY", "AR", "ES"],
-      "description": "Optimización de perfil de Google Business, arquitectura semántica LocalBusiness y estrategia de posicionamiento en Google Maps."
-    }
-  ]
-};
+const growthServicesSchema = [
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#plan-crecimiento`,
+    "name": "Plan de Crecimiento Continuo",
+    "serviceType": "Mantenimiento y Optimización Web",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "Plan mensual de mantenimiento técnico, optimización de velocidad (<0.8s), seguridad, CRO y SEO continuo."
+  },
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#auditoria-cro`,
+    "name": "Auditoría de Conversión (CRO)",
+    "serviceType": "Optimización de Conversión y UX",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "Diagnóstico integral de fricción, velocidad LCP y embudos de venta para multiplicar consultas."
+  },
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#whatsapp-commerce`,
+    "name": "WhatsApp que Vende",
+    "serviceType": "Automatización y Flujos Comerciales",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "WhatsApp Business, respuestas inmediatas e integración directa con botones y flujos web."
+  },
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#landing-pages`,
+    "name": "Landing Pages de Alta Conversión",
+    "serviceType": "Diseño y Desarrollo de Landing Pages",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "Páginas ultrarrápidas (<0.8s) enfocadas en un único objetivo comercial para Meta Ads y Google Ads."
+  },
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#seo-local`,
+    "name": "Visibilidad Local & Google Business",
+    "serviceType": "SEO Local y Google Maps",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "Optimización de Google Business Profile, Schema LocalBusiness y posicionamiento en Maps."
+  }
+];
 
 const growthServices = [
   {
@@ -264,13 +237,12 @@ const faqs = [
   description={pageDescription}
   canonicalUrl={canonicalUrl}
   image={ogImage}
+  extraSchema={growthServicesSchema}
   breadcrumbs={[
     { name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' },
     { name: 'Servicios & Crecimiento', url: canonicalUrl }
   ]}
 >
-  <script type="application/ld+json" set:html={JSON.stringify(growthSchema)} />
-
   <Navbar />
 
   <main id="main-content" class="growth-page">
