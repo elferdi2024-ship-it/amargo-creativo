@@ -1,11 +1,12 @@
 ---
 // filepath: src/components/Marquee.astro
-// Accessible Editorial Marquee:
-// - Respects prefers-reduced-motion strictly (static ribbon, zero forced rAF)
-// - Includes WCAG 2.2.2 pause/play control without aria-pressed conflict
-// - Smooth CSS compositor-only transform
+// Bullet-proof Mobile & Desktop Marquee (fixes Xiaomi HyperOS / Android battery saver CSS pause + sticky touch :hover)
+// - Runs CSS compositor animation by default
+// - Self-healing rAF detector: if OS/HyperOS freezes CSS keyframes, smoothly takes over with IO-gated 60/120fps rAF
+// - Hover pause strictly scoped to @media (hover: hover) so touch taps never freeze it
+// - Always-accessible WCAG 2.2.2 Pause/Play control
 ---
-<div class="marquee" id="marqueeRoot" role="region" aria-label="Principios de Amargo Creativo">
+<div class="marquee" id="marqueeRoot" role="region" aria-label="Especialidades de Amargo Creativo">
   <div class="marquee-track" id="marqueeTrack" aria-hidden="true">
     {[0, 1, 2, 3].map(() => (
       <div class="marquee-group">
@@ -45,6 +46,7 @@
     position: relative;
     user-select: none;
     -webkit-user-select: none;
+    touch-action: pan-y;
   }
 
   .marquee-track {
@@ -52,18 +54,19 @@
     align-items: stretch;
     width: max-content;
     flex-shrink: 0;
+    animation: marqueeLoop 28s linear infinite;
+    will-change: transform;
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .marquee-track {
-      animation: marqueeLoop 32s linear infinite;
-    }
+  /* Hover pause ONLY on real mouse pointers (prevents sticky-hover freeze on touch screens!) */
+  @media (hover: hover) and (pointer: fine) {
     .marquee:hover .marquee-track {
       animation-play-state: paused;
     }
-    .marquee.is-paused .marquee-track {
-      animation-play-state: paused;
-    }
+  }
+
+  .marquee.is-paused .marquee-track {
+    animation-play-state: paused !important;
   }
 
   @keyframes marqueeLoop {
@@ -127,15 +130,15 @@
 
   .marquee-pause-btn {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     z-index: 4;
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    border: 1px solid rgba(245, 243, 236, 0.25);
-    background: rgba(17, 18, 15, 0.85);
+    border: 1px solid rgba(245, 243, 236, 0.28);
+    background: rgba(17, 18, 15, 0.86);
     color: #f5f3ec;
     font-size: 9px;
     display: inline-flex;
@@ -143,19 +146,18 @@
     justify-content: center;
     cursor: pointer;
     backdrop-filter: blur(8px);
-    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.15s var(--ease);
   }
 
-  .marquee-pause-btn:hover,
-  .marquee-pause-btn:focus-visible {
-    background: var(--electric);
-    color: #11120f;
-    border-color: var(--electric);
+  .marquee-pause-btn:active {
+    transform: translateY(-50%) scale(0.9);
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .marquee-pause-btn {
-      display: none;
+  @media (hover: hover) {
+    .marquee-pause-btn:hover {
+      background: var(--electric);
+      color: #11120f;
+      border-color: var(--electric);
     }
   }
 
@@ -168,16 +170,107 @@
 </style>
 
 <script>
-  const marqueeRoot = document.getElementById('marqueeRoot');
-  const pauseBtn = document.getElementById('marqueePauseBtn');
-  if (marqueeRoot && pauseBtn) {
-    let paused = false;
-    pauseBtn.addEventListener('click', () => {
-      paused = !paused;
-      marqueeRoot.classList.toggle('is-paused', paused);
-      const icon = pauseBtn.querySelector('.mp-icon');
-      if (icon) icon.textContent = paused ? '▶' : '❚❚';
-      pauseBtn.setAttribute('aria-label', paused ? 'Reanudar cinta en movimiento' : 'Pausar cinta en movimiento');
+  (function initResilientMarquee() {
+    const root = document.getElementById('marqueeRoot');
+    const track = document.getElementById('marqueeTrack');
+    const pauseBtn = document.getElementById('marqueePauseBtn');
+    if (!root || !track) return;
+
+    let userPaused = false;
+    let isVisible = true;
+    let useRafDriver = false;
+    let posX = 0;
+    let halfWidth = 0;
+    let lastTs = 0;
+    let scrollBoost = 0;
+    let lastScrollY = window.scrollY;
+    let rafId = 0;
+
+    const measure = () => {
+      halfWidth = track.scrollWidth / 2;
+    };
+
+    const syncPauseBtn = () => {
+      root.classList.toggle('is-paused', userPaused);
+      if (pauseBtn) {
+        const icon = pauseBtn.querySelector('.mp-icon');
+        if (icon) icon.textContent = userPaused ? '▶' : '❚❚';
+        pauseBtn.setAttribute('aria-label', userPaused ? 'Reanudar cinta en movimiento' : 'Pausar cinta en movimiento');
+      }
+    };
+
+    pauseBtn?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      syncPauseBtn();
+      if (!userPaused && useRafDriver && isVisible && !rafId) {
+        lastTs = performance.now();
+        rafId = requestAnimationFrame(stepRaf);
+      }
     });
-  }
+
+    // Subtle inertial speed boost when scrolling on touch/desktop (when rAF driver is active)
+    window.addEventListener(
+      'scroll',
+      () => {
+        const sy = window.scrollY;
+        const dy = Math.abs(sy - lastScrollY);
+        lastScrollY = sy;
+        if (dy > 2) scrollBoost = Math.min(220, scrollBoost + dy * 2.2);
+      },
+      { passive: true }
+    );
+
+    function stepRaf(now: number) {
+      rafId = 0;
+      if (!useRafDriver || userPaused || !isVisible) return;
+      const dt = Math.min(0.05, Math.max(0.004, (now - lastTs) / 1000));
+      lastTs = now;
+      if (!halfWidth) measure();
+
+      const basePxPerSec = window.innerWidth < 768 ? 58 : 74;
+      scrollBoost *= 0.9;
+      posX -= (basePxPerSec + scrollBoost) * dt;
+      if (halfWidth > 0 && posX <= -halfWidth) {
+        posX += halfWidth;
+      }
+      track.style.transform = `translate3d(${posX.toFixed(1)}px, 0, 0)`;
+      rafId = requestAnimationFrame(stepRaf);
+    }
+
+    function activateRafFallback() {
+      if (useRafDriver) return;
+      useRafDriver = true;
+      measure();
+      track.style.animation = 'none';
+      lastTs = performance.now();
+      if (!userPaused && isVisible) {
+        rafId = requestAnimationFrame(stepRaf);
+      }
+    }
+
+    // Pause rAF when scrolled off-screen (zero battery drain!)
+    new IntersectionObserver((entries) => {
+      isVisible = entries[0]?.isIntersecting ?? true;
+      if (useRafDriver && isVisible && !userPaused && !rafId) {
+        lastTs = performance.now();
+        rafId = requestAnimationFrame(stepRaf);
+      }
+    }).observe(root);
+
+    window.addEventListener('resize', measure, { passive: true });
+    measure();
+
+    // Real motion detector: sample CSS transform twice; if OS/HyperOS froze CSS keyframes, take over with rAF!
+    setTimeout(() => {
+      if (userPaused || useRafDriver) return;
+      const t1 = getComputedStyle(track).transform;
+      setTimeout(() => {
+        if (userPaused || useRafDriver || !isVisible) return;
+        const t2 = getComputedStyle(track).transform;
+        if (t1 === t2) {
+          activateRafFallback();
+        }
+      }, 240);
+    }, 350);
+  })();
 </script>

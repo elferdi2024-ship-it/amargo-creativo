@@ -370,16 +370,31 @@ const categoryLabels: Record<string, string> = {
     transition: transform 0.38s var(--ease-emphasis), box-shadow 0.38s var(--ease), border-color 0.3s var(--ease);
   }
 
-  .project-card:hover {
-    transform: translate3d(0, -4px, 0);
-    border-color: var(--mate);
-    box-shadow: 0 22px 48px -22px var(--shadow-tint);
+  .project-card:active {
+    transform: scale(0.985);
+    transition-duration: 110ms;
   }
 
-  :global(body.theme-dark) .project-card:hover,
-  :global(body.theme-electric) .project-card:hover,
-  :global(body.theme-mate) .project-card:hover {
-    border-color: var(--electric);
+  @media (hover: hover) {
+    .project-card:hover {
+      transform: translate3d(0, -4px, 0);
+      border-color: var(--mate);
+      box-shadow: 0 22px 48px -22px var(--shadow-tint);
+    }
+
+    :global(body.theme-dark) .project-card:hover,
+    :global(body.theme-electric) .project-card:hover,
+    :global(body.theme-mate) .project-card:hover {
+      border-color: var(--electric);
+    }
+
+    .project-card:hover .pc-img {
+      transform: scale(1.045);
+    }
+
+    .project-card:hover .pc-hover-scrim {
+      opacity: 1;
+    }
   }
 
   .project-card.hidden {
@@ -457,10 +472,6 @@ const categoryLabels: Record<string, string> = {
     opacity: 1;
   }
 
-  .project-card:hover .pc-img {
-    transform: scale(1.045);
-  }
-
   .pc-hover-scrim {
     position: absolute;
     inset: 0;
@@ -471,10 +482,7 @@ const categoryLabels: Record<string, string> = {
     padding: 14px;
     opacity: 0;
     transition: opacity 0.3s var(--ease);
-  }
-
-  .project-card:hover .pc-hover-scrim {
-    opacity: 1;
+    pointer-events: none;
   }
 
   .pc-open-pill {

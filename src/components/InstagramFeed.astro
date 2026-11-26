@@ -102,7 +102,7 @@ const posts: InstagramPost[] = [
       </div>
     </div>
 
-    <div class="ig-grid">
+    <div class="ig-grid" id="igRail">
       {posts.map((post) => (
         <a 
           href={post.url} 
@@ -140,6 +140,9 @@ const posts: InstagramPost[] = [
           </div>
         </a>
       ))}
+    </div>
+    <div class="mobile-rail-progress" aria-hidden="true">
+      <div class="mobile-rail-fill" id="igRailFill"></div>
     </div>
   </div>
 </section>

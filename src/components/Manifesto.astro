@@ -52,7 +52,7 @@ const pillars = [
       </div>
     </div>
 
-    <div class="manifesto-pillars-grid">
+    <div class="manifesto-pillars-grid" id="manifestoRail">
       {pillars.map((pillar, i) => (
         <article class="pillar-col" data-reveal-block style={`--rd:${i * 80}ms`}>
           <div class="pillar-header">
@@ -63,6 +63,9 @@ const pillars = [
           <p class="pillar-desc">{pillar.desc}</p>
         </article>
       ))}
+    </div>
+    <div class="mobile-rail-progress" aria-hidden="true">
+      <div class="mobile-rail-fill" id="manifestoRailFill"></div>
     </div>
 
     <div class="manifesto-footer-bar">

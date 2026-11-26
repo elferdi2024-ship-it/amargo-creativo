@@ -817,6 +817,82 @@ const structuredData = {
       if (e.target === modalOverlay) closeModal();
     });
 
+    // Mobile bottom-sheet swipe-down to dismiss ProjectModal
+    const modalShell = document.getElementById('modalShell');
+    if (modalShell && modalOverlay) {
+      let sheetStartY = 0;
+      let sheetDy = 0;
+      modalShell.addEventListener(
+        'touchstart',
+        (e: TouchEvent) => {
+          if (modalShell.scrollTop <= 0) {
+            sheetStartY = e.touches[0].clientY;
+            sheetDy = 0;
+          }
+        },
+        { passive: true }
+      );
+      modalShell.addEventListener(
+        'touchmove',
+        (e: TouchEvent) => {
+          if (!sheetStartY || modalShell.scrollTop > 0) return;
+          sheetDy = Math.max(0, e.touches[0].clientY - sheetStartY);
+          if (sheetDy > 8) {
+            modalShell.style.transition = 'none';
+            modalShell.style.transform = `translate3d(0, ${sheetDy}px, 0)`;
+          }
+        },
+        { passive: true }
+      );
+      modalShell.addEventListener(
+        'touchend',
+        () => {
+          if (!sheetStartY) return;
+          modalShell.style.transition = '';
+          modalShell.style.transform = '';
+          if (sheetDy > 90) closeModal();
+          sheetStartY = 0;
+          sheetDy = 0;
+        },
+        { passive: true }
+      );
+    }
+
+    // Mobile horizontal rail progress trackers (Manifesto pillars & Instagram filmstrip)
+    function bindRailProgress(railId: string, fillId: string) {
+      const rail = document.getElementById(railId);
+      const fill = document.getElementById(fillId);
+      if (!rail || !fill) return;
+      const update = () => {
+        const max = Math.max(1, rail.scrollWidth - rail.clientWidth);
+        const ratio = Math.min(1, Math.max(0.24, (rail.scrollLeft / max) * 0.76 + 0.24));
+        fill.style.transform = `scaleX(${ratio.toFixed(3)})`;
+      };
+      rail.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('resize', update, { passive: true });
+      update();
+    }
+    bindRailProgress('manifestoRail', 'manifestoRailFill');
+    bindRailProgress('igRail', 'igRailFill');
+
+    // Subtle 8ms tactile haptic tick on Android touch devices (silent no-op elsewhere)
+    if (!isDesktop && typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      document.addEventListener(
+        'click',
+        (e) => {
+          const hit = (e.target as HTMLElement | null)?.closest(
+            '.hero-cta, .nav-cta, .fc-btn, .contact-wa-primary, .filter-btn, .client-tab-btn, .theme-dot, .copy-email-btn, .marquee-pause-btn'
+          );
+          if (hit) {
+            try {
+              navigator.vibrate(8);
+            } catch {}
+          }
+        },
+        { passive: true }
+      );
+    }
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && modalOverlay?.classList.contains('active')) {
         closeModal();

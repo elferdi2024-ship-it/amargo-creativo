@@ -907,7 +907,7 @@ const brandLetters: string[] = Array.from('AMARGO');
       else if (acc > 8) navEl.classList.add('hide-nav');
       else if (acc < -6) navEl.classList.remove('hide-nav');
 
-      if (navProgress && !CSS.supports('animation-timeline', 'scroll()')) {
+      if (navProgress && (!CSS.supports('animation-timeline', 'scroll()') || reduceMotion)) {
         const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
         navProgress.style.transform = `scaleX(${Math.min(1, y / max).toFixed(4)})`;
       }

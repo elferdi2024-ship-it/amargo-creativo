@@ -184,7 +184,7 @@ const clientCases: ClientCase[] = [
       );
     }
 
-    function switchTab(index: number) {
+    function switchTab(index: number, fromUser = false) {
       if (index < 0 || index >= tabBtns.length) return;
       activeIndex = index;
 
@@ -192,6 +192,9 @@ const clientCases: ClientCase[] = [
         const isActive = i === index;
         btn.classList.toggle('active', isActive);
         btn.setAttribute('aria-selected', isActive ? 'true' : 'false');
+        if (isActive && fromUser && window.innerWidth < 900) {
+          btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        }
       });
 
       panels.forEach((panel, i) => {
@@ -201,7 +204,7 @@ const clientCases: ClientCase[] = [
 
     tabBtns.forEach((btn, index) => {
       btn.addEventListener('click', () => {
-        switchTab(index);
+        switchTab(index, true);
         userPaused = true;
         stopAutoPlay();
         syncPauseBtn();
@@ -256,10 +259,10 @@ const clientCases: ClientCase[] = [
       if (Math.abs(diff) > 45) {
         if (diff > 0) {
           // Swipe izquierda -> Siguiente
-          switchTab((activeIndex + 1) % tabBtns.length);
+          switchTab((activeIndex + 1) % tabBtns.length, true);
         } else {
           // Swipe derecha -> Anterior
-          switchTab(activeIndex > 0 ? activeIndex - 1 : tabBtns.length - 1);
+          switchTab(activeIndex > 0 ? activeIndex - 1 : tabBtns.length - 1, true);
         }
       }
     }, { passive: true });
