@@ -18,7 +18,7 @@ import RollText from './motion/RollText.astro';
     </h2>
 
     <p class="contact-lead" data-reveal-block>
-      Sin formularios de 12 campos ni ejecutivos de cuenta. Escribís directo a quien diseña y programa tu activo digital.
+      Sin formularios eternos ni intermediarios. Hablás directo con quien diseña y programa tu proyecto.
     </p>
 
     <div class="contact-actions-wrap" data-reveal-block style="--rd:90ms">
@@ -32,7 +32,7 @@ import RollText from './motion/RollText.astro';
         >
           <span class="ink" aria-hidden="true"></span>
           <span class="wa-live-dot" aria-hidden="true"></span>
-          <RollText text="HABLAR POR WHATSAPP (+598 98 300 491)" arrow="diag" />
+          <RollText text="HABLAR POR WHATSAPP" arrow="diag" />
         </a>
       </div>
 
@@ -50,24 +50,15 @@ import RollText from './motion/RollText.astro';
           data-cursor="COPIAR"
           aria-label="Copiar dirección de correo amargo.creativo@gmail.com"
         >
-          COPIAR EMAIL
+          COPIAR
         </button>
       </div>
     </div>
 
-    <div class="contact-info" data-reveal-block style="--rd:160ms">
-      <div class="info-block">
-        <h4>01 / ESTUDIO</h4>
-        <p>AMARGO CREATIVO™<br />Atlántida, Costa de Oro, UY<br />Clientes en UY &bull; AR &bull; ES</p>
-      </div>
-      <div class="info-block">
-        <h4>02 / RESPUESTA</h4>
-        <p>Menos de 24 horas hábiles<br />Trato directo con dirección técnica</p>
-      </div>
-      <div class="info-block">
-        <h4>03 / CRONOGRAMA</h4>
-        <p>1. Llamada de 15 min<br />2. Propuesta cerrada en 48h<br />3. Lanzamiento en 2–4 semanas</p>
-      </div>
+    <div class="contact-steps-strip" data-reveal-block style="--rd:150ms">
+      <div class="c-step"><span>01</span><strong>Charla 15 min</strong></div>
+      <div class="c-step"><span>02</span><strong>Propuesta en 48h</strong></div>
+      <div class="c-step"><span>03</span><strong>En vivo en 2–4 sem</strong></div>
     </div>
   </div>
 </section>
@@ -115,18 +106,20 @@ import RollText from './motion/RollText.astro';
   .contact-ambient-statue {
     position: absolute;
     bottom: -4%;
-    right: 2%;
-    width: clamp(280px, 38vw, 540px);
-    height: 88%;
+    right: -2%;
+    width: clamp(260px, 38vw, 520px);
+    height: 85%;
     background-image: url('/backgrounds/bg-ambient-4.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.16;
-    mix-blend-mode: screen;
+    opacity: 0.14;
+    mix-blend-mode: soft-light;
     pointer-events: none;
     z-index: 1;
-    filter: brightness(1.1) contrast(1.2);
+    filter: grayscale(100%) contrast(1.35) brightness(1.1);
+    mask-image: radial-gradient(ellipse 54% 52% at 62% 66%, black 8%, transparent 58%);
+    -webkit-mask-image: radial-gradient(ellipse 54% 52% at 62% 66%, black 8%, transparent 58%);
   }
 
   .contact-content {
@@ -293,45 +286,66 @@ import RollText from './motion/RollText.astro';
     border-color: var(--electric);
   }
 
-  .contact-info {
-    width: 100%;
-    margin-top: 24px;
+  .contact-steps-strip {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 32px;
-    text-align: left;
+    gap: 12px;
+    width: 100%;
+    max-width: 780px;
+    padding-top: 28px;
     border-top: 1px solid rgba(245, 243, 236, 0.16);
-    padding-top: 36px;
   }
 
-  .info-block h4 {
+  .c-step {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 1px solid rgba(245, 243, 236, 0.14);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .c-step span {
     font-family: var(--font-mono);
-    font-size: 10.5px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
+    font-size: 10px;
+    font-weight: 700;
     color: var(--electric);
-    margin-bottom: 10px;
   }
 
-  .info-block p {
+  .c-step strong {
     font-family: var(--font-body);
-    font-size: 14.5px;
-    line-height: 1.6;
-    color: rgba(245, 243, 236, 0.9);
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(245, 243, 236, 0.92);
   }
 
   @media (max-width: 768px) {
+    .contact {
+      padding: 68px var(--gut);
+    }
     .contact-title {
-      font-size: clamp(32px, 10vw, 58px);
+      font-size: clamp(34px, 11vw, 58px);
+      margin-bottom: 16px;
+    }
+    .contact-lead {
+      font-size: 14.5px;
+      margin-bottom: 24px;
     }
     .contact-wa-primary {
       width: 100%;
       padding: 15px 18px;
-      font-size: 10.5px;
+      font-size: 11px;
     }
-    .contact-info {
+    .contact-steps-strip {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 8px;
+      padding-top: 20px;
+    }
+    .c-step {
+      justify-content: flex-start;
+      padding: 10px 16px;
     }
   }
 </style>

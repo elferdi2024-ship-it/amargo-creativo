@@ -5,7 +5,7 @@
 // Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
 import RollText from './motion/RollText.astro';
 
-const titleWords: string[] = ['MOTORES', 'DIGITALES', 'DE', 'ALTO', 'RENDIMIENTO'];
+const titleWords: string[] = ['DISEÑO', 'RADICAL.', 'CÓDIGO', '<0.8s'];
 const lastIndex = titleWords.length - 1;
 ---
 <header class="hero" id="top">
@@ -45,28 +45,28 @@ const lastIndex = titleWords.length - 1;
     <div class="hero-gradient" id="heroGradient"></div>
   </div>
 
-  <!-- Barra Superior del Hero -->
+  <!-- Barra Superior Minimalista (1 sola línea limpia en mobile y PC) -->
   <div class="hero-top">
-    <div class="hero-live-badge hx" style="--d:120ms;--hx-y:-10px">
+    <div class="hero-live-badge hx" style="--d:100ms;--hx-y:-8px">
       <span class="live-label"><span class="live-dot" aria-hidden="true"></span>80°C EN VIVO</span>
-      <span>INGENIERÍA WEB &amp; DISEÑO DE AUTOR</span>
+      <span class="hero-top-extra">INGENIERÍA WEB &amp; DISEÑO DE AUTOR</span>
     </div>
-    <div class="hero-location-badge hx" style="--d:180ms;--hx-y:-10px">
-      <span>ATLÁNTIDA, CANELONES</span>
-      <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+    <div class="hero-location-badge hx" style="--d:160ms;--hx-y:-8px">
+      <span>ATLÁNTIDA, UY</span>
+      <span class="hero-top-extra">UY &bull; AR &bull; ES</span>
     </div>
   </div>
 
-  <!-- Área Central Abierta: El arte original del mate luce al 100% sin solapamientos -->
+  <!-- Área Central Abierta: La obra del mate y AMARGO. ESTUDIO CREATIVO respiran al 100% -->
   <div class="hero-spacer" aria-hidden="true"></div>
 
-  <!-- Barra Inferior Editorial Equilibrada en 3 Columnas (Titular • Pilares • Métricas) -->
-  <div class="hero-bottom hx" id="heroBottom" style="--d:160ms;--hx-y:28px">
-    <!-- Columna 1: Titular Semántico, Propuesta de Valor & Acciones -->
+  <!-- Dock Inferior Editorial Compacto y Escultórico -->
+  <div class="hero-bottom hx" id="heroBottom" style="--d:140ms;--hx-y:24px">
+    <!-- Columna 1: Titular Cortante & Acciones -->
     <div class="hero-sub-wrap">
       <h1 class="hero-h1">
-        <span class="h1-sub hx" style="--d:280ms;--hx-y:8px">DISEÑO WEB &bull; APPS A MEDIDA &bull; SEO &bull; WHATSAPP COMMERCE</span>
-        <span class="h1-title" style="--d:320ms">
+        <span class="h1-sub hx" style="--d:240ms;--hx-y:6px">WEBS &bull; APPS &bull; SEO &bull; WHATSAPP COMMERCE</span>
+        <span class="h1-title" style="--d:280ms">
           {titleWords.map((word, i) => (
             i === lastIndex ? (
               <span class="hw-u">
@@ -81,9 +81,9 @@ const lastIndex = titleWords.length - 1;
           ))}
         </span>
       </h1>
-      <p class="hero-sub hx" style="--d:520ms;--hx-y:10px">Código propio en Astro 5 y Next.js, carga en menos de 0.8s y conversión directa a WhatsApp. Sin plantillas, 100% tuyo.</p>
+      <p class="hero-sub hx" style="--d:440ms;--hx-y:8px">Sin plantillas. Activos digitales veloces que convierten directo a WhatsApp.</p>
       <div class="hero-cta-wrap">
-        <span class="hero-cta-slot hx-pop" style="--d:640ms">
+        <span class="hero-cta-slot hx-pop" style="--d:540ms">
           <span class="magnetic-btn hero-cta-mag">
             <a 
               href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
@@ -94,14 +94,14 @@ const lastIndex = titleWords.length - 1;
               aria-label="Hablar directamente por WhatsApp para cotizar proyecto"
             >
               <span class="ink" aria-hidden="true"></span>
-              <RollText text="HABLAR POR WHATSAPP" arrow="diag" />
+              <RollText text="COTIZAR POR WHATSAPP" arrow="diag" />
             </a>
           </span>
         </span>
-        <span class="hero-cta-slot hx-pop" style="--d:720ms">
+        <span class="hero-cta-slot hx-pop" style="--d:620ms">
           <a href="#showcase" class="hero-cta-secondary ink-fill" data-cursor="CASOS" aria-label="Ver proyectos y casos de éxito">
             <span class="ink" aria-hidden="true"></span>
-            <RollText text="VER TRABAJOS" arrow="right" />
+            <RollText text="VER CASOS" arrow="right" />
           </a>
         </span>
       </div>
@@ -451,14 +451,14 @@ const lastIndex = titleWords.length - 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 38%;
+    object-position: center 26%;
     pointer-events: none;
     z-index: 1;
   }
 
   @media (max-width: 900px) {
     .hero-poster-img {
-      object-position: center 30%;
+      object-position: center 34%;
     }
   }
 
@@ -469,7 +469,7 @@ const lastIndex = titleWords.length - 1;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: center 38%;
+    object-position: center 26%;
     filter: contrast(1.02);
     pointer-events: none;
     z-index: 2;
@@ -544,20 +544,20 @@ const lastIndex = titleWords.length - 1;
     pointer-events: none;
   }
 
-  /* BARRA INFERIOR EDITORIAL EQUILIBRADA EN 3 COLUMNAS */
+  /* BARRA INFERIOR EDITORIAL COMPACTA (DEJA RESPIRAR EL ARTE DEL MATE) */
   .hero-bottom {
     position: relative;
     z-index: 10;
     display: grid;
-    grid-template-columns: 1.55fr 1fr 0.95fr;
+    grid-template-columns: 1.5fr 0.95fr 0.9fr;
     align-items: center;
-    gap: clamp(24px, 3.2vw, 48px);
-    padding: 26px var(--gut) calc(30px + env(safe-area-inset-bottom));
+    gap: clamp(20px, 3vw, 44px);
+    padding: 18px var(--gut) calc(20px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--line);
-    background: rgba(246, 244, 237, 0.9);
+    background: rgba(246, 244, 237, 0.92);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -16px 40px rgba(21, 46, 26, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -16px 40px rgba(21, 46, 26, 0.05);
   }
 
   :global(body.theme-dark) .hero-bottom {
@@ -918,20 +918,27 @@ const lastIndex = titleWords.length - 1;
     }
 
     .hero-top {
-      padding-top: calc(65px + env(safe-area-inset-top));
-      padding-bottom: 10px;
+      padding-top: calc(68px + env(safe-area-inset-top));
+      padding-bottom: 8px;
       font-size: 9.5px;
+      flex-wrap: nowrap;
+    }
+
+    .hero-top-extra {
+      display: none;
     }
 
     .hero-bottom {
       display: flex;
       flex-direction: column;
       align-items: stretch;
-      gap: 16px;
+      gap: 12px;
       padding: 16px var(--gut) calc(18px + env(safe-area-inset-bottom));
     }
 
-    .hero-pillars {
+    .hero-pillars,
+    .hero-right-wrap,
+    .h1-sub {
       display: none;
     }
 
@@ -941,17 +948,19 @@ const lastIndex = titleWords.length - 1;
     }
 
     .h1-title {
-      font-size: clamp(18px, 4.8vw, 24px);
+      font-size: clamp(23px, 6.4vw, 30px);
+      line-height: 0.98;
     }
 
     .hero-sub {
-      font-size: 12.5px;
+      font-size: 13px;
       line-height: 1.4;
+      margin-bottom: 2px;
     }
 
     .hero-cta-wrap {
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
+      grid-template-columns: 1.45fr 1fr;
       gap: 8px;
       width: 100%;
     }
@@ -964,28 +973,10 @@ const lastIndex = titleWords.length - 1;
 
     .hero-cta, .hero-cta-secondary {
       width: 100%;
-      height: 38px;
-      padding: 0 8px;
+      height: 42px;
+      padding: 0 10px;
       font-size: 10px;
       gap: 6px;
-    }
-
-    .hero-right-wrap {
-      width: 100%;
-      justify-content: flex-start;
-      padding-top: 10px;
-      border-top: 1px solid rgba(0, 0, 0, 0.08);
-    }
-
-    .hero-stats {
-      flex-direction: row;
-      width: 100%;
-      justify-content: space-between;
-      gap: 16px;
-    }
-
-    .hero-meta strong {
-      font-size: 20px;
     }
 
     .hero-badge {

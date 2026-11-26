@@ -26,22 +26,40 @@
     const fc = document.getElementById('floatingContact');
     if (!fc) return;
     const contactSection = document.getElementById('contact');
-    let contactInView = false;
+    const footerSection = document.querySelector('footer');
+    let hideZoneInView = false;
+    let contactVisible = false;
+    let footerVisible = false;
     let isVisible = false;
+
+    const syncZone = () => {
+      hideZoneInView = contactVisible || footerVisible;
+      checkVisibility();
+    };
 
     if (contactSection) {
       new IntersectionObserver(
         (entries) => {
-          contactInView = entries[0]?.isIntersecting ?? false;
-          checkVisibility();
+          contactVisible = entries[0]?.isIntersecting ?? false;
+          syncZone();
         },
-        { threshold: 0.15 }
+        { threshold: 0.1 }
       ).observe(contactSection);
+    }
+
+    if (footerSection) {
+      new IntersectionObserver(
+        (entries) => {
+          footerVisible = entries[0]?.isIntersecting ?? false;
+          syncZone();
+        },
+        { threshold: 0.05 }
+      ).observe(footerSection);
     }
 
     function checkVisibility() {
       const scrollY = window.scrollY || document.documentElement.scrollTop || 0;
-      const shouldShow = scrollY > 360 && !contactInView;
+      const shouldShow = scrollY > 420 && !hideZoneInView;
       if (shouldShow !== isVisible) {
         isVisible = shouldShow;
         fc.classList.toggle('visible', shouldShow);

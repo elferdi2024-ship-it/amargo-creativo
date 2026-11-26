@@ -1,7 +1,6 @@
 ---
 // filepath: src/components/Metrics.astro
-// Métricas & Impacto: Tipografía brutalista, cero saturación de texto y diseño arquitectónico
-
+// Architectural 2x2 Swiss Bento Grid (even on Mobile — fits cleanly in 1 viewport!)
 interface Metric {
   num: string;
   label: string;
@@ -10,29 +9,28 @@ interface Metric {
 
 const metrics: Metric[] = [
   {
-    num: "VENTAS",
-    label: "CONVERSIÓN DIRECTA",
-    desc: "Embudos 1-click a WhatsApp sin fricción para cerrar clientes en minutos."
+    num: "1-CLICK",
+    label: "WHATSAPP DIRECTO",
+    desc: "Cierre en minutos sin formularios eternos."
   },
   {
     num: "< 0.8s",
-    label: "CARGA INSTANTÁNEA",
-    desc: "Apertura récord en cualquier celular sin esperas ni caídas de rebote."
+    label: "CARGA EN 4G",
+    desc: "Velocidad récord que destruye el rebote."
   },
   {
-    num: "GOOGLE",
-    label: "SEO & POSICIONAMIENTO",
-    desc: "Visibilidad orgánica en Uruguay, Argentina y España con datos estructurados."
+    num: "#1 SEO",
+    label: "GOOGLE & IA",
+    desc: "Schema.org multi-región para UY, AR y ES."
   },
   {
     num: "100%",
-    label: "ACTIVO PROPIO",
-    desc: "Código de autor, dominio y bases de datos 100% tuyos sin alquileres cautivos."
+    label: "ACTIVO TUYO",
+    desc: "Código y dominio propios. Cero alquileres."
   }
 ];
 ---
 <section class="metrics-impact">
-  <div class="graphic-mark" aria-hidden="true">+</div>
   <div class="mi-inner">
     <div class="mi-head">
       <div class="section-label">
@@ -40,23 +38,16 @@ const metrics: Metric[] = [
         <span>INGENIERÍA &bull; IMPACTO</span>
       </div>
       <h2 data-reveal-words>Estrategia. <em>Sin vueltas.</em></h2>
-      <p class="mi-tagline">Rendimiento extremo, dirección de arte radical y conversión directa a WhatsApp.</p>
-      
-      <div class="mi-stamp-badge" aria-hidden="true">
-        <span class="stamp-dot">●</span>
-        <span>ESTÁNDAR AMARGO &bull; 80°C EDGE</span>
-      </div>
+      <p class="mi-tagline">Velocidad extrema, dirección de arte y conversión directa.</p>
     </div>
-    
+
     <div class="mi-cards">
       {metrics.map((metric, i) => (
-        <div class="mi-card" data-reveal-block style={`--rd:${i * 70}ms`}>
-          <div class="mi-card-top">
-            <div class="mi-num tabular">{metric.num}</div>
-            <div class="mi-label">{metric.label}</div>
-          </div>
-          <div class="mi-desc">{metric.desc}</div>
-        </div>
+        <article class="mi-card" data-reveal-block style={`--rd:${i * 60}ms`}>
+          <div class="mi-num tabular">{metric.num}</div>
+          <div class="mi-label">{metric.label}</div>
+          <p class="mi-desc">{metric.desc}</p>
+        </article>
       ))}
     </div>
   </div>
@@ -66,194 +57,153 @@ const metrics: Metric[] = [
   .metrics-impact {
     background: var(--marquee-bg);
     color: var(--marquee-text);
-    padding: clamp(90px, 13vh, 160px) var(--gut);
-    border-bottom: 1px solid var(--marquee-bg);
+    padding: clamp(64px, 11vh, 136px) var(--gut);
+    border-bottom: 1px solid rgba(245, 243, 236, 0.12);
     width: 100%;
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
   }
+
   .metrics-impact::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+    inset: 0;
+    background-image: radial-gradient(rgba(245, 243, 236, 0.14) 1px, transparent 1px);
     background-size: 24px 24px;
-    z-index: 0;
-    opacity: 0.2;
-    mask-image: linear-gradient(to right, black, transparent 70%);
-    -webkit-mask-image: linear-gradient(to right, black, transparent 70%);
+    opacity: 0.18;
+    mask-image: linear-gradient(to right, black, transparent 72%);
+    -webkit-mask-image: linear-gradient(to right, black, transparent 72%);
     pointer-events: none;
   }
-  :global(body.theme-electric) .metrics-impact::before {
-    background-image: radial-gradient(rgba(241, 255, 90, 0.2) 1px, transparent 1px);
-  }
-  :global(body.theme-mate) .metrics-impact::before {
-    background-image: radial-gradient(rgba(151, 188, 98, 0.2) 1px, transparent 1px);
-  }
+
   .mi-inner {
     max-width: var(--max);
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr 1.35fr;
-    gap: clamp(40px, 6vw, 80px);
+    grid-template-columns: 0.9fr 1.4fr;
+    gap: clamp(28px, 5vw, 72px);
     align-items: center;
     position: relative;
     z-index: 2;
   }
+
   .section-label {
-    font-size: 11px;
+    font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    color: rgba(244, 241, 234, 0.7);
+    color: rgba(245, 243, 236, 0.68);
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
-    margin-bottom: 20px;
-    font-family: 'JetBrains Mono', monospace;
+    margin-bottom: 16px;
+    font-family: var(--font-mono);
   }
+
   .section-label .num {
-    color: #0a0a0a;
+    color: #11120f;
     font-weight: 700;
     background: var(--electric);
     padding: 3px 8px;
     border-radius: 2px;
   }
+
   .mi-head h2 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(32px, 4.5vw, 68px);
-    line-height: 0.95;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 4.4vw, 64px);
+    line-height: 0.94;
     text-transform: uppercase;
-    margin: 0 0 16px;
-    letter-spacing: -0.025em;
+    margin: 0 0 12px;
+    letter-spacing: -0.035em;
   }
+
   .mi-head h2 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
     color: var(--electric);
   }
-  .mi-tagline {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    line-height: 1.5;
-    color: rgba(244, 241, 234, 0.85);
-    margin: 0 0 24px;
-    max-width: 360px;
-  }
-  :global(body.theme-electric) .mi-tagline {
-    color: rgba(241, 255, 90, 0.9);
-  }
 
-  .mi-stamp-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    color: var(--electric);
-    padding: 6px 12px;
-    border: 1px solid rgba(212, 255, 0, 0.3);
-    background: rgba(212, 255, 0, 0.05);
-  }
-  .stamp-dot {
-    font-size: 8px;
+  .mi-tagline {
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(245, 243, 236, 0.78);
+    max-width: 34ch;
   }
 
   .mi-cards {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     gap: 1px;
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(245, 243, 236, 0.14);
+    border: 1px solid rgba(245, 243, 236, 0.14);
+    border-radius: var(--radius-md);
+    overflow: hidden;
   }
-  :global(body.theme-electric) .mi-cards {
-    background: rgba(241, 255, 90, 0.15);
-    border: 1px solid rgba(241, 255, 90, 0.25);
-  }
-  :global(body.theme-mate) .mi-cards {
-    background: rgba(151, 188, 98, 0.15);
-    border: 1px solid rgba(151, 188, 98, 0.25);
-  }
+
   .mi-card {
     background: var(--marquee-bg);
-    padding: clamp(24px, 3.2vw, 36px);
+    padding: clamp(18px, 3vw, 34px);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 14px;
-    transition: background 0.3s var(--ease), color 0.3s var(--ease);
-    cursor: default;
-    position: relative;
+    gap: 6px;
+    transition: background-color 0.28s var(--ease), color 0.28s var(--ease);
   }
+
   .mi-card:hover {
     background: var(--electric);
-    color: #0a0a0a;
+    color: #11120f;
   }
-  .mi-card:hover .mi-num {
-    color: #0a0a0a;
-  }
+
+  .mi-card:hover .mi-num,
   .mi-card:hover .mi-label {
-    color: #0a0a0a;
+    color: #11120f;
   }
+
   .mi-card:hover .mi-desc {
-    color: rgba(10, 10, 10, 0.85);
+    color: rgba(17, 18, 15, 0.8);
   }
+
   .mi-num {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(28px, 3.4vw, 44px);
-    letter-spacing: -0.035em;
+    font-size: clamp(22px, 3.2vw, 42px);
+    letter-spacing: -0.04em;
     line-height: 1;
     color: var(--electric);
-    transition: color 0.3s;
   }
+
   .mi-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: clamp(9px, 1vw, 10.5px);
     text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: rgba(244, 241, 234, 0.95);
+    letter-spacing: 0.1em;
+    color: rgba(245, 243, 236, 0.94);
     font-weight: 700;
-    margin-top: 6px;
-    transition: color 0.3s;
+    margin-top: 2px;
   }
+
   .mi-desc {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13.5px;
-    line-height: 1.5;
-    color: rgba(244, 241, 234, 0.8);
-    transition: color 0.3s;
+    font-family: var(--font-body);
+    font-size: clamp(12px, 1.1vw, 13.5px);
+    line-height: 1.45;
+    color: rgba(245, 243, 236, 0.72);
+    margin-top: 4px;
   }
-  @media (min-width: 600px) {
-    .mi-cards {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-  @media (max-width: 900px) {
+
+  @media (max-width: 860px) {
     .metrics-impact {
-      padding: clamp(64px, 10vh, 100px) var(--gut);
+      padding: 56px var(--gut);
     }
     .mi-inner {
       grid-template-columns: 1fr;
-      gap: 36px;
+      gap: 24px;
     }
-  }
-  .metrics-impact .graphic-mark {
-    position: absolute;
-    bottom: -10%;
-    left: -5%;
-    font-size: 35vw;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.03);
-    pointer-events: none;
-    font-family: 'Space Grotesk', sans-serif;
+    .mi-card {
+      padding: 18px 14px;
+    }
   }
 </style>

@@ -63,6 +63,34 @@ export const projects: Project[] = [
     }
   },
   {
+    id: "docubox",
+    category: "saas",
+    title: "DocuBox",
+    client: "DocuBox AI Workspace",
+    location: "🇺🇾 Uruguay & Latinoamérica",
+    yearCategory: "2026 — AI Document SaaS & PWA",
+    desc: "Archivo digital inteligente para estudios y equipos: escanea documentos desde el celular, importa Google Drive y encuentra cualquier cláusula, fecha o monto en segundos.",
+    challenge: "Estudios profesionales y pymes perdían horas buscando contratos, fechas de vencimiento y montos en cientos de PDFs dispersos y fotos borrosas.",
+    solution: "PWA instalable en móvil y PC con escáner inteligente, búsqueda semántica dentro de PDFs con cita de página exacta, bóveda cifrada y compartición directa por WhatsApp.",
+    keyResult: "Búsqueda en segundos • Escáner móvil + IA • Bóveda cifrada SHA-256",
+    url: "https://app.docubox.site/",
+    liveUrlLabel: "app.docubox.site",
+    img: "/projects/docubox.png",
+    aspectWidth: 1280,
+    aspectHeight: 960,
+    tags: ["AI SAAS", "PWA MÓVIL", "OCR & BÚSQUEDA IA", "CLOUDFLARE"],
+    metrics: "Búsqueda instantánea • PWA Instalable",
+    featured: true,
+    status: "ACTIVO EN PRODUCCIÓN",
+    lighthouse: { perf: 99, a11y: 100, bp: 100, seo: 100 },
+    architecture: {
+      stack: "Next.js / React + AI Semantic Index + PWA",
+      edge: "Cloudflare Edge + Cifrado SHA-256",
+      database: "Vector & Relational Cloud Vault",
+      speed: "LCP 0.64s • Indexación instantánea • CLS 0.000"
+    }
+  },
+  {
     id: "canarios-ya",
     category: "ecommerce",
     title: "Canarios Ya!",

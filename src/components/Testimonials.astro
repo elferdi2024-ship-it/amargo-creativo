@@ -25,7 +25,7 @@ const clientCases: ClientCase[] = [
     name: "Barrio.uy",
     category: "Plataforma Inmobiliaria & Marketplace",
     location: "Montevideo, Uruguay",
-    quote: "Buscábamos salir del molde de los sitios inmobiliarios lentos y pesados. Amargo construyó una plataforma instantánea con búsqueda ultra rápida que multiplicó las consultas comerciales desde el primer mes.",
+    quote: "Salimos del molde de los portales inmobiliarios lentos. Con búsqueda instantánea en <45ms multiplicamos las consultas desde el primer mes.",
     stat1Num: "-45%",
     stat1Label: "Tasa de Rebote",
     stat1Desc: "Retención récord en tráfico móvil",
@@ -41,7 +41,7 @@ const clientCases: ClientCase[] = [
     name: "Deal Motors UY",
     category: "Plataforma Automotriz & Trade-In",
     location: "Montevideo, Uruguay",
-    quote: "Pasamos de responder cotizaciones manuales durante horas a un cotizador inteligente de permutas que califica prospectos en minutos. La velocidad y estética elevaron la confianza al instante.",
+    quote: "Pasamos de cotizar manual durante horas a un cotizador inteligente de permutas que califica prospectos en minutos.",
     stat1Num: "+65",
     stat1Label: "Cotizaciones / Sem",
     stat1Desc: "Permutas calificadas en tiempo real",
@@ -57,7 +57,7 @@ const clientCases: ClientCase[] = [
     name: "El Remate",
     category: "E-Commerce Mayorista & 6 Sucursales",
     location: "Canelones, Uruguay",
-    quote: "Manejar más de 1.900 productos en celular sin que la web se trabe parecía imposible. Amargo entregó un buscador instantáneo en 18ms que derivó pedidos mayoristas directos a cada sucursal.",
+    quote: "Manejar +1.900 productos en celular sin trabas parecía imposible. El buscador en 18ms derivó pedidos mayoristas directo a cada sucursal.",
     stat1Num: "18ms",
     stat1Label: "Búsqueda Catálogo",
     stat1Desc: "+1.900 SKUs navegables en 4G",
@@ -326,18 +326,19 @@ const clientCases: ClientCase[] = [
     position: absolute;
     top: 8%;
     right: -3%;
-    width: clamp(320px, 46vw, 700px);
+    width: clamp(280px, 44vw, 660px);
     height: 85%;
     background-image: url('/backgrounds/bg-ambient-5.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.20;
+    opacity: 0.18;
     mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 1;
-    filter: contrast(1.15) brightness(0.96);
-    transition: opacity 0.5s var(--ease);
+    filter: contrast(1.12) brightness(0.98);
+    mask-image: radial-gradient(ellipse 68% 72% at 64% 52%, black 22%, transparent 74%);
+    -webkit-mask-image: radial-gradient(ellipse 68% 72% at 64% 52%, black 22%, transparent 74%);
   }
 
   :global(body.theme-dark) .testimonials-ambient-bg {
@@ -506,11 +507,11 @@ const clientCases: ClientCase[] = [
   .spotlight-panel {
     display: none;
     grid-template-columns: 1.4fr 1fr;
-    gap: 40px;
+    gap: 36px;
     border: 1px solid var(--line);
-    padding: clamp(24px, 4vw, 48px);
-    background: rgba(10, 10, 10, 0.02);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+    border-radius: var(--radius-md);
+    padding: clamp(22px, 3.8vw, 44px);
+    background: var(--paper);
     opacity: 0;
     transform: translateY(10px);
     transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);

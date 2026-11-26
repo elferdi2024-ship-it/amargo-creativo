@@ -58,6 +58,13 @@ const brandLetters: string[] = Array.from('AMARGO');
         <span class="sound-text">AUDIO <strong class="sound-state-text">OFF</strong></span>
       </button>
       <span class="status-sep">|</span>
+      <div class="nav-theme-dots" role="toolbar" aria-label="Cambiar tema visual">
+        <button type="button" class="theme-dot active" data-theme="default" aria-label="Tema Hueso" title="Hueso"></button>
+        <button type="button" class="theme-dot" data-theme="dark" aria-label="Tema Carbón" title="Carbón"></button>
+        <button type="button" class="theme-dot" data-theme="electric" aria-label="Tema Eléctrico" title="Volt"></button>
+        <button type="button" class="theme-dot" data-theme="mate" aria-label="Tema Verde Mate" title="Mate"></button>
+      </div>
+      <span class="status-sep">|</span>
       <span class="status-cupos">5 CUPOS</span>
     </div>
     <a 
@@ -412,49 +419,83 @@ const brandLetters: string[] = Array.from('AMARGO');
     font-weight: 700;
   }
 
+  .nav-theme-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .nav-theme-dots .theme-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease);
+  }
+
+  .nav-theme-dots .theme-dot:hover {
+    transform: scale(1.25);
+  }
+
+  .nav-theme-dots .theme-dot.active {
+    border-color: #ffffff;
+    box-shadow: 0 0 0 2px var(--electric);
+  }
+
+  .nav-theme-dots .theme-dot[data-theme="default"] { background: #ebe8e0; }
+  .nav-theme-dots .theme-dot[data-theme="dark"] { background: #1a1c18; }
+  .nav-theme-dots .theme-dot[data-theme="electric"] { background: #d2f638; }
+  .nav-theme-dots .theme-dot[data-theme="mate"] { background: #347540; }
+
   /* CTA — tinta que sube (#009) */
   .nav-cta {
-    --mx-fill-ink: #0a0a0a;
+    --mx-fill-ink: #11120f;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 7px;
     background: var(--electric);
-    color: #0a0a0a;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    color: #11120f;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     text-decoration: none;
-    padding: 8px 16px;
-    border: 1px solid var(--ink);
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
     transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.45s var(--ux-ease);
-    height: 36px;
+    height: 34px;
     box-sizing: border-box;
     white-space: nowrap;
   }
   .nav-cta:hover,
   .nav-cta:focus-visible {
     color: var(--electric);
-    transform: translate3d(-1px, -1px, 0);
+    transform: translate3d(0, -1px, 0);
   }
   .nav-cta:active {
     transform: scale(0.96);
     transition-duration: 90ms;
   }
   .menu-btn {
-    background: none;
-    border: 1px solid var(--ink);
-    padding: 8px 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    background: transparent;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    padding: 0 13px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     cursor: pointer;
     display: none;
     align-items: center;
-    gap: 8px;
-    height: 36px;
+    gap: 7px;
+    height: 34px;
     color: var(--ink);
     transition: transform var(--spring-snap-dur) var(--spring-snap), background-color 0.2s, color 0.2s;
   }
