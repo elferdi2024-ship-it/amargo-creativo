@@ -1,18 +1,44 @@
 /* filepath: src/styles/motion.css
    ============================================================================
-   AMARGO MOTION SYSTEM v1
-   - Springs reales (oscilador armónico amortiguado, m=1) compilados a linear().
-     Generados con scratch/spring.mjs. Escalar la duración = escalar la física:
-     t·s  ⇔  k/s², c/s.
-   - Solo transform + opacity en todo lo que corre por frame.
-   - Gating: las entradas solo se ocultan con html.mx (inyectado en <head> cuando
-     NO hay prefers-reduced-motion ni bot de auditoría). Sin JS = estado final.
-   - Partes portadas desde Lucian UX/UI Prompt (MIT © 2026 Seokwoooo):
-     #009 Rolling label button · #237 Line-by-line mask reveal headline ·
-     #260 Scroll-filled sentence · #212 Hide-on-scroll header ·
-     #205 Rippling letter logo · #394 Scroll-driven marquee rows
-     https://lucianlabs.dev/uxui-prompt/
+   AMARGO MOTION SYSTEM v2
+   - Native Cross-Document View Transitions (@view-transition)
+   - Native CSS Scroll-Driven Animations (@supports (animation-timeline: scroll()))
+   - Real spring physics compiled to linear() (damped harmonic oscillator)
+   - Strictly compositor-only (transform + opacity)
+   - Progressive gating via html.mx; zero JS = final visible state
+   - Reduced-motion compliance (modern-web-guidance: opt-in where disabled)
    ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   0. NATIVE MPA CROSS-DOCUMENT VIEW TRANSITIONS
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+
+  ::view-transition-old(root) {
+    animation: amargo-vt-out 0.34s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: amargo-vt-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes amargo-vt-out {
+    to {
+      opacity: 0;
+      transform: translate3d(0, -10px, 0) scale(0.992);
+    }
+  }
+
+  @keyframes amargo-vt-in {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 14px, 0);
+    }
+  }
+}
 
 :root {
   /* snap: k=380 c=26 · settle 583ms · overshoot 5.8% — hovers, indicadores, press release */
@@ -25,10 +51,10 @@
   --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
   --spring-bounce-dur: 954ms;
 
-  /* Lucian #009/#237 curves (valores originales, no tocar) */
+  /* Lucian #009/#237 curves */
   --ux-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --ux-spring: cubic-bezier(0.34, 1.45, 0.64, 1);
-  --mx-mask: cubic-bezier(0.2, 0.9, 0.2, 1);
+  --mx-mask: cubic-bezier(0.16, 1, 0.3, 1);
   --mx-out: cubic-bezier(0.6, 0, 0.4, 1);
 
   --mx-accent: var(--mate);
@@ -61,8 +87,7 @@ body.theme-mate {
 }
 
 /* ---------------------------------------------------------------------------
-   1. ROLLING LABEL — Lucian #009 (letras ruedan una a una, 22ms stagger)
-   Uso: <span class="roll" data-roll>…letras con --i…</span> dentro de a/button.
+   1. ROLLING LABEL — Lucian #009 (22ms stagger, compositor-only)
    --------------------------------------------------------------------------- */
 .roll {
   position: relative;
@@ -75,8 +100,6 @@ body.theme-mate {
 .roll > span {
   display: flex;
   flex-direction: column;
-  transition: transform 0.55s var(--ux-ease);
-  transition-delay: calc(var(--i, 0) * 22ms);
   white-space: pre;
 }
 .roll > span::after {
@@ -84,11 +107,18 @@ body.theme-mate {
   content: attr(data-c) / "";
   display: block;
 }
-:is(a, button):is(:hover, :focus-visible) .roll > span {
-  transform: translate3d(0, -1.2em, 0);
+
+@media (prefers-reduced-motion: no-preference) {
+  .roll > span {
+    transition: transform 0.52s var(--ux-ease);
+    transition-delay: calc(var(--i, 0) * 20ms);
+  }
+  :is(a, button):is(:hover, :focus-visible) .roll > span {
+    transform: translate3d(0, -1.2em, 0);
+  }
 }
 
-/* Flecha que sale y vuelve a entrar (orb de #009, versión inline) */
+/* Arrow launch */
 .roll-arrow {
   position: relative;
   display: inline-block;
@@ -104,10 +134,9 @@ body.theme-mate {
   height: 100%;
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.3;
+  stroke-width: 2.2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  transition: transform 0.55s var(--ux-ease);
 }
 .roll-arrow svg + svg {
   transform: translate3d(-110%, 110%, 0);
@@ -115,18 +144,24 @@ body.theme-mate {
 .roll-arrow.is-right svg + svg {
   transform: translate3d(-110%, 0, 0);
 }
-:is(a, button):is(:hover, :focus-visible) .roll-arrow svg:first-child {
-  transform: translate3d(110%, -110%, 0);
-}
-:is(a, button):is(:hover, :focus-visible) .roll-arrow.is-right svg:first-child {
-  transform: translate3d(110%, 0, 0);
-}
-:is(a, button):is(:hover, :focus-visible) .roll-arrow svg + svg {
-  transform: none;
-  transition-delay: 0.08s;
+
+@media (prefers-reduced-motion: no-preference) {
+  .roll-arrow svg {
+    transition: transform 0.52s var(--ux-ease);
+  }
+  :is(a, button):is(:hover, :focus-visible) .roll-arrow svg:first-child {
+    transform: translate3d(110%, -110%, 0);
+  }
+  :is(a, button):is(:hover, :focus-visible) .roll-arrow.is-right svg:first-child {
+    transform: translate3d(110%, 0, 0);
+  }
+  :is(a, button):is(:hover, :focus-visible) .roll-arrow svg + svg {
+    transform: none;
+    transition-delay: 0.08s;
+  }
 }
 
-/* Tinta que sube desde abajo con borde curvo (fill de #009) */
+/* Rising liquid ink fill */
 .ink-fill {
   position: relative;
   isolation: isolate;
@@ -139,8 +174,12 @@ body.theme-mate {
   background: var(--mx-fill-ink);
   border-radius: 50% 50% 0 0 / 40% 40% 0 0;
   transform: translate3d(0, 102%, 0);
-  transition: transform 0.7s var(--ux-ease), border-radius 0.7s var(--ux-ease);
   pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .ink-fill > .ink {
+    transition: transform 0.65s var(--ux-ease), border-radius 0.65s var(--ux-ease);
+  }
 }
 .ink-fill:is(:hover, :focus-visible) > .ink {
   transform: none;
@@ -148,25 +187,23 @@ body.theme-mate {
 }
 
 /* ---------------------------------------------------------------------------
-   2. ENTRADA DEL HERO (coreografía en body.loaded)
-   .hx      → bloque que sube con spring-soft (time-scaled a 900ms ≈ k=69 c=15)
-   .hw/.hwi → máscara por palabra de Lucian #237 (108% + rotate 4deg, 95ms)
+   2. HERO ENTRANCE CHOREOGRAPHY (body.loaded)
    --------------------------------------------------------------------------- */
 @keyframes hx-rise {
   from {
     opacity: 0;
-    transform: translate3d(var(--hx-x, 0), var(--hx-y, 22px), 0) scale(var(--hx-s, 1));
+    transform: translate3d(var(--hx-x, 0), var(--hx-y, 20px), 0) scale(var(--hx-s, 1));
   }
 }
 @keyframes hx-word {
   from {
-    transform: translate3d(0, 108%, 0) rotate(4deg);
+    transform: translate3d(0, 110%, 0) rotate(3deg);
   }
 }
 @keyframes hx-pop {
   from {
     opacity: 0;
-    transform: scale(0.86);
+    transform: scale(0.9);
   }
 }
 
@@ -174,57 +211,107 @@ body.theme-mate {
   display: inline-block;
   overflow: hidden;
   vertical-align: top;
-  padding-bottom: 0.08em;
-  margin-bottom: -0.08em;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
 }
 .hwi {
   display: inline-block;
   transform-origin: 0 100%;
 }
 
-html.mx body:not(.loaded) :is(.hx, .hx-pop) {
-  opacity: 0;
-}
-html.mx body:not(.loaded) .hwi {
-  transform: translate3d(0, 108%, 0);
-}
-html.mx body.loaded .hx {
-  animation: hx-rise 900ms var(--spring-soft) var(--d, 0ms) both;
-}
-html.mx body.loaded .hx-pop {
-  animation: hx-pop var(--spring-bounce-dur) var(--spring-bounce) var(--d, 0ms) both;
-}
-html.mx body.loaded .hwi {
-  animation: hx-word 0.9s var(--mx-mask) calc(var(--d, 0ms) + var(--i, 0) * 95ms) both;
-}
-
-/* ---------------------------------------------------------------------------
-   3. WORD MASK REVEAL EN SCROLL — mismo lenguaje que #237 para títulos de sección
-   [data-reveal-words] es dividido por JS; .is-in dispara.
-   --------------------------------------------------------------------------- */
-html.mx [data-reveal-words].is-split .hwi {
-  transform: translate3d(0, 108%, 0) rotate(4deg);
-}
-html.mx [data-reveal-words].is-split.is-in .hwi {
-  transform: none;
-  transition: transform 0.9s var(--mx-mask) calc(var(--i, 0) * 28ms);
-}
-
-/* ---------------------------------------------------------------------------
-   4. EDITORIAL HIGHLIGHTS & BLOOM
-   --------------------------------------------------------------------------- */
-mark.hl-bloom {
-  animation: mf-bloom var(--spring-bounce-dur) var(--spring-bounce) both;
-}
-@keyframes mf-bloom {
-  from {
-    transform: scale(0.94);
+@media (prefers-reduced-motion: no-preference) {
+  html.mx body:not(.loaded) :is(.hx, .hx-pop) {
+    opacity: 0;
+  }
+  html.mx body:not(.loaded) .hwi {
+    transform: translate3d(0, 110%, 0);
+  }
+  html.mx body.loaded .hx {
+    animation: hx-rise 820ms var(--spring-soft) var(--d, 0ms) both;
+  }
+  html.mx body.loaded .hx-pop {
+    animation: hx-pop var(--spring-bounce-dur) var(--spring-bounce) var(--d, 0ms) both;
+  }
+  html.mx body.loaded .hwi {
+    animation: hx-word 0.85s var(--mx-mask) calc(var(--d, 0ms) + var(--i, 0) * 75ms) both;
   }
 }
 
 /* ---------------------------------------------------------------------------
-   5. LIVE DOT — pulso de anillo (solo transform/opacity)
+   3. SCROLL WORD MASK & BLOCK REVEALS (JS splitter + IO + Native View Timeline)
    --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.mx [data-reveal-words].is-split .hwi {
+    transform: translate3d(0, 112%, 0) rotate(2.5deg);
+  }
+  html.mx [data-reveal-words].is-split.is-in .hwi {
+    transform: none;
+    transition: transform 0.85s var(--mx-mask) calc(var(--i, 0) * 32ms);
+  }
+
+  html.mx [data-reveal-block] {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+    transition:
+      opacity 0.72s var(--ease) var(--rd, 0ms),
+      transform 0.82s var(--ease-emphasis) var(--rd, 0ms);
+  }
+  html.mx [data-reveal-block].is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   4. NATIVE CSS SCROLL-DRIVEN PROGRESS BAR (Zero-JS on supporting browsers)
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    @keyframes amargo-scroll-progress {
+      from {
+        transform: scaleX(0);
+      }
+      to {
+        transform: scaleX(1);
+      }
+    }
+
+    #navProgress {
+      animation: amargo-scroll-progress auto linear;
+      animation-timeline: scroll(root block);
+    }
+
+    @keyframes amargo-ambient-drift {
+      from {
+        transform: translate3d(0, 28px, 0);
+      }
+      to {
+        transform: translate3d(0, -28px, 0);
+      }
+    }
+
+    .ambient-parallax {
+      animation: amargo-ambient-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   5. EDITORIAL HIGHLIGHTS & LIVE PULSE
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  mark.hl-bloom {
+    animation: mf-bloom var(--spring-bounce-dur) var(--spring-bounce) both;
+  }
+  @keyframes mf-bloom {
+    from {
+      transform: scale(0.94);
+    }
+  }
+}
+
 .live-dot {
   position: relative;
   display: inline-block;
@@ -234,45 +321,25 @@ mark.hl-bloom {
   background: currentColor;
   flex: none;
 }
-.live-dot::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: currentColor;
-  animation: live-ring 2.2s var(--ux-ease) infinite;
-}
-@keyframes live-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  70%,
-  100% {
-    transform: scale(3.2);
-    opacity: 0;
-  }
-}
 
-/* ---------------------------------------------------------------------------
-   6. REDUCED MOTION — todo termina en su estado final, nada se queda oculto
-   --------------------------------------------------------------------------- */
-@media (prefers-reduced-motion: reduce) {
-  .roll > span,
-  .roll-arrow svg,
-  .ink-fill > .ink {
-    transition-duration: 0.001ms !important;
-    transition-delay: 0ms !important;
+@media (prefers-reduced-motion: no-preference) {
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: currentColor;
+    animation: live-ring 2.2s var(--ux-ease) infinite;
   }
-  .live-dot::after,
-  mark.mf.on {
-    animation: none !important;
-  }
-  .hx,
-  .hx-pop,
-  .hwi {
-    animation: none !important;
-    opacity: 1 !important;
-    transform: none !important;
+  @keyframes live-ring {
+    0% {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    70%,
+    100% {
+      transform: scale(3.2);
+      opacity: 0;
+    }
   }
 }

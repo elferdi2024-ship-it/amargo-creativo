@@ -16,7 +16,11 @@ import Contact from '../components/Contact.astro';
 import InstagramFeed from '../components/InstagramFeed.astro';
 import Footer from '../components/Footer.astro';
 ---
-<Layout>
+<Layout
+  preloadHero={true}
+  includeShowcaseSchema={true}
+  breadcrumbs={[{ name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' }]}
+>
   <Navbar />
   <main id="main-content">
     <Hero />

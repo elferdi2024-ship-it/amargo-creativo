@@ -1,62 +1,42 @@
 ---
 // filepath: src/components/Marquee.astro
-// Marquee editorial de alta precisión: CSS continuo ininterrumpido + motor RAF garantizado en cualquier celular
+// Accessible Editorial Marquee:
+// - Respects prefers-reduced-motion strictly (static ribbon, zero forced rAF)
+// - Includes WCAG 2.2.2 pause/play control without aria-pressed conflict
+// - Smooth CSS compositor-only transform
 ---
-<div class="marquee" id="marqueeRoot" aria-hidden="true">
-  <div class="marquee-track" id="marqueeTrack">
-    <!-- Grupo 1 -->
-    <div class="marquee-group">
-      <span class="bone-block">STARTUPS<span class="star">/</span></span>
-      <span class="italic">crecimiento</span>
-      <span class="mate-block">PYMES<span class="star">/</span></span>
-      <span>APLICACIONES</span>
-      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-      <span class="italic">ventas</span>
-      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-      <span>RESULTADOS</span>
-    </div>
-    <!-- Grupo 2 -->
-    <div class="marquee-group" aria-hidden="true">
-      <span class="bone-block">STARTUPS<span class="star">/</span></span>
-      <span class="italic">crecimiento</span>
-      <span class="mate-block">PYMES<span class="star">/</span></span>
-      <span>APLICACIONES</span>
-      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-      <span class="italic">ventas</span>
-      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-      <span>RESULTADOS</span>
-    </div>
-    <!-- Grupo 3 (Garantiza buffer continuo en pantallas ultra-wide y rotación mobile) -->
-    <div class="marquee-group" aria-hidden="true">
-      <span class="bone-block">STARTUPS<span class="star">/</span></span>
-      <span class="italic">crecimiento</span>
-      <span class="mate-block">PYMES<span class="star">/</span></span>
-      <span>APLICACIONES</span>
-      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-      <span class="italic">ventas</span>
-      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-      <span>RESULTADOS</span>
-    </div>
-    <!-- Grupo 4 -->
-    <div class="marquee-group" aria-hidden="true">
-      <span class="bone-block">STARTUPS<span class="star">/</span></span>
-      <span class="italic">crecimiento</span>
-      <span class="mate-block">PYMES<span class="star">/</span></span>
-      <span>APLICACIONES</span>
-      <span class="rust-block">E-COMMERCE<span class="star">/</span></span>
-      <span class="italic">ventas</span>
-      <span class="bone-block">DISEÑO WEB<span class="star">/</span></span>
-      <span>RESULTADOS</span>
-    </div>
+<div class="marquee" id="marqueeRoot" role="region" aria-label="Principios de Amargo Creativo">
+  <div class="marquee-track" id="marqueeTrack" aria-hidden="true">
+    {[0, 1, 2, 3].map(() => (
+      <div class="marquee-group">
+        <span class="bone-block">80°C PRECISIÓN<span class="star">/</span></span>
+        <span class="italic">sin plantillas</span>
+        <span class="mate-block">&lt; 0.8s LCP<span class="star">/</span></span>
+        <span>CÓDIGO PROPIO</span>
+        <span class="rust-block">WHATSAPP COMMERCE<span class="star">/</span></span>
+        <span class="italic">conversión</span>
+        <span class="bone-block">ASTRO 5 &amp; EDGE<span class="star">/</span></span>
+        <span>100% TUYO</span>
+      </div>
+    ))}
   </div>
+  <button
+    type="button"
+    class="marquee-pause-btn"
+    id="marqueePauseBtn"
+    aria-label="Pausar cinta en movimiento"
+    title="Pausar o reanudar movimiento"
+  >
+    <span class="mp-icon" aria-hidden="true">❚❚</span>
+  </button>
 </div>
 
 <style>
   .marquee {
     background: var(--marquee-bg);
     color: var(--marquee-text);
-    border-top: 1px solid var(--marquee-bg);
-    border-bottom: 1px solid var(--marquee-bg);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
     padding: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -72,16 +52,25 @@
     align-items: stretch;
     width: max-content;
     flex-shrink: 0;
-    will-change: transform;
-    /* Movimiento continuo CSS de base a prueba de fallos */
-    animation: marqueeLoop 28s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .marquee-track {
+      animation: marqueeLoop 32s linear infinite;
+    }
+    .marquee:hover .marquee-track {
+      animation-play-state: paused;
+    }
+    .marquee.is-paused .marquee-track {
+      animation-play-state: paused;
+    }
   }
 
   @keyframes marqueeLoop {
-    0% {
+    from {
       transform: translate3d(0, 0, 0);
     }
-    100% {
+    to {
       transform: translate3d(-50%, 0, 0);
     }
   }
@@ -93,122 +82,102 @@
   }
 
   .marquee-track span {
-    padding: 16px 24px;
+    padding: 15px 24px;
     display: inline-flex;
     align-items: center;
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(20px, 3.5vw, 44px);
+    font-size: clamp(18px, 3vw, 38px);
     line-height: 1;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
 
   .marquee-track .italic {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
-    color: #0a0a0a;
+    font-weight: 400;
+    color: #11120f;
     background: var(--electric);
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 22px;
+    padding-right: 22px;
   }
 
   .marquee-track .bone-block {
     background: var(--bone);
-    color: #0a0a0a;
+    color: var(--ink);
   }
 
   .marquee-track .mate-block {
     background: var(--mate);
-    color: var(--bone);
+    color: #f5f3ec;
   }
 
   .marquee-track .rust-block {
     background: var(--rust);
-    color: var(--bone);
+    color: #f5f3ec;
   }
 
   .marquee-track .star {
-    font-size: 0.8em;
-    padding: 0 0 0 8px;
-    opacity: 0.5;
+    font-size: 0.72em;
+    padding: 0 0 0 10px;
+    opacity: 0.45;
+  }
+
+  .marquee-pause-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(245, 243, 236, 0.25);
+    background: rgba(17, 18, 15, 0.85);
+    color: #f5f3ec;
+    font-size: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  .marquee-pause-btn:hover,
+  .marquee-pause-btn:focus-visible {
+    background: var(--electric);
+    color: #11120f;
+    border-color: var(--electric);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-pause-btn {
+      display: none;
+    }
   }
 
   @media (max-width: 768px) {
     .marquee-track span {
       padding: 12px 16px;
-      font-size: clamp(17px, 4.2vw, 24px);
+      font-size: clamp(16px, 4vw, 22px);
     }
   }
 </style>
 
 <script>
-  // Motor redundante de animación física: si el navegador del celular pausa CSS por ahorro de batería,
-  // el bucle rAF toma el control instantáneamente garantizando movimiento continuo.
-  (function initMarqueeEngine() {
-    const track = document.getElementById('marqueeTrack');
-    if (!track) return;
-
-    let posX = 0;
-    let baseSpeed = 1.15;
-    let currentSpeed = baseSpeed;
-    let targetSpeed = baseSpeed;
-    let halfWidth = 0;
-    let lastScrollY = window.scrollY;
-    let isRafActive = false;
-
-    function measure() {
-      if (track) {
-        // La mitad corresponde a 2 de los 4 grupos
-        halfWidth = track.scrollWidth / 2;
-      }
-    }
-
-    measure();
-    window.addEventListener('resize', measure, { passive: true });
-    window.addEventListener('orientationchange', measure, { passive: true });
-
-    // Verificamos si la animación CSS está corriendo efectivamente en el dispositivo
-    function checkAndDrive() {
-      // Si la animación CSS está pausada por el OS (ej. ahorro de batería Android / prefers-reduced-motion)
-      const computed = window.getComputedStyle(track);
-      const isPaused = computed.animationPlayState === 'paused' || computed.animationName === 'none';
-
-      if (isPaused && !isRafActive) {
-        isRafActive = true;
-        track.style.animation = 'none';
-
-        function step() {
-          currentSpeed += (targetSpeed - currentSpeed) * 0.12;
-          posX -= currentSpeed;
-          if (halfWidth > 0 && posX <= -halfWidth) {
-            posX += halfWidth;
-          }
-          track.style.transform = `translate3d(${posX.toFixed(2)}px, 0, 0)`;
-          requestAnimationFrame(step);
-        }
-        requestAnimationFrame(step);
-      }
-    }
-
-    // Aceleración reactiva al scrollear (tacto inercial fluido)
-    window.addEventListener('scroll', () => {
-      const sy = window.scrollY;
-      const dy = Math.abs(sy - lastScrollY);
-      lastScrollY = sy;
-
-      if (dy > 3) {
-        targetSpeed = baseSpeed + Math.min(dy * 0.15, 6);
-        clearTimeout((window as any).__amargoMarqueeTimeout);
-        (window as any).__amargoMarqueeTimeout = setTimeout(() => {
-          targetSpeed = baseSpeed;
-        }, 120);
-      }
-    }, { passive: true });
-
-    // Ejecución inicial y tras hidratación
-    setTimeout(measure, 300);
-    setTimeout(checkAndDrive, 500);
-  })();
+  const marqueeRoot = document.getElementById('marqueeRoot');
+  const pauseBtn = document.getElementById('marqueePauseBtn');
+  if (marqueeRoot && pauseBtn) {
+    let paused = false;
+    pauseBtn.addEventListener('click', () => {
+      paused = !paused;
+      marqueeRoot.classList.toggle('is-paused', paused);
+      const icon = pauseBtn.querySelector('.mp-icon');
+      if (icon) icon.textContent = paused ? '▶' : '❚❚';
+      pauseBtn.setAttribute('aria-label', paused ? 'Reanudar cinta en movimiento' : 'Pausar cinta en movimiento');
+    });
+  }
 </script>

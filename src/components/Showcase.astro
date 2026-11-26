@@ -11,53 +11,67 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
 ---
 <section class="showcase" id="showcase">
   <!-- Fondo Ambiental del Personaje con Mate -->
-  <div class="showcase-ambient-bg" aria-hidden="true"></div>
+  <div class="showcase-ambient-bg ambient-parallax" aria-hidden="true"></div>
 
   <div class="showcase-head">
     <div>
       <div class="section-label"><span class="num">03</span> CASOS DE ÉXITO</div>
-      <h2>TRABAJOS <em>seleccionados</em></h2>
+      <h2 data-reveal-words>TRABAJOS <em>seleccionados</em></h2>
       <div class="showcase-filters" role="group" aria-label="Filtrar proyectos">
         <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">TODOS ({displayedProjects.length})</button>
         <button type="button" class="filter-btn" data-filter="marketplace" aria-pressed="false">MARKETPLACE ({displayedProjects.filter(p => p.category === 'marketplace').length})</button>
-        <button type="button" class="filter-btn" data-filter="saas" aria-pressed="false">SAAS & APPS ({displayedProjects.filter(p => p.category === 'saas').length})</button>
+        <button type="button" class="filter-btn" data-filter="saas" aria-pressed="false">SAAS &amp; APPS ({displayedProjects.filter(p => p.category === 'saas').length})</button>
         <button type="button" class="filter-btn" data-filter="ecommerce" aria-pressed="false">E-COMMERCE ({displayedProjects.filter(p => p.category === 'ecommerce').length})</button>
       </div>
     </div>
     <div class="showcase-head-right">
+      <div class="showcase-nav-controls" aria-label="Navegar carrusel de proyectos">
+        <button type="button" class="sc-arrow-btn" id="showcasePrev" aria-label="Proyecto anterior" data-cursor="ANTERIOR">←</button>
+        <button type="button" class="sc-arrow-btn" id="showcaseNext" aria-label="Siguiente proyecto" data-cursor="SIGUIENTE">→</button>
+      </div>
       <a href="/proyectos" class="see-all-top-btn" data-cursor="PROYECTOS">
-        <span>VER TODOS LOS PROYECTOS ({projects.length})</span> →
+        <span>ARCHIVO COMPLETO ({projects.length})</span> →
       </a>
     </div>
   </div>
-  <div class="projects-drag" id="projectsDrag">
-    {displayedProjects.map(project => (
-      <div 
-        class="project-card tactile-card" 
-        data-cursor="VER" 
+  <div class="projects-drag" id="projectsDrag" data-cursor="ARRASTRAR">
+    {displayedProjects.map((project, idx) => (
+      <article
+        class="project-card tactile-card"
+        tabindex="0"
+        role="button"
+        aria-label={`Ver detalles del caso de éxito ${project.title}`}
+        data-cursor="VER CASO"
         data-category={project.category}
-        data-title={project.title} 
-        data-desc={project.desc} 
-        data-url={project.url} 
+        data-title={project.title}
+        data-desc={project.desc}
+        data-url={project.url}
         data-img={project.img}
+        data-kicker={`${project.client} • ${project.location}`}
+        data-result={project.keyResult}
+        data-speed={project.architecture.speed}
+        data-perf={String(project.lighthouse.perf)}
+        data-tags={project.tags.join('|')}
       >
         <div class="pc-img-wrap">
-          <img 
-            src={project.img} 
-            class="pc-img" 
-            alt={project.title} 
-            width={project.aspectWidth} 
-            height={project.aspectHeight} 
-            loading="lazy" 
+          <img
+            src={project.img}
+            class="pc-img"
+            alt={`Interfaz en producción de ${project.title}`}
+            width={project.aspectWidth}
+            height={project.aspectHeight}
+            loading="lazy"
+            fetchpriority={idx > 1 ? 'low' : 'auto'}
+            decoding="async"
           />
           <div class="pc-loc-pill">{project.location}</div>
           {project.lighthouse && (
-            <div class="pc-lighthouse-pill">
+            <div class="pc-lighthouse-pill tabular">
               <span class="lh-dot">●</span>
               <span>LIGHTHOUSE {project.lighthouse.perf}</span>
             </div>
           )}
-          <div class="pc-arrow">
+          <div class="pc-arrow" aria-hidden="true">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M7 17L17 7M7 7h10v10"/>
             </svg>
@@ -69,22 +83,23 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
               <h3 class="pc-title">{project.title}</h3>
               <span class="pc-year">{project.yearCategory}</span>
             </div>
+            <p class="pc-result-line">{project.keyResult}</p>
           </div>
           <div class="pc-tags-row">
             <div class="pc-tags">
-              {project.tags.map(tag => (
+              {project.tags.slice(0, 3).map(tag => (
                 <span class="pc-tag">{tag}</span>
               ))}
             </div>
             {project.architecture?.speed && (
-              <div class="pc-speed-chip" title="Métricas de rendimiento en edge">
+              <div class="pc-speed-chip tabular" title="Métricas de rendimiento en edge">
                 <span class="speed-bolt">⚡</span>
-                <span class="speed-val">{project.architecture.speed}</span>
+                <span class="speed-val">{project.metrics}</span>
               </div>
             )}
           </div>
         </div>
-      </div>
+      </article>
     ))}
 
     {limit && (
@@ -97,6 +112,9 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
         </a>
       </div>
     )}
+  </div>
+  <div class="showcase-progress-bar" aria-hidden="true">
+    <div class="showcase-progress-fill" id="showcaseProgressFill"></div>
   </div>
 </section>
 
@@ -533,6 +551,74 @@ const displayedProjects = limit ? projects.slice(0, limit) : projects;
   .showcase-head-right {
     display: flex;
     align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .showcase-nav-controls {
+    display: inline-flex;
+    gap: 6px;
+  }
+
+  .sc-arrow-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.25s var(--ease), color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+
+  .sc-arrow-btn:hover {
+    background: var(--ink);
+    color: var(--bone);
+    transform: translate3d(0, -1px, 0);
+  }
+
+  .pc-result-line {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--mate);
+    line-height: 1.4;
+    margin-top: 4px;
+  }
+
+  :global(body.theme-dark) .pc-result-line,
+  :global(body.theme-electric) .pc-result-line,
+  :global(body.theme-mate) .pc-result-line {
+    color: var(--electric);
+  }
+
+  .showcase-progress-bar {
+    width: 100%;
+    height: 2px;
+    background: var(--line);
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+  }
+
+  .showcase-progress-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--mate);
+    transform: scaleX(0.15);
+    transform-origin: 0 50%;
+    transition: transform 0.16s ease-out;
+  }
+
+  :global(body.theme-dark) .showcase-progress-fill,
+  :global(body.theme-electric) .showcase-progress-fill,
+  :global(body.theme-mate) .showcase-progress-fill {
+    background: var(--electric);
   }
 
   .see-all-top-btn {

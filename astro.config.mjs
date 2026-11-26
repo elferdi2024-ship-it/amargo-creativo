@@ -14,6 +14,16 @@ export default defineConfig({
   build: {
     inlineStylesheets: 'always',
   },
-  integrations: [sitemap(), react()],
+  integrations: [
+    sitemap({
+      filter: (page) =>
+        !page.includes('/admin') &&
+        !page.includes('/p/') &&
+        !page.includes('/comprobante') &&
+        !page.includes('/finanzas') &&
+        !page.includes('/api/') &&
+        !page.endsWith('/servicios/'),
+    }),
+    react(),
+  ],
 });
-

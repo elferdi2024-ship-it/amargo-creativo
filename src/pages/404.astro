@@ -2,124 +2,161 @@
 // filepath: src/pages/404.astro
 export const prerender = true;
 
-import { whatsappHref } from "../lib/format";
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import RollText from '../components/motion/RollText.astro';
+import { whatsappHref } from '../lib/format';
 
-const waUrl = whatsappHref("Hola Amargo, intenté acceder a un enlace y no lo encontré.");
+const waUrl = whatsappHref('Hola Amargo Creativo, intenté abrir un enlace y me salió 404.');
 ---
-
-<!doctype html>
-<html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Página no encontrada · Amargo Creativo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-  </head>
-  <body>
-    <main class="notfound-card">
-      <a href="/" class="brand">AMARGO.</a>
-      <span class="error-code">404</span>
-      <h1>Propuesta o enlace no disponible</h1>
-      <p>
-        El enlace al que intentás acceder no existe, caducó o fue desactivado por el equipo de Amargo Creativo.
-      </p>
-      <div class="actions">
-        <a href="/" class="btn-home">Ir al inicio</a>
-        <a href={waUrl} target="_blank" rel="noopener" class="btn-wa">Consultar por WhatsApp ↗</a>
+<Layout
+  title="404 — Ruta no encontrada | Amargo Creativo™"
+  description="La página solicitada no existe o fue movida. Volvé al inicio o hablá directo por WhatsApp con Amargo Creativo."
+  noindex={true}
+>
+  <Navbar />
+  <main id="main-content" class="nf-page">
+    <div class="nf-shell">
+      <div class="nf-meta">
+        <span class="nf-badge">ERROR 404</span>
+        <span>RUTA FUERA DE COORDENADAS // ATLÁNTIDA, UY</span>
       </div>
-    </main>
-  </body>
-</html>
+      <div class="nf-code tabular" aria-hidden="true">404</div>
+      <h1 class="nf-title">Este mate se <em>lavó</em> antes de tiempo.</h1>
+      <p class="nf-desc">
+        El enlace al que intentaste acceder no existe, caducó o fue archivado por el equipo de Amargo Creativo.
+      </p>
+      <div class="nf-actions">
+        <a href="/" class="nf-btn-primary ink-fill" data-cursor="INICIO">
+          <span class="ink" aria-hidden="true"></span>
+          <RollText text="VOLVER AL INICIO" arrow="right" />
+        </a>
+        <a
+          href={waUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="nf-btn-secondary ink-fill"
+          data-cursor="WHATSAPP"
+        >
+          <span class="ink" aria-hidden="true"></span>
+          <RollText text="CONSULTAR POR WHATSAPP" arrow="diag" />
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
 
 <style>
-  :root {
-    --bg: #141E18;
-    --ink: #F8F9F6;
-    --mute: #8E9C92;
-    --lime: #C8FF00;
-    --border: #2D4034;
-  }
-
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: "Archivo", system-ui, -apple-system, sans-serif;
-    min-height: 100vh;
+  .nf-page {
+    min-height: calc(100dvh - 180px);
+    padding: calc(110px + env(safe-area-inset-top)) var(--gut) 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    background: var(--bone);
   }
 
-  .notfound-card {
-    max-width: 440px;
-    text-align: center;
-    background: #1C2B22;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 3rem 2rem;
-  }
-
-  .brand {
-    font-weight: 800;
-    font-size: 1.25rem;
-    color: var(--ink);
-    text-decoration: none;
-    display: inline-block;
-    margin-bottom: 1.5rem;
-  }
-
-  .error-code {
-    display: block;
-    font-family: "JetBrains Mono", monospace;
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: var(--lime);
-    line-height: 1;
-    margin-bottom: 0.5rem;
-  }
-
-  h1 {
-    font-size: 1.4rem;
-    font-weight: 800;
-    margin: 0 0 0.85rem;
-  }
-
-  p {
-    font-size: 0.9rem;
-    color: var(--mute);
-    line-height: 1.5;
-    margin: 0 0 2rem;
-  }
-
-  .actions {
+  .nf-shell {
+    max-width: 760px;
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    padding: clamp(32px, 5vw, 64px);
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 20px;
   }
 
-  .btn-home {
-    background: var(--lime);
-    color: #141E18;
-    padding: 0.85rem;
-    border-radius: 8px;
+  .nf-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    color: var(--mute);
+  }
+
+  .nf-badge {
+    background: var(--mate);
+    color: #f5f3ec;
+    padding: 4px 10px;
     font-weight: 700;
-    text-decoration: none;
-    font-size: 0.92rem;
+    border-radius: 2px;
   }
 
-  .btn-wa {
-    background: transparent;
-    border: 1px solid var(--border);
+  .nf-code {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(72px, 16vw, 150px);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
     color: var(--ink);
-    padding: 0.85rem;
-    border-radius: 8px;
-    font-weight: 600;
+  }
+
+  .nf-title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(24px, 4vw, 44px);
+    line-height: 1.02;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  .nf-desc {
+    font-family: var(--font-body);
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--mute);
+    max-width: 52ch;
+  }
+
+  .nf-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+  }
+
+  .nf-btn-primary,
+  .nf-btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 24px;
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     text-decoration: none;
-    font-size: 0.88rem;
+  }
+
+  .nf-btn-primary {
+    --mx-fill-ink: #11120f;
+    background: var(--electric);
+    color: #11120f;
+    border: 1px solid #11120f;
+  }
+
+  .nf-btn-primary:hover {
+    color: var(--electric);
+  }
+
+  .nf-btn-secondary {
+    --mx-fill-ink: var(--ink);
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--line-strong);
+  }
+
+  .nf-btn-secondary:hover {
+    color: var(--bone);
   }
 </style>

@@ -5,7 +5,7 @@
 // Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
 import RollText from './motion/RollText.astro';
 
-const titleWords: string[] = ['MOTORES', 'DE', 'CRECIMIENTO', 'DIGITAL', 'EN', 'URUGUAY'];
+const titleWords: string[] = ['MOTORES', 'DIGITALES', 'DE', 'ALTO', 'RENDIMIENTO'];
 const lastIndex = titleWords.length - 1;
 ---
 <header class="hero" id="top">
@@ -20,7 +20,7 @@ const lastIndex = titleWords.length - 1;
           <source media="(min-width: 769px)" srcset="/amargo-hero-pc.webp" type="image/webp" />
           <img 
             src="/amargo-hero-pc.webp" 
-            alt="Amargo Creativo — Hero Poster" 
+            alt="Amargo Creativo — Ritual del mate e ingeniería web de precisión" 
             class="hero-poster-img"
             fetchpriority="high"
             decoding="async"
@@ -47,11 +47,11 @@ const lastIndex = titleWords.length - 1;
 
   <!-- Barra Superior del Hero -->
   <div class="hero-top">
-    <div class="hero-live-badge hx" style="--d:150ms;--hx-y:-10px">
-      <span class="live-label"><span class="live-dot" aria-hidden="true"></span>EN VIVO</span>
-      <span>AGENCIA DIGITAL DE ALTO RENDIMIENTO</span>
+    <div class="hero-live-badge hx" style="--d:120ms;--hx-y:-10px">
+      <span class="live-label"><span class="live-dot" aria-hidden="true"></span>80°C EN VIVO</span>
+      <span>INGENIERÍA WEB &amp; DISEÑO DE AUTOR</span>
     </div>
-    <div class="hero-location-badge hx" style="--d:230ms;--hx-y:-10px">
+    <div class="hero-location-badge hx" style="--d:180ms;--hx-y:-10px">
       <span>ATLÁNTIDA, CANELONES</span>
       <span>URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
     </div>
@@ -61,12 +61,12 @@ const lastIndex = titleWords.length - 1;
   <div class="hero-spacer" aria-hidden="true"></div>
 
   <!-- Barra Inferior Editorial Equilibrada en 3 Columnas (Titular • Pilares • Métricas) -->
-  <div class="hero-bottom hx" id="heroBottom" style="--d:200ms;--hx-y:36px">
+  <div class="hero-bottom hx" id="heroBottom" style="--d:160ms;--hx-y:28px">
     <!-- Columna 1: Titular Semántico, Propuesta de Valor & Acciones -->
     <div class="hero-sub-wrap">
       <h1 class="hero-h1">
-        <span class="h1-sub hx" style="--d:380ms;--hx-y:8px">CREACIÓN DE PÁGINAS WEB &bull; APPS &bull; SEO &bull; CONVERSIÓN</span>
-        <span class="h1-title" style="--d:420ms">
+        <span class="h1-sub hx" style="--d:280ms;--hx-y:8px">DISEÑO WEB &bull; APPS A MEDIDA &bull; SEO &bull; WHATSAPP COMMERCE</span>
+        <span class="h1-title" style="--d:320ms">
           {titleWords.map((word, i) => (
             i === lastIndex ? (
               <span class="hw-u">
@@ -81,9 +81,9 @@ const lastIndex = titleWords.length - 1;
           ))}
         </span>
       </h1>
-      <p class="hero-sub hx" style="--d:620ms;--hx-y:12px">Webs ultrarrápidas (&lt;0.8s), aplicaciones de autor y conversión directa a WhatsApp.</p>
+      <p class="hero-sub hx" style="--d:520ms;--hx-y:10px">Código propio en Astro 5 y Next.js, carga en menos de 0.8s y conversión directa a WhatsApp. Sin plantillas, 100% tuyo.</p>
       <div class="hero-cta-wrap">
-        <span class="hero-cta-slot hx-pop" style="--d:760ms">
+        <span class="hero-cta-slot hx-pop" style="--d:640ms">
           <span class="magnetic-btn hero-cta-mag">
             <a 
               href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
@@ -98,8 +98,8 @@ const lastIndex = titleWords.length - 1;
             </a>
           </span>
         </span>
-        <span class="hero-cta-slot hx-pop" style="--d:840ms">
-          <a href="#showcase" class="hero-cta-secondary ink-fill" aria-label="Ver proyectos y casos de éxito">
+        <span class="hero-cta-slot hx-pop" style="--d:720ms">
+          <a href="#showcase" class="hero-cta-secondary ink-fill" data-cursor="CASOS" aria-label="Ver proyectos y casos de éxito">
             <span class="ink" aria-hidden="true"></span>
             <RollText text="VER TRABAJOS" arrow="right" />
           </a>
@@ -402,11 +402,11 @@ const lastIndex = titleWords.length - 1;
 <style>
   .hero {
     position: relative;
-    min-height: 100vh;
     min-height: 100svh;
+    min-height: 100dvh;
     width: 100%;
-    background: #e4e1d8;
-    color: #0a0a0a;
+    background: #e7e4dc;
+    color: var(--ink);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -549,15 +549,15 @@ const lastIndex = titleWords.length - 1;
     position: relative;
     z-index: 10;
     display: grid;
-    grid-template-columns: 1.4fr 1.15fr 1fr;
+    grid-template-columns: 1.55fr 1fr 0.95fr;
     align-items: center;
     gap: clamp(24px, 3.2vw, 48px);
-    padding: 24px var(--gut) calc(28px + env(safe-area-inset-bottom));
-    border-top: 1px solid rgba(10, 10, 10, 0.14);
-    background: rgba(244, 242, 236, 0.88);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.03);
+    padding: 26px var(--gut) calc(30px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: rgba(246, 244, 237, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 -16px 40px rgba(21, 46, 26, 0.06);
   }
 
   :global(body.theme-dark) .hero-bottom {
@@ -605,11 +605,11 @@ const lastIndex = titleWords.length - 1;
   }
 
   .h1-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(19px, 2.2vw, 27px);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    font-size: clamp(22px, 2.7vw, 36px);
+    line-height: 1.02;
+    letter-spacing: -0.032em;
     text-transform: uppercase;
     color: var(--ink);
     font-kerning: normal;

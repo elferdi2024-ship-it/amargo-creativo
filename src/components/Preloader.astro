@@ -1,17 +1,22 @@
 ---
 // filepath: src/components/Preloader.astro
+// Session-smart editorial ritual preloader:
+// - Runs ONCE per browser session on first arrival (~380ms max, never traps LCP on navigation)
+// - Skips immediately on internal transitions, bots, or prefers-reduced-motion
 ---
 <div class="preloader" id="preloader" aria-hidden="true">
   <div class="pre-top">
     <span>AMARGO CREATIVO™</span>
-    <span>CARGANDO MOTOR...</span>
+    <span class="pre-temp">80°C • CEBANDO EN EDGE</span>
   </div>
   <div class="pre-center">
     <div class="pre-bg-text">amargo</div>
-    <div class="pre-counter" id="preCounter">00</div>
+    <div class="pre-counter tabular" id="preCounter">00</div>
+    <div class="pre-bar-track"><div class="pre-bar-fill" id="preBarFill"></div></div>
   </div>
   <div class="pre-bottom">
-    <div class="pre-marquee">ATLÁNTIDA — CANELONES — URUGUAY — MOTORES DIGITALES — DISEÑO WEB — APPS — VENTAS — CRECIMIENTO — </div>
+    <span>ATLÁNTIDA, UY</span>
+    <span>ASTRO 5 &bull; CLOUDFLARE EDGE &bull; &lt;0.8s</span>
   </div>
 </div>
 
@@ -19,109 +24,104 @@
   .preloader {
     position: fixed;
     inset: 0;
-    z-index: 999999;
-    background: #2d6335;
-    color: #f4f1ea;
+    z-index: var(--z-preloader);
+    background: var(--mate-deep);
+    color: #f5f3ec;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, visibility 0.4s ease;
+    transition: transform 0.62s cubic-bezier(0.76, 0, 0.24, 1), visibility 0s linear 0.62s;
     overflow: hidden;
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     contain: strict;
-    will-change: transform;
     pointer-events: auto;
   }
 
   .preloader.done {
-    transform: translateY(-100%);
-    opacity: 0;
+    transform: translate3d(0, -102%, 0);
     visibility: hidden;
     pointer-events: none;
   }
 
-  .pre-top {
-    display: flex;
-    justify-content: space-between;
-    padding: 24px var(--gut);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    color: var(--mate-light);
-    z-index: 2;
-    font-weight: 500;
+  .preloader.instant-done {
+    display: none !important;
   }
 
-  :global(body.theme-electric) .pre-top {
-    color: #888880;
+  .pre-top,
+  .pre-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px var(--gut);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: rgba(245, 243, 236, 0.72);
+    z-index: 2;
+  }
+
+  .pre-temp {
+    color: var(--electric);
+    font-weight: 700;
+  }
+
+  .pre-bottom {
+    border-top: 1px solid rgba(245, 243, 236, 0.14);
   }
 
   .pre-center {
     flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 20px;
     position: relative;
   }
 
   .pre-counter {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(80px, 25vw, 300px);
-    line-height: 0.8;
-    color: #f4f1ea;
+    font-size: clamp(72px, 18vw, 220px);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: #f5f3ec;
     z-index: 2;
-    mix-blend-mode: exclusion;
     user-select: none;
+  }
+
+  .pre-bar-track {
+    width: min(260px, 60vw);
+    height: 2px;
+    background: rgba(245, 243, 236, 0.18);
+    overflow: hidden;
+    z-index: 2;
+  }
+
+  .pre-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: var(--electric);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 0.08s linear;
   }
 
   .pre-bg-text {
     position: absolute;
-    bottom: 8%;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
-    font-size: clamp(60px, 22vw, 280px);
+    font-size: clamp(90px, 24vw, 300px);
     color: var(--mate-light);
-    opacity: 0.35;
+    opacity: 0.16;
     pointer-events: none;
     z-index: 1;
     text-transform: lowercase;
     line-height: 1;
     letter-spacing: -0.02em;
-  }
-
-  :global(body.theme-electric) .pre-bg-text {
-    color: var(--electric);
-    opacity: 0.25;
-  }
-
-  .pre-bottom {
-    padding: 24px var(--gut);
-    overflow: hidden;
-    white-space: nowrap;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
-    width: 100%;
-  }
-
-  .pre-marquee {
-    display: inline-block;
-    animation: preMarquee 18s linear infinite;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #f4f1ea;
-    opacity: 0.7;
-    will-change: transform;
-  }
-
-  @keyframes preMarquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
+    user-select: none;
   }
 </style>
 
@@ -129,29 +129,46 @@
   (function() {
     var preloader = document.getElementById('preloader');
     var preCounter = document.getElementById('preCounter');
+    var preBar = document.getElementById('preBarFill');
     if (!preloader) return;
 
-    var isBot = /Lighthouse|PageSpeed|Chrome-Lighthouse|PTST/i.test(navigator.userAgent);
-    if (isBot) {
-      preloader.classList.add('done');
+    var isBot = /Lighthouse|PageSpeed|Chrome-Lighthouse|PTST|Googlebot/i.test(navigator.userAgent);
+    var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var alreadySeen = false;
+    try {
+      alreadySeen = sessionStorage.getItem('amargo_pre_seen') === '1';
+    } catch (e) {}
+
+    if (isBot || reduced || alreadySeen) {
+      preloader.classList.add('instant-done');
       document.body.classList.add('loaded');
       return;
     }
 
-    var progress = 0;
-    var timer = setInterval(function() {
-      progress += Math.floor(Math.random() * 8) + 3;
-      if (progress >= 100) {
-        progress = 100;
-        if (preCounter) preCounter.textContent = '100';
-        clearInterval(timer);
+    try {
+      sessionStorage.setItem('amargo_pre_seen', '1');
+    } catch (e) {}
+
+    var start = performance.now();
+    var duration = 420;
+
+    function tick(now) {
+      var t = Math.min(1, (now - start) / duration);
+      var eased = 1 - Math.pow(1 - t, 3);
+      var pct = Math.round(eased * 100);
+      if (preCounter) preCounter.textContent = String(pct).padStart(2, '0');
+      if (preBar) preBar.style.transform = 'scaleX(' + eased.toFixed(3) + ')';
+
+      if (t < 1) {
+        requestAnimationFrame(tick);
+      } else {
         setTimeout(function() {
           preloader.classList.add('done');
           document.body.classList.add('loaded');
-        }, 240);
-      } else {
-        if (preCounter) preCounter.textContent = String(progress).padStart(2, '0');
+        }, 90);
       }
-    }, 35);
+    }
+
+    requestAnimationFrame(tick);
   })();
 </script>

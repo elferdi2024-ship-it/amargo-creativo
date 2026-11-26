@@ -36,47 +36,58 @@ const clientCases: ClientCase[] = [
     initials: "BU"
   },
   {
-    id: "driveprime",
+    id: "deal-motors",
     num: "02",
-    name: "DrivePrime",
-    category: "Alquiler de Vehículos & Gestión de Flotas",
-    location: "Canelones, Uruguay",
-    quote: "Pasamos de responder cotizaciones manuales durante horas a tener un sistema automatizado que gestiona reservas en 2 minutos. La velocidad de carga y el diseño marcaron una diferencia total en ventas.",
-    stat1Num: "2 min",
-    stat1Label: "Cierre de Reserva",
-    stat1Desc: "Flujo automatizado sin fricción",
-    stat2Num: "100%",
-    stat2Label: "Autogestión",
-    stat2Desc: "Validación inmediata de flotas",
-    tag: "SAAS VEHICULAR",
-    initials: "DP"
+    name: "Deal Motors UY",
+    category: "Plataforma Automotriz & Trade-In",
+    location: "Montevideo, Uruguay",
+    quote: "Pasamos de responder cotizaciones manuales durante horas a un cotizador inteligente de permutas que califica prospectos en minutos. La velocidad y estética elevaron la confianza al instante.",
+    stat1Num: "+65",
+    stat1Label: "Cotizaciones / Sem",
+    stat1Desc: "Permutas calificadas en tiempo real",
+    stat2Num: "-4 días",
+    stat2Label: "Ciclo de Venta",
+    stat2Desc: "Cierre más ágil por WhatsApp",
+    tag: "AUTOMOTRIZ",
+    initials: "DM"
   },
   {
-    id: "remate",
+    id: "el-remate",
     num: "03",
-    name: "Remate",
-    category: "Subastas y Pujas en Tiempo Real",
-    location: "Todo Uruguay",
-    quote: "En subastas en vivo, cada milisegundo de retraso arruina la operación. La arquitectura técnica desarrollada por Amargo soporta cientos de postores simultáneos con latencia prácticamente cero.",
-    stat1Num: "<50ms",
-    stat1Label: "Latencia Real",
-    stat1Desc: "Pujas en vivo con WebSockets",
-    stat2Num: "99.9%",
-    stat2Label: "Disponibilidad",
-    stat2Desc: "Cero caídas en picos de tráfico",
-    tag: "FINTECH EN VIVO",
-    initials: "RM"
+    name: "El Remate",
+    category: "E-Commerce Mayorista & 6 Sucursales",
+    location: "Canelones, Uruguay",
+    quote: "Manejar más de 1.900 productos en celular sin que la web se trabe parecía imposible. Amargo entregó un buscador instantáneo en 18ms que derivó pedidos mayoristas directos a cada sucursal.",
+    stat1Num: "18ms",
+    stat1Label: "Búsqueda Catálogo",
+    stat1Desc: "+1.900 SKUs navegables en 4G",
+    stat2Num: "6",
+    stat2Label: "Sucursales Activas",
+    stat2Desc: "Despacho por zona sin fricción",
+    tag: "E-COMMERCE",
+    initials: "ER"
   }
 ];
 ---
 <section class="testimonials" id="testimonials">
   <!-- Fondo Ambiental del Personaje con Mate -->
-  <div class="testimonials-ambient-bg" aria-hidden="true"></div>
+  <div class="testimonials-ambient-bg ambient-parallax" aria-hidden="true"></div>
 
   <!-- Cabecera de Sección -->
   <div class="test-header">
-    <div class="section-label"><span class="num">06</span> CLIENTES & RESULTADOS</div>
-    <h2>Resultados <em>reales.</em> Negocios que crecen.</h2>
+    <div class="test-header-top">
+      <div class="section-label"><span class="num">05</span> CLIENTES &amp; RESULTADOS</div>
+      <button
+        type="button"
+        class="test-pause-btn"
+        id="testPauseBtn"
+        aria-label="Pausar rotación automática de testimonios"
+      >
+        <span class="tp-icon" aria-hidden="true">❚❚</span>
+        <span class="tp-label">AUTO</span>
+      </button>
+    </div>
+    <h2 data-reveal-words>Resultados <em>reales.</em> Negocios que crecen.</h2>
   </div>
 
   <!-- Selector de Pestañas Interactivo -->
@@ -155,8 +166,23 @@ const clientCases: ClientCase[] = [
 
     const tabBtns = section.querySelectorAll<HTMLButtonElement>('.client-tab-btn');
     const panels = section.querySelectorAll<HTMLElement>('.spotlight-panel');
+    const pauseBtn = document.getElementById('testPauseBtn');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let activeIndex = 0;
-    let autoPlayTimer: any = null;
+    let autoPlayTimer: ReturnType<typeof setInterval> | null = null;
+    let userPaused = reduced;
+
+    function syncPauseBtn() {
+      if (!pauseBtn) return;
+      const icon = pauseBtn.querySelector('.tp-icon');
+      const lbl = pauseBtn.querySelector('.tp-label');
+      if (icon) icon.textContent = userPaused ? '▶' : '❚❚';
+      if (lbl) lbl.textContent = userPaused ? 'PAUSADO' : 'AUTO';
+      pauseBtn.setAttribute(
+        'aria-label',
+        userPaused ? 'Reanudar rotación automática de testimonios' : 'Pausar rotación automática de testimonios'
+      );
+    }
 
     function switchTab(index: number) {
       if (index < 0 || index >= tabBtns.length) return;
@@ -169,24 +195,31 @@ const clientCases: ClientCase[] = [
       });
 
       panels.forEach((panel, i) => {
-        const isActive = i === index;
-        panel.classList.toggle('active', isActive);
+        panel.classList.toggle('active', i === index);
       });
     }
 
     tabBtns.forEach((btn, index) => {
       btn.addEventListener('click', () => {
         switchTab(index);
+        userPaused = true;
         stopAutoPlay();
+        syncPauseBtn();
       });
     });
 
-    // Auto-rotación suave (opcional, pausada con hover)
+    pauseBtn?.addEventListener('click', () => {
+      userPaused = !userPaused;
+      if (userPaused) stopAutoPlay();
+      else startAutoPlay();
+      syncPauseBtn();
+    });
+
     function startAutoPlay() {
+      if (userPaused || reduced) return;
       stopAutoPlay();
       autoPlayTimer = setInterval(() => {
-        const next = (activeIndex + 1) % tabBtns.length;
-        switchTab(next);
+        switchTab((activeIndex + 1) % tabBtns.length);
       }, 8000);
     }
 
@@ -199,9 +232,15 @@ const clientCases: ClientCase[] = [
 
     section.addEventListener('mouseenter', stopAutoPlay);
     section.addEventListener('mouseleave', startAutoPlay);
-    section.addEventListener('touchstart', stopAutoPlay, { passive: true });
+    section.addEventListener('focusin', stopAutoPlay);
+    section.addEventListener('touchstart', () => {
+      userPaused = true;
+      stopAutoPlay();
+      syncPauseBtn();
+    }, { passive: true });
 
-    startAutoPlay();
+    syncPauseBtn();
+    if (!reduced) startAutoPlay();
 
     // Soporte para gestos táctiles Swipe
     let touchStartX = 0;
@@ -243,6 +282,43 @@ const clientCases: ClientCase[] = [
     position: relative;
     overflow: hidden;
     box-sizing: border-box;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 640px;
+  }
+
+  .test-header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+
+  .test-header-top .section-label {
+    margin-bottom: 0;
+  }
+
+  .test-pause-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+
+  .test-pause-btn:hover {
+    background: var(--ink);
+    color: var(--bone);
   }
 
   /* Fondo Ambiental Texturizado del Personaje con Mate */
@@ -614,8 +690,10 @@ const clientCases: ClientCase[] = [
   }
 
   .mib-num {
-    font-family: 'Anton', sans-serif;
-    font-size: clamp(32px, 3.5vw, 46px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(30px, 3.2vw, 44px);
+    letter-spacing: -0.04em;
     line-height: 1;
     color: var(--mate);
     transition: color 0.25s;
@@ -705,7 +783,8 @@ const clientCases: ClientCase[] = [
     }
 
     .mib-desc {
-      display: none;
+      font-size: 11px;
+      line-height: 1.35;
     }
   }
 

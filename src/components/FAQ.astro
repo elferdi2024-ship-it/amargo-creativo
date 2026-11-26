@@ -38,10 +38,10 @@ const faqs: FAQItem[] = [
 ---
 <section class="faq" id="faq">
   <!-- Marca de Agua Ambiental Decorativa -->
-  <div class="faq-ambient-bg" aria-hidden="true"></div>
+  <div class="faq-ambient-bg ambient-parallax" aria-hidden="true"></div>
   <div class="faq-head">
     <div class="section-label"><span class="num">{sectionNum}</span> PREGUNTAS FRECUENTES</div>
-    <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
+    <h2 data-reveal-words>Dudas <em>claras.</em> Respuestas directas.</h2>
   </div>
   <div class="faq-list">
     {faqs.map((faq, index) => (
@@ -164,8 +164,10 @@ const faqs: FAQItem[] = [
     color: var(--electric);
   }
   .faq-num {
-    font-family: 'Anton', sans-serif;
-    font-size: 36px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 30px;
+    letter-spacing: -0.04em;
     color: var(--mute);
     line-height: 1;
     transition: color 0.3s var(--ease);

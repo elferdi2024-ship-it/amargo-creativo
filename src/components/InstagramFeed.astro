@@ -81,8 +81,8 @@ const posts: InstagramPost[] = [
   <div class="ig-container">
     <div class="ig-head">
       <div class="ig-head-left">
-        <div class="section-label"><span class="num">10</span> COMUNIDAD DIGITAL</div>
-        <h2 class="ig-title">NUESTRO <em>instagram</em></h2>
+        <div class="section-label"><span class="num">07</span> STUDIO LOG &amp; COMUNIDAD</div>
+        <h2 class="ig-title" data-reveal-words>NUESTRO <em>instagram</em></h2>
       </div>
       <div class="ig-head-right">
         <a 
@@ -117,7 +117,9 @@ const posts: InstagramPost[] = [
               src={post.img} 
               alt={post.caption} 
               class="ig-img" 
-              loading="lazy" 
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
               width="600" 
               height="600" 
             />
@@ -180,14 +182,16 @@ const posts: InstagramPost[] = [
 
 <style>
   .ig-section {
-    background: var(--bg);
+    background: var(--bone);
     color: var(--ink);
-    padding: clamp(60px, 10vh, 120px) var(--gut);
+    padding: clamp(72px, 11vh, 130px) var(--gut);
     border-top: 1px solid var(--line);
     position: relative;
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 880px;
   }
   .ig-container {
     max-width: var(--max);

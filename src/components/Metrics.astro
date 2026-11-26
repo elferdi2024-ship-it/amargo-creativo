@@ -36,23 +36,23 @@ const metrics: Metric[] = [
   <div class="mi-inner">
     <div class="mi-head">
       <div class="section-label">
-        <span class="num">05</span>
-        <span>ESTRATEGIA &bull; IMPACTO</span>
+        <span class="num">04</span>
+        <span>INGENIERÍA &bull; IMPACTO</span>
       </div>
-      <h2>Estrategia. <em>Sin vueltas.</em></h2>
-      <p class="mi-tagline">Rendimiento extremo, diseño radical y conversión directa.</p>
+      <h2 data-reveal-words>Estrategia. <em>Sin vueltas.</em></h2>
+      <p class="mi-tagline">Rendimiento extremo, dirección de arte radical y conversión directa a WhatsApp.</p>
       
       <div class="mi-stamp-badge" aria-hidden="true">
         <span class="stamp-dot">●</span>
-        <span>ESTÁNDAR AMARGO &bull; 0.0s LATENCY</span>
+        <span>ESTÁNDAR AMARGO &bull; 80°C EDGE</span>
       </div>
     </div>
     
     <div class="mi-cards">
-      {metrics.map(metric => (
-        <div class="mi-card">
+      {metrics.map((metric, i) => (
+        <div class="mi-card" data-reveal-block style={`--rd:${i * 70}ms`}>
           <div class="mi-card-top">
-            <div class="mi-num">{metric.num}</div>
+            <div class="mi-num tabular">{metric.num}</div>
             <div class="mi-label">{metric.label}</div>
           </div>
           <div class="mi-desc">{metric.desc}</div>
@@ -207,8 +207,10 @@ const metrics: Metric[] = [
     color: rgba(10, 10, 10, 0.85);
   }
   .mi-num {
-    font-family: 'Anton', sans-serif;
-    font-size: clamp(32px, 3.8vw, 48px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(28px, 3.4vw, 44px);
+    letter-spacing: -0.035em;
     line-height: 1;
     color: var(--electric);
     transition: color 0.3s;

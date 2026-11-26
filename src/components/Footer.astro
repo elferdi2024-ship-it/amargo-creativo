@@ -1,194 +1,265 @@
 ---
 // filepath: src/components/Footer.astro
+// Architectural Awwwards Footer: Fixed HTML structure, monumental signature, clean 3-column grid
 ---
-<footer>
-  <div class="footer-inner">
-    <div class="footer-left">
-      <div class="clock-block">
-        <span>HORA EN URUGUAY</span>
-        <strong id="clockUY">--:--:--</strong>
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-top">
+      <div class="footer-brand-col">
+        <a href="#top" class="footer-wordmark" aria-label="Volver al inicio de Amargo Creativo">
+          AMARGO<span class="wm-dot">.</span>
+        </a>
+        <p class="footer-phrase">
+          <em>"Siempre es una buena hora para compartir un amargo."</em>
+        </p>
+        <div class="clock-block">
+          <span>HORA EN ATLÁNTIDA, UY</span>
+          <strong id="clockUY" class="tabular">--:--:--</strong>
+        </div>
       </div>
-      <div class="footer-phrase">
-        <em>"Siempre es una buena hora para compartir un amargo"</em>
+
+      <div class="footer-nav-col">
+        <h3 class="footer-col-title">NAVEGACIÓN</h3>
+        <nav class="footer-links" aria-label="Enlaces del pie de página">
+          <a href="/proyectos">Proyectos &amp; Casos</a>
+          <a href="/servicios-crecimiento">Servicios &amp; CRO</a>
+          <a href="/facturacion">Sistemas B2B</a>
+          <a href="/manifiesto">Manifiesto &amp; Método</a>
+        </nav>
       </div>
-    <div class="footer-nav">
-      <a href="/proyectos" class="footer-nav-link">PROYECTOS</a>
-      <a href="/servicios-crecimiento" class="footer-nav-link">SERVICIOS & CRO</a>
-      <a href="/facturacion" class="footer-nav-link">SISTEMAS B2B & COBROS</a>
-      <a href="/manifiesto" class="footer-nav-link">MANIFIESTO</a>
-      <a href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" target="_blank" rel="noopener noreferrer" class="footer-nav-link footer-cta-link">WHATSAPP ↗</a>
+
+      <div class="footer-contact-col">
+        <h3 class="footer-col-title">CONTACTO DIRECTO</h3>
+        <div class="footer-links">
+          <a
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="footer-wa-pill"
+            data-cursor="WHATSAPP"
+          >
+            WHATSAPP +598 98 300 491 ↗
+          </a>
+          <a href="mailto:amargo.creativo@gmail.com">amargo.creativo@gmail.com</a>
+          <a
+            href="https://www.instagram.com/amargocreativo"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Instagram @amargocreativo ↗
+          </a>
+        </div>
+      </div>
     </div>
-    <div class="footer-copy">© 2026 AMARGO CREATIVO™ — ATLÁNTIDA, URUGUAY • ARGENTINA • ESPAÑA</div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">
+        © 2026 AMARGO CREATIVO™ &mdash; ATLÁNTIDA, CANELONES, URUGUAY &bull; ARGENTINA &bull; ESPAÑA
+      </div>
+      <div class="footer-meta-right">
+        <span class="footer-stack">ASTRO 5 &bull; CLOUDFLARE EDGE &bull; &lt;0.8s</span>
+        <a href="#top" class="back-top-btn" data-cursor="SUBIR" aria-label="Volver arriba">
+          ARRIBA ↑
+        </a>
+      </div>
+    </div>
   </div>
 </footer>
 
 <style>
-  footer {
+  .site-footer {
     background: var(--footer-bg);
     color: var(--footer-text);
-    padding: 48px var(--gut);
-    padding-bottom: calc(48px + env(safe-area-inset-bottom));
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: clamp(56px, 8vh, 96px) var(--gut) calc(44px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(245, 243, 236, 0.12);
     width: 100%;
     position: relative;
     overflow: hidden;
   }
-  :global(body.theme-electric) footer {
-    border-top: 1px solid rgba(241, 255, 90, 0.1);
-  }
-  :global(body.theme-mate) footer {
-    border-top: 1px solid rgba(151, 188, 98, 0.15);
-  }
-  footer::before {
+
+  .site-footer::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.15) 1px, transparent 1px);
-    background-size: 24px 24px;
-    z-index: 0;
+    inset: 0;
+    background-image: radial-gradient(rgba(245, 243, 236, 0.14) 1px, transparent 1px);
+    background-size: 26px 26px;
     opacity: 0.08;
-    mask-image: linear-gradient(to top, black, transparent 80%);
-    -webkit-mask-image: linear-gradient(to top, black, transparent 80%);
+    mask-image: linear-gradient(to top, black, transparent 82%);
+    -webkit-mask-image: linear-gradient(to top, black, transparent 82%);
     pointer-events: none;
   }
-  .footer-inner {
+
+  .footer-container {
     max-width: var(--max);
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(36px, 5vw, 56px);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1.1fr;
+    gap: clamp(28px, 4vw, 56px);
+    align-items: start;
+  }
+
+  .footer-brand-col {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .footer-wordmark {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 64px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--footer-text);
+    text-decoration: none;
+    display: inline-block;
+    width: fit-content;
+  }
+
+  .wm-dot {
+    color: var(--electric);
+  }
+
+  .footer-phrase em {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--mate-light);
+    font-weight: 400;
+  }
+
+  .clock-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: 6px;
+  }
+
+  .clock-block span {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+    color: rgba(245, 243, 236, 0.56);
+  }
+
+  .clock-block strong {
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--footer-text);
+  }
+
+  .footer-col-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(245, 243, 236, 0.52);
+    margin-bottom: 16px;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .footer-links a {
+    color: rgba(245, 243, 236, 0.88);
+    text-decoration: none;
+    font-family: var(--font-body);
+    font-size: 14.5px;
+    transition: color 0.2s var(--ease), transform 0.25s var(--ease);
+  }
+
+  .footer-links a:hover {
+    color: var(--electric);
+    transform: translate3d(4px, 0, 0);
+  }
+
+  .footer-wa-pill {
+    display: inline-flex;
+    align-items: center;
+    background: var(--electric);
+    color: #11120f !important;
+    font-family: var(--font-mono) !important;
+    font-size: 10.5px !important;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    margin-bottom: 4px;
+  }
+
+  .footer-wa-pill:hover {
+    background: #ffffff;
+    color: #11120f !important;
+    transform: translate3d(0, -2px, 0) !important;
+  }
+
+  .footer-bottom {
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 28px;
-    font-size: 11px;
-    text-transform: uppercase;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(245, 243, 236, 0.12);
+    font-family: var(--font-mono);
+    font-size: 10px;
     letter-spacing: 0.08em;
-    position: relative;
-    z-index: 1;
+    color: rgba(245, 243, 236, 0.6);
   }
-  .footer-left {
+
+  .footer-meta-right {
     display: flex;
     align-items: center;
-    gap: 32px;
+    gap: 16px;
     flex-wrap: wrap;
   }
-  .clock-block {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .clock-block span {
-    color: rgba(244, 241, 234, 0.7);
-    font-size: 9px;
-    letter-spacing: 0.12em;
-  }
-  :global(body.theme-electric) .clock-block span {
-    color: rgba(241, 255, 90, 0.75);
-  }
-  :global(body.theme-mate) .clock-block span {
-    color: rgba(232, 230, 224, 0.75);
-  }
-  .clock-block strong {
-    font-family: 'JetBrains Mono', monospace;
-    font-weight: 500;
-    font-size: 15px;
-    letter-spacing: 0;
-    color: var(--footer-text);
-  }
-  .footer-phrase {
-    border-left: 1px solid rgba(255, 255, 255, 0.2);
-    padding-left: 24px;
-  }
-  :global(body.theme-mate) .footer-phrase {
-    border-left-color: rgba(151, 188, 98, 0.3);
-  }
-  .footer-phrase em {
-    font-family: 'Instrument Serif', serif;
-    font-style: italic;
-    text-transform: none;
-    font-size: 18px;
+
+  .footer-stack {
     color: var(--mate-light);
-    letter-spacing: 0.01em;
-    font-weight: 400;
-  }
-  :global(body.theme-electric) .footer-phrase em {
-    color: var(--electric);
-  }
-  .footer-copy {
-    color: rgba(244, 241, 234, 0.7);
-    font-size: 10px;
-  }
-  :global(body.theme-electric) .footer-copy {
-    color: rgba(241, 255, 90, 0.75);
-  }
-  :global(body.theme-mate) .footer-copy {
-    color: rgba(232, 230, 224, 0.75);
-  }
-  .footer-nav {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .footer-nav-link {
-    color: var(--mate-light);
-    text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.1em;
+  }
+
+  .back-top-btn {
+    color: var(--footer-text);
+    text-decoration: none;
+    border: 1px solid rgba(245, 243, 236, 0.22);
+    border-radius: var(--radius-pill);
     padding: 6px 14px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s var(--ease);
-    display: inline-block;
+    font-weight: 700;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
   }
-  .footer-cta-link {
-    background: var(--electric) !important;
-    color: #0a0a0a !important;
-    border-color: var(--electric) !important;
-    font-weight: 700 !important;
-  }
-  .footer-nav-link:hover {
-    background: var(--mate-light);
-    color: #0a0a0a;
-    border-color: var(--mate-light);
-  }
-  :global(body.theme-electric) .footer-nav-link {
-    color: var(--electric);
-    border-color: rgba(212, 255, 0, 0.3);
-  }
-  :global(body.theme-electric) .footer-nav-link:hover {
+
+  .back-top-btn:hover {
     background: var(--electric);
-    color: #0a0a0a;
+    color: #11120f;
+    border-color: var(--electric);
   }
-  :global(body.theme-mate) .footer-nav-link {
-    color: var(--mate-light);
-    border-color: rgba(164, 201, 112, 0.3);
-  }
-  :global(body.theme-mate) .footer-nav-link:hover {
-    background: var(--mate-light);
-    color: #0b140e;
-  }
-  @media (max-width: 768px) {
-    footer {
-      padding-bottom: calc(100px + env(safe-area-inset-bottom));
+
+  @media (max-width: 820px) {
+    .site-footer {
+      padding-bottom: calc(96px + env(safe-area-inset-bottom));
     }
-    .footer-inner {
-      gap: 20px;
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 32px;
     }
-    .footer-left {
+    .footer-bottom {
       flex-direction: column;
       align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 8px;
-    }
-    .footer-phrase {
-      border-left: none;
-      padding-left: 0;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 12px;
     }
   }
 </style>

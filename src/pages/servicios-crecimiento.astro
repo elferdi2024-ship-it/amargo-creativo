@@ -259,7 +259,16 @@ const faqs = [
 ];
 ---
 
-<Layout title={pageTitle} description={pageDescription} canonicalUrl={canonicalUrl} image={ogImage}>
+<Layout
+  title={pageTitle}
+  description={pageDescription}
+  canonicalUrl={canonicalUrl}
+  image={ogImage}
+  breadcrumbs={[
+    { name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' },
+    { name: 'Servicios & Crecimiento', url: canonicalUrl }
+  ]}
+>
   <script type="application/ld+json" set:html={JSON.stringify(growthSchema)} />
 
   <Navbar />
@@ -279,7 +288,7 @@ const faqs = [
           <span>CRECIMIENTO CONTINUO · AUDITORÍA · RENDIMIENTO WEB</span>
         </div>
 
-        <h1 class="hero-headline">
+        <h1 class="hero-headline" data-reveal-words>
           Tu web ya existe.<br />
           <em>Ahora hacemos que venda más.</em>
         </h1>
@@ -1102,8 +1111,11 @@ const faqs = [
   }
 
   .service-num {
-    font-family: 'Anton', sans-serif;
-    font-size: clamp(36px, 5vw, 56px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(32px, 4.5vw, 50px);
     color: var(--mate);
     line-height: 1;
   }
@@ -1417,8 +1429,11 @@ const faqs = [
     position: relative;
   }
   .step-num {
-    font-family: 'Anton', sans-serif;
-    font-size: 36px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    font-size: 32px;
     color: var(--mate);
     line-height: 1;
     margin-bottom: 14px;
@@ -1469,8 +1484,11 @@ const faqs = [
     color: var(--ink);
   }
   .faq-num {
-    font-family: 'Anton', sans-serif;
-    font-size: 32px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+    font-size: 28px;
     color: var(--mute);
     line-height: 1;
   }

@@ -27,7 +27,7 @@ const pillars = [
 ---
 <section class="manifesto-section" id="manifesto">
   <!-- Fondo Ambiental Texturizado con Presencia Visual Clara del Personaje con Mate -->
-  <div class="manifesto-ambient-bg" aria-hidden="true"></div>
+  <div class="manifesto-ambient-bg ambient-parallax" aria-hidden="true"></div>
   <div class="manifesto-bg-text" aria-hidden="true">AMARGO</div>
 
   <div class="manifesto-container">
@@ -36,7 +36,7 @@ const pillars = [
     <div class="manifesto-meta-bar">
       <div class="meta-label">
         <span class="meta-idx">01</span>
-        <span class="meta-title">MANIFIESTO &bull; DIRECCIÓN CREATIVA</span>
+        <span class="meta-title">MANIFIESTO &bull; EL RITUAL DEL CÓDIGO</span>
       </div>
       <div class="meta-loc">
         <span class="loc-dot">●</span>
@@ -44,26 +44,26 @@ const pillars = [
       </div>
     </div>
 
-    <!-- Gran Bloque Monolítico de Declaración (Estilo Dendra Agency) -->
+    <!-- Gran Bloque Monolítico de Declaración -->
     <div class="manifesto-statement-block">
-      <h2 class="statement-heading">
-        <span class="heading-lead">SOMOS MÁS QUE UNA AGENCIA CREATIVA &mdash;</span>
-        <span class="heading-accent">UNA FUERZA CREADA PARA POTENCIAR MARCAS Y ACELERAR VENTAS.</span>
+      <h2 class="statement-heading" data-reveal-words>
+        <span class="heading-lead">SIN AZÚCAR. SIN PLANTILLAS &mdash;</span>
+        <span class="heading-accent">INGENIERÍA WEB CREADA PARA VENDER EN MENOS DE UN SEGUNDO.</span>
       </h2>
 
-      <div class="statement-editorial">
+      <div class="statement-editorial" data-reveal-block style="--rd:120ms">
         <p class="editorial-quote">
-          Integramos <em>estrategia de negocio, diseño de autor y código de alto rendimiento</em> para crear motores digitales que capturan la atención e inspiran acción inmediata.
+          Como un buen amargo cebado a 80°C: <em>intenso, preciso y sin relleno</em>. Unimos dirección de arte contemporánea y código de élite para transformar visitas en conversaciones reales por WhatsApp.
         </p>
       </div>
     </div>
 
     <!-- Grilla de Pilares de Arquitectura: 3 Columnas Limpias con Gran Espacio -->
     <div class="manifesto-pillars-grid">
-      {pillars.map((pillar) => (
-        <div class="pillar-col">
+      {pillars.map((pillar, i) => (
+        <div class="pillar-col" data-reveal-block style={`--rd:${i * 90}ms`}>
           <div class="pillar-header">
-            <span class="pillar-index">{pillar.num}</span>
+            <span class="pillar-index tabular">{pillar.num}</span>
             <span class="pillar-tag">{pillar.tag}</span>
           </div>
           <h3 class="pillar-title">{pillar.title}</h3>
@@ -329,9 +329,11 @@ const pillars = [
   }
 
   .pillar-index {
-    font-family: 'Anton', sans-serif;
-    font-size: 32px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 30px;
     line-height: 1;
+    letter-spacing: -0.04em;
     color: var(--rust);
   }
 

@@ -1,53 +1,93 @@
 ---
 // filepath: src/components/Contact.astro
+// Monumental Awwwards Conversion Finale: WhatsApp Direct Primary + One-Click Email Copy
+import RollText from './motion/RollText.astro';
 ---
 <section class="contact" id="contact">
-  <div class="contact-bg"></div>
-  <!-- Fondo Ambiental del Personaje Clásico con Mate -->
-  <div class="contact-ambient-statue" aria-hidden="true"></div>
+  <div class="contact-bg" aria-hidden="true"></div>
+  <div class="contact-ambient-statue ambient-parallax" aria-hidden="true"></div>
   <div class="contact-content">
-    <span class="contact-label">DISPONIBLE PARA NUEVOS PROYECTOS EN URUGUAY, ARGENTINA Y ESPAÑA</span>
-    <h2 class="contact-title">
-      <span class="word-nowrap">EMPECEMOS</span>
-      <em>tu proyecto</em>
+    <div class="contact-top-meta">
+      <span class="contact-idx">06</span>
+      <span class="contact-label">5 CUPOS / MES &bull; URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+    </div>
+
+    <h2 class="contact-title" data-reveal-words>
+      <span class="word-nowrap">CEBEMOS</span>
+      <em>tu próximo proyecto</em>
     </h2>
 
-    <div class="contact-actions-wrap">
-      <div class="magnetic-wrap" id="magneticEmailWrap">
-        <a href="mailto:amargo.creativo@gmail.com" class="contact-email" data-cursor="EMAIL">
-          amargo.creativo@gmail.com
+    <p class="contact-lead" data-reveal-block>
+      Sin formularios de 12 campos ni ejecutivos de cuenta. Escribís directo a quien diseña y programa tu activo digital.
+    </p>
+
+    <div class="contact-actions-wrap" data-reveal-block style="--rd:90ms">
+      <div class="magnetic-wrap" id="magneticWaWrap">
+        <a
+          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="contact-wa-primary ink-fill"
+          data-cursor="WHATSAPP"
+        >
+          <span class="ink" aria-hidden="true"></span>
+          <span class="wa-live-dot" aria-hidden="true"></span>
+          <RollText text="HABLAR POR WHATSAPP (+598 98 300 491)" arrow="diag" />
         </a>
       </div>
 
-      <div class="magnetic-wrap" id="magneticWaWrap">
-        <a 
-          href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          class="contact-wa" 
-          data-cursor="WHATSAPP"
+      <div class="contact-email-row">
+        <div class="magnetic-wrap" id="magneticEmailWrap">
+          <a href="mailto:amargo.creativo@gmail.com" class="contact-email" data-cursor="EMAIL">
+            amargo.creativo@gmail.com
+          </a>
+        </div>
+        <button
+          type="button"
+          class="copy-email-btn"
+          id="copyEmailBtn"
+          data-email="amargo.creativo@gmail.com"
+          data-cursor="COPIAR"
+          aria-label="Copiar dirección de correo amargo.creativo@gmail.com"
         >
-          +598 98 300 491 (WhatsApp)
-        </a>
+          COPIAR EMAIL
+        </button>
       </div>
     </div>
 
-    <div class="contact-info">
+    <div class="contact-info" data-reveal-block style="--rd:160ms">
       <div class="info-block">
-        <h4>AGENCIA</h4>
-        <p>AMARGO CREATIVO™<br>Atlántida, Canelones, UY<br>Alcance: UY • AR • ES</p>
+        <h4>01 / ESTUDIO</h4>
+        <p>AMARGO CREATIVO™<br />Atlántida, Costa de Oro, UY<br />Clientes en UY &bull; AR &bull; ES</p>
       </div>
       <div class="info-block">
-        <h4>RESPUESTA</h4>
-        <p>En 24 horas hábiles<br>Sin formularios aburridos</p>
+        <h4>02 / RESPUESTA</h4>
+        <p>Menos de 24 horas hábiles<br />Trato directo con dirección técnica</p>
       </div>
       <div class="info-block">
-        <h4>SIGUIENTES PASOS</h4>
-        <p>1. Llamada de 15 min<br>2. Propuesta en 48h<br>3. Proyecto en 2-3 semanas</p>
+        <h4>03 / CRONOGRAMA</h4>
+        <p>1. Llamada de 15 min<br />2. Propuesta cerrada en 48h<br />3. Lanzamiento en 2–4 semanas</p>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  const copyBtn = document.getElementById('copyEmailBtn');
+  copyBtn?.addEventListener('click', async () => {
+    const email = copyBtn.getAttribute('data-email') || 'amargo.creativo@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      copyBtn.textContent = '✓ COPIADO';
+      (window as any).amargoToast?.('EMAIL COPIADO AL PORTAPAPELES');
+      setTimeout(() => {
+        copyBtn.textContent = 'COPIAR EMAIL';
+      }, 2200);
+    } catch {
+      window.location.href = `mailto:${email}`;
+    }
+  });
+</script>
 
 <style>
   .contact {
@@ -59,194 +99,239 @@
     overflow: hidden;
     width: 100%;
     box-sizing: border-box;
+    border-bottom: 1px solid rgba(245, 243, 236, 0.12);
   }
+
   .contact-bg {
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    background:
+      radial-gradient(circle at 20% 20%, rgba(210, 246, 56, 0.08) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, rgba(137, 179, 88, 0.12) 0%, transparent 50%);
     z-index: 1;
     pointer-events: none;
   }
 
-  /* Fondo Ambiental de la Estatua con Mate */
   .contact-ambient-statue {
     position: absolute;
-    bottom: -5%;
+    bottom: -4%;
     right: 2%;
-    width: clamp(280px, 40vw, 560px);
-    height: 90%;
+    width: clamp(280px, 38vw, 540px);
+    height: 88%;
     background-image: url('/backgrounds/bg-ambient-4.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: bottom right;
-    opacity: 0.18;
+    opacity: 0.16;
     mix-blend-mode: screen;
     pointer-events: none;
     z-index: 1;
     filter: brightness(1.1) contrast(1.2);
-    transition: opacity 0.5s var(--ease);
   }
-  :global(body.theme-electric) .contact-bg {
-    background-image: radial-gradient(circle at 50% 50%, rgba(212, 255, 0, 0.1) 0%, transparent 60%);
-  }
-  :global(body.theme-mate) .contact-bg {
-    background-image: radial-gradient(circle at 50% 50%, rgba(151, 188, 98, 0.1) 0%, transparent 60%);
-  }
+
   .contact-content {
     position: relative;
     z-index: 2;
     max-width: var(--max);
     margin: 0 auto;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
-  .contact-label {
-    font-size: clamp(9px, 2.5vw, 11px);
+
+  .contact-top-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--electric);
-    margin-bottom: 24px;
-    display: inline-block;
-    border: 1px solid var(--electric);
-    padding: 8px 14px;
-    max-width: 90%;
-    line-height: 1.4;
   }
+
+  .contact-idx {
+    background: var(--electric);
+    color: #11120f;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 2px;
+  }
+
+  .contact-label {
+    color: rgba(245, 243, 236, 0.85);
+    border: 1px solid rgba(210, 246, 56, 0.35);
+    border-radius: var(--radius-pill);
+    padding: 5px 14px;
+  }
+
   .contact-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(32px, 8.5vw, 130px);
-    line-height: 0.92;
+    font-size: clamp(36px, 8vw, 124px);
+    line-height: 0.9;
     letter-spacing: -0.04em;
     text-transform: uppercase;
-    margin-bottom: 40px;
+    margin-bottom: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
   }
-  .contact-title .word-nowrap {
-    display: block;
-    max-width: 100%;
-  }
+
   .contact-title em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
     color: var(--electric);
     display: block;
-    margin-top: 4px;
+    margin-top: 6px;
   }
+
+  .contact-lead {
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.4vw, 19px);
+    line-height: 1.55;
+    color: rgba(245, 243, 236, 0.82);
+    max-width: 54ch;
+    margin-bottom: 36px;
+  }
+
   .contact-actions-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 24px;
-    margin: 20px 0 40px;
+    margin-bottom: 48px;
     width: 100%;
   }
+
   .magnetic-wrap {
-    display: inline-block;
+    display: inline-flex;
     max-width: 100%;
-    will-change: transform;
   }
-  .contact-email {
-    font-family: 'Syne', sans-serif;
+
+  .contact-wa-primary {
+    --mx-fill-ink: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: var(--electric);
+    color: #11120f;
+    border: 1.5px solid var(--electric);
+    border-radius: var(--radius-pill);
+    padding: 18px 34px;
+    font-family: var(--font-mono);
+    font-size: clamp(11px, 1.2vw, 13px);
     font-weight: 700;
-    font-size: clamp(15px, 4.4vw, 54px);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.28);
+    transition: transform 0.3s var(--ease-emphasis), color 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+
+  .contact-wa-primary:hover {
+    color: #11120f;
+    border-color: #ffffff;
+    transform: translate3d(0, -3px, 0);
+  }
+
+  .wa-live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mate);
+    flex-shrink: 0;
+  }
+
+  .contact-email-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .contact-email {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(16px, 2.8vw, 34px);
     color: var(--contact-text);
     text-decoration: none;
-    border-bottom: 3px solid var(--electric);
-    padding-bottom: 6px;
-    transition: color 0.3s var(--ease), border-color 0.3s;
-    display: inline-block;
-    cursor: pointer;
-    max-width: 100%;
+    border-bottom: 2px solid rgba(210, 246, 56, 0.65);
+    padding-bottom: 4px;
+    transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
     word-break: break-word;
   }
+
   .contact-email:hover {
     color: var(--electric);
+    border-color: var(--electric);
   }
-  .contact-email:active {
-    transform: scale(0.98);
-  }
-  .contact-wa {
-    font-family: 'Syne', sans-serif;
+
+  .copy-email-btn {
+    background: rgba(245, 243, 236, 0.08);
+    color: #f5f3ec;
+    border: 1px solid rgba(245, 243, 236, 0.25);
+    border-radius: var(--radius-pill);
+    padding: 7px 14px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
-    font-size: clamp(16px, 3.8vw, 44px);
-    color: var(--contact-text);
-    text-decoration: none;
-    border-bottom: 3px solid var(--mate-light);
-    padding-bottom: 6px;
-    transition: color 0.3s var(--ease), border-color 0.3s;
-    display: inline-block;
+    letter-spacing: 0.08em;
     cursor: pointer;
-    max-width: 100%;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease);
   }
-  .contact-wa:hover {
-    color: var(--mate-light);
+
+  .copy-email-btn:hover {
+    background: var(--electric);
+    color: #11120f;
+    border-color: var(--electric);
   }
-  .contact-wa:active {
-    transform: scale(0.98);
-  }
+
   .contact-info {
-    margin-top: 60px;
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     text-align: left;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 40px;
+    border-top: 1px solid rgba(245, 243, 236, 0.16);
+    padding-top: 36px;
   }
-  :global(body.theme-electric) .contact-info {
-    border-top: 1px solid rgba(241, 255, 90, 0.1);
-  }
-  :global(body.theme-mate) .contact-info {
-    border-top: 1px solid rgba(151, 188, 98, 0.15);
-  }
+
   .info-block h4 {
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: rgba(244, 241, 234, 0.75);
-    margin-bottom: 12px;
+    letter-spacing: 0.12em;
+    color: var(--electric);
+    margin-bottom: 10px;
   }
-  :global(body.theme-electric) .info-block h4 {
-    color: rgba(241, 255, 90, 0.75);
-  }
-  :global(body.theme-mate) .info-block h4 {
-    color: rgba(232, 230, 224, 0.85);
-  }
+
   .info-block p {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
+    font-family: var(--font-body);
+    font-size: 14.5px;
     line-height: 1.6;
-    color: rgba(244, 241, 234, 0.95);
-  }
-  :global(body.theme-electric) .info-block p {
-    color: var(--ink);
-  }
-  :global(body.theme-mate) .info-block p {
-    color: rgba(232, 230, 224, 0.95);
+    color: rgba(245, 243, 236, 0.9);
   }
 
   @media (max-width: 768px) {
     .contact-title {
-      font-size: clamp(24px, 7.8vw, 56px);
-      letter-spacing: -0.03em;
-      margin-bottom: 28px;
+      font-size: clamp(32px, 10vw, 58px);
     }
-    .contact-email {
-      font-size: clamp(14px, 4.4vw, 24px);
-    }
-    .contact-wa {
-      font-size: clamp(14px, 4.0vw, 22px);
+    .contact-wa-primary {
+      width: 100%;
+      padding: 15px 18px;
+      font-size: 10.5px;
     }
     .contact-info {
-      flex-direction: column;
+      grid-template-columns: 1fr;
       gap: 24px;
-      margin-top: 48px;
     }
   }
 </style>

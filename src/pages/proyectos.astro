@@ -17,6 +17,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
   description={pageDescription}
   canonicalUrl={canonicalUrl}
   image={ogImage}
+  includeShowcaseSchema={true}
+  breadcrumbs={[
+    { name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' },
+    { name: 'Proyectos', url: canonicalUrl }
+  ]}
 >
   <Navbar />
   
@@ -31,11 +36,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
           </div>
           <div class="header-stamp-row">
             <span class="geo-coord">COORD: -34.7719° S, 55.7594° W // ATLÁNTIDA, UY</span>
-            <span class="live-counter" id="liveCounter">MOSTRANDO {projects.length} DE {projects.length} PROYECTOS</span>
+            <span class="live-counter tabular" id="liveCounter">MOSTRANDO {projects.length} DE {projects.length} PROYECTOS</span>
           </div>
         </div>
 
-        <h1 class="page-title">
+        <h1 class="page-title" data-reveal-words>
           CASOS REALES &amp; INGENIERÍA <em>sin plantillas</em>
         </h1>
         
@@ -589,27 +594,36 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image.jpg";
 
   .filter-pill {
     background: transparent;
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
     padding: 9px 18px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--ink);
     cursor: pointer;
-    transition: all 0.2s var(--ease);
+    transition: background-color 0.22s var(--ease), color 0.22s var(--ease), border-color 0.22s var(--ease), transform 0.22s var(--ease);
   }
 
   .filter-pill:hover {
     background: var(--ink);
     color: var(--bone);
+    transform: translate3d(0, -1px, 0);
   }
 
   .filter-pill.active {
+    background: var(--mate);
+    color: #f5f3ec;
+    border-color: var(--mate);
+  }
+
+  :global(body.theme-electric) .filter-pill.active,
+  :global(body.theme-dark) .filter-pill.active {
     background: var(--electric);
-    color: #0a0a0a;
-    border-color: var(--ink);
-    box-shadow: 2px 2px 0px var(--ink);
+    color: #11120f;
+    border-color: var(--electric);
   }
 
   .search-input-wrap {
