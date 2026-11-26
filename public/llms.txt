@@ -1,32 +1,33 @@
 # Amargo Creativo™
 
-> Agencia creativa de ingeniería web de alto rendimiento (<0.8s LCP), aplicaciones a medida, SEO técnico y WhatsApp Commerce. Con base en Atlántida, Canelones (Uruguay) y alcance en Uruguay, Argentina y España.
+> Estudio de producto e ingeniería digital: desarrollamos apps móviles y PWA, software con Inteligencia Artificial, plataformas SaaS B2B, comercio propio sin comisiones y diseño de autor. Con base en Atlántida, Canelones (Uruguay) y alcance en Uruguay, Argentina y España.
 
-## Identidad y Filosofía
-- **Principio central**: Como un mate amargo a 80°C — intenso, preciso, sin plantillas y sin relleno.
-- **Propiedad 100% del cliente**: Código fuente, repositorios, dominios y hosting propios sin alquileres cautivos.
-- **Stack técnico**: Astro 5, Next.js 15, React 19, TypeScript estricto, Cloudflare Pages/Workers Edge, Supabase y Algolia SSR.
-- **Rendimiento garantizado**: Carga sub-segundo (<0.8s LCP), Lighthouse 95–100 y Core Web Vitals en verde.
-- **Conversión directa**: Flujos comerciales 1-click a WhatsApp sin fricción ni formularios eternos.
+## Qué Construimos
+- **Apps Móviles, PWA y Super-Apps**: Aplicaciones instalables para delivery hiperlocal, reservas, logística y pedidos directos sin pagar comisiones abusivas.
+- **Software a Medida, IA y Plataformas SaaS**: Escáneres inteligentes de documentos con búsqueda semántica (OCR + IA), portales ciudadanos con mapas en tiempo real, trazabilidad operativa agroindustrial y sistemas B2B con facturación electrónica CFE.
+- **Comercio Propio y Experiencias D2C**: Tiendas de marca, catálogos multi-sucursal (+1.900 SKUs), cotizadores inteligentes y ventas directas a WhatsApp.
+- **SEO Técnico y Visibilidad en Motores IA (AEO/GEO)**: Arquitectura rápida en Edge, Schema.org unificado y posicionamiento orgánico multi-región (UY, AR, ES).
+- **Propiedad 100% del Cliente**: Código fuente, datos, repositorios y dominios siempre a nombre del cliente. Cero plantillas, cero alquileres cautivos.
 
 ## Páginas Principales
-- [Inicio](https://amargo-creativo.pages.dev/): Propuesta de valor, capacidades, casos de éxito seleccionados y contacto directo.
-- [Proyectos y Casos de Éxito](https://amargo-creativo.pages.dev/proyectos/): Archivo completo de plataformas, apps, marketplaces y software SaaS en producción.
-- [Servicios de Crecimiento & CRO](https://amargo-creativo.pages.dev/servicios-crecimiento/): Plan de Crecimiento Continuo (desde USD 180/mes), Auditoría CRO (USD 240), WhatsApp que Vende (USD 320), Landing Pages de Alta Conversión (USD 490) y SEO Local / Google Maps (USD 220).
-- [Sistemas B2B & Facturación](https://amargo-creativo.pages.dev/facturacion/): Portales B2B, facturación electrónica CFE y automatización de cobros.
-- [Manifiesto & Método](https://amargo-creativo.pages.dev/manifiesto/): Los 6 mandamientos técnicos, comparativa contra agencias tradicionales y preguntas frecuentes.
+- [Inicio](https://amargo-creativo.pages.dev/): Propuesta de producto, capacidades, apps y plataformas en vivo, y contacto directo.
+- [Proyectos y Casos Reales](https://amargo-creativo.pages.dev/proyectos/): Archivo completo de apps, plataformas IA, delivery hiperlocal y SaaS en producción.
+- [Servicios de Crecimiento & CRO](https://amargo-creativo.pages.dev/servicios-crecimiento/): Evolución continua de productos, auditorías CRO, automatización WhatsApp, Landing Pages a medida y SEO Local.
+- [Sistemas B2B & Facturación CFE](https://amargo-creativo.pages.dev/facturacion/): Portales extranet con Magic Link, facturación electrónica DGI CFE y conciliación bancaria.
+- [Manifiesto & Método](https://amargo-creativo.pages.dev/manifiesto/): Los 6 mandamientos de ingeniería de producto y preguntas frecuentes.
 
-## Proyectos Destacados en Producción
-- **Barrio.uy** (https://www.barrio.uy/): Portal ciudadano de reportes urbanos y seguimiento de expedientes en Uruguay.
-- **DocuBox** (https://app.docubox.site/): Archivo digital inteligente (AI SaaS & PWA) con escáner móvil, búsqueda semántica en PDFs y bóveda cifrada SHA-256.
-- **Canarios Ya!** (https://canarios-ya.pages.dev/): Super-App de delivery hiperlocal en Canelones, Juanicó y Santa Lucía.
-- **Yoyo Juanito** (https://yoyo-juanito.elferdi2024.workers.dev/): Tienda D2C artesanal con checkout directo a WhatsApp y carga en 0.61s.
+## Productos en Producción
+- **Barrio.uy** (https://www.barrio.uy/): Portal ciudadano CivicTech de reportes urbanos, mapa interactivo en vivo y seguimiento de expedientes en Uruguay.
+- **DocuBox** (https://app.docubox.site/): Archivo digital inteligente (AI SaaS & PWA) con escáner móvil, búsqueda semántica dentro de PDFs y bóveda cifrada SHA-256.
+- **Canarios Ya!** (https://canarios-ya.pages.dev/): Super-App de delivery hiperlocal en Canelones, Juanicó y Santa Lucía con pagos BROU y logística directa.
+- **Yoyo Juanito** (https://yoyo-juanito.elferdi2024.workers.dev/): Tienda D2C artesanal con selector de cajas y pedido inmediato a WhatsApp.
 - **Tsunami Dulce de Leche** (https://tsunami-uruguay.elferdi2024.workers.dev/): Vitrina gourmet internacional (1er Premio Nacional, Sin TACC).
-- **LOMAX Propiedades** (https://lomax-propiedades.elferdi2024.workers.dev/): Inmobiliaria boutique en Punta del Este y Montevideo.
-- **Mercado Atlántida** (https://mercado-atlantida.elferdi2024.workers.dev/): Plataforma comercial para +40 locales gastronómicos en la Costa de Oro.
+- **Deal Motors UY** (https://driveprime-eta.vercel.app/): Plataforma automotriz con motor inteligente de cotización de permutas (Trade-In).
+- **Distribuidora El Remate** (https://remate-psi.vercel.app/): Ecosistema comercial con +1.900 productos y 6 sucursales en Canelones.
+- **Avícola Control** (https://faconeros-app.vercel.app/hub): Agro SaaS de trazabilidad de lotes y eficiencia productiva.
 
 ## Contacto Directo
 - **WhatsApp**: +598 98 300 491 (https://wa.me/59898300491)
 - **Email**: amargo.creativo@gmail.com
-- **Ubicación**: Atlántida, Canelones, Uruguay (cobertura en Uruguay, Argentina y España)
+- **Ubicación**: Atlántida, Canelones, Uruguay (Uruguay · Argentina · España)
 - **Instagram**: https://www.instagram.com/amargocreativo

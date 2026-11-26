@@ -5,7 +5,7 @@
 // Lucian UX/UI Prompt #009 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#009
 import RollText from './motion/RollText.astro';
 
-const titleWords: string[] = ['DISEÑO', 'RADICAL.', 'CÓDIGO', '<0.8s'];
+const titleWords: string[] = ['APPS', '&', 'PRODUCTOS', 'DE', 'AUTOR'];
 const lastIndex = titleWords.length - 1;
 ---
 <header class="hero" id="top">
@@ -20,7 +20,7 @@ const lastIndex = titleWords.length - 1;
           <source media="(min-width: 769px)" srcset="/amargo-hero-pc.webp" type="image/webp" />
           <img 
             src="/amargo-hero-pc.webp" 
-            alt="Amargo Creativo — Ritual del mate e ingeniería web de precisión" 
+            alt="Amargo Creativo — Estudio de desarrollo de apps, IA y productos digitales" 
             class="hero-poster-img"
             fetchpriority="high"
             decoding="async"
@@ -45,11 +45,11 @@ const lastIndex = titleWords.length - 1;
     <div class="hero-gradient" id="heroGradient"></div>
   </div>
 
-  <!-- Barra Superior Minimalista (1 sola línea limpia en mobile y PC) -->
+  <!-- Barra Superior Minimalista -->
   <div class="hero-top">
     <div class="hero-live-badge hx" style="--d:100ms;--hx-y:-8px">
       <span class="live-label"><span class="live-dot" aria-hidden="true"></span>80°C EN VIVO</span>
-      <span class="hero-top-extra">INGENIERÍA WEB &amp; DISEÑO DE AUTOR</span>
+      <span class="hero-top-extra">APPS, IA &amp; PRODUCTOS DIGITALES</span>
     </div>
     <div class="hero-location-badge hx" style="--d:160ms;--hx-y:-8px">
       <span>ATLÁNTIDA, UY</span>
@@ -65,7 +65,7 @@ const lastIndex = titleWords.length - 1;
     <!-- Columna 1: Titular Cortante & Acciones -->
     <div class="hero-sub-wrap">
       <h1 class="hero-h1">
-        <span class="h1-sub hx" style="--d:240ms;--hx-y:6px">WEBS &bull; APPS &bull; SEO &bull; WHATSAPP COMMERCE</span>
+        <span class="h1-sub hx" style="--d:240ms;--hx-y:6px">APPS A MEDIDA &bull; SOFTWARE &amp; IA &bull; PLATAFORMAS &bull; E-COMMERCE</span>
         <span class="h1-title" style="--d:280ms">
           {titleWords.map((word, i) => (
             i === lastIndex ? (
@@ -81,67 +81,67 @@ const lastIndex = titleWords.length - 1;
           ))}
         </span>
       </h1>
-      <p class="hero-sub hx" style="--d:440ms;--hx-y:8px">Sin plantillas. Activos digitales veloces que convierten directo a WhatsApp.</p>
+      <p class="hero-sub hx" style="--d:440ms;--hx-y:8px">Creamos apps móviles, plataformas con IA y comercio propio pensados para operar y escalar negocios reales.</p>
       <div class="hero-cta-wrap">
         <span class="hero-cta-slot hx-pop" style="--d:540ms">
           <span class="magnetic-btn hero-cta-mag">
             <a 
-              href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto%20web" 
+              href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20desarrollar%20una%20app%20o%20producto%20digital" 
               target="_blank" 
               rel="noopener noreferrer" 
               class="hero-cta ink-fill" 
               data-cursor="WHATSAPP"
-              aria-label="Hablar directamente por WhatsApp para cotizar proyecto"
+              aria-label="Hablar directamente por WhatsApp para cotizar tu app o proyecto"
             >
               <span class="ink" aria-hidden="true"></span>
-              <RollText text="COTIZAR POR WHATSAPP" arrow="diag" />
+              <RollText text="COTIZAR PROYECTO" arrow="diag" />
             </a>
           </span>
         </span>
         <span class="hero-cta-slot hx-pop" style="--d:620ms">
-          <a href="#showcase" class="hero-cta-secondary ink-fill" data-cursor="CASOS" aria-label="Ver proyectos y casos de éxito">
+          <a href="#showcase" class="hero-cta-secondary ink-fill" data-cursor="CASOS" aria-label="Ver apps y plataformas creadas">
             <span class="ink" aria-hidden="true"></span>
-            <RollText text="VER CASOS" arrow="right" />
+            <RollText text="VER APPS EN VIVO" arrow="right" />
           </a>
         </span>
       </div>
     </div>
 
-    <!-- Columna 2: Sellos de Arquitectura Editorial (Síntesis limpia sin saturación de texto) -->
-    <div class="hero-pillars" aria-label="Sellos de Arquitectura Editorial">
+    <!-- Columna 2: Especialidades reales -->
+    <div class="hero-pillars" aria-label="Especialidades de Amargo Creativo">
       <div class="pillar-item hx" style="--d:600ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">01</span>
         <div class="pillar-content">
-          <strong>CÓDIGO PROPIO</strong>
-          <span>Astro 5 &bull; Next.js</span>
+          <strong>APPS &amp; PWA</strong>
+          <span>Super-Apps · Delivery · Móvil</span>
         </div>
       </div>
       <div class="pillar-item hx" style="--d:680ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">02</span>
         <div class="pillar-content">
-          <strong>CONVERSIÓN</strong>
-          <span>Directo a WhatsApp</span>
+          <strong>IA &amp; SAAS B2B</strong>
+          <span>Documentos · Mapas · Portales</span>
         </div>
       </div>
       <div class="pillar-item hx" style="--d:760ms;--hx-x:-12px;--hx-y:0px">
         <span class="pillar-num">03</span>
         <div class="pillar-content">
-          <strong>SEO & EDGE</strong>
-          <span>&lt;0.8s Cloudflare</span>
+          <strong>COMERCIO PROPIO</strong>
+          <span>0% Comisiones · WhatsApp</span>
         </div>
       </div>
     </div>
 
-    <!-- Columna 3: Métricas de Autoridad & Badge Giratorio -->
+    <!-- Columna 3: Métricas de Producto & Badge Giratorio -->
     <div class="hero-right-wrap">
       <div class="hero-stats">
         <div class="hero-meta hx" style="--d:700ms;--hx-y:10px">
-          <strong data-count-from="0" data-count-to="100" data-count-suffix="%">100%</strong>
-          <span>ENFOCADO EN VENTAS</span>
+          <strong data-count-from="0" data-count-to="11" data-count-suffix="+">11+</strong>
+          <span>PRODUCTOS EN VIVO</span>
         </div>
         <div class="hero-meta hx" style="--d:780ms;--hx-y:10px">
-          <strong data-count-from="4.8" data-count-to="0.8" data-count-decimals="1" data-count-prefix="< " data-count-suffix="s">&lt; 0.8s</strong>
-          <span>CARGA INSTANTÁNEA</span>
+          <strong data-count-from="0" data-count-to="100" data-count-suffix="%">100%</strong>
+          <span>PROPIEDAD DEL CÓDIGO</span>
         </div>
       </div>
 

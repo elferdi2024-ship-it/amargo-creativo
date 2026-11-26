@@ -31,10 +31,10 @@ interface Props {
 const SITE_URL = 'https://amargo-creativo.pages.dev';
 
 const {
-  title = 'Amargo Creativo™ | Diseño Web <0.8s, Apps y SEO (UY·AR·ES)',
-  description = 'Agencia de ingeniería web (<0.8s), apps a medida, SEO técnico y WhatsApp Commerce desde Atlántida, Uruguay para UY, AR y ES. Sin plantillas.',
-  image = `${SITE_URL}/og-image-v2.jpg`,
-  imageAlt = 'Amargo Creativo™ — Diseño radical y código propio <0.8s en Uruguay, Argentina y España',
+  title = 'Amargo Creativo™ | Apps, IA y Software a Medida (UY·AR·ES)',
+  description = 'Estudio de producto e ingeniería: apps móviles, software con IA, plataformas SaaS, comercio propio y diseño de autor en Uruguay, Argentina y España.',
+  image = `${SITE_URL}/og-image-v3.jpg`,
+  imageAlt = 'Amargo Creativo™ — Estudio de desarrollo de apps, IA y productos digitales a medida',
   canonicalUrl,
   preloadHero = false,
   includeFaqSchema = false,
@@ -141,38 +141,38 @@ const graph: Record<string, unknown>[] = [
     sameAs: ['https://www.instagram.com/amargocreativo'],
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: 'Servicios de Ingeniería Web, Apps y Posicionamiento SEO',
+      name: 'Desarrollo de Apps, IA, Plataformas SaaS y Comercio Propio',
       itemListElement: [
         {
           '@type': 'Offer',
           itemOffered: {
             '@type': 'Service',
-            name: 'Diseño y Creación de Páginas Web de Alto Rendimiento',
-            description: 'Sitios web ultrarrápidos (<0.8s) mobile-first con conversión directa a WhatsApp.',
+            name: 'Desarrollo de Apps Móviles, PWA y Super-Apps',
+            description: 'Aplicaciones instalables de delivery hiperlocal, reservas, logística y pedidos sin comisiones de terceros.',
           },
         },
         {
           '@type': 'Offer',
           itemOffered: {
             '@type': 'Service',
-            name: 'Desarrollo de Aplicaciones Web y SaaS',
-            description: 'Marketplaces, portales B2B, cotizadores inteligentes y software a medida en la nube.',
+            name: 'Software a Medida, IA y Plataformas SaaS B2B',
+            description: 'Búsqueda semántica en documentos, portales ciudadanos con mapas en vivo, trazabilidad operativa y facturación CFE.',
           },
         },
         {
           '@type': 'Offer',
           itemOffered: {
             '@type': 'Service',
-            name: 'Posicionamiento SEO Técnico & Motores IA',
-            description: 'Core Web Vitals en verde, Schema.org estructurado y SEO multi-región UY/AR/ES.',
+            name: 'E-Commerce Propio y Diseño Web de Autor',
+            description: 'Tiendas D2C, catálogos multi-sucursal, cotizadores inteligentes y conversión directa a WhatsApp.',
           },
         },
         {
           '@type': 'Offer',
           itemOffered: {
             '@type': 'Service',
-            name: 'CRO & WhatsApp Commerce',
-            description: 'Embudos comerciales sin fricción orientados a consultas calificadas por WhatsApp.',
+            name: 'SEO Técnico y Visibilidad en Motores IA (AEO/GEO)',
+            description: 'Arquitectura veloz, Schema.org estructurado y posicionamiento orgánico en Uruguay, Argentina y España.',
           },
         },
       ],

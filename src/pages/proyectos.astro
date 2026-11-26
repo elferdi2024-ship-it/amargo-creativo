@@ -7,10 +7,10 @@ import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
 import { projects } from '../lib/projects';
 
-const pageTitle = "Proyectos & Casos Web, Apps y SaaS | Amargo Creativo™";
-const pageDescription = "Casos reales en producción: Barrio.uy, DocuBox AI, Canarios Ya! y plataformas SaaS con carga <0.8s en Uruguay, Argentina y España.";
+const pageTitle = "Apps, Plataformas IA & Casos Reales | Amargo Creativo™";
+const pageDescription = "Productos digitales en producción: Barrio.uy, DocuBox AI, Canarios Ya!, plataformas SaaS y tiendas D2C creadas a medida en UY, AR y ES.";
 const canonicalUrl = "https://amargo-creativo.pages.dev/proyectos/";
-const ogImage = "https://amargo-creativo.pages.dev/og-image-v2.jpg";
+const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 ---
 <Layout 
   title={pageTitle}
@@ -45,18 +45,18 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v2.jpg";
         </h1>
         
         <p class="page-subtitle">
-          No vendemos maquetas ni temas prediseñados de ThemeForest. Cada proyecto es un activo digital diseñado desde cero para dominar en velocidad (&lt;0.8s), escalar en la nube y cerrar ventas directas por WhatsApp.
+          No vendemos maquetas ni plantillas recicladas. Cada caso es un producto real en producción — desde apps con IA y portales ciudadanos hasta super-apps de delivery y comercio propio 100% del cliente.
         </p>
 
         <!-- Barra de Estadísticas Clave -->
         <div class="stats-strip">
           <div class="stat-cell">
             <strong>{String(projects.length).padStart(2, '0')}</strong>
-            <span>PROYECTOS EN VIVO</span>
+            <span>PRODUCTOS EN VIVO</span>
           </div>
           <div class="stat-cell">
-            <strong>&lt; 0.8s</strong>
-            <span>TIEMPO MEDIO LCP</span>
+            <strong>IA + PWA</strong>
+            <span>APPS &amp; PLATAFORMAS</span>
           </div>
           <div class="stat-cell">
             <strong>100%</strong>
@@ -64,7 +64,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v2.jpg";
           </div>
           <div class="stat-cell">
             <strong>0%</strong>
-            <span>DEPENDENCIAS CAUTIVAS</span>
+            <span>COMISIONES CAUTIVAS</span>
           </div>
         </div>
 
