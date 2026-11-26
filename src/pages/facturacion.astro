@@ -5,20 +5,51 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import RollText from '../components/motion/RollText.astro';
 import { whatsappHref } from "../lib/format";
 
 const waMessage = "Hola Amargo Creativo, quiero consultar por el desarrollo de un Sistema Web B2B / Portal de Clientes con Facturación CFE para mi empresa.";
 const waLink = whatsappHref(waMessage);
 
 const title = "Sistemas B2B, Portales & Facturación CFE | Amargo Creativo";
-const description = "Software B2B a medida en Uruguay: portales extranet con Magic Link, facturación electrónica CFE DGI, conciliación bancaria y WhatsApp.";
+const description = "Software B2B a medida en Uruguay: portales extranet con Magic Link, facturación electrónica CFE DGI, conciliación bancaria y automatización WhatsApp.";
 const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
+const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
+
+const b2bComparisons = [
+  {
+    criterio: "Experiencia de Uso & Móvil",
+    amargo: "Portal ágil y app PWA con Magic Link sin contraseñas y Core Web Vitals en verde",
+    generic: "Pantallas de escritorio viejas, captchas y sesiones lentas de 5 a 9 segundos"
+  },
+  {
+    criterio: "Cobros & Notificaciones",
+    amargo: "WhatsApp Cloud API nativo con link de descarga y conciliación BROU / Itaú / MP",
+    generic: "Correos genéricos que caen en Spam y seguimiento manual en planillas Excel"
+  },
+  {
+    criterio: "Licencias & Propiedad",
+    amargo: "Código 100% tuyo, sin cobro mensual por usuario ni licencias perpetuas",
+    generic: "Cuotas recurrentes que suben cada vez que sumás un usuario o sucursal"
+  },
+  {
+    criterio: "Adaptabilidad Operativa",
+    amargo: "Modelado exacto a tus reglas comerciales, IVA, presupuestos y flujos reales",
+    generic: "Tu equipo debe adaptarse a la estructura rígida de un ERP enlatado"
+  },
+  {
+    criterio: "Seguridad & Trazabilidad",
+    amargo: "PostgreSQL con Row-Level Security (RLS) y registro inmutable de cada acción",
+    generic: "Servidores monolíticos difíciles de auditar y costosos de mantener"
+  }
+];
 ---
 
 <Layout
   title={title}
   description={description}
   canonicalUrl={canonicalUrl}
+  image={ogImage}
   breadcrumbs={[
     { name: 'Inicio', url: 'https://amargo-creativo.pages.dev/' },
     { name: 'Sistemas B2B', url: canonicalUrl }
@@ -33,33 +64,35 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
         <div class="fac-top-bar">
           <div class="section-label">
             <span class="num">B2B SUITE</span>
-            <span>SOFTWARE A MEDIDA · PORTALES EXTRANET · URUGUAY & REGIONAL</span>
+            <span>SOFTWARE A MEDIDA · PORTALES EXTRANET · URUGUAY &amp; REGIONAL</span>
           </div>
-          <div class="fac-telemetry-stamp">DGI CFE COMPLIANT // POSTGRESQL RLS // LCP &lt;0.8s</div>
+          <div class="fac-telemetry-stamp">DGI CFE COMPLIANT // POSTGRESQL RLS // EDGE CLOUD</div>
         </div>
 
-        <h1 class="fac-h1">
+        <h1 class="fac-h1" data-reveal-words>
           Sistemas Web B2B, Portales de Clientes y <em>Facturación CFE</em>
         </h1>
 
         <p class="fac-lead">
-          Reemplazá planillas desactualizadas de Excel y ERPs lentos de los 90. Desarrollamos infraestructura digital a medida: portales de autoservicio para tus clientes con Magic Link, conciliación de transferencias bancarias (BROU, Itaú, Santander) y facturación electrónica CFE conectada en tiempo real.
+          Reemplazá planillas de Excel dispersas y ERPs rígidos de los 90. Desarrollamos infraestructura propia: portales de autoservicio con Magic Link, conciliación bancaria local (BROU, Itaú, Santander) y facturación electrónica CFE conectada en tiempo real.
         </p>
 
-        <div class="fac-specs-chips">
-          <span class="spec-chip">⚡ NEXT.JS 15 & ASTRO RSC</span>
+        <div class="fac-specs-chips" aria-label="Especificaciones técnicas">
+          <span class="spec-chip">⚡ NEXT.JS 15 &amp; ASTRO</span>
           <span class="spec-chip">🔒 MAGIC LINK PASSWORDLESS</span>
           <span class="spec-chip">🇺🇾 CFE DGI COMPLIANT</span>
           <span class="spec-chip">💬 WHATSAPP CLOUD API</span>
-          <span class="spec-chip">⏱ TIEMPO DE CARGA &lt;0.8s</span>
+          <span class="spec-chip">🏦 BROU · ITAÚ · MP</span>
         </div>
 
         <div class="fac-cta-row">
-          <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary" data-cursor="WHATSAPP">
-            <span>AGENDAR DEMO TÉCNICA</span> ↗
+          <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary ink-fill magnetic-btn" data-cursor="WHATSAPP">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="AGENDAR DEMO TÉCNICA" arrow="diag" />
           </a>
-          <a href="#simulator" class="fac-btn-secondary" data-cursor="SIMULADOR">
-            <span>PROBAR SIMULADOR EN VIVO</span> ↓
+          <a href="#simulator" class="fac-btn-secondary ink-fill" data-cursor="SIMULADOR">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="PROBAR SIMULADOR EN VIVO" arrow="right" />
           </a>
         </div>
       </div>
@@ -71,28 +104,28 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
         <div class="simulator-wrapper tactile-card">
           <!-- Terminal Header -->
           <div class="term-header">
-            <div class="term-dots">
+            <div class="term-dots" aria-hidden="true">
               <span class="dot dot-red"></span>
               <span class="dot dot-yellow"></span>
               <span class="dot dot-green"></span>
             </div>
-            <div class="term-title">AMARGO_CORE // B2B CLIENT EXTRANET & ENGINE v3.2</div>
-            <div class="term-live-tag">● SISTEMA OPERATIVO ACTIVO</div>
+            <div class="term-title">AMARGO_CORE // B2B CLIENT EXTRANET v3.2</div>
+            <div class="term-live-tag">● ACTIVO</div>
           </div>
 
-          <!-- Navigation Tabs -->
+          <!-- Navigation Tabs (swipeable rail en mobile) -->
           <div class="sim-nav-bar" role="tablist" aria-label="Simulador de Módulos B2B">
-            <button class="sim-tab active" data-tab="tab-extranet" role="tab" aria-selected="true" aria-controls="tab-extranet">
-              <span class="tab-icon">👤</span> 01. PORTAL CLIENTE (EXTRANET)
+            <button type="button" class="sim-tab active" data-tab="tab-extranet" role="tab" aria-selected="true" aria-controls="tab-extranet">
+              <span class="tab-icon" aria-hidden="true">👤</span> 01. EXTRANET
             </button>
-            <button class="sim-tab" data-tab="tab-cfe" role="tab" aria-selected="false" aria-controls="tab-cfe">
-              <span class="tab-icon">🧾</span> 02. FACTURACIÓN CFE & DGI
+            <button type="button" class="sim-tab" data-tab="tab-cfe" role="tab" aria-selected="false" aria-controls="tab-cfe">
+              <span class="tab-icon" aria-hidden="true">🧾</span> 02. CFE &amp; DGI
             </button>
-            <button class="sim-tab" data-tab="tab-whatsapp" role="tab" aria-selected="false" aria-controls="tab-whatsapp">
-              <span class="tab-icon">💬</span> 03. WORKFLOWS WHATSAPP
+            <button type="button" class="sim-tab" data-tab="tab-whatsapp" role="tab" aria-selected="false" aria-controls="tab-whatsapp">
+              <span class="tab-icon" aria-hidden="true">💬</span> 03. WHATSAPP
             </button>
-            <button class="sim-tab" data-tab="tab-security" role="tab" aria-selected="false" aria-controls="tab-security">
-              <span class="tab-icon">🛡️</span> 04. TELEMETRÍA & SEGURIDAD
+            <button type="button" class="sim-tab" data-tab="tab-security" role="tab" aria-selected="false" aria-controls="tab-security">
+              <span class="tab-icon" aria-hidden="true">🛡️</span> 04. SEGURIDAD RLS
             </button>
           </div>
 
@@ -103,11 +136,11 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                 <div class="pb-left">
                   <span class="pb-tag">VISTA DEL CLIENTE FINAL</span>
                   <h4>Portal de Autoservicio con Acceso Magic Link</h4>
-                  <p>Tus clientes entran sin contraseñas con un enlace firmado de un solo clic. Ven sus presupuestos aprobados, descargan facturas fiscales y abonan saldos pendientes.</p>
+                  <p>Tus clientes entran sin contraseñas con un enlace firmado de un clic. Revisan presupuestos aprobados, descargan comprobantes fiscales y concilian saldos.</p>
                 </div>
                 <div class="pb-right">
                   <div class="client-auth-pill">
-                    <span class="auth-dot">●</span> SESIÓN SEGURA: <strong>estudio@barrio.uy</strong>
+                    <span class="auth-dot" aria-hidden="true">●</span> SESIÓN: <strong>admin@lomax.uy</strong>
                   </div>
                 </div>
               </div>
@@ -115,27 +148,26 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
               <div class="term-metrics-grid">
                 <div class="metric-card">
                   <span class="mc-label">Saldo Pendiente</span>
-                  <div class="mc-val mc-green">$ 0,00 UYU</div>
-                  <span class="mc-sub">Al día · Próxima cuota 01 OCT</span>
+                  <div class="mc-val mc-green tabular">$ 0,00</div>
+                  <span class="mc-sub">Al día · Próxima 01 OCT</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">Presupuestos Aprobados</span>
-                  <div class="mc-val mc-bone">3 / 3</div>
-                  <span class="mc-sub">Firma digital registrada</span>
+                  <span class="mc-label">Presupuestos</span>
+                  <div class="mc-val mc-bone tabular">3 / 3</div>
+                  <span class="mc-sub">Firma digital activa</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">Tiempo de Respuesta</span>
-                  <div class="mc-val mc-electric">0.42s</div>
-                  <span class="mc-sub">Cache Edge Cloudflare</span>
+                  <span class="mc-label">Latencia Edge</span>
+                  <div class="mc-val mc-electric tabular">38ms</div>
+                  <span class="mc-sub">Cloudflare Anycast</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">Documentos Disponibles</span>
-                  <div class="mc-val mc-bone">18 PDFs</div>
-                  <span class="mc-sub">Descarga inmediata sin fricción</span>
+                  <span class="mc-label">Documentos</span>
+                  <div class="mc-val mc-bone tabular">18 PDFs</div>
+                  <span class="mc-sub">Descarga sin fricción</span>
                 </div>
               </div>
 
-              <!-- Interactive Ledger Table Preview -->
               <div class="term-table-wrap">
                 <table class="term-table">
                   <thead>
@@ -151,27 +183,27 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                   <tbody>
                     <tr>
                       <td class="font-mono">e-Factura #A-0492</td>
-                      <td>Desarrollo Plataforma Inmobiliaria Web (Fase 2)</td>
+                      <td>Portal LOMAX Propiedades &amp; Gestión de Leads (Fase 2)</td>
                       <td>10 SEP 2026</td>
                       <td class="font-mono"><strong>$ 54.000 UYU</strong></td>
                       <td><span class="pill-paid">● PAGADO (BROU)</span></td>
-                      <td><a href={waLink} target="_blank" class="table-action-btn">Descargar PDF ↓</a></td>
+                      <td><a href={waLink} target="_blank" rel="noopener noreferrer" class="table-action-btn">PDF ↓</a></td>
                     </tr>
                     <tr>
                       <td class="font-mono">e-Factura #A-0480</td>
-                      <td>Infraestructura Cloudflare Edge & Optimización LCP</td>
+                      <td>Plataforma Barrio.uy CivicTech &amp; Mapa de Reportes</td>
                       <td>15 AGO 2026</td>
-                      <td class="font-mono"><strong>$ 38.500 UYU</strong></td>
+                      <td class="font-mono"><strong>$ 46.500 UYU</strong></td>
                       <td><span class="pill-paid">● PAGADO (ITAÚ)</span></td>
-                      <td><a href={waLink} target="_blank" class="table-action-btn">Descargar PDF ↓</a></td>
+                      <td><a href={waLink} target="_blank" rel="noopener noreferrer" class="table-action-btn">PDF ↓</a></td>
                     </tr>
                     <tr>
                       <td class="font-mono">Presupuesto #PR-2026-09</td>
-                      <td>Módulo de Conciliación Bancaria y Alertas WhatsApp</td>
+                      <td>Módulo Conciliación Bancaria &amp; Alertas WhatsApp</td>
                       <td>01 SEP 2026</td>
                       <td class="font-mono"><strong>$ 42.000 UYU</strong></td>
                       <td><span class="pill-approved">✓ APROBADO</span></td>
-                      <td><a href={waLink} target="_blank" class="table-action-btn">Ver Detalle ↗</a></td>
+                      <td><a href={waLink} target="_blank" rel="noopener noreferrer" class="table-action-btn">Detalle ↗</a></td>
                     </tr>
                   </tbody>
                 </table>
@@ -184,35 +216,35 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                 <div class="pb-left">
                   <span class="pb-tag">CUMPLIMIENTO TRIBUTARIO URUGUAY</span>
                   <h4>Emisión de Comprobantes Fiscales Electrónicos (CFE)</h4>
-                  <p>Mapeo directo con DGI. Cálculo estricto de IVA básico (22%), IVA mínimo (10%) y operaciones exentas. Generación de firmas XML y representación gráfica oficial.</p>
+                  <p>Mapeo directo con DGI. Cálculo estricto de IVA básico (22%), IVA mínimo (10%) y exportaciones exentas. Firma XML y representación gráfica oficial.</p>
                 </div>
                 <div class="pb-right">
                   <div class="client-auth-pill">
-                    <span class="auth-dot" style="background:#4ade80;">●</span> CAE AUTORIZADO DGI N° 2026-90412
+                    <span class="auth-dot" style="background:#4ade80;" aria-hidden="true">●</span> CAE DGI N° 2026-90412
                   </div>
                 </div>
               </div>
 
               <div class="term-metrics-grid">
                 <div class="metric-card">
-                  <span class="mc-label">Total Emitido (Mes)</span>
-                  <div class="mc-val mc-bone">$ 428.500</div>
-                  <span class="mc-sub">18 Comprobantes válidos</span>
+                  <span class="mc-label">Emitido (Mes)</span>
+                  <div class="mc-val mc-bone tabular">$ 428.5k</div>
+                  <span class="mc-sub">18 Comprobantes</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">IVA 22% Liquidado</span>
-                  <div class="mc-val mc-yellow">$ 77.270</div>
-                  <span class="mc-sub">Discriminado automático</span>
+                  <span class="mc-label">IVA 22%</span>
+                  <div class="mc-val mc-yellow tabular">$ 77.2k</div>
+                  <span class="mc-sub">Discriminado</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">CFE Aprobados DGI</span>
-                  <div class="mc-val mc-green">100%</div>
-                  <span class="mc-sub">0 rechazos en validación</span>
+                  <span class="mc-label">Aprobados DGI</span>
+                  <div class="mc-val mc-green tabular">100%</div>
+                  <span class="mc-sub">0 rechazos</span>
                 </div>
                 <div class="metric-card">
-                  <span class="mc-label">Tiempo Firma Digital</span>
-                  <div class="mc-val mc-electric">320ms</div>
-                  <span class="mc-sub">Hash criptográfico RSA</span>
+                  <span class="mc-label">Firma RSA</span>
+                  <div class="mc-val mc-electric tabular">320ms</div>
+                  <span class="mc-sub">Hash certificado</span>
                 </div>
               </div>
 
@@ -221,7 +253,7 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                   <thead>
                     <tr>
                       <th>TIPO CFE</th>
-                      <th>SERIE & NÚMERO</th>
+                      <th>SERIE &amp; NÚMERO</th>
                       <th>RECEPTOR (RUT)</th>
                       <th>SUBTOTAL</th>
                       <th>IVA 22%</th>
@@ -232,7 +264,7 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                     <tr>
                       <td><span class="cfe-badge">111 - e-Factura</span></td>
                       <td class="font-mono">Serie A #0492</td>
-                      <td>Barrio Inmobiliaria (RUT 218903440012)</td>
+                      <td>LOMAX Propiedades SRL (RUT 218903440012)</td>
                       <td class="font-mono">$ 44.262</td>
                       <td class="font-mono">$ 9.738</td>
                       <td class="font-mono"><strong>$ 54.000 UYU</strong></td>
@@ -240,13 +272,13 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                     <tr>
                       <td><span class="cfe-badge">101 - e-Ticket</span></td>
                       <td class="font-mono">Serie A #0493</td>
-                      <td>Consumidor Final (CI 4.892.110-3)</td>
+                      <td>Distribuidora El Remate (CI 4.892.110-3)</td>
                       <td class="font-mono">$ 15.574</td>
                       <td class="font-mono">$ 3.426</td>
                       <td class="font-mono"><strong>$ 19.000 UYU</strong></td>
                     </tr>
                     <tr>
-                      <td><span class="cfe-badge">112 - e-Factura Export</span></td>
+                      <td><span class="cfe-badge">112 - Exportación</span></td>
                       <td class="font-mono">Serie B #0104</td>
                       <td>Tech Studio LLC (Delaware, USA)</td>
                       <td class="font-mono">US$ 2.400</td>
@@ -263,12 +295,12 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
               <div class="panel-banner">
                 <div class="pb-left">
                   <span class="pb-tag">COBROS SIN LLAMADAS INCÓMODAS</span>
-                  <h4>Automatización de Mensajería & Conciliación por WhatsApp</h4>
-                  <p>Cuando emitís una factura o un pago ingresa en tu cuenta bancaria, el webhook dispara una alerta instantánea con el link directo para ver el recibo o pagar con QR.</p>
+                  <h4>Automatización de Mensajería &amp; Conciliación por WhatsApp</h4>
+                  <p>Cuando emitís una factura o se acredita una transferencia, el webhook dispara una alerta automática con el comprobante listo para descargar.</p>
                 </div>
                 <div class="pb-right">
                   <div class="client-auth-pill">
-                    <span class="auth-dot" style="background:#25d366;">●</span> META WHATSAPP CLOUD API ONLINE
+                    <span class="auth-dot" style="background:#25d366;" aria-hidden="true">●</span> META WHATSAPP API ONLINE
                   </div>
                 </div>
               </div>
@@ -276,18 +308,18 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
               <div class="wa-chat-simulator">
                 <div class="wa-message-bubble incoming">
                   <div class="wa-msg-meta">AMARGO B2B BOT · Hace 2 minutos</div>
-                  <p>👋 Hola <strong>Martín</strong>. Te confirmamos que se acreditó la transferencia bancaria (BROU) correspondiente a la <strong>e-Factura #A-0492</strong> por <strong>$ 54.000 UYU</strong>.</p>
-                  <p>Podés descargar tu comprobante fiscal firmado y ver tu estado de cuenta actualizado en tu portal:</p>
+                  <p>👋 Hola <strong>Martín</strong>. Confirmamos la acreditación BROU de la <strong>e-Factura #A-0492</strong> por <strong>$ 54.000 UYU</strong>.</p>
+                  <p>Ya podés descargar tu comprobante fiscal firmado desde tu portal:</p>
                   <div class="wa-msg-card">
-                    <span class="wa-card-title">📄 e-Factura_A-0492_Barrio.pdf</span>
+                    <span class="wa-card-title">📄 e-Factura_A-0492_LOMAX.pdf</span>
                     <span class="wa-card-sub">DGI CFE · Descarga instantánea</span>
                   </div>
                   <span class="wa-time">14:32 ✓✓</span>
                 </div>
 
                 <div class="wa-message-bubble outgoing">
-                  <div class="wa-msg-meta">CLIENTE (BARRIO.UY)</div>
-                  <p>Excelente, muchas gracias por la rapidez. Descargada y archivada.</p>
+                  <div class="wa-msg-meta">CLIENTE (LOMAX)</div>
+                  <p>Impecable, descargada y enviada al estudio contable.</p>
                   <span class="wa-time">14:33</span>
                 </div>
               </div>
@@ -298,12 +330,12 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
               <div class="panel-banner">
                 <div class="pb-left">
                   <span class="pb-tag">ARQUITECTURA CLOUD A MEDIDA</span>
-                  <h4>Base de Datos Aislada & Registro Inmutable de Auditoría</h4>
-                  <p>A diferencia de sistemas monolíticos obsoletos, cada cliente opera con aislamiento Row-Level Security (RLS) sobre PostgreSQL. Trazabilidad completa de cada acción y cobro.</p>
+                  <h4>Base de Datos Aislada &amp; Auditoría Inmutable</h4>
+                  <p>Cada empresa opera con aislamiento Row-Level Security (RLS) en PostgreSQL y trazabilidad completa de emisiones, accesos Magic Link y cobros.</p>
                 </div>
                 <div class="pb-right">
                   <div class="client-auth-pill">
-                    <span class="auth-dot" style="background:#38bdf8;">●</span> POSTGRESQL RLS ENCRYPTED
+                    <span class="auth-dot" style="background:#38bdf8;" aria-hidden="true">●</span> POSTGRESQL RLS ENCRYPTED
                   </div>
                 </div>
               </div>
@@ -313,7 +345,7 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                   <span class="log-time">[14:31:02.108]</span>
                   <span class="log-code">POST /api/cfe/emit</span>
                   <span class="log-status ok">200 OK</span>
-                  <span class="log-desc">CFE #A-0492 firmado digitalmente con certificado digital DGI (218ms).</span>
+                  <span class="log-desc">CFE #A-0492 firmado digitalmente con certificado DGI (218ms).</span>
                 </div>
                 <div class="sec-log-row">
                   <span class="log-time">[14:31:04.450]</span>
@@ -325,13 +357,13 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
                   <span class="log-time">[14:31:05.120]</span>
                   <span class="log-code">QUEUE /wa/notify</span>
                   <span class="log-status ok">SENT</span>
-                  <span class="log-desc">Mensaje de confirmación entregado al cliente via WhatsApp Cloud API.</span>
+                  <span class="log-desc">Confirmación entregada al cliente vía WhatsApp Cloud API.</span>
                 </div>
                 <div class="sec-log-row">
                   <span class="log-time">[14:32:40.890]</span>
                   <span class="log-code">AUTH /magic-link</span>
                   <span class="log-status ok">VERIFIED</span>
-                  <span class="log-desc">Acceso concedido a estudio@barrio.uy. Token JWT revocado post-uso (RLS activo).</span>
+                  <span class="log-desc">Acceso concedido a admin@lomax.uy. Token revocado post-uso (RLS activo).</span>
                 </div>
               </div>
             </div>
@@ -345,18 +377,18 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
       <div class="fac-container">
         <div class="fac-section-head">
           <div class="section-label"><span class="num">02</span> MÓDULOS DEL SISTEMA</div>
-          <h2>Ingeniería pensada para la <em>operativa real</em></h2>
-          <p class="section-lead-text">No vendemos software genérico enlatado. Diseñamos la solución exacta que se adapta a las reglas de tu negocio, tu equipo y tus clientes.</p>
+          <h2 data-reveal-words>Ingeniería pensada para la <em>operativa real</em></h2>
+          <p class="section-lead-text">No vendemos software genérico enlatado. Diseñamos el sistema exacto que se adapta a tus reglas comerciales, tu equipo y tus clientes.</p>
         </div>
 
         <div class="fac-features-grid">
           <div class="feat-box tactile-card">
             <div class="feat-top">
-              <span class="feat-num">01</span>
+              <span class="feat-num tabular">01</span>
               <span class="feat-badge">EXTRANET</span>
             </div>
             <h3>Portales de Clientes con Magic Link</h3>
-            <p>Tus clientes acceden con un enlace seguro a su estado de cuenta en vivo, historial de compras, presupuestos interactivos con firma digital y comprobantes fiscales descargables sin contraseñas.</p>
+            <p>Tus clientes acceden con un enlace seguro a su estado de cuenta en vivo, presupuestos interactivos con firma digital y comprobantes fiscales descargables sin contraseñas.</p>
             <div class="feat-tags">
               <span>#PASSWORDLESS</span>
               <span>#ESTADO EN VIVO</span>
@@ -366,11 +398,11 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 
           <div class="feat-box tactile-card">
             <div class="feat-top">
-              <span class="feat-num">02</span>
+              <span class="feat-num tabular">02</span>
               <span class="feat-badge">CFE DGI</span>
             </div>
             <h3>Facturación Electrónica CFE (Uruguay)</h3>
-            <p>Módulo fiscal 100% homologable con DGI. Soporte para e-Factura, e-Ticket, e-Factura Exportación y Notas de Crédito, con cálculo de IVA 22% / 10% y emisión de PDFs oficiales con código QR.</p>
+            <p>Módulo fiscal homologable con DGI. Soporte para e-Factura, e-Ticket, e-Factura Exportación y Notas de Crédito, con IVA 22% / 10% y PDFs oficiales con QR.</p>
             <div class="feat-tags">
               <span>#CFE URUGUAY</span>
               <span>#IVA 22%</span>
@@ -380,11 +412,11 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 
           <div class="feat-box tactile-card">
             <div class="feat-top">
-              <span class="feat-num">03</span>
+              <span class="feat-num tabular">03</span>
               <span class="feat-badge">COBROS</span>
             </div>
-            <h3>Conciliación Bancaria & Pasarelas</h3>
-            <p>Automatizá el registro de transferencias bancarias (BROU, Itaú, Santander, Scotiabank) y aceptá cobros inmediatos con Mercado Pago Checkout Pro o Stripe para clientes en el exterior.</p>
+            <h3>Conciliación Bancaria &amp; Pasarelas</h3>
+            <p>Automatizá el registro de transferencias locales (BROU, Itaú, Santander, Scotiabank) y aceptá cobros inmediatos con Mercado Pago o Stripe para el exterior.</p>
             <div class="feat-tags">
               <span>#BROU</span>
               <span>#ITAÚ</span>
@@ -394,11 +426,11 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 
           <div class="feat-box tactile-card">
             <div class="feat-top">
-              <span class="feat-num">04</span>
+              <span class="feat-num tabular">04</span>
               <span class="feat-badge">AUTOMATIZACIÓN</span>
             </div>
             <h3>Disparadores WhatsApp Cloud API</h3>
-            <p>Notificá automáticamente al cliente cuando un presupuesto fue emitido, un pago fue acreditado o una factura está próxima a vencer. Cero llamadas incómodas, cobranzas 100% fluidas.</p>
+            <p>Notificá automáticamente cuando se emite un presupuesto, se acredita un pago o vence una factura. Cero llamadas incómodas y cobranzas ordenadas.</p>
             <div class="feat-tags">
               <span>#WHATSAPP API</span>
               <span>#WEBHOOKS</span>
@@ -409,50 +441,32 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
       </div>
     </section>
 
-    <!-- 03. Comparativa Técnica (Amargo vs ERPs Tradicionales) -->
+    <!-- 03. Comparativa Técnica -->
     <section class="fac-comparison">
       <div class="fac-container">
         <div class="fac-section-head">
           <div class="section-label"><span class="num">03</span> DIFERENCIACIÓN TÉCNICA</div>
-          <h2>Amargo a medida <em>vs</em> ERPs Tradicionales</h2>
-          <p class="section-lead-text">Por qué las empresas que buscan alta conversión y control eligen software propietario en vez de licencias mensuales infladas.</p>
+          <h2 data-reveal-words>Amargo a medida <em>vs</em> ERPs Tradicionales</h2>
+          <p class="section-lead-text">Por qué las empresas modernas eligen software propietario en vez de licencias mensuales rígidas.</p>
         </div>
 
         <div class="comparison-table-wrap tactile-card">
           <table class="comparison-table">
             <thead>
               <tr>
-                <th>CRITERIO TÉCNICO & OPERATIVO</th>
+                <th>CRITERIO OPERATIVO</th>
                 <th class="col-amargo">SISTEMA AMARGO A MEDIDA</th>
-                <th class="col-generic">ERPS TRADICIONALES (SAP / ODOO / MEMORY)</th>
+                <th class="col-generic">ERPS TRADICIONALES</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>Velocidad & Carga Móvil (LCP)</strong></td>
-                <td class="col-amargo"><span class="check">✓</span> <strong>&lt; 0.8 segundos</strong> (Next.js / Astro Edge)</td>
-                <td class="col-generic"><span class="cross">✕</span> 4.5s a 9s (Sistemas pesados basados en servidor)</td>
-              </tr>
-              <tr>
-                <td><strong>Experiencia del Cliente Final</strong></td>
-                <td class="col-amargo"><span class="check">✓</span> Portal moderno, Magic Link sin contraseñas, UI premium</td>
-                <td class="col-generic"><span class="cross">✕</span> Formularios complejos, captchas, UX anticuada</td>
-              </tr>
-              <tr>
-                <td><strong>Notificaciones & Cobros</strong></td>
-                <td class="col-amargo"><span class="check">✓</span> WhatsApp Cloud API nativo con link directo de pago</td>
-                <td class="col-generic"><span class="cross">✕</span> Emails genéricos que caen en la carpeta de Spam</td>
-              </tr>
-              <tr>
-                <td><strong>Costos Recurrentes de Licencia</strong></td>
-                <td class="col-amargo"><span class="check">✓</span> Código de tu propiedad. Sin cobro por usuario adicional</td>
-                <td class="col-generic"><span class="cross">✕</span> Pagos mensuales perpetuos que aumentan por usuario</td>
-              </tr>
-              <tr>
-                <td><strong>Adaptabilidad a tus Reglas</strong></td>
-                <td class="col-amargo"><span class="check">✓</span> 100% adaptable a tu flujo comercial específico</td>
-                <td class="col-generic"><span class="cross">✕</span> Tu empresa debe forzarse a la estructura del software</td>
-              </tr>
+              {b2bComparisons.map(row => (
+                <tr>
+                  <td class="col-key"><strong>{row.criterio}</strong></td>
+                  <td class="col-amargo"><span class="check">✓</span> {row.amargo}</td>
+                  <td class="col-generic"><span class="cross">✕</span> {row.generic}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -464,49 +478,49 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
       <div class="fac-container">
         <div class="fac-section-head">
           <div class="section-label"><span class="num">04</span> INTEGRACIONES NATIVAS</div>
-          <h2>Conectado con tu <em>banca y herramientas</em></h2>
+          <h2 data-reveal-words>Conectado con tu <em>banca y herramientas</em></h2>
         </div>
 
         <div class="integrations-grid">
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <span class="integ-status">● ACTIVO</span>
             <h4>DGI CFE URUGUAY</h4>
-            <p>e-Factura, e-Ticket, CAE correlativo oficial y firma XML.</p>
+            <p>e-Factura, e-Ticket, CAE oficial y firma XML.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
-            <h4>BROU (BANCO REPÚBLICA)</h4>
-            <p>Conciliación de transferencias y depósitos bancarios locales.</p>
+            <span class="integ-status">● ACTIVO</span>
+            <h4>BROU</h4>
+            <p>Conciliación de transferencias y depósitos locales.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <span class="integ-status">● ACTIVO</span>
             <h4>BANCO ITAÚ</h4>
-            <p>Integración de cuentas comerciales en pesos y dólares.</p>
+            <p>Cuentas comerciales en pesos y dólares.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
-            <h4>SANTANDER URUGUAY</h4>
-            <p>Monitoreo de acreditaciones en cuentas corporativas.</p>
+            <span class="integ-status">● ACTIVO</span>
+            <h4>SANTANDER UY</h4>
+            <p>Control de acreditaciones en cuentas empresa.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <span class="integ-status">● ACTIVO</span>
             <h4>MERCADO PAGO</h4>
-            <p>Cobros online inmediatos con tarjetas y saldo digital.</p>
+            <p>Cobros online inmediatos con tarjetas y QR.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
-            <h4>WHATSAPP CLOUD API</h4>
-            <p>Webhooks oficiales de Meta para alertas y comprobantes.</p>
+            <span class="integ-status">● ACTIVO</span>
+            <h4>WHATSAPP API</h4>
+            <p>Webhooks de Meta para alertas y comprobantes.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
+            <span class="integ-status">● ACTIVO</span>
             <h4>STRIPE PAYMENTS</h4>
-            <p>Cobros internacionales en USD/EUR para clientes en el exterior.</p>
+            <p>Cobros internacionales en USD y EUR.</p>
           </div>
           <div class="integ-pill">
-            <span class="integ-status">● CONECTOR ACTIVO</span>
-            <h4>POSTGRESQL & SUPABASE</h4>
-            <p>Base de datos relacional con Row-Level Security y backups en caliente.</p>
+            <span class="integ-status">● ACTIVO</span>
+            <h4>POSTGRESQL RLS</h4>
+            <p>Base relacional aislada con backups continuos.</p>
           </div>
         </div>
       </div>
@@ -516,38 +530,38 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     <section class="fac-roadmap">
       <div class="fac-container">
         <div class="fac-section-head">
-          <div class="section-label"><span class="num">05</span> METODOLOGÍA & SLA</div>
-          <h2>Despliegue operativo en <em>15 días hábiles</em></h2>
-          <p class="section-lead-text">Sin demoras burocráticas de meses. Trabajamos con sprints atómicos para que tu sistema esté produciendo valor de inmediato.</p>
+          <div class="section-label"><span class="num">05</span> METODOLOGÍA &amp; SPRINTS</div>
+          <h2 data-reveal-words>Despliegue operativo en <em>15 días hábiles</em></h2>
+          <p class="section-lead-text">Sprints cortos y verificables para que tu sistema empiece a ordenar tu empresa sin meses de espera.</p>
         </div>
 
         <div class="roadmap-steps">
           <div class="road-step tactile-card">
-            <div class="road-step-num">01</div>
+            <div class="road-step-num tabular">01</div>
             <div class="road-step-days">DÍAS 1 AL 3</div>
-            <h4>Mapeo & Arquitectura</h4>
-            <p>Analizamos tu flujo actual de cotizaciones y facturas. Diseñamos el modelo relacional de datos en PostgreSQL y los permisos de acceso.</p>
+            <h4>Mapeo &amp; Datos</h4>
+            <p>Modelamos tu flujo de cotizaciones, facturas y permisos RLS en PostgreSQL.</p>
           </div>
 
           <div class="road-step tactile-card">
-            <div class="road-step-num">02</div>
+            <div class="road-step-num tabular">02</div>
             <div class="road-step-days">DÍAS 4 AL 8</div>
-            <h4>Frontend UI & Extranet</h4>
-            <p>Construcción del portal de clientes con diseño de alta gama, autenticación Magic Link y visualización instantánea de documentos.</p>
+            <h4>Extranet &amp; UI</h4>
+            <p>Portal móvil y escritorio con Magic Link y visualización clara de documentos.</p>
           </div>
 
           <div class="road-step tactile-card">
-            <div class="road-step-num">03</div>
+            <div class="road-step-num tabular">03</div>
             <div class="road-step-days">DÍAS 9 AL 12</div>
-            <h4>CFE & Automatizaciones</h4>
-            <p>Conexión del emisor tributario CFE DGI, disparadores de cobro por WhatsApp Cloud API y pasarelas de pago bancarias.</p>
+            <h4>CFE &amp; Cobros</h4>
+            <p>Integración CFE DGI, alertas por WhatsApp Cloud API y conciliación bancaria.</p>
           </div>
 
           <div class="road-step tactile-card">
-            <div class="road-step-num">04</div>
+            <div class="road-step-num tabular">04</div>
             <div class="road-step-days">DÍAS 13 AL 15</div>
-            <h4>Certificación & Lanzamiento</h4>
-            <p>Pruebas de estrés de seguridad, capacitación a tu equipo y pase oficial a producción sin interrumpir tu operativa diaria.</p>
+            <h4>Producción</h4>
+            <p>Pruebas reales, capacitación a tu equipo y pase a producción sin cortes.</p>
           </div>
         </div>
       </div>
@@ -560,20 +574,24 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
           <div class="lookup-content">
             <span class="lookup-badge">● EXTRANET DE AUTOSERVICIO EN VIVO</span>
             <h3>¿Ya sos cliente de Amargo Creativo?</h3>
-            <p>Ingresá el código identificador de tu factura para acceder a tu estado de cuenta en tiempo real, descargar tu comprobante fiscal firmado o verificar datos bancarios.</p>
+            <p>Ingresá el código identificador de tu factura para ver tu estado de cuenta en tiempo real, descargar el PDF firmado o verificar datos bancarios.</p>
           </div>
-          <form class="lookup-form" onsubmit="event.preventDefault(); const val = (document.getElementById('fac-lookup-input') as any).value.trim(); if(val) { window.location.href = '/comprobante/' + val; } else { alert('Por favor ingresá tu código identificador'); }">
+          <form class="lookup-form" id="facLookupForm" novalidate>
             <div class="lookup-row">
               <input 
                 type="text" 
                 id="fac-lookup-input" 
                 placeholder="ID o código de comprobante..." 
                 class="lookup-input font-mono"
+                autocomplete="off"
+                aria-describedby="lookupFeedback"
               />
-              <button type="submit" class="lookup-btn">
-                <span>CONSULTAR FACTURA</span> ↗
+              <button type="submit" class="lookup-btn ink-fill">
+                <span class="ink" aria-hidden="true"></span>
+                <RollText text="CONSULTAR" arrow="diag" />
               </button>
             </div>
+            <span id="lookupFeedback" class="lookup-feedback" role="alert" hidden>Ingresá tu código de comprobante para continuar.</span>
             <span class="lookup-note">Acceso instantáneo sin contraseñas · Compatible con e-Factura y e-Ticket CFE</span>
           </form>
         </div>
@@ -586,12 +604,13 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
         <div class="fac-banner-box tactile-card">
           <span class="banner-tag">● CONSULTORÍA ARQUITECTURAL SIN CARGO</span>
           <h2>¿Querés modernizar el sistema operativo de tu empresa?</h2>
-          <p>Coordiná una llamada técnica de 20 minutos con nuestros ingenieros. Revisamos tu flujo actual y te entregamos la propuesta de arquitectura exacta para tu negocio.</p>
+          <p>Coordiná una llamada técnica de 20 minutos. Revisamos tu flujo actual y te entregamos la propuesta de arquitectura exacta para tu operación.</p>
           <div class="banner-cta-group">
-            <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary" data-cursor="WHATSAPP">
-              <span>AGENDAR CONSULTA TÉCNICA VÍA WHATSAPP</span> ↗
+            <a href={waLink} target="_blank" rel="noopener noreferrer" class="fac-btn-primary ink-fill magnetic-btn" data-cursor="WHATSAPP">
+              <span class="ink" aria-hidden="true"></span>
+              <RollText text="AGENDAR CONSULTA POR WHATSAPP" arrow="diag" />
             </a>
-            <span class="banner-guarantee">Respuesta en menos de 2 horas hábiles · Soporte en Uruguay</span>
+            <span class="banner-guarantee">Respuesta en menos de 2 horas hábiles • Soporte en UY, AR y ES</span>
           </div>
         </div>
       </div>
@@ -602,40 +621,62 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 </Layout>
 
 <script>
-  // Script para el switcher interactivo de Tabs en el simulador
-  document.addEventListener('DOMContentLoaded', () => {
-    const tabs = document.querySelectorAll<HTMLButtonElement>('.sim-tab');
-    const panels = document.querySelectorAll<HTMLElement>('.sim-panel');
+  const haptic = () => {
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(8); } catch {}
+    }
+  };
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        const targetId = tab.getAttribute('data-tab');
-        if (!targetId) return;
+  // Switcher interactivo de Tabs en el simulador + auto-center en mobile
+  const tabs = document.querySelectorAll<HTMLButtonElement>('.sim-tab');
+  const panels = document.querySelectorAll<HTMLElement>('.sim-panel');
 
-        // Actualizar estados de los botones
-        tabs.forEach(t => {
-          t.classList.remove('active');
-          t.setAttribute('aria-selected', 'false');
-        });
-        tab.classList.add('active');
-        tab.setAttribute('aria-selected', 'true');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetId = tab.getAttribute('data-tab');
+      if (!targetId) return;
 
-        // Actualizar visibilidad de los paneles
-        panels.forEach(panel => {
-          if (panel.id === targetId) {
-            panel.classList.add('active');
-          } else {
-            panel.classList.remove('active');
-          }
-        });
+      tabs.forEach(t => {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
       });
+      tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
+      tab.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
+      panels.forEach(panel => {
+        panel.classList.toggle('active', panel.id === targetId);
+      });
+      haptic();
     });
+  });
+
+  // Formulario limpio de consulta de comprobante (sin alert() nativo ni as any)
+  const lookupForm = document.getElementById('facLookupForm') as HTMLFormElement | null;
+  const lookupInput = document.getElementById('fac-lookup-input') as HTMLInputElement | null;
+  const lookupFeedback = document.getElementById('lookupFeedback') as HTMLElement | null;
+
+  lookupForm?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const val = lookupInput?.value.trim() || '';
+    if (!val) {
+      if (lookupFeedback) lookupFeedback.hidden = false;
+      lookupInput?.focus();
+      haptic();
+      return;
+    }
+    if (lookupFeedback) lookupFeedback.hidden = true;
+    window.location.href = `/comprobante/${encodeURIComponent(val)}`;
+  });
+
+  lookupInput?.addEventListener('input', () => {
+    if (lookupFeedback && !lookupFeedback.hidden) lookupFeedback.hidden = true;
   });
 </script>
 
 <style>
   .facturacion-page {
-    padding-top: calc(75px + env(safe-area-inset-top));
+    padding-top: calc(72px + env(safe-area-inset-top));
     background: var(--bone);
     color: var(--ink);
     min-height: 100vh;
@@ -651,7 +692,7 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .fac-hero {
-    padding: 40px 0 60px;
+    padding: clamp(32px, 5vw, 60px) 0 clamp(40px, 6vw, 64px);
     border-bottom: 1px solid var(--line);
   }
 
@@ -660,19 +701,21 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
+    gap: 12px;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
     border-bottom: 1px solid var(--line);
   }
 
   .section-label {
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--mute);
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
   }
 
@@ -681,6 +724,7 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
+    border-radius: 3px;
   }
 
   :global(body.theme-electric) .section-label .num {
@@ -689,10 +733,10 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .fac-telemetry-stamp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     color: var(--mate);
   }
 
@@ -701,20 +745,18 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .fac-h1 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(26px, 5.2vw, 80px);
-    line-height: 0.96;
-    letter-spacing: -0.025em;
+    font-size: clamp(28px, 5.2vw, 78px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
-    margin: 0 0 24px;
-    max-width: 1200px;
-    overflow-wrap: break-word;
-    word-break: normal;
+    margin: 0 0 20px;
+    max-width: 1120px;
   }
 
   .fac-h1 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
@@ -722,110 +764,99 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .fac-lead {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(15px, 1.6vw, 18px);
-    line-height: 1.6;
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.5vw, 18.5px);
+    line-height: 1.58;
     color: var(--ink);
     opacity: 0.88;
-    max-width: 860px;
-    margin-bottom: 28px;
+    max-width: 74ch;
+    margin-bottom: 24px;
   }
 
   .fac-specs-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-bottom: 32px;
+    margin-bottom: 28px;
   }
 
   .spec-chip {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
     padding: 6px 12px;
     border: 1px solid var(--line);
-    background: rgba(0, 0, 0, 0.04);
+    border-radius: 999px;
+    background: var(--paper);
     color: var(--ink);
     letter-spacing: 0.04em;
-  }
-
-  :global(body.theme-electric) .spec-chip {
-    background: rgba(241, 255, 90, 0.06);
-    border-color: rgba(241, 255, 90, 0.2);
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .fac-cta-row {
     display: flex;
-    gap: 14px;
+    gap: 12px;
     flex-wrap: wrap;
     align-items: center;
   }
 
-  .fac-btn-primary {
+  .fac-btn-primary,
+  .fac-btn-secondary {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    background: var(--mate);
-    color: #ffffff;
-    padding: 14px 24px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
+    height: 46px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
     text-decoration: none;
-    border: 1px solid var(--mate-light);
-    border-radius: 999px;
-    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
-    transition: all 0.2s var(--ease);
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
   }
 
-  .fac-btn-primary:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-    border-color: #ffffff;
-    box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.3);
-    transform: translate(-1px, -1px);
+  .fac-btn-primary:active,
+  .fac-btn-secondary:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
   }
 
-  :global(body.theme-electric) .fac-btn-primary {
+  .fac-btn-primary {
+    --mx-fill-ink: #11120f;
     background: var(--electric);
-    color: #0a0a0a;
-    border: 1px solid #0a0a0a;
-    box-shadow: 3px 3px 0px #0a0a0a;
+    color: #11120f;
+    border: 1px solid #11120f;
+    box-shadow: 2px 2px 0px #11120f;
   }
 
-  :global(body.theme-electric) .fac-btn-primary:hover {
-    background: #0a0a0a;
-    color: var(--electric);
-    box-shadow: 5px 5px 0px var(--electric);
+  @media (hover: hover) {
+    .fac-btn-primary:hover {
+      color: var(--electric);
+      transform: translate3d(0, -2px, 0);
+    }
   }
 
   .fac-btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
+    --mx-fill-ink: var(--ink);
     background: transparent;
     color: var(--ink);
-    padding: 14px 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    text-decoration: none;
-    border: 1px solid var(--line);
-    transition: all 0.2s var(--ease);
+    border: 1px solid var(--line-strong);
   }
 
-  .fac-btn-secondary:hover {
-    background: var(--ink);
-    color: var(--bone);
+  @media (hover: hover) {
+    .fac-btn-secondary:hover {
+      color: var(--bone);
+      transform: translate3d(0, -2px, 0);
+    }
   }
 
   /* Simulator Section */
   .fac-mockup-section {
-    padding: 60px 0;
+    padding: clamp(36px, 5vw, 60px) 0;
     border-bottom: 1px solid var(--line);
   }
 
@@ -833,80 +864,85 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     background: var(--charcoal);
     color: var(--bone);
     border: 1px solid var(--line);
-    box-shadow: 8px 8px 0px var(--mate);
-  }
-
-  :global(body.theme-electric) .simulator-wrapper {
-    box-shadow: 8px 8px 0px var(--electric);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(17, 18, 15, 0.18);
   }
 
   .term-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 12px;
+    padding: 13px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(0, 0, 0, 0.45);
   }
 
-  .term-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-  }
+  .term-dots { display: flex; gap: 6px; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
   .dot-red { background: #ff5f56; }
   .dot-yellow { background: #ffbd2e; }
   .dot-green { background: #27c93f; }
 
   .term-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--electric);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .term-live-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     color: #4ade80;
+    flex-shrink: 0;
   }
 
   /* Navigation Tabs */
   .sim-nav-bar {
     display: flex;
     overflow-x: auto;
-    background: rgba(0, 0, 0, 0.3);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+    background: rgba(0, 0, 0, 0.32);
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
+
+  .sim-nav-bar::-webkit-scrollbar { display: none; }
 
   .sim-tab {
     background: transparent;
     border: none;
     border-right: 1px solid rgba(255, 255, 255, 0.1);
-    color: rgba(244, 241, 234, 0.65);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    color: rgba(244, 241, 234, 0.68);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.06em;
-    padding: 14px 20px;
+    padding: 14px 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 7px;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    flex-shrink: 0;
+    scroll-snap-align: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s, color 0.2s;
   }
 
-  .sim-tab:hover {
-    color: var(--bone);
-    background: rgba(255, 255, 255, 0.05);
+  @media (hover: hover) {
+    .sim-tab:hover {
+      color: var(--bone);
+      background: rgba(255, 255, 255, 0.06);
+    }
   }
 
   .sim-tab.active {
@@ -916,32 +952,26 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .term-body {
-    padding: clamp(20px, 3vw, 36px);
+    padding: clamp(18px, 3vw, 34px);
   }
 
-  .sim-panel {
-    display: none;
-  }
+  .sim-panel { display: none; }
+  .sim-panel.active { display: block; }
 
-  .sim-panel.active {
-    display: block;
-  }
-
-  /* Panel Banner */
   .panel-banner {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     flex-wrap: wrap;
-    gap: 20px;
-    padding-bottom: 24px;
-    margin-bottom: 28px;
+    gap: 16px;
+    padding-bottom: 20px;
+    margin-bottom: 22px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .pb-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--electric);
@@ -950,57 +980,57 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .pb-left h4 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(20px, 2.2vw, 28px);
+    font-family: var(--font-display);
+    font-size: clamp(18px, 2.2vw, 26px);
     font-weight: 700;
     margin: 0 0 8px;
     color: var(--bone);
   }
 
   .pb-left p {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    font-family: var(--font-body);
+    font-size: 13.5px;
     line-height: 1.55;
-    color: rgba(244, 241, 234, 0.75);
+    color: rgba(244, 241, 234, 0.78);
     margin: 0;
-    max-width: 680px;
+    max-width: 64ch;
   }
 
   .client-auth-pill {
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     color: var(--bone);
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
   }
 
-  .auth-dot {
-    color: #4ade80;
-  }
+  .auth-dot { color: #4ade80; }
 
   .term-metrics-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-    margin-bottom: 28px;
+    gap: 12px;
+    margin-bottom: 22px;
   }
 
   .metric-card {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 20px;
+    border-radius: 12px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
 
   .mc-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: rgba(244, 241, 234, 0.65);
@@ -1010,10 +1040,9 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.03em;
-    font-variant-numeric: tabular-nums;
-    font-size: clamp(24px, 2.6vw, 34px);
-    line-height: 1;
-    margin: 4px 0;
+    font-size: clamp(20px, 2.4vw, 32px);
+    line-height: 1.05;
+    margin: 2px 0;
   }
 
   .mc-green { color: #4ade80; }
@@ -1022,15 +1051,17 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   .mc-bone { color: var(--bone); }
 
   .mc-sub {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 11.5px;
+    font-family: var(--font-body);
+    font-size: 11px;
     color: rgba(244, 241, 234, 0.7);
   }
 
   .term-table-wrap {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.22);
   }
 
   .term-table {
@@ -1042,39 +1073,35 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .term-table th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 12px 16px;
+    padding: 11px 14px;
     background: rgba(255, 255, 255, 0.05);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     color: rgba(244, 241, 234, 0.75);
   }
 
   .term-table td {
-    padding: 14px 16px;
+    padding: 13px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  .term-table tr:last-child td {
-    border-bottom: none;
-  }
+  .term-table tr:last-child td { border-bottom: none; }
 
-  .font-mono {
-    font-family: 'JetBrains Mono', monospace;
-  }
+  .font-mono { font-family: var(--font-mono); }
 
   .pill-paid {
     color: #4ade80;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
   }
 
   .pill-approved {
     color: var(--electric);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
   }
@@ -1083,24 +1110,28 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     display: inline-block;
     color: var(--electric);
     text-decoration: none;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
-    padding: 4px 8px;
-    border: 1px solid rgba(241, 255, 90, 0.3);
-    transition: all 0.2s ease;
+    padding: 4px 10px;
+    border: 1px solid rgba(241, 255, 90, 0.35);
+    border-radius: 999px;
+    transition: background-color 0.2s, color 0.2s;
   }
 
-  .table-action-btn:hover {
-    background: var(--electric);
-    color: #0a0a0a;
+  @media (hover: hover) {
+    .table-action-btn:hover {
+      background: var(--electric);
+      color: #0a0a0a;
+    }
   }
 
   .cfe-badge {
     background: rgba(255, 255, 255, 0.08);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
-    padding: 3px 6px;
+    padding: 3px 7px;
+    border-radius: 4px;
     border: 1px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
   }
@@ -1109,40 +1140,40 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   .wa-chat-simulator {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    max-width: 680px;
+    gap: 14px;
+    max-width: 660px;
     margin: 0 auto;
     background: rgba(0, 0, 0, 0.4);
-    padding: 24px;
+    padding: clamp(14px, 3vw, 24px);
+    border-radius: 14px;
     border: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .wa-message-bubble {
-    padding: 16px 20px;
-    max-width: 85%;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
+    padding: 14px 18px;
+    max-width: 88%;
+    font-family: var(--font-body);
+    font-size: 13.5px;
     line-height: 1.5;
-    position: relative;
   }
 
   .wa-message-bubble.incoming {
     background: #005c4b;
     color: #e9edef;
     align-self: flex-start;
-    border-radius: 4px 12px 12px 12px;
+    border-radius: 4px 14px 14px 14px;
   }
 
   .wa-message-bubble.outgoing {
     background: #202c33;
     color: #e9edef;
     align-self: flex-end;
-    border-radius: 12px 4px 12px 12px;
+    border-radius: 14px 4px 14px 14px;
   }
 
   .wa-msg-meta {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.06em;
     color: #25d366;
@@ -1153,41 +1184,34 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   .wa-msg-card {
     margin-top: 10px;
     background: rgba(0, 0, 0, 0.3);
-    padding: 10px 14px;
+    padding: 10px 12px;
     border-left: 3px solid #25d366;
+    border-radius: 0 8px 8px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
 
-  .wa-card-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: #ffffff;
-  }
-
-  .wa-card-sub {
-    font-size: 10.5px;
-    color: rgba(255, 255, 255, 0.7);
-  }
+  .wa-card-title { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: #ffffff; }
+  .wa-card-sub { font-size: 10.5px; color: rgba(255, 255, 255, 0.72); }
 
   .wa-time {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     text-align: right;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.52);
     margin-top: 6px;
   }
 
   /* Security Log Terminal */
   .security-log-terminal {
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.55);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 20px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
+    border-radius: 12px;
+    padding: 18px;
+    font-family: var(--font-mono);
+    font-size: 11px;
     display: flex;
     flex-direction: column;
     gap: 12px;
@@ -1195,76 +1219,85 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 
   .sec-log-row {
     display: grid;
-    grid-template-columns: 140px 180px 80px 1fr;
-    gap: 14px;
+    grid-template-columns: 130px 175px 76px 1fr;
+    gap: 12px;
     align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     padding-bottom: 10px;
   }
 
-  .sec-log-row:last-child {
-    border-bottom: none;
-    padding-bottom: 0;
-  }
-
+  .sec-log-row:last-child { border-bottom: none; padding-bottom: 0; }
   .log-time { color: rgba(244, 241, 234, 0.5); }
   .log-code { color: var(--electric); font-weight: 700; }
   .log-status.ok { color: #4ade80; font-weight: 700; }
   .log-desc { color: rgba(244, 241, 234, 0.85); }
 
-  /* 02. Features Grid */
-  .fac-features {
-    padding: clamp(60px, 10vh, 100px) 0;
+  /* 02..05 Sections */
+  .fac-features,
+  .fac-comparison,
+  .fac-integrations,
+  .fac-roadmap {
+    padding: clamp(48px, 7vh, 92px) 0;
     border-bottom: 1px solid var(--line);
   }
 
   .fac-section-head {
-    margin-bottom: 48px;
-    padding-bottom: 24px;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
     border-bottom: 1px solid var(--line);
   }
 
   .fac-section-head h2 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(28px, 4.2vw, 60px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 4.1vw, 56px);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     margin: 12px 0 10px;
   }
 
   .fac-section-head h2 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
     color: var(--rust);
   }
 
   .section-lead-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
+    font-family: var(--font-body);
+    font-size: 15.5px;
+    line-height: 1.58;
     color: var(--ink);
     opacity: 0.85;
     margin: 0;
-    max-width: 760px;
+    max-width: 68ch;
   }
 
   .fac-features-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 28px;
+    gap: 20px;
   }
 
   .feat-box {
-    padding: clamp(24px, 3vw, 36px);
-    background: var(--bone);
+    padding: clamp(22px, 3vw, 34px);
+    background: var(--paper);
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 16px;
+    gap: 14px;
+    transition: transform 0.25s var(--ease), border-color 0.25s, box-shadow 0.25s;
+  }
+
+  @media (hover: hover) {
+    .feat-box:hover {
+      transform: translate3d(0, -3px, 0);
+      border-color: var(--line-strong);
+      box-shadow: 0 14px 30px rgba(17, 18, 15, 0.08);
+    }
   }
 
   .feat-top {
@@ -1277,41 +1310,38 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    font-size: 32px;
+    font-size: 30px;
     line-height: 1;
     color: var(--mate);
   }
 
-  :global(body.theme-electric) .feat-num {
+  :global(body.theme-electric) .feat-num { color: var(--electric); }
+
+  .feat-badge {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: #11120f;
     color: var(--electric);
   }
 
-  .feat-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    padding: 4px 8px;
-    background: rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--line);
-  }
-
   .feat-box h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: clamp(18px, 1.8vw, 22px);
-    letter-spacing: -0.01em;
     text-transform: uppercase;
     margin: 0;
   }
 
   .feat-box p {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14.5px;
-    line-height: 1.6;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.58;
     color: var(--ink);
-    opacity: 0.85;
+    opacity: 0.86;
     margin: 0;
   }
 
@@ -1319,187 +1349,147 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
-    padding-top: 14px;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
   }
 
   .feat-tags span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     font-weight: 700;
     color: var(--mate);
   }
 
-  :global(body.theme-electric) .feat-tags span {
-    color: var(--electric);
-  }
+  :global(body.theme-electric) .feat-tags span { color: var(--electric); }
 
-  /* 03. Comparison Section */
-  .fac-comparison {
-    padding: clamp(60px, 10vh, 100px) 0;
-    border-bottom: 1px solid var(--line);
-  }
-
+  /* Comparison Table */
   .comparison-table-wrap {
     background: var(--charcoal);
     color: var(--bone);
-    overflow-x: auto;
+    overflow: hidden;
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
   }
 
   .comparison-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 13.5px;
     text-align: left;
-    white-space: normal;
   }
 
   .comparison-table th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    padding: 16px 24px;
-    background: rgba(255, 255, 255, 0.05);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 15px 22px;
+    background: rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
   }
 
   .comparison-table td {
-    padding: 18px 24px;
+    padding: 16px 22px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
+    vertical-align: top;
   }
 
-  .comparison-table tr:last-child td {
-    border-bottom: none;
-  }
+  .comparison-table tr:last-child td { border-bottom: none; }
+  .col-amargo { background: rgba(241, 255, 90, 0.04); color: var(--bone); }
+  .col-generic { color: rgba(244, 241, 234, 0.68); }
+  .check { color: #4ade80; font-weight: 700; margin-right: 6px; }
+  .cross { color: #ff5f56; font-weight: 700; margin-right: 6px; }
 
-  .col-amargo {
-    background: rgba(241, 255, 90, 0.03);
-    color: var(--bone);
-  }
-
-  .col-generic {
-    color: rgba(244, 241, 234, 0.65);
-  }
-
-  .check {
-    color: #4ade80;
-    font-weight: 700;
-    margin-right: 6px;
-  }
-
-  .cross {
-    color: #ff5f56;
-    font-weight: 700;
-    margin-right: 6px;
-  }
-
-  /* 04. Integrations Grid */
-  .fac-integrations {
-    padding: clamp(60px, 10vh, 100px) 0;
-    border-bottom: 1px solid var(--line);
-  }
-
+  /* Integrations Grid */
   .integrations-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
 
   .integ-pill {
-    background: var(--bone);
+    background: var(--paper);
     border: 1px solid var(--line);
-    padding: 24px;
+    border-radius: 14px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    gap: 6px;
+    transition: transform 0.2s var(--ease), border-color 0.2s;
   }
 
-  .integ-pill:hover {
-    transform: translateY(-2px);
-    border-color: var(--mate);
-  }
-
-  :global(body.theme-electric) .integ-pill:hover {
-    border-color: var(--electric);
+  @media (hover: hover) {
+    .integ-pill:hover {
+      transform: translate3d(0, -2px, 0);
+      border-color: var(--mate);
+    }
+    :global(body.theme-electric) .integ-pill:hover { border-color: var(--electric); }
   }
 
   .integ-status {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    color: #4ade80;
+    color: #22c55e;
   }
 
   .integ-pill h4 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 15px;
+    font-size: 14.5px;
     margin: 0;
     color: var(--ink);
-    letter-spacing: -0.01em;
   }
 
   .integ-pill p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 12.5px;
-    line-height: 1.5;
+    line-height: 1.48;
     color: var(--ink);
     opacity: 0.8;
     margin: 0;
   }
 
-  /* 05. Roadmap Steps */
-  .fac-roadmap {
-    padding: clamp(60px, 10vh, 100px) 0;
-    border-bottom: 1px solid var(--line);
-  }
-
+  /* Roadmap Steps */
   .roadmap-steps {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    gap: 16px;
   }
 
   .road-step {
-    background: var(--bone);
+    background: var(--paper);
     border: 1px solid var(--line);
-    padding: 28px 22px;
+    border-radius: 14px;
+    padding: 22px 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    position: relative;
+    gap: 8px;
   }
 
   .road-step-num {
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    font-size: 32px;
+    font-size: 30px;
     line-height: 1;
     color: var(--mate);
-    opacity: 0.8;
   }
 
-  :global(body.theme-electric) .road-step-num {
-    color: var(--electric);
-  }
+  :global(body.theme-electric) .road-step-num { color: var(--electric); }
 
   .road-step-days {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--mute);
   }
 
   .road-step h4 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     font-size: 17px;
     margin: 0;
@@ -1507,31 +1497,32 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
   }
 
   .road-step p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13px;
-    line-height: 1.55;
+    line-height: 1.52;
     color: var(--ink);
     opacity: 0.85;
     margin: 0;
   }
 
-  /* 06. Lookup Section */
+  /* Lookup Section */
   .fac-lookup-section {
-    padding: clamp(40px, 6vh, 60px) 0 0;
+    padding: clamp(36px, 5vh, 56px) 0 0;
   }
 
   .lookup-box {
-    background: var(--bone);
+    background: var(--paper);
     border: 1px solid var(--line);
-    padding: clamp(28px, 4vw, 44px);
+    border-radius: 18px;
+    padding: clamp(24px, 4vw, 40px);
     display: grid;
     grid-template-columns: 1.2fr 1fr;
-    gap: 32px;
+    gap: 28px;
     align-items: center;
   }
 
   .lookup-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -1540,20 +1531,18 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     margin-bottom: 8px;
   }
 
-  :global(body.theme-electric) .lookup-badge {
-    color: var(--electric);
-  }
+  :global(body.theme-electric) .lookup-badge { color: var(--electric); }
 
   .lookup-content h3 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(20px, 2.2vw, 28px);
+    font-family: var(--font-display);
+    font-size: clamp(20px, 2.2vw, 27px);
     font-weight: 800;
     text-transform: uppercase;
-    margin: 0 0 10px;
+    margin: 0 0 8px;
   }
 
   .lookup-content p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14px;
     line-height: 1.55;
     color: var(--ink);
@@ -1574,127 +1563,115 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
 
   .lookup-input {
     flex: 1;
-    background: #ffffff;
-    border: 1px solid var(--line);
-    padding: 12px 14px;
+    background: var(--bone);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    padding: 12px 16px;
     font-size: 13px;
     color: var(--ink);
     outline: none;
-    transition: border-color 0.2s ease;
+    transition: border-color 0.2s;
   }
 
   .lookup-input:focus {
-    border-color: var(--ink);
+    border-color: var(--mate);
   }
 
   .lookup-btn {
-    background: var(--ink);
-    color: var(--bone);
-    border: 1px solid var(--ink);
-    padding: 12px 18px;
-    font-family: 'JetBrains Mono', monospace;
+    --mx-fill-ink: #11120f;
+    background: var(--electric);
+    color: #11120f;
+    border: 1px solid #11120f;
+    border-radius: 999px;
+    padding: 0 20px;
+    height: 44px;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
     cursor: pointer;
     white-space: nowrap;
-    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: color 0.3s var(--ease), transform 0.15s;
   }
 
-  .lookup-btn:hover {
-    background: var(--mate);
-    border-color: var(--mate);
-    color: #ffffff;
+  .lookup-btn:active { transform: scale(0.97); }
+
+  @media (hover: hover) {
+    .lookup-btn:hover { color: var(--electric); }
   }
 
-  :global(body.theme-electric) .lookup-btn {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: var(--electric);
+  .lookup-feedback {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #dc2626;
   }
 
-  :global(body.theme-electric) .lookup-btn:hover {
-    background: #ffffff;
-    border-color: #ffffff;
-  }
+  .lookup-feedback[hidden] { display: none; }
 
   .lookup-note {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--mute);
   }
 
-  @media (max-width: 860px) {
-    .lookup-box {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    .lookup-row {
-      flex-direction: column;
-    }
-    .lookup-btn {
-      width: 100%;
-    }
-  }
-
   /* Bottom Banner */
   .fac-bottom-banner {
-    padding: clamp(60px, 10vh, 100px) 0;
+    padding: clamp(48px, 7vh, 88px) 0;
   }
 
   .fac-banner-box {
     background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
     color: #f4f1ea;
-    padding: clamp(36px, 5vw, 64px);
+    padding: clamp(28px, 5vw, 60px);
     border: 1px solid #244b2c;
     border-radius: 20px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
   }
 
   :global(body.theme-electric) .fac-banner-box {
     background: #000000;
-    border-color: #2e3010;
-    box-shadow: 8px 8px 0px var(--electric);
+    border-color: var(--electric);
+    box-shadow: none;
   }
 
   .banner-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.1em;
     color: var(--mate-light);
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
   }
 
-  :global(body.theme-electric) .banner-tag {
-    color: var(--electric);
-  }
+  :global(body.theme-electric) .banner-tag { color: var(--electric); }
 
   .fac-banner-box h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(26px, 4vw, 50px);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(24px, 3.8vw, 48px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     margin: 0;
-    max-width: 800px;
+    max-width: 24ch;
     color: #f4f1ea;
   }
 
   .fac-banner-box p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.6;
     color: rgba(244, 241, 234, 0.85);
-    max-width: 650px;
-    margin: 0 0 8px;
+    max-width: 60ch;
+    margin: 0 0 6px;
   }
 
   .banner-cta-group {
@@ -1702,22 +1679,19 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    width: 100%;
   }
 
   .banner-guarantee {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    color: rgba(244, 241, 234, 0.65);
-    letter-spacing: 0.04em;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: rgba(244, 241, 234, 0.68);
   }
 
+  /* RESPONSIVE */
   @media (max-width: 1024px) {
-    .term-metrics-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .integrations-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    .term-metrics-grid,
+    .integrations-grid,
     .roadmap-steps {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -1727,23 +1701,103 @@ const canonicalUrl = "https://amargo-creativo.pages.dev/facturacion/";
     }
   }
 
+  @media (max-width: 860px) {
+    .lookup-box {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .lookup-row {
+      flex-direction: column;
+    }
+    .lookup-btn {
+      width: 100%;
+    }
+  }
+
   @media (max-width: 768px) {
+    .fac-telemetry-stamp {
+      display: none;
+    }
+    .fac-specs-chips {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      margin-inline: calc(var(--gut) * -1);
+      padding-inline: var(--gut);
+      padding-bottom: 4px;
+    }
+    .fac-specs-chips::-webkit-scrollbar { display: none; }
+    .fac-cta-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .fac-btn-primary,
+    .fac-btn-secondary {
+      width: 100%;
+      box-sizing: border-box;
+    }
     .fac-features-grid {
       grid-template-columns: 1fr;
     }
     .integrations-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .integ-pill {
+      padding: 14px;
     }
     .roadmap-steps {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .road-step {
+      padding: 16px 14px;
     }
     .sim-tab {
       padding: 12px 14px;
       font-size: 10px;
     }
+    /* Bento 2x2 para las métricas del simulador en Mobile */
     .term-metrics-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    .metric-card {
+      padding: 13px;
+    }
+    /* Comparativa B2B convertida a tarjetas apiladas en Mobile */
+    .comparison-table-wrap {
+      background: transparent;
+      border: none;
+      overflow: visible;
+    }
+    .comparison-table,
+    .comparison-table tbody,
+    .comparison-table tr,
+    .comparison-table td {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .comparison-table thead { display: none; }
+    .comparison-table tr {
+      background: var(--charcoal);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 14px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .comparison-table td {
+      padding: 12px 15px;
+    }
+    .comparison-table td.col-key {
+      background: rgba(255, 255, 255, 0.06);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--electric);
     }
   }
 </style>
-

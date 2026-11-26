@@ -16,28 +16,28 @@ interface FAQItem {
 const faqs: FAQItem[] = [
   {
     num: "01",
-    question: "¿Cuánto tiempo toma el desarrollo de mi página web o aplicación?",
-    answer: "Dependiendo del alcance, una Landing Page de alta conversión o sitio corporativo toma entre 10 y 14 días hábiles. Proyectos complejos con paneles SaaS o e-commerce avanzados toman entre 3 y 5 semanas. Te entregamos un cronograma exacto antes de empezar."
+    question: "¿Cuánto tiempo toma desarrollar una app, plataforma SaaS o comercio propio?",
+    answer: "Una landing o tienda D2C directa a WhatsApp toma entre 10 y 14 días hábiles. Aplicaciones móviles PWA, plataformas con IA/OCR, portales B2B o super-apps de delivery toman entre 3 y 6 semanas en sprints semanales con demos reales en vivo."
   },
   {
     num: "02",
-    question: "¿El sitio web y el código fuente serán 100% de mi propiedad?",
-    answer: "Sí, absolutamente. Todo el código fuente, diseño, dominio y cuentas quedan a tu nombre sin dependencias cautivas ni costos ocultos de plataformas cerradas. Eres el dueño absoluto de tu activo digital."
+    question: "¿El código fuente, las bases de datos y los dominios son 100% míos?",
+    answer: "Sí, al 100%. Todo el repositorio en GitHub, infraestructura en Cloudflare/Supabase, cuentas y dominios quedan a tu nombre desde el primer día. Cero licencias cautivas ni cobros ocultos por usuario o por pedido."
   },
   {
     num: "03",
-    question: "¿Cómo optimizan la web para posicionar en Google en Uruguay, Argentina y España?",
-    answer: "Aplicamos SEO técnico nativo: tiempos de carga por debajo de 1 segundo (Core Web Vitals verdes), marcado semántico Schema.org multi-región, arquitectura limpia, meta tags geolocalizados y optimización de palabras clave para que te encuentren clientes con intención real de compra en tu mercado objetivo."
+    question: "¿Qué diferencia hay entre una app PWA a medida y una tienda o app genérica?",
+    answer: "En una plataforma genérica pagás comisiones de hasta el 30% y te limitás a plantillas rígidas. Con software a medida diseñamos las reglas exactas de tu operación (rutas de delivery, IA documental, facturación CFE, pagos locales) y te quedás con todo el margen."
   },
   {
     num: "04",
-    question: "¿Qué formas de pago y opciones de financiación aceptan?",
-    answer: "Trabajamos con esquema 50% al inicio y 50% contra entrega final una vez aprobado el proyecto. Aceptamos transferencias bancarias en Uruguay (BROU, Santander, Itaú), pagos en Argentina (Mercado Pago / transferencia), pagos internacionales vía Stripe/Wise y criptomonedas."
+    question: "¿Cómo trabajan el SEO, el rendimiento y los pagos para Uruguay, Argentina y España?",
+    answer: "Cada producto sale con arquitectura Edge, Core Web Vitals en verde, Schema.org estructurado y pasarelas locales listas (BROU, Itaú, Santander, Mercado Pago, Stripe/Wise). Trabajamos 50% al inicio y 50% contra entrega aprobada."
   }
 ];
 ---
 <section class="faq" id="faq">
-  <!-- Marca de Agua Ambiental Decorativa -->
+  <!-- Marca de Agua Ambiental Decorativa con máscara orgánica -->
   <div class="faq-ambient-bg ambient-parallax" aria-hidden="true"></div>
   <div class="faq-head">
     <div class="section-label"><span class="num">{sectionNum}</span> PREGUNTAS FRECUENTES</div>
@@ -46,8 +46,8 @@ const faqs: FAQItem[] = [
   <div class="faq-list">
     {faqs.map((faq, index) => (
       <div class="faq-item" data-index={index}>
-        <button class="faq-trigger" aria-expanded="false">
-          <span class="faq-num">{faq.num}</span>
+        <button type="button" class="faq-trigger" aria-expanded="false">
+          <span class="faq-num tabular">{faq.num}</span>
           <span class="faq-title">{faq.question}</span>
           <span class="faq-icon" aria-hidden="true">+</span>
         </button>
@@ -71,73 +71,72 @@ const faqs: FAQItem[] = [
   }
   .faq-ambient-bg {
     position: absolute;
-    top: 10%;
+    top: 8%;
     right: -4%;
-    width: clamp(300px, 45vw, 650px);
-    height: 85%;
+    width: clamp(300px, 44vw, 620px);
+    height: 86%;
     background-image: url('/backgrounds/bg-ambient-5.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.22;
+    opacity: 0.18;
     mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 0;
-    filter: contrast(1.1) brightness(0.98);
+    filter: contrast(1.08) brightness(0.98);
+    -webkit-mask-image: radial-gradient(ellipse 68% 68% at 62% 50%, #000 35%, transparent 78%);
+    mask-image: radial-gradient(ellipse 68% 68% at 62% 50%, #000 35%, transparent 78%);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .faq-ambient-bg {
-    opacity: 0.20;
+    opacity: 0.16;
     mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
   :global(body.theme-dark) .faq-ambient-bg {
-    opacity: 0.18;
+    opacity: 0.14;
     mix-blend-mode: screen;
   }
   :global(body.theme-mate) .faq-ambient-bg {
-    opacity: 0.22;
+    opacity: 0.18;
     mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
-  @media (max-width: 768px) {
-    .faq-ambient-bg {
-      width: 75vw;
-      right: -12%;
-      opacity: 0.18;
-    }
-  }
   .faq-head {
+    position: relative;
+    z-index: 1;
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 48px;
-    margin-bottom: 64px;
+    margin-bottom: 56px;
     align-items: start;
     padding-bottom: 24px;
     border-bottom: 1px solid var(--line);
   }
   .faq-head h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(36px, 6vw, 96px);
-    line-height: 0.9;
-    letter-spacing: -0.02em;
+    font-size: clamp(32px, 5.5vw, 88px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
   }
   .faq-head h2 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
     color: var(--rust);
   }
   .faq-list {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
   }
   .faq-item {
     border-bottom: 1px solid var(--line);
-    transition: background 0.3s var(--ease);
+    transition: background-color 0.25s var(--ease);
   }
   .faq-item:last-child {
     border-bottom: none;
@@ -147,55 +146,69 @@ const faqs: FAQItem[] = [
     background: none;
     border: none;
     display: grid;
-    grid-template-columns: 80px 1fr 40px;
-    gap: 32px;
-    padding: 32px 0;
+    grid-template-columns: 76px 1fr 40px;
+    gap: 28px;
+    padding: 28px 0;
     align-items: center;
     text-align: left;
     color: inherit;
     cursor: pointer;
     font-family: inherit;
-    transition: padding 0.3s var(--ease), color 0.3s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.25s var(--ease), transform 0.15s var(--ease);
   }
-  .faq-item:hover .faq-trigger {
-    color: var(--rust);
+  .faq-trigger:active {
+    transform: scale(0.99);
   }
-  :global(body.theme-electric) .faq-item:hover .faq-trigger {
-    color: var(--electric);
+  @media (hover: hover) {
+    .faq-item:hover .faq-trigger {
+      color: var(--rust);
+    }
+    :global(body.theme-electric) .faq-item:hover .faq-trigger {
+      color: var(--electric);
+    }
+    .faq-item:hover .faq-num {
+      color: var(--mate);
+    }
+    :global(body.theme-dark) .faq-item:hover .faq-num,
+    :global(body.theme-electric) .faq-item:hover .faq-num,
+    :global(body.theme-mate) .faq-item:hover .faq-num {
+      color: var(--electric);
+    }
   }
   .faq-num {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 30px;
+    font-size: 28px;
     letter-spacing: -0.04em;
     color: var(--mute);
     line-height: 1;
-    transition: color 0.3s var(--ease);
+    transition: color 0.25s var(--ease);
   }
-  .faq-item:hover .faq-num {
+  .faq-item.active .faq-num {
     color: var(--mate);
   }
-  :global(body.theme-dark) .faq-item:hover .faq-num,
-  :global(body.theme-electric) .faq-item:hover .faq-num,
-  :global(body.theme-mate) .faq-item:hover .faq-num {
+  :global(body.theme-dark) .faq-item.active .faq-num,
+  :global(body.theme-electric) .faq-item.active .faq-num,
+  :global(body.theme-mate) .faq-item.active .faq-num {
     color: var(--electric);
   }
   .faq-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(18px, 2.2vw, 28px);
+    font-size: clamp(16px, 2vw, 25px);
     text-transform: uppercase;
     letter-spacing: -0.01em;
-    line-height: 1.2;
+    line-height: 1.22;
     color: var(--ink);
   }
   .faq-icon {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: 28px;
+    font-size: 26px;
     color: var(--ink);
     opacity: 0.6;
-    transition: transform 0.4s var(--ease), color 0.3s var(--ease), opacity 0.3s;
+    transition: transform 0.35s var(--spring-snap), color 0.25s var(--ease), opacity 0.25s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -211,24 +224,26 @@ const faqs: FAQItem[] = [
     color: var(--electric);
   }
   .faq-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s var(--ease-emphasis), padding 0.4s var(--ease);
-    padding-left: 112px;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.36s var(--ease-emphasis), padding-bottom 0.3s var(--ease);
+    padding-left: 104px;
     padding-right: 40px;
   }
   .faq-item.active .faq-content {
-    max-height: 300px;
-    padding-bottom: 32px;
+    grid-template-rows: 1fr;
+    padding-bottom: 28px;
   }
   .faq-content p {
-    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    font-family: var(--font-body);
     font-size: 15px;
     line-height: 1.65;
     color: var(--ink);
     opacity: 0.85;
   }
-  :global(body.theme-dark) .faq-content p {
+  :global(body.theme-dark) .faq-content p,
+  :global(body.theme-mate) .faq-content p {
     color: rgba(232, 230, 224, 0.9);
     opacity: 1;
   }
@@ -236,19 +251,26 @@ const faqs: FAQItem[] = [
     color: rgba(241, 255, 90, 0.9);
     opacity: 1;
   }
-  :global(body.theme-mate) .faq-content p {
-    color: rgba(232, 230, 224, 0.9);
-    opacity: 1;
-  }
   @media (max-width: 900px) {
+    .faq {
+      padding: 48px var(--gut);
+    }
+    .faq-ambient-bg {
+      display: none;
+    }
     .faq-head {
       grid-template-columns: 1fr;
-      gap: 16px;
+      gap: 14px;
+      margin-bottom: 32px;
+      padding-bottom: 18px;
     }
     .faq-trigger {
-      grid-template-columns: 50px 1fr 30px;
-      gap: 16px;
-      padding: 24px 0;
+      grid-template-columns: 42px 1fr 28px;
+      gap: 12px;
+      padding: 20px 0;
+    }
+    .faq-num {
+      font-size: 20px;
     }
     .faq-content {
       padding-left: 0;

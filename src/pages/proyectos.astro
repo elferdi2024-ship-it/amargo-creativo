@@ -5,12 +5,50 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import RollText from '../components/motion/RollText.astro';
 import { projects } from '../lib/projects';
 
 const pageTitle = "Apps, Plataformas IA & Casos Reales | Amargo Creativo™";
 const pageDescription = "Productos digitales en producción: Barrio.uy, DocuBox AI, Canarios Ya!, plataformas SaaS y tiendas D2C creadas a medida en UY, AR y ES.";
 const canonicalUrl = "https://amargo-creativo.pages.dev/proyectos/";
 const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
+
+const saasCount = projects.filter(p => p.category === 'saas').length;
+const commerceCount = projects.filter(p => p.category === 'ecommerce').length;
+const marketplaceCount = projects.filter(p => p.category === 'marketplace').length;
+
+const benchmarks = [
+  {
+    criterio: "Tipo de Producto",
+    amargo: "Apps PWA, plataformas con IA, portales CivicTech y comercio propio",
+    agencia: "Sitios institucionales estáticos hechos con plantillas repetidas"
+  },
+  {
+    criterio: "Comisiones y Licencias",
+    amargo: "0% comisiones por pedido y sin cuotas cautivas por usuario",
+    agencia: "Atado a apps intermediarias (hasta 30%) o plugins pagos mensuales"
+  },
+  {
+    criterio: "Propiedad del Código",
+    amargo: "100% tuyo en tu repositorio, hosting y dominio desde el día 1",
+    agencia: "Dependencia técnica de servidores propios de la agencia"
+  },
+  {
+    criterio: "Flujo Comercial",
+    amargo: "Checkout propio, WhatsApp directo, pagos locales (BROU / MP) y DGI",
+    agencia: "Formularios largos que nadie responde o carritos abandonados"
+  },
+  {
+    criterio: "Arquitectura & SEO",
+    amargo: "Next.js 15 / Astro 5 en Cloudflare Edge con Core Web Vitals en verde",
+    agencia: "WordPress pesado con 35+ plugins lentos y vulnerables"
+  },
+  {
+    criterio: "Relación & Velocidad",
+    amargo: "Trato directo con quienes diseñan y programan tu producto",
+    agencia: "Ejecutivos de cuenta, tickets eternos y semanas sin código real"
+  }
+];
 ---
 <Layout 
   title={pageTitle}
@@ -32,26 +70,26 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
         <div class="header-top-meta">
           <div class="section-label">
             <span class="num">ARCHIVO</span>
-            <span>PRODUCCIÓN TÉCNICA // URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+            <span>PRODUCCIÓN TÉCNICA // UY &bull; AR &bull; ES</span>
           </div>
           <div class="header-stamp-row">
-            <span class="geo-coord">COORD: -34.7719° S, 55.7594° W // ATLÁNTIDA, UY</span>
-            <span class="live-counter tabular" id="liveCounter">MOSTRANDO {projects.length} DE {projects.length} PROYECTOS</span>
+            <span class="geo-coord">ATLÁNTIDA, UY // -34.77° S, 55.75° W</span>
+            <span class="live-counter tabular" id="liveCounter">MOSTRANDO {projects.length} DE {projects.length}</span>
           </div>
         </div>
 
         <h1 class="page-title" data-reveal-words>
-          CASOS REALES &amp; INGENIERÍA <em>sin plantillas</em>
+          CASOS REALES &amp; SOFTWARE <em>en producción</em>
         </h1>
         
         <p class="page-subtitle">
-          No vendemos maquetas ni plantillas recicladas. Cada caso es un producto real en producción — desde apps con IA y portales ciudadanos hasta super-apps de delivery y comercio propio 100% del cliente.
+          Cada caso es un producto real operando hoy — apps móviles instalables, buscadores con IA documental, portales ciudadanos y tiendas propias sin comisiones intermediarias.
         </p>
 
-        <!-- Barra de Estadísticas Clave -->
+        <!-- Barra de Estadísticas Clave (Bento 2x2 en Mobile / 4 cols en PC) -->
         <div class="stats-strip">
           <div class="stat-cell">
-            <strong>{String(projects.length).padStart(2, '0')}</strong>
+            <strong class="tabular">{String(projects.length).padStart(2, '0')}</strong>
             <span>PRODUCTOS EN VIVO</span>
           </div>
           <div class="stat-cell">
@@ -59,11 +97,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
             <span>APPS &amp; PLATAFORMAS</span>
           </div>
           <div class="stat-cell">
-            <strong>100%</strong>
-            <span>CÓDIGO A MEDIDA</span>
+            <strong class="tabular">100%</strong>
+            <span>PROPIEDAD DEL CÓDIGO</span>
           </div>
           <div class="stat-cell">
-            <strong>0%</strong>
+            <strong class="tabular">0%</strong>
             <span>COMISIONES CAUTIVAS</span>
           </div>
         </div>
@@ -72,31 +110,33 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
         <div class="controls-bar">
           <div class="filter-controls" role="group" aria-label="Filtrar por categoría">
             <button type="button" class="filter-pill active" data-filter="all" aria-pressed="true">TODOS ({projects.length})</button>
-            <button type="button" class="filter-pill" data-filter="marketplace" aria-pressed="false">MARKETPLACES &amp; REAL ESTATE ({projects.filter(p => p.category === 'marketplace').length})</button>
-            <button type="button" class="filter-pill" data-filter="saas" aria-pressed="false">SAAS &amp; AUTOMOTRIZ ({projects.filter(p => p.category === 'saas').length})</button>
-            <button type="button" class="filter-pill" data-filter="ecommerce" aria-pressed="false">FOODTECH &amp; E-COMMERCE ({projects.filter(p => p.category === 'ecommerce').length})</button>
+            <button type="button" class="filter-pill" data-filter="saas" aria-pressed="false">APPS, IA &amp; SAAS ({saasCount})</button>
+            <button type="button" class="filter-pill" data-filter="ecommerce" aria-pressed="false">COMERCIO &amp; DELIVERY ({commerceCount})</button>
+            <button type="button" class="filter-pill" data-filter="marketplace" aria-pressed="false">PORTALES &amp; REAL ESTATE ({marketplaceCount})</button>
           </div>
 
           <div class="search-input-wrap">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
             <input 
               type="text" 
               id="projectSearch" 
-              placeholder="Buscar por tecnología, stack o cliente..." 
+              placeholder="Buscar app, industria o stack..." 
               class="search-input"
               aria-label="Buscar en el catálogo de proyectos"
             />
+            <button type="button" id="clearSearchBtn" class="clear-search-btn" aria-label="Limpiar búsqueda" hidden>×</button>
           </div>
         </div>
 
-        <!-- Chips de Filtro Rápido por Tecnología -->
-        <div class="quick-tags-strip">
-          <span class="quick-label">FILTROS RÁPIDOS:</span>
-          <button type="button" class="quick-tag-chip" data-tag="algolia">#ALGOLIA</button>
-          <button type="button" class="quick-tag-chip" data-tag="supabase">#SUPABASE</button>
+        <!-- Chips de Filtro Rápido por Tecnología / Capacidad -->
+        <div class="quick-tags-strip" role="group" aria-label="Filtros rápidos">
+          <span class="quick-label">RÁPIDO:</span>
+          <button type="button" class="quick-tag-chip" data-tag="ia">#IA</button>
+          <button type="button" class="quick-tag-chip" data-tag="pwa">#PWA</button>
+          <button type="button" class="quick-tag-chip" data-tag="civictech">#CIVICTECH</button>
           <button type="button" class="quick-tag-chip" data-tag="next.js">#NEXT.JS</button>
           <button type="button" class="quick-tag-chip" data-tag="cloudflare">#CLOUDFLARE</button>
           <button type="button" class="quick-tag-chip" data-tag="whatsapp">#WHATSAPP</button>
@@ -111,7 +151,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
           <article 
             class="project-card tactile-card" 
             data-category={project.category}
-            data-search={`${project.title} ${project.client} ${project.tags.join(' ')} ${project.desc} ${project.location}`.toLowerCase()}
+            data-search={`${project.title} ${project.client} ${project.yearCategory} ${project.tags.join(' ')} ${project.desc} ${project.location}`.toLowerCase()}
             data-cursor="VER"
           >
             <!-- Media Visual -->
@@ -126,11 +166,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
                 decoding="async"
               />
               <div class="media-tags-top">
-                <span class="project-num">0{idx + 1}</span>
+                <span class="project-num tabular">{String(idx + 1).padStart(2, '0')}</span>
                 <span class="project-loc">{project.location}</span>
                 <span class="project-status">
-                  <span class="status-pulse-mini"></span>
-                  {project.status}
+                  <span class="status-pulse-mini" aria-hidden="true"></span>
+                  EN VIVO
                 </span>
               </div>
               <a 
@@ -157,7 +197,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 
               <!-- Métrica de Impacto Destacada -->
               <div class="project-metric-box">
-                <span class="metric-icon">⚡</span>
+                <span class="metric-icon" aria-hidden="true">⚡</span>
                 <span class="metric-text">{project.keyResult}</span>
               </div>
 
@@ -165,19 +205,19 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
               <div class="lighthouse-strip" title="Métricas auditadas con Google Lighthouse">
                 <div class="lh-pill">
                   <span class="lh-label">PERF</span>
-                  <span class="lh-score score-100">{project.lighthouse.perf}</span>
+                  <span class="lh-score tabular">{project.lighthouse.perf}</span>
                 </div>
                 <div class="lh-pill">
                   <span class="lh-label">A11Y</span>
-                  <span class="lh-score score-100">{project.lighthouse.a11y}</span>
+                  <span class="lh-score tabular">{project.lighthouse.a11y}</span>
                 </div>
                 <div class="lh-pill">
                   <span class="lh-label">PRACT</span>
-                  <span class="lh-score score-100">{project.lighthouse.bp}</span>
+                  <span class="lh-score tabular">{project.lighthouse.bp}</span>
                 </div>
                 <div class="lh-pill">
                   <span class="lh-label">SEO</span>
-                  <span class="lh-score score-100">{project.lighthouse.seo}</span>
+                  <span class="lh-score tabular">{project.lighthouse.seo}</span>
                 </div>
               </div>
 
@@ -188,7 +228,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
                   <p>{project.challenge}</p>
                 </div>
                 <div class="case-detail-item">
-                  <strong>LA SOLUCIÓN TÉCNICA:</strong>
+                  <strong>LA SOLUCIÓN:</strong>
                   <p>{project.solution}</p>
                 </div>
               </div>
@@ -196,8 +236,8 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
               <!-- Acordeón Desplegable de Ficha de Arquitectura -->
               <details class="tech-spec-drawer">
                 <summary class="spec-drawer-toggle">
-                  <span>[ VER ARQUITECTURA TÉCNICA ]</span>
-                  <span class="toggle-arrow">▾</span>
+                  <span>ARQUITECTURA &amp; STACK</span>
+                  <span class="toggle-arrow" aria-hidden="true">▾</span>
                 </summary>
                 <div class="spec-drawer-content">
                   <div class="spec-item">
@@ -205,11 +245,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
                     <span class="spec-val">{project.architecture.stack}</span>
                   </div>
                   <div class="spec-item">
-                    <span class="spec-kicker">EDGE CDN &amp; STREAM:</span>
+                    <span class="spec-kicker">EDGE CDN &amp; INFRA:</span>
                     <span class="spec-val">{project.architecture.edge}</span>
                   </div>
                   <div class="spec-item">
-                    <span class="spec-kicker">DATABASE / INDEX:</span>
+                    <span class="spec-kicker">DATOS / INDEXACIÓN:</span>
                     <span class="spec-val">{project.architecture.database}</span>
                   </div>
                   <div class="spec-item">
@@ -239,19 +279,21 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
                   href={project.url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  class="action-btn-live"
+                  class="action-btn-live ink-fill"
                   data-cursor="VISITAR"
                 >
-                  VER DEMO EN VIVO ↗
+                  <span class="ink" aria-hidden="true"></span>
+                  <RollText text="VER EN VIVO" arrow="diag" />
                 </a>
                 <a 
-                  href={`https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20vi%20el%20proyecto%20${encodeURIComponent(project.title)}%20y%20quiero%20cotizar%20un%20proyecto%20similar`} 
+                  href={`https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20vi%20el%20proyecto%20${encodeURIComponent(project.title)}%20y%20quiero%20cotizar%20un%20producto%20similar`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  class="action-btn-quote"
+                  class="action-btn-quote ink-fill"
                   data-cursor="WHATSAPP"
                 >
-                  COTIZAR SIMILAR
+                  <span class="ink" aria-hidden="true"></span>
+                  <RollText text="COTIZAR SIMILAR" arrow="right" />
                 </a>
               </div>
             </div>
@@ -259,63 +301,46 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
         ))}
       </div>
 
-      <div id="noResults" class="no-results" style="display: none;">
-        <p>No se encontraron proyectos con ese criterio de búsqueda.</p>
-        <button id="resetSearch" class="reset-search-btn">VER TODOS LOS PROYECTOS</button>
+      <div id="noResults" class="no-results" hidden>
+        <p>No encontramos proyectos con ese filtro.</p>
+        <button type="button" id="resetSearch" class="reset-search-btn">VER LOS {projects.length} PROYECTOS</button>
       </div>
     </section>
 
-    <!-- Matriz de Benchmark Técnico -->
+    <!-- Matriz de Benchmark de Producto -->
     <section class="benchmark-section">
       <div class="benchmark-container">
         <div class="section-label">
-          <span class="num">02</span> COMPARATIVA TÉCNICA DE RENDIMIENTO
+          <span class="num">02</span> COMPARATIVA DE ENFOQUE
         </div>
-        <h2 class="benchmark-heading">AMARGO STACK <em>vs</em> AGENCIAS TRADICIONALES</h2>
+        <h2 class="benchmark-heading" data-reveal-words>PRODUCT STUDIO <em>vs</em> AGENCIAS DE PLANTILLAS</h2>
         <p class="benchmark-sub">
-          Por qué nuestras webs cargan en menos de un segundo y las de WordPress demoran 4 segundos.
+          La diferencia entre ser dueño de un producto digital a medida y alquilar una maqueta que te cobra por cada límite.
         </p>
 
         <div class="table-wrap">
           <table class="benchmark-table">
             <thead>
               <tr>
-                <th>CRITERIO TÉCNICO</th>
-                <th class="col-highlight">AMARGO CREATIVO (ASTRO 5 / NEXT.JS 15)</th>
-                <th>AGENCIAS CON WORDPRESS / ELEMENTOR</th>
+                <th>CRITERIO</th>
+                <th class="col-highlight">AMARGO CREATIVO (PRODUCT STUDIO)</th>
+                <th>AGENCIAS TRADICIONALES / PLANTILLAS</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>Tiempo de Carga (LCP)</strong></td>
-                <td class="col-highlight"><span class="badge-good"><mark class="hl-yellow">&lt; 0.8 segundos</mark></span> (Instantáneo)</td>
-                <td><span class="badge-bad">3.8 a 6.5 segundos</span> (Lento)</td>
-              </tr>
-              <tr>
-                <td><strong>Lighthouse Performance</strong></td>
-                <td class="col-highlight"><span class="badge-good"><mark class="hl-yellow">95 - 100 / 100</mark></span> garantizado</td>
-                <td><span class="badge-bad">35 - 65 / 100</span> habitual</td>
-              </tr>
-              <tr>
-                <td><strong>Embudos de Venta</strong></td>
-                <td class="col-highlight"><mark class="hl-yellow">WhatsApp Directo</mark> sin intermediarios</td>
-                <td>Formularios estáticos o carritos abandonados</td>
-              </tr>
-              <tr>
-                <td><strong>Búsqueda &amp; Catálogo</strong></td>
-                <td class="col-highlight">Algolia SSR InstantSearch (&lt;45ms)</td>
-                <td>Búsquedas SQL pesadas que congelan el servidor</td>
-              </tr>
-              <tr>
-                <td><strong>Propiedad del Código</strong></td>
-                <td class="col-highlight">100% tuyo, sin ataduras ni costos cautivos</td>
-                <td>Dependencia de licencias mensuales de plugins</td>
-              </tr>
-              <tr>
-                <td><strong>Seguridad &amp; Mantenimiento</strong></td>
-                <td class="col-highlight">Inmune a inyecciones SQL / Cloudflare Edge</td>
-                <td>Vulnerable a hackeos por plugins desactualizados</td>
-              </tr>
+              {benchmarks.map(row => (
+                <tr>
+                  <td data-label="Criterio"><strong>{row.criterio}</strong></td>
+                  <td class="col-highlight" data-label="Amargo Creativo">
+                    <span class="cell-pill good">✓ PRODUCTO PROPIO</span>
+                    <span>{row.amargo}</span>
+                  </td>
+                  <td data-label="Agencias tradicionales">
+                    <span class="cell-pill bad">✕ LÍMITE HABITUAL</span>
+                    <span>{row.agencia}</span>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -327,23 +352,25 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
       <div class="cta-card">
         <div class="cta-info">
           <span class="cta-mini-tag">● DISPONIBILIDAD INMEDIATA</span>
-          <h2 class="cta-title">¿QUERÉS QUE <mark class="hl-yellow">CONSTRUYAMOS</mark> TU PRÓXIMO ACTIVO DIGITAL?</h2>
+          <h2 class="cta-title">¿CONSTRUIMOS TU PRÓXIMA <mark class="hl-yellow">APP O PLATAFORMA</mark>?</h2>
           <p class="cta-desc">
-            Evaluamos tu negocio, planificamos la arquitectura y entregamos tu web o app lista para vender en tiempo récord.
+            Bajamos tu idea a arquitectura real, diseñamos las pantallas y la llevamos a producción con código 100% tuyo.
           </p>
         </div>
         <div class="cta-buttons">
           <a 
-            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20un%20proyecto" 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20cotizar%20una%20app%20o%20producto%20digital" 
             target="_blank" 
             rel="noopener noreferrer" 
-            class="cta-wa-btn magnetic-btn"
+            class="cta-wa-btn ink-fill magnetic-btn"
             data-cursor="WHATSAPP"
           >
-            <span>HABLAR POR WHATSAPP</span> ↗
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="HABLAR POR WHATSAPP" arrow="diag" />
           </a>
-          <a href="/servicios-crecimiento" class="cta-secondary-link">
-            EXPLORAR SERVICIOS &amp; PLANES →
+          <a href="/servicios-crecimiento" class="cta-secondary-link ink-fill">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="VER SERVICIOS & PLANES" arrow="right" />
           </a>
         </div>
       </div>
@@ -354,46 +381,85 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 </Layout>
 
 <script>
-  // Filtrado reactivo y búsqueda en vivo de proyectos
-  const pills = document.querySelectorAll('.filter-pill');
-  const cards = document.querySelectorAll('.project-card') as NodeListOf<HTMLElement>;
-  const searchInput = document.getElementById('projectSearch') as HTMLInputElement;
-  const noResults = document.getElementById('noResults') as HTMLElement;
-  const resetBtn = document.getElementById('resetSearch') as HTMLButtonElement;
+  const pills = document.querySelectorAll<HTMLButtonElement>('.filter-pill');
+  const cards = document.querySelectorAll<HTMLElement>('.project-card');
+  const searchInput = document.getElementById('projectSearch') as HTMLInputElement | null;
+  const clearSearchBtn = document.getElementById('clearSearchBtn') as HTMLButtonElement | null;
+  const noResults = document.getElementById('noResults') as HTMLElement | null;
+  const resetBtn = document.getElementById('resetSearch') as HTMLButtonElement | null;
   const liveCounter = document.getElementById('liveCounter');
-  const quickTags = document.querySelectorAll('.quick-tag-chip');
-  const tagBtns = document.querySelectorAll('.filter-by-tag-btn');
+  const quickTags = document.querySelectorAll<HTMLButtonElement>('.quick-tag-chip');
+  const tagBtns = document.querySelectorAll<HTMLButtonElement>('.filter-by-tag-btn');
 
   let currentCategory = 'all';
   let currentSearchQuery = '';
   const totalProjects = cards.length;
 
-  function applyFilters() {
+  const haptic = () => {
+    if ('vibrate' in navigator) {
+      try { navigator.vibrate(8); } catch {}
+    }
+  };
+
+  function syncUrl() {
+    const url = new URL(window.location.href);
+    if (currentCategory && currentCategory !== 'all') url.searchParams.set('cat', currentCategory);
+    else url.searchParams.delete('cat');
+    if (currentSearchQuery) url.searchParams.set('q', currentSearchQuery);
+    else url.searchParams.delete('q');
+    window.history.replaceState({}, '', url.toString());
+  }
+
+  function applyFilters(updateUrl = true) {
     let visibleCount = 0;
 
     cards.forEach(card => {
       const category = card.getAttribute('data-category');
       const searchText = card.getAttribute('data-search') || '';
 
-      const matchesCat = (currentCategory === 'all' || category === currentCategory);
-      const matchesSearch = (!currentSearchQuery || searchText.includes(currentSearchQuery));
+      const matchesCat = currentCategory === 'all' || category === currentCategory;
+      const matchesSearch = !currentSearchQuery || searchText.includes(currentSearchQuery);
 
       if (matchesCat && matchesSearch) {
+        card.hidden = false;
         card.style.display = 'flex';
         visibleCount++;
       } else {
+        card.hidden = true;
         card.style.display = 'none';
       }
     });
 
-    if (noResults) {
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
+    if (noResults) noResults.hidden = visibleCount !== 0;
+    if (clearSearchBtn) clearSearchBtn.hidden = currentSearchQuery.length === 0;
+    if (liveCounter) liveCounter.textContent = `MOSTRANDO ${visibleCount} DE ${totalProjects}`;
 
-    if (liveCounter) {
-      liveCounter.textContent = `MOSTRANDO ${visibleCount} DE ${totalProjects} PROYECTOS`;
+    quickTags.forEach(chip => {
+      const t = (chip.getAttribute('data-tag') || '').toLowerCase();
+      chip.classList.toggle('is-active', currentSearchQuery === t && t.length > 0);
+    });
+
+    if (updateUrl) syncUrl();
+  }
+
+  // Hidratar desde URL si existe ?cat= o ?q=
+  const params = new URLSearchParams(window.location.search);
+  const initialCat = params.get('cat');
+  const initialQ = params.get('q');
+  if (initialCat) {
+    const matchPill = Array.from(pills).find(p => p.getAttribute('data-filter') === initialCat);
+    if (matchPill) {
+      pills.forEach(p => { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
+      matchPill.classList.add('active');
+      matchPill.setAttribute('aria-pressed', 'true');
+      currentCategory = initialCat;
     }
   }
+  if (initialQ && searchInput) {
+    searchInput.value = initialQ;
+    currentSearchQuery = initialQ.trim().toLowerCase();
+  }
+  if (initialCat || initialQ) applyFilters(false);
 
   pills.forEach(pill => {
     pill.addEventListener('click', () => {
@@ -404,6 +470,8 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
       pill.classList.add('active');
       pill.setAttribute('aria-pressed', 'true');
       currentCategory = pill.getAttribute('data-filter') || 'all';
+      pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      haptic();
       applyFilters();
     });
   });
@@ -413,26 +481,34 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     applyFilters();
   });
 
+  clearSearchBtn?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    currentSearchQuery = '';
+    haptic();
+    applyFilters();
+    searchInput?.focus();
+  });
+
   quickTags.forEach(chip => {
     chip.addEventListener('click', () => {
-      const tag = chip.getAttribute('data-tag') || '';
-      if (searchInput) {
-        searchInput.value = tag;
-        currentSearchQuery = tag.toLowerCase();
-        applyFilters();
-      }
+      const tag = (chip.getAttribute('data-tag') || '').toLowerCase();
+      currentSearchQuery = currentSearchQuery === tag ? '' : tag;
+      if (searchInput) searchInput.value = currentSearchQuery;
+      chip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      haptic();
+      applyFilters();
     });
   });
 
   tagBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const tag = btn.getAttribute('data-tag') || '';
-      if (searchInput) {
-        searchInput.value = tag;
-        currentSearchQuery = tag.toLowerCase();
-        applyFilters();
-      }
+      const tag = (btn.getAttribute('data-tag') || '').toLowerCase();
+      if (searchInput) searchInput.value = tag;
+      currentSearchQuery = tag;
+      haptic();
+      applyFilters();
+      document.getElementById('projectsGrid')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
   });
 
@@ -440,8 +516,12 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     if (searchInput) searchInput.value = '';
     currentSearchQuery = '';
     currentCategory = 'all';
-    pills.forEach(p => p.classList.remove('active'));
-    pills[0]?.classList.add('active');
+    pills.forEach(p => { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
+    if (pills[0]) {
+      pills[0].classList.add('active');
+      pills[0].setAttribute('aria-pressed', 'true');
+    }
+    haptic();
     applyFilters();
   });
 </script>
@@ -454,7 +534,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .page-head {
-    padding: clamp(44px, 6vw, 84px) var(--gut) 48px;
+    padding: clamp(36px, 6vw, 80px) var(--gut) clamp(32px, 4vw, 48px);
     border-bottom: 1px solid var(--line);
     background: var(--bone);
   }
@@ -468,8 +548,8 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 18px;
     flex-wrap: wrap;
   }
 
@@ -480,22 +560,23 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   .header-stamp-row {
     display: flex;
     align-items: center;
-    gap: 16px;
-    font-family: 'JetBrains Mono', monospace;
+    gap: 12px;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--mute);
     flex-wrap: wrap;
   }
 
   .geo-coord {
-    opacity: 0.7;
+    opacity: 0.72;
     letter-spacing: 0.05em;
   }
 
   .live-counter {
     background: var(--ink);
     color: var(--bone);
-    padding: 3px 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
     font-weight: 700;
     letter-spacing: 0.08em;
   }
@@ -506,20 +587,19 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .page-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(26px, 6vw, 88px);
-    line-height: 0.96;
+    font-size: clamp(28px, 6vw, 84px);
+    line-height: 0.95;
     letter-spacing: -0.03em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     overflow-wrap: break-word;
-    word-break: normal;
   }
 
   .page-title em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
@@ -527,13 +607,13 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .page-subtitle {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(15px, 1.4vw, 19px);
-    line-height: 1.5;
+    font-family: var(--font-body);
+    font-size: clamp(14.5px, 1.35vw, 18.5px);
+    line-height: 1.55;
     color: var(--ink);
     opacity: 0.88;
-    max-width: 840px;
-    margin-bottom: 36px;
+    max-width: 78ch;
+    margin-bottom: 28px;
   }
 
   /* BARRA DE ESTADÍSTICAS */
@@ -542,16 +622,17 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
     background: var(--paper);
-    padding: 24px;
-    margin-bottom: 36px;
+    padding: 20px 24px;
+    margin-bottom: 28px;
   }
 
   .stat-cell {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border-right: 1px solid rgba(0,0,0,0.1);
+    border-right: 1px solid var(--line);
     padding-right: 16px;
   }
 
@@ -561,16 +642,16 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .stat-cell strong {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(24px, 2.5vw, 36px);
+    font-size: clamp(22px, 2.4vw, 34px);
     line-height: 1;
     color: var(--ink);
   }
 
   .stat-cell span {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--mute);
@@ -581,14 +662,14 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
     flex-wrap: wrap;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .filter-controls {
     display: flex;
-    gap: 10px;
+    gap: 8px;
     flex-wrap: wrap;
   }
 
@@ -596,7 +677,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     background: transparent;
     border: 1px solid var(--line-strong);
     border-radius: var(--radius-pill);
-    padding: 9px 18px;
+    padding: 9px 16px;
     font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
@@ -604,13 +685,22 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     letter-spacing: 0.05em;
     color: var(--ink);
     cursor: pointer;
-    transition: background-color 0.22s var(--ease), color 0.22s var(--ease), border-color 0.22s var(--ease), transform 0.22s var(--ease);
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.22s var(--ease), color 0.22s var(--ease), border-color 0.22s var(--ease), transform 0.15s var(--ease);
   }
 
-  .filter-pill:hover {
-    background: var(--ink);
-    color: var(--bone);
-    transform: translate3d(0, -1px, 0);
+  .filter-pill:active {
+    transform: scale(0.95);
+  }
+
+  @media (hover: hover) {
+    .filter-pill:hover {
+      background: var(--ink);
+      color: var(--bone);
+      transform: translate3d(0, -1px, 0);
+    }
   }
 
   .filter-pill.active {
@@ -628,40 +718,67 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 
   .search-input-wrap {
     position: relative;
-    min-width: 280px;
+    min-width: 260px;
     flex: 1;
-    max-width: 380px;
+    max-width: 360px;
   }
 
   .search-icon {
     position: absolute;
-    left: 12px;
+    left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     color: var(--mute);
     pointer-events: none;
   }
 
   .search-input {
     width: 100%;
-    padding: 10px 14px 10px 36px;
-    border: 1px solid var(--line);
+    padding: 10px 36px 10px 38px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
     background: var(--paper);
     color: var(--ink);
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 12.5px;
+    font-family: var(--font-body);
+    font-size: 13px;
     outline: none;
-    transition: border-color 0.2s;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   .search-input:focus {
     border-color: var(--mate);
-    box-shadow: 2px 2px 0px var(--line);
+    box-shadow: 0 0 0 3px rgba(45, 99, 53, 0.14);
   }
+
   :global(body.theme-electric) .search-input:focus {
     border-color: var(--electric);
+    box-shadow: 0 0 0 3px rgba(241, 255, 90, 0.16);
+  }
+
+  .clear-search-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: none;
+    background: var(--line);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .clear-search-btn[hidden] {
+    display: none;
   }
 
   .quick-tags-strip {
@@ -669,60 +786,85 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
-    padding-top: 4px;
+    padding-top: 2px;
   }
 
   .quick-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
     color: var(--mute);
+    flex-shrink: 0;
   }
 
   .quick-tag-chip {
     background: var(--paper);
-    border: 1px dashed var(--line);
-    padding: 3px 8px;
-    font-family: 'JetBrains Mono', monospace;
+    border: 1px dashed var(--line-strong);
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     color: var(--ink);
     cursor: pointer;
-    transition: all 0.2s var(--ease);
+    white-space: nowrap;
+    flex-shrink: 0;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-style 0.2s, transform 0.15s;
   }
 
-  .quick-tag-chip:hover {
+  .quick-tag-chip:active {
+    transform: scale(0.94);
+  }
+
+  .quick-tag-chip.is-active {
     background: var(--ink);
     color: var(--bone);
     border-style: solid;
+  }
+
+  @media (hover: hover) {
+    .quick-tag-chip:hover {
+      background: var(--ink);
+      color: var(--bone);
+      border-style: solid;
+    }
   }
 
   /* GRID DE PROYECTOS */
   .projects-grid-section {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(40px, 6vw, 80px) var(--gut);
+    padding: clamp(32px, 5vw, 72px) var(--gut);
   }
 
   .projects-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(clamp(320px, 45vw, 560px), 1fr));
-    gap: clamp(32px, 4vw, 52px);
+    grid-template-columns: repeat(auto-fill, minmax(clamp(310px, 44vw, 540px), 1fr));
+    gap: clamp(24px, 3.5vw, 44px);
   }
 
   .project-card {
     display: flex;
     flex-direction: column;
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    overflow: hidden;
     background: var(--bone);
     position: relative;
-    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
   }
 
-  .project-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 6px 6px 0px var(--line);
+  @media (hover: hover) {
+    .project-card:hover {
+      transform: translate3d(0, -4px, 0);
+      box-shadow: 0 18px 40px rgba(17, 18, 15, 0.1);
+      border-color: var(--line-strong);
+    }
+    .project-card:hover .project-img {
+      transform: scale(1.035);
+    }
   }
 
   .project-media {
@@ -741,10 +883,6 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     transition: transform 0.6s var(--ease);
   }
 
-  .project-card:hover .project-img {
-    transform: scale(1.04);
-  }
-
   .media-tags-top {
     position: absolute;
     top: 12px;
@@ -756,37 +894,38 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .project-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     font-weight: 700;
     background: #0a0a0a;
     color: var(--electric);
     padding: 3px 8px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
   .project-loc {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     font-weight: 600;
-    background: rgba(10, 10, 10, 0.85);
+    background: rgba(10, 10, 10, 0.84);
+    backdrop-filter: blur(8px);
     color: #ffffff;
-    padding: 3px 7px;
-    border-radius: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
   }
 
   .project-status {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     font-weight: 700;
     text-transform: uppercase;
-    background: rgba(244, 241, 234, 0.95);
+    background: rgba(244, 241, 234, 0.94);
     color: #0a0a0a;
-    padding: 3px 7px;
-    border-radius: 2px;
+    padding: 3px 8px;
+    border-radius: 4px;
   }
 
   .status-pulse-mini {
@@ -803,25 +942,28 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     right: 12px;
     background: var(--electric);
     color: #0a0a0a;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 5px 10px;
+    padding: 5px 11px;
     text-decoration: none;
     border: 1px solid #0a0a0a;
+    border-radius: 999px;
     z-index: 2;
-    transition: transform 0.2s, background 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
   }
 
-  .live-chip:hover {
-    background: #ffffff;
-    transform: translateY(-2px);
+  @media (hover: hover) {
+    .live-chip:hover {
+      background: #ffffff;
+      transform: translate3d(0, -2px, 0);
+    }
   }
 
   /* CUERPO DEL PROYECTO */
   .project-body {
-    padding: clamp(20px, 3vw, 32px);
+    padding: clamp(18px, 2.8vw, 30px);
     display: flex;
     flex-direction: column;
     flex: 1;
@@ -831,13 +973,14 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 8px;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
   }
 
   .client-name {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -849,29 +992,29 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .project-year-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     color: var(--mute);
   }
 
   .project-title {
-    font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    font-weight: 700;
-    font-size: clamp(22px, 2.4vw, 30px);
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(21px, 2.3vw, 29px);
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 10px;
-    line-height: 1.15;
+    line-height: 1.08;
   }
 
   .project-summary {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13.5px;
-    line-height: 1.5;
+    line-height: 1.52;
     color: var(--ink);
     opacity: 0.88;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   /* MÉTRICA DESTACADA */
@@ -881,20 +1024,22 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     gap: 8px;
     background: var(--paper);
     border: 1px solid var(--line);
+    border-radius: 10px;
     padding: 9px 12px;
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .metric-icon {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .metric-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
     color: var(--ink);
+    line-height: 1.4;
   }
 
   /* LIGHTHOUSE STRIP */
@@ -902,17 +1047,18 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
   }
 
   .lh-pill {
-    background: #0a0a0a;
-    color: #ffffff;
+    background: #11120f;
+    color: #f5f3ec;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 8px;
-    font-family: 'JetBrains Mono', monospace;
+    padding: 5px 8px;
+    font-family: var(--font-mono);
     font-size: 9px;
   }
 
@@ -930,15 +1076,15 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border-top: 1px solid rgba(0,0,0,0.08);
-    border-bottom: 1px solid rgba(0,0,0,0.08);
-    padding: 14px 0;
-    margin-bottom: 16px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+    margin-bottom: 14px;
   }
 
   .case-detail-item strong {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     letter-spacing: 0.08em;
     color: var(--mute);
@@ -946,23 +1092,25 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .case-detail-item p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 12.5px;
-    line-height: 1.45;
+    line-height: 1.48;
     color: var(--ink);
-    opacity: 0.85;
+    opacity: 0.86;
   }
 
   /* FICHA TÉCNICA DRAWER */
   .tech-spec-drawer {
     background: var(--paper);
     border: 1px solid var(--line);
-    margin-bottom: 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
   }
 
   .spec-drawer-toggle {
     padding: 10px 14px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
@@ -974,6 +1122,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     align-items: center;
     list-style: none;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   .spec-drawer-toggle::-webkit-details-marker {
@@ -981,7 +1130,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .toggle-arrow {
-    transition: transform 0.2s;
+    transition: transform 0.25s var(--ease);
   }
 
   .tech-spec-drawer[open] .toggle-arrow {
@@ -990,7 +1139,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 
   .spec-drawer-content {
     padding: 10px 14px 14px;
-    border-top: 1px solid rgba(0,0,0,0.08);
+    border-top: 1px solid var(--line);
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -1003,7 +1152,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .spec-kicker {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8.5px;
     font-weight: 700;
     color: var(--mute);
@@ -1011,7 +1160,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .spec-val {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 11.5px;
     color: var(--ink);
     font-weight: 500;
@@ -1020,8 +1169,9 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   .spec-val.highlight-speed {
     color: var(--mate);
     font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
+
   :global(body.theme-electric) .spec-val.highlight-speed {
     color: var(--electric);
   }
@@ -1031,11 +1181,11 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: flex;
     gap: 6px;
     flex-wrap: wrap;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .stack-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 600;
     text-transform: uppercase;
@@ -1045,25 +1195,31 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     color: var(--ink);
     cursor: pointer;
     border-radius: 999px;
-    transition: all 0.2s var(--ease);
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.15s;
   }
 
-  .stack-badge:hover {
-    background: var(--mate);
-    color: #ffffff;
-    border-color: var(--mate);
+  .stack-badge:active {
+    transform: scale(0.94);
   }
 
-  :global(body.theme-electric) .stack-badge:hover {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: var(--electric);
+  @media (hover: hover) {
+    .stack-badge:hover {
+      background: var(--mate);
+      color: #ffffff;
+      border-color: var(--mate);
+    }
+    :global(body.theme-electric) .stack-badge:hover {
+      background: var(--electric);
+      color: #0a0a0a;
+      border-color: var(--electric);
+    }
   }
 
   /* ACCIONES */
   .project-actions {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: 1.15fr 1fr;
     gap: 8px;
     margin-top: auto;
   }
@@ -1073,78 +1229,75 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    gap: 6px;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    padding: 11px 12px;
+    letter-spacing: 0.04em;
+    height: 40px;
+    padding: 0 12px;
     text-decoration: none;
     box-sizing: border-box;
     border-radius: 999px;
-    transition: all 0.2s var(--ease);
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
+  }
+
+  .action-btn-live:active,
+  .action-btn-quote:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
   }
 
   .action-btn-live {
-    background: var(--mate);
-    color: #ffffff;
-    border: 1px solid var(--mate-light);
-    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.3);
-  }
-
-  .action-btn-live:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-    border-color: #ffffff;
-  }
-
-  :global(body.theme-electric) .action-btn-live {
+    --mx-fill-ink: #11120f;
     background: var(--electric);
-    color: #0a0a0a;
-    border: 1px solid var(--line);
-    box-shadow: 2px 2px 0px var(--line);
+    color: #11120f;
+    border: 1px solid #11120f;
   }
 
-  :global(body.theme-electric) .action-btn-live:hover {
-    background: #ffffff;
-    color: #000000;
+  @media (hover: hover) {
+    .action-btn-live:hover {
+      color: var(--electric);
+    }
   }
 
   .action-btn-quote {
+    --mx-fill-ink: var(--ink);
     background: transparent;
     color: var(--ink);
-    border: 1px solid var(--line);
+    border: 1px solid var(--line-strong);
   }
 
-  .action-btn-quote:hover {
-    background: var(--ink);
-    color: var(--bone);
+  @media (hover: hover) {
+    .action-btn-quote:hover {
+      color: var(--bone);
+    }
   }
 
   .no-results {
     text-align: center;
-    padding: 60px 20px;
-    font-family: 'Space Grotesk', sans-serif;
+    padding: 56px 20px;
+    font-family: var(--font-body);
     font-size: 16px;
     color: var(--mute);
+  }
+
+  .no-results[hidden] {
+    display: none;
   }
 
   .reset-search-btn {
     margin-top: 16px;
     background: var(--mate);
     color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
-    padding: 10px 20px;
+    padding: 11px 22px;
     border: none;
     border-radius: 999px;
     cursor: pointer;
-    transition: background 0.2s;
-  }
-
-  .reset-search-btn:hover {
-    background: var(--mate-light);
-    color: #0c180e;
   }
 
   /* BENCHMARK TABLE */
@@ -1152,7 +1305,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     border-top: 1px solid var(--line);
     border-bottom: 1px solid var(--line);
     background: var(--bone);
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(52px, 7vw, 96px) var(--gut);
   }
 
   .benchmark-container {
@@ -1170,7 +1323,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     align-items: center;
     margin-bottom: 16px;
     font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
 
   .section-label .num {
@@ -1178,6 +1331,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
+    border-radius: 3px;
   }
 
   :global(body.theme-electric) .section-label .num {
@@ -1186,35 +1340,36 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .benchmark-heading {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(30px, 4.5vw, 60px);
+    font-size: clamp(28px, 4.4vw, 58px);
     line-height: 0.96;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
 
   .benchmark-heading em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--rust);
   }
 
   .benchmark-sub {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: clamp(14px, 1.2vw, 17px);
     color: var(--ink);
     opacity: 0.85;
-    margin-bottom: 36px;
+    margin-bottom: 32px;
+    max-width: 68ch;
   }
 
   .table-wrap {
-    overflow-x: auto;
+    overflow: hidden;
     border: 1px solid var(--line);
     background: var(--paper);
-    border-radius: 12px;
+    border-radius: var(--radius-md);
   }
 
   .benchmark-table {
@@ -1222,22 +1377,26 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     border-collapse: collapse;
     font-size: 13.5px;
     text-align: left;
-    min-width: 650px;
   }
 
   .benchmark-table th,
   .benchmark-table td {
     padding: 16px 20px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .benchmark-table tr:last-child td {
+    border-bottom: none;
   }
 
   .benchmark-table th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    background: #0a0a0a;
-    color: #ffffff;
+    background: #11120f;
+    color: #f5f3ec;
     text-transform: uppercase;
   }
 
@@ -1252,7 +1411,7 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .benchmark-table td.col-highlight {
-    background: rgba(45, 99, 53, 0.08);
+    background: rgba(45, 99, 53, 0.07);
     font-weight: 600;
   }
 
@@ -1260,33 +1419,39 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     background: rgba(212, 255, 0, 0.06);
   }
 
-  .badge-good {
+  .cell-pill {
     display: inline-block;
-    background: var(--mate);
-    color: #ffffff;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    display: block;
+    width: fit-content;
   }
 
-  .badge-bad {
-    display: inline-block;
-    background: #dc2626;
+  .cell-pill.good {
+    background: var(--mate);
     color: #ffffff;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
+  }
+
+  :global(body.theme-electric) .cell-pill.good {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
+  .cell-pill.bad {
+    background: rgba(220, 38, 38, 0.14);
+    color: #dc2626;
   }
 
   /* BANNER FINAL */
   .cta-banner-wrap {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
   }
 
   .cta-card {
@@ -1295,12 +1460,12 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     border: 1px solid #244b2c;
     border-radius: 20px;
     box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
-    padding: clamp(36px, 5vw, 64px);
+    padding: clamp(28px, 5vw, 60px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 32px;
+    gap: 28px;
   }
 
   :global(body.theme-electric) .cta-card {
@@ -1310,12 +1475,12 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .cta-info {
-    max-width: 650px;
+    max-width: 640px;
   }
 
   .cta-mini-tag {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--mate-light);
     letter-spacing: 0.1em;
@@ -1330,20 +1495,18 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   }
 
   .cta-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(20px, 3.8vw, 42px);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
+    font-size: clamp(22px, 3.6vw, 42px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: #f4f1ea;
     margin-bottom: 12px;
-    overflow-wrap: break-word;
-    word-break: normal;
   }
 
   .cta-desc {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14.5px;
     line-height: 1.55;
     color: rgba(244, 241, 234, 0.85);
@@ -1352,85 +1515,94 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
   .cta-buttons {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
     max-width: 280px;
   }
 
-  .cta-wa-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--mate);
-    color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 14px 24px;
-    text-decoration: none;
-    border: 1px solid var(--mate-light);
-    border-radius: 999px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
-    transition: transform 0.2s, background 0.2s, border-color 0.2s;
-  }
-
-  .cta-wa-btn:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-    border-color: #ffffff;
-    transform: translate(-2px, -2px);
-  }
-
-  :global(body.theme-electric) .cta-wa-btn {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: #0a0a0a;
-  }
-
-  :global(body.theme-electric) .cta-wa-btn:hover {
-    background: #ffffff;
-    color: #000000;
-  }
-
+  .cta-wa-btn,
   .cta-secondary-link {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    color: #f4f1ea;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    gap: 8px;
+    height: 46px;
+    padding: 0 22px;
     border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    padding: 12px 18px;
     text-decoration: none;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
   }
 
-  .cta-secondary-link:hover {
-    border-color: var(--mate-light);
-    color: var(--mate-light);
-    background: rgba(130, 168, 80, 0.1);
+  .cta-wa-btn {
+    --mx-fill-ink: #0a0a0a;
+    background: var(--electric);
+    color: #0a0a0a;
+    border: 1px solid #0a0a0a;
+  }
+
+  @media (hover: hover) {
+    .cta-wa-btn:hover {
+      color: var(--electric);
+    }
+  }
+
+  .cta-secondary-link {
+    --mx-fill-ink: #f4f1ea;
+    background: transparent;
+    color: #f4f1ea;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+  }
+
+  @media (hover: hover) {
+    .cta-secondary-link:hover {
+      color: #0c180e;
+    }
   }
 
   @media (max-width: 900px) {
+    .geo-coord {
+      display: none;
+    }
     .stats-strip {
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      gap: 14px;
+      padding: 16px;
     }
     .stat-cell {
       border-right: none;
+      padding-right: 0;
     }
     .controls-bar {
       flex-direction: column;
       align-items: stretch;
+      gap: 12px;
+    }
+    .filter-controls,
+    .quick-tags-strip {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      scroll-snap-type: x proximity;
+      margin-inline: calc(var(--gut) * -1);
+      padding-inline: var(--gut);
+      padding-bottom: 4px;
+    }
+    .filter-controls::-webkit-scrollbar,
+    .quick-tags-strip::-webkit-scrollbar {
+      display: none;
+    }
+    .filter-pill,
+    .quick-tag-chip {
+      scroll-snap-align: start;
     }
     .search-input-wrap {
       max-width: 100%;
+      min-width: 0;
     }
     .cta-card {
       flex-direction: column;
@@ -1441,13 +1613,45 @@ const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
     }
   }
 
-  @media (max-width: 600px) {
-    .cta-card {
-      padding: 28px 18px;
+  /* Tabla comparativa convertida a tarjetas apiladas en Mobile (0 scroll horizontal) */
+  @media (max-width: 768px) {
+    .table-wrap {
+      border: none;
+      background: transparent;
+      overflow: visible;
     }
-    .cta-title {
-      font-size: clamp(18px, 5.2vw, 24px);
-      line-height: 1.15;
+    .benchmark-table,
+    .benchmark-table tbody,
+    .benchmark-table tr,
+    .benchmark-table td {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .benchmark-table thead {
+      display: none;
+    }
+    .benchmark-table tr {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--paper);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .benchmark-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .benchmark-table td:first-child {
+      background: #11120f;
+      color: #f5f3ec;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .benchmark-table td:last-child {
+      border-bottom: none;
     }
   }
 

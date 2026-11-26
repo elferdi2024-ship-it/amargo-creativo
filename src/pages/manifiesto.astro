@@ -7,9 +7,10 @@ import Navbar from '../components/Navbar.astro';
 import Process from '../components/Process.astro';
 import FAQ from '../components/FAQ.astro';
 import Footer from '../components/Footer.astro';
+import RollText from '../components/motion/RollText.astro';
 
 const pageTitle = "Manifiesto: Apps, IA y Software de Autor | Amargo Creativo";
-const pageDescription = "Cómo pensamos y construimos productos digitales: 6 mandamientos de ingeniería, apps a medida, propiedad total del código y cero plantillas.";
+const pageDescription = "Cómo pensamos y construimos productos digitales: 6 mandamientos de ingeniería, apps a medida, IA aplicada, propiedad total del código y cero plantillas.";
 const canonicalUrl = "https://amargo-creativo.pages.dev/manifiesto/";
 const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 
@@ -18,88 +19,76 @@ const commandments = [
     num: "01",
     tag: "PROPIEDAD TOTAL",
     title: "Cero Dependencias Cautivas",
-    desc: "El código fuente es 100% tuyo. Sin suscripciones obligatorias ni licencias cautivas de plugins. Tu repositorio en GitHub, tu hosting en Cloudflare y tus dominios siempre a tu nombre.",
-    benchmark: "vs Agencias: Te retienen las contraseñas para cobrarte rescate mensual."
+    desc: "El código fuente es 100% tuyo. Sin suscripciones obligatorias ni licencias por usuario o comisiones por pedido. Tu repositorio en GitHub, tu infraestructura en Cloudflare y tus dominios siempre a tu nombre.",
+    benchmark: "vs Agencias: Te retienen los accesos o te atan a plataformas que cobran rescate mensual."
   },
   {
     num: "02",
-    tag: "CORE WEB VITALS",
-    title: "Velocidad Sub-Segundo (<0.8s)",
-    desc: "Cada 100ms de retraso reduce las conversiones un 7%. Construimos en Astro 5 y Next.js 15 para que la página pinte en menos de 800 milisegundos en redes 4G móviles.",
-    benchmark: "vs Agencias: Sitios en WordPress que demoran 4 a 7 segundos en abrir."
+    tag: "PRODUCTO OPERATIVO",
+    title: "Software Real, No Folletos",
+    desc: "Construimos aplicaciones que resuelven operación diaria: escáner y búsqueda con IA documental, mapas ciudadanos en vivo, delivery hiperlocal y tiendas directas conectadas a pagos locales.",
+    benchmark: "vs Agencias: Te venden una web estática que nadie usa ni conecta con tu negocio."
   },
   {
     num: "03",
     tag: "ANTI-AI SLOP",
-    title: "Diseño Radical con Carácter",
-    desc: "Prohibido el diseño corporativo soso y los templates clonados de ThemeForest. Usamos tipografía suiza brutalista, contrastes ópticos calculados y jerarquía visual que atrapa la mirada.",
-    benchmark: "vs Agencias: Compran una plantilla de $29 y te cobran como diseño a medida."
+    title: "Diseño Editorial con Carácter",
+    desc: "Prohibido el diseño corporativo genérico y los templates clonados. Aplicamos sistemas tipográficos propios, jerarquía visual real y micro-interacciones pensadas para diferenciar tu marca.",
+    benchmark: "vs Agencias: Compran una plantilla genérica y te la cobran como diseño a medida."
   },
   {
     num: "04",
-    tag: "MOBILE ERGONOMICS",
+    tag: "ERGONOMÍA MÓVIL",
     title: "Mobile-First de Pulgar Real",
-    desc: "El 85% de tus clientes navega con el pulgar mientras camina. Los llamados a la acción, el menú y el botón de WhatsApp están ergonómicamente ubicados en la zona natural de alcance.",
-    benchmark: "vs Agencias: Diseñan en una iMac de 27 pulgadas y descuidan la experiencia móvil."
+    desc: "Más del 85% de tus usuarios entra desde el teléfono. Cada app PWA, catálogo o portal se diseña primero para uso con una sola mano, gestos fluidos y acción directa a WhatsApp.",
+    benchmark: "vs Agencias: Diseñan en monitores gigantes y dejan el celular roto o incómodo."
   },
   {
     num: "05",
-    tag: "EDGE ARCHITECTURE",
-    title: "Cloudflare Edge & Algolia SSR",
-    desc: "Distribuimos tu web en más de 300 centros de datos mundiales. Las búsquedas de catálogo responden en menos de 45ms y el servidor soporta picos masivos de tráfico sin caerse.",
-    benchmark: "vs Agencias: Hosting compartido de $3 que colapsa ante cualquier campaña de pauta."
+    tag: "ARQUITECTURA EDGE",
+    title: "Ingeniería Lista para Escalar",
+    desc: "Desplegamos sobre Next.js 15, Astro 5, PostgreSQL/Supabase y Cloudflare Edge en más de 300 nodos globales. Core Web Vitals en verde y estabilidad real ante picos de tráfico.",
+    benchmark: "vs Agencias: Hosting compartido barato que colapsa en tu primera campaña fuerte."
   },
   {
     num: "06",
     tag: "CERO INTERMEDIARIOS",
     title: "De Ingeniero a Dueño de Negocio",
-    desc: "No hay ejecutivos de cuenta, vendedores que prometen imposibles ni cadenas burocráticas de emails. Hablas directo por WhatsApp con quien diseña y programa tu software.",
-    benchmark: "vs Agencias: 4 semanas en reuniones de 'alineación' sin una sola línea de código escrita."
+    desc: "No hay ejecutivos de cuenta, vendedores que prometen imposibles ni cadenas de correos. Hablás directo por WhatsApp con quien diseña y programa tu producto.",
+    benchmark: "vs Agencias: Semanas en reuniones de 'alineación' sin una sola pantalla real."
   }
 ];
 
 const comparisons = [
   {
-    criterio: "Tecnología Base",
-    amargo: "Astro 5, Next.js 15, TypeScript estricto y Tailwind",
-    amargoStatus: "good",
-    agencia: "WordPress, Elementor, 40+ plugins desactualizados",
-    agenciaStatus: "bad"
+    criterio: "Qué Construimos",
+    amargo: "Apps PWA, plataformas con IA/OCR, portales B2B y comercio propio a medida",
+    agencia: "Sitios WordPress con Elementor y 40+ plugins repetidos"
   },
   {
-    criterio: "Tiempo de Carga (LCP)",
-    amargo: "< 0.8s garantizado (Lighthouse 95-100)",
-    amargoStatus: "good",
-    agencia: "3.5s a 7.2s (Lighthouse 35-65 en rojo)",
-    agenciaStatus: "bad"
+    criterio: "Comisiones & Costos",
+    amargo: "0% comisiones por pedido y sin cobros por asiento o licencia cautiva",
+    agencia: "Cuotas mensuales perpetuas o hasta 30% de comisión en apps de terceros"
   },
   {
-    criterio: "Flujo de Conversión",
-    amargo: "Directo a WhatsApp con mensaje pre-cargado y checkout ágil",
-    amargoStatus: "good",
-    agencia: "Formularios de contacto que nadie lee o carritos complejos",
-    agenciaStatus: "bad"
+    criterio: "Conversión & Pagos",
+    amargo: "Flujos directos a WhatsApp, BROU, Mercado Pago, Stripe y CFE DGI",
+    agencia: "Formularios que nadie lee o carritos genéricos con alta fuga"
   },
   {
     criterio: "Propiedad del Código",
-    amargo: "100% en tu poder desde el día del lanzamiento",
-    amargoStatus: "good",
-    agencia: "Atado a sus servidores y cuotas de mantenimiento forzadas",
-    agenciaStatus: "bad"
+    amargo: "100% en tu poder desde el lanzamiento (GitHub + Cloudflare + Dominio)",
+    agencia: "Código retenido en servidores privados de la agencia"
   },
   {
-    criterio: "Seguridad & Vulnerabilidades",
-    amargo: "Sitios estáticos y serverless invulnerables a inyecciones SQL",
-    amargoStatus: "good",
-    agencia: "Hackeos frecuentes por plugins de terceros no actualizados",
-    agenciaStatus: "bad"
+    criterio: "Rendimiento & Seguridad",
+    amargo: "Edge Computing, RLS en PostgreSQL y Core Web Vitals en verde",
+    agencia: "Sitios lentos y vulnerables a hackeos por plugins desactualizados"
   },
   {
-    criterio: "Comunicación & Velocidad",
-    amargo: "Canal directo con el arquitecto del software en tiempo real",
-    amargoStatus: "good",
-    agencia: "Tickets de soporte, demoras y burocracia interminable",
-    agenciaStatus: "bad"
+    criterio: "Comunicación Directa",
+    amargo: "Canal abierto en tiempo real con el arquitecto que escribe tu código",
+    agencia: "Tickets de soporte, intermediarios y demoras burocráticas"
   }
 ];
 ---
@@ -122,13 +111,13 @@ const comparisons = [
       <div class="man-container">
         <div class="hero-kicker-row">
           <span class="num">ESTÁNDAR</span>
-          <span class="hero-kicker-text">MANIFIESTO, CULTURA &amp; ESTÁNDARES DE PRODUCCIÓN</span>
+          <span class="hero-kicker-text">MANIFIESTO, PRODUCT STUDIO &amp; CULTURA DE INGENIERÍA</span>
           <span class="sep">//</span>
-          <span class="hero-kicker-loc">URUGUAY &bull; ARGENTINA &bull; ESPAÑA</span>
+          <span class="hero-kicker-loc">UY &bull; AR &bull; ES</span>
         </div>
 
         <h1 class="man-title" data-reveal-words>
-          EL RITUAL <em>del amargo</em> &amp;<br />INGENIERÍA HONESTA
+          EL RITUAL <em>del amargo</em> &amp;<br />PRODUCTO DE AUTOR
         </h1>
 
         <p class="man-lead">
@@ -138,15 +127,15 @@ const comparisons = [
         <!-- Métricas de Identidad -->
         <div class="man-metrics-row">
           <div class="man-metric-box">
-            <span class="m-val">11+</span>
+            <span class="m-val tabular">11+</span>
             <span class="m-lbl">PRODUCTOS EN PRODUCCIÓN</span>
           </div>
           <div class="man-metric-box">
-            <span class="m-val">100%</span>
+            <span class="m-val tabular">100%</span>
             <span class="m-lbl">CÓDIGO PROPIO A MEDIDA</span>
           </div>
           <div class="man-metric-box">
-            <span class="m-val">0%</span>
+            <span class="m-val tabular">0%</span>
             <span class="m-lbl">PLANTILLAS O COMISIONES</span>
           </div>
           <div class="man-metric-box">
@@ -166,23 +155,23 @@ const comparisons = [
 
         <div class="philosophy-grid">
           <div class="philosophy-headline">
-            <h2>Por qué nos llamamos <em>Amargo.</em></h2>
+            <h2 data-reveal-words>Por qué nos llamamos <em>Amargo.</em></h2>
             <p class="big-statement">
-              En el Río de la Plata, el mate amargo no se endulza para agradarle a todo el mundo. Es honesto, directo, te despierta y acompaña las jornadas de trabajo duro.
+              En el Río de la Plata, el mate amargo no se endulza para agradarle a todo el mundo. Es honesto, directo, te despierta y acompaña las jornadas de trabajo real.
             </p>
           </div>
 
           <div class="philosophy-body">
             <div class="story-card tactile-card">
-              <h3>La industria web está intoxicada de azúcar barata</h3>
+              <h3>La industria digital está llena de humo y plantillas</h3>
               <p>
-                Durante años, las agencias tradicionales vendieron maquetas de WordPress infladas de plugins innecesarios, cobrando miles de dólares por sitios lentos que demoran 6 segundos en cargar y jamás generan una consulta calificada.
+                Durante años, las agencias tradicionales vendieron maquetas recicladas llenas de plugins o te empujaron a depender de plataformas que se quedan con el 30% de tu margen y nunca te dejan ser dueño de tu producto.
               </p>
               <p>
-                <strong>Amargo es el antídoto.</strong> Es el compromiso de decirte la verdad: si tu web no carga en un segundo en un celular, estás perdiendo dinero. Si tu formulario tiene 8 campos, nadie te va a escribir. Si tu diseño parece una plantilla de 2018, tus clientes dudarán de tu seriedad.
+                <strong>Amargo es el antídoto.</strong> Diseñamos y programamos software que opera negocios de verdad: desde apps de delivery hiperlocal y buscadores con IA documental hasta portales ciudadanos y comercio propio sin intermediarios.
               </p>
               <div class="ritual-quote">
-                "Hacemos software como cebamos el mate: agua a punto exacto, yerba seleccionada sin polvo y cebado a mano, una taza a la vez."
+                "Construimos productos digitales como cebamos el mate: temperatura justa, criterio artesanal y cero relleno innecesario."
               </div>
             </div>
           </div>
@@ -194,24 +183,24 @@ const comparisons = [
     <section class="commandments-section">
       <div class="man-container">
         <div class="section-label">
-          <span class="num">02</span> EL ESTÁNDAR TÉCNICO
+          <span class="num">02</span> EL ESTÁNDAR DEL ESTUDIO
         </div>
-        <h2 class="section-heading">LOS 6 MANDAMIENTOS <em>de Amargo</em></h2>
+        <h2 class="section-heading" data-reveal-words>LOS 6 MANDAMIENTOS <em>de Amargo</em></h2>
         <p class="section-sub">
-          Reglas inquebrantables que aplicamos a cada línea de código, arquitectura de base de datos y decisión de interfaz.
+          Reglas inquebrantables que aplicamos a cada app, arquitectura de datos y decisión de interfaz.
         </p>
 
         <div class="commandments-grid">
           {commandments.map(item => (
             <article class="commandment-card tactile-card">
               <div class="cmd-header">
-                <span class="cmd-num">{item.num}</span>
+                <span class="cmd-num tabular">{item.num}</span>
                 <span class="cmd-tag">{item.tag}</span>
               </div>
               <h3 class="cmd-title">{item.title}</h3>
               <p class="cmd-desc">{item.desc}</p>
               <div class="cmd-benchmark">
-                <span class="cmd-benchmark-icon">⚡</span>
+                <span class="cmd-benchmark-icon" aria-hidden="true">⚡</span>
                 <span class="cmd-benchmark-text">{item.benchmark}</span>
               </div>
             </article>
@@ -226,18 +215,18 @@ const comparisons = [
         <div class="section-label">
           <span class="num">03</span> EL ABISMO TÉCNICO
         </div>
-        <h2 class="section-heading">AMARGO CREATIVO <em>vs</em> AGENCIAS COMUNES</h2>
+        <h2 class="section-heading" data-reveal-words>PRODUCT STUDIO <em>vs</em> AGENCIAS COMUNES</h2>
         <p class="section-sub">
-          La diferencia entre construir un activo de ingeniería y alquilar una maqueta obsoleta.
+          La diferencia entre construir un activo propio que escala y alquilar una maqueta obsoleta.
         </p>
 
         <div class="table-wrap">
           <table class="matrix-table">
             <thead>
               <tr>
-                <th>CRITERIO TÉCNICO / COMERCIAL</th>
-                <th class="th-highlight">AMARGO CREATIVO (PERFORMANCE ARCHITECTS)</th>
-                <th>AGENCIAS TRADICIONALES DE MARKETING</th>
+                <th>CRITERIO</th>
+                <th class="th-highlight">AMARGO CREATIVO (PRODUCT STUDIO)</th>
+                <th>AGENCIAS TRADICIONALES</th>
               </tr>
             </thead>
             <tbody>
@@ -247,7 +236,7 @@ const comparisons = [
                     <strong>{row.criterio}</strong>
                   </td>
                   <td class="col-amargo">
-                    <span class="pill-badge good">VENTAJA TÉCNICA</span>
+                    <span class="pill-badge good">VENTAJA REAL</span>
                     <p>{row.amargo}</p>
                   </td>
                   <td class="col-agencia">
@@ -262,105 +251,99 @@ const comparisons = [
       </div>
     </section>
 
-    <!-- Sección 04: Anatomía de un Software Amargo -->
+    <!-- Sección 04: Anatomía de un Producto Amargo -->
     <section class="anatomy-section">
       <div class="man-container">
         <div class="section-label">
           <span class="num">04</span> ARQUITECTURA EN CAPAS
         </div>
-        <h2 class="section-heading">ANATOMÍA DE UN <em>software amargo</em></h2>
+        <h2 class="section-heading" data-reveal-words>ANATOMÍA DE UN <em>producto amargo</em></h2>
         <p class="section-sub">
-          Cada activo digital que construimos se ensambla en cuatro capas independientes de ingeniería, diseñadas para resistir picos de tráfico y convertir visitantes en clientes.
+          Cada app o plataforma que construimos se ensambla en cuatro capas independientes, pensadas para operar sin fricción y crecer sin reescribir desde cero.
         </p>
 
         <div class="anatomy-stack">
           <div class="layer-card tactile-card">
-            <div class="layer-badge">CAPA 04 // INTERFAZ RADICAL</div>
-            <h3>DISEÑO DE ALTO CONTRASTE &amp; BOTONES DE PULGAR</h3>
-            <p>CSS puro optimizado, tipografía suiza jerarquizada y llamados a la acción ergonómicamente ubicados en la zona natural de alcance del pulgar en móviles.</p>
-            <div class="layer-stat">LCP &lt; 0.8s • 0kb Client Bloat • Ergonómico</div>
+            <div class="layer-badge">CAPA 04 // EXPERIENCIA &amp; PWA</div>
+            <h3>DISEÑO DE AUTOR &amp; ERGONOMÍA DE PULGAR</h3>
+            <p>Interfaces instalables en móvil y escritorio, micro-interacciones a 60fps en compositor GPU y flujos pensados para completar tareas o pedidos en segundos.</p>
+            <div class="layer-stat">PWA Instalable • Gestos Táctiles • Core Web Vitals Verdes</div>
           </div>
 
           <div class="layer-card tactile-card">
-            <div class="layer-badge">CAPA 03 // MOTOR DE DATOS</div>
-            <h3>ALGOLIA SSR &amp; BASES DE DATOS SERVERLESS</h3>
-            <p>Búsquedas instantáneas de catálogos y propiedades en menos de 45ms sin congelar la base de datos, respaldado por PostgreSQL distribuido y Supabase.</p>
-            <div class="layer-stat">42ms Latencia Media • Búsqueda Instantánea</div>
+            <div class="layer-badge">CAPA 03 // IA &amp; MOTOR DE DATOS</div>
+            <h3>BÚSQUEDA SEMÁNTICA, OCR &amp; POSTGRESQL RLS</h3>
+            <p>Indexación inteligente de documentos, mapas en vivo y bases relacionales con aislamiento Row-Level Security sobre PostgreSQL y Supabase.</p>
+            <div class="layer-stat">IA Documental &amp; OCR • Datos Aislados RLS • Tiempo Real</div>
           </div>
 
           <div class="layer-card tactile-card">
-            <div class="layer-badge">CAPA 02 // NÚCLEO REACTIVO</div>
-            <h3>ASTRO 5 &amp; NEXT.JS 15 SERVER COMPONENTS</h3>
-            <p>El 90% del HTML se renderiza en el servidor. El navegador del cliente solo descarga los bytes estrictamente necesarios para la interacción, eliminando esperas.</p>
-            <div class="layer-stat">React Server Components • TypeScript Estricto</div>
+            <div class="layer-badge">CAPA 02 // NÚCLEO DE APLICACIÓN</div>
+            <h3>NEXT.JS 15, REACT 19 &amp; ASTRO 5</h3>
+            <p>Renderizado híbrido con Server Components y TypeScript estricto. Solo se descarga el código mínimo necesario para cada interacción.</p>
+            <div class="layer-stat">TypeScript Estricto • Server Actions • Cero Bloat</div>
           </div>
 
           <div class="layer-card tactile-card">
-            <div class="layer-badge">CAPA 01 // RED GLOBAL</div>
-            <h3>CLOUDFLARE EDGE V8 RUNTIME</h3>
-            <p>Tu sitio se replica simultáneamente en más de 300 centros de datos mundiales. Un usuario en Montevideo, Buenos Aires o Madrid descarga los assets en tiempo récord.</p>
-            <div class="layer-stat">300+ Edge Nodes • Caching Inmutable • 100% Uptime</div>
+            <div class="layer-badge">CAPA 01 // RED GLOBAL &amp; PAGOS</div>
+            <h3>CLOUDFLARE EDGE + INTEGRACIONES LOCALES</h3>
+            <p>Distribución global en 300+ nodos Edge conectada con WhatsApp Cloud API, BROU, Mercado Pago, Stripe y facturación electrónica CFE DGI.</p>
+            <div class="layer-stat">300+ Edge Nodes • Pagos UY / AR / ES • 100% Propio</div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Sección 05: Metodología de 4 Fases (Reutiliza Process) -->
+    <!-- Sección 05: Metodología de 4 Fases -->
     <Process sectionNum="05" />
 
-    <!-- Sección 06: Telemetría & Terminal de Rendimiento Interactivo -->
+    <!-- Sección 06: Telemetría & Terminal Interactivo -->
     <section class="terminal-section">
       <div class="man-container">
         <div class="section-label">
-          <span class="num">06</span> TELEMETRÍA EN PRODUCCIÓN
+          <span class="num">06</span> TELEMETRÍA EN VIVO
         </div>
-        <h2 class="section-heading">AUDITORÍA TÉCNICA <em>interactiva</em></h2>
+        <h2 class="section-heading" data-reveal-words>VERIFICACIÓN <em>en tu navegador</em></h2>
         <p class="section-sub">
-          Nuestras páginas no son maquetas en un PDF: son software verificable en producción. Ejecuta una prueba de red en vivo contra nuestros nodos de borde.
+          No vendemos promesas en un PDF: ejecutá una medición real de red desde tu conexión actual contra el nodo Edge más cercano.
         </p>
 
         <div class="terminal-window">
           <div class="terminal-titlebar">
-            <div class="term-dots">
+            <div class="term-dots" aria-hidden="true">
               <span class="dot red"></span>
               <span class="dot yellow"></span>
               <span class="dot green"></span>
             </div>
-            <span class="term-title">amargo-edge-telemetry.sh — bash — 80x24</span>
-            <button id="runBenchmarkBtn" class="term-run-btn" title="Ejecutar test de latencia en vivo">
-              <span>⚡ EJECUTAR TEST EN VIVO</span>
+            <span class="term-title">amargo-edge-telemetry.sh — live</span>
+            <button type="button" id="runBenchmarkBtn" class="term-run-btn" title="Ejecutar test de latencia real">
+              <span>⚡ MEDIR EN VIVO</span>
             </button>
           </div>
           <div class="terminal-body" id="termOutputBody">
-            <p class="term-line"><span class="prompt">$</span> amargo benchmark --live --edge</p>
-            <p class="term-output">[PING] Conectando a nodos Cloudflare Edge mundiales...</p>
-            <p class="term-output">✔ Nodo MVD (Montevideo, UY): 18ms TTFB</p>
-            <p class="term-output">✔ Nodo EZE (Buenos Aires, AR): 24ms TTFB</p>
-            <p class="term-output">✔ Nodo MAD (Madrid, ES): 86ms TTFB</p>
-            <p class="term-line"><span class="prompt">$</span> npx lighthouse-ci --collect.url="https://amargo-creativo.pages.dev"</p>
-            <p class="term-success">✔ Performance: 97/100 (Desktop) • 86/100 (Mobile 4G)</p>
-            <p class="term-success">✔ First Contentful Paint (FCP): 0.6s</p>
-            <p class="term-success">✔ Largest Contentful Paint (LCP): 1.0s</p>
-            <p class="term-success">✔ Total Blocking Time (TBT): 0ms</p>
-            <p class="term-success">✔ Cumulative Layout Shift (CLS): 0.000</p>
-            <p class="term-line"><span class="prompt">$</span> echo $STATUS</p>
-            <p class="term-output">[OK]: 0kb Client Bloat • 100% Serverless • Inmune a SQL Injections</p>
+            <p class="term-line"><span class="prompt">$</span> amargo inspect --stack --edge</p>
+            <p class="term-output">[RUNTIME] Astro 5 + Cloudflare Edge Network (300+ nodos globales)</p>
+            <p class="term-output">✔ Módulos activos: Apps PWA, IA Documental, CivicTech, Comercio Propio</p>
+            <p class="term-output">✔ Integraciones nativas: WhatsApp API, BROU, Mercado Pago, DGI CFE</p>
+            <p class="term-line"><span class="prompt">$</span> echo $OWNERSHIP</p>
+            <p class="term-success">✔ 100% Código propio • 0% Comisiones intermediarias • Cero plantillas</p>
+            <p class="term-output">→ Tocá "MEDIR EN VIVO" para ejecutar un test real de Navigation Timing desde tu dispositivo.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Sección 07: Preguntas Frecuentes Detalladas -->
+    <!-- Sección 07: Preguntas Frecuentes -->
     <FAQ sectionNum="07" />
 
     <!-- Sección 08: Llamado a la Acción Final -->
     <section class="man-cta-section">
       <div class="man-cta-card tactile-card">
         <div class="man-cta-text">
-          <span class="cta-label">● CUPOS LIMITADOS A 5 PROYECTOS / MES</span>
-          <h2>¿LISTO PARA UN ACTIVO DIGITAL QUE <mark class="hl-yellow">VENDA DE VERDAD</mark>?</h2>
+          <span class="cta-label">● MÁXIMO 5 PROYECTOS ACTIVOS / MES</span>
+          <h2>¿LISTO PARA CONSTRUIR UN <mark class="hl-yellow">PRODUCTO PROPIO</mark>?</h2>
           <p>
-            No aceptamos más de 5 clientes simultáneos para garantizar dedicación artesanal, velocidad extrema y acompañamiento directo sin delegar a juniors.
+            Trabajamos con cupo limitado para dedicar diseño artesanal, ingeniería senior y acompañamiento directo sin delegar a terceros.
           </p>
         </div>
         <div class="cta-buttons-wrap">
@@ -368,13 +351,15 @@ const comparisons = [
             href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20le%C3%AD%20su%20manifiesto%20y%20quiero%20cotizar%20un%20proyecto" 
             target="_blank" 
             rel="noopener noreferrer" 
-            class="man-wa-btn magnetic-btn"
+            class="man-wa-btn ink-fill magnetic-btn"
             data-cursor="WHATSAPP"
           >
-            <span>HABLAR DIRECTO CON FERDI</span> ↗
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="HABLAR CON FERDI" arrow="diag" />
           </a>
-          <a href="/proyectos" class="man-secondary-btn">
-            EXPLORAR PROYECTOS EN VIVO →
+          <a href="/proyectos" class="man-secondary-btn ink-fill">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="VER PROYECTOS EN VIVO" arrow="right" />
           </a>
         </div>
       </div>
@@ -385,18 +370,20 @@ const comparisons = [
 </Layout>
 
 <script>
-  // Terminal interactivo con telemetría REAL desde el navegador del visitante (Navigation Timing + Fetch HEAD)
-  const runBtn = document.getElementById('runBenchmarkBtn');
+  const runBtn = document.getElementById('runBenchmarkBtn') as HTMLButtonElement | null;
   const termBody = document.getElementById('termOutputBody');
 
   if (runBtn && termBody) {
     runBtn.addEventListener('click', async () => {
-      runBtn.setAttribute('disabled', 'true');
-      runBtn.textContent = 'MIDIENDO EN VIVO...';
+      if ('vibrate' in navigator) {
+        try { navigator.vibrate(8); } catch {}
+      }
+      runBtn.disabled = true;
+      runBtn.textContent = 'MIDIENDO...';
 
       termBody.innerHTML = `
         <p class="term-line"><span class="prompt">$</span> amargo telemetry --live --origin</p>
-        <p class="term-output">[AUDITORÍA REAL]: Midiendo latencia directa desde tu conexión al nodo más cercano...</p>
+        <p class="term-output">[AUDITORÍA REAL]: Midiendo latencia directa desde tu conexión al nodo Edge...</p>
       `;
 
       const t0 = performance.now();
@@ -418,15 +405,15 @@ const comparisons = [
 
       termBody.innerHTML += `<p class="term-output">⚡ Round-Trip real (HEAD ${window.location.pathname}): <strong>${liveMs}ms</strong> (${statusLabel})</p>`;
       termBody.innerHTML += `<p class="term-output">⚡ TTFB de esta sesión: <strong>${ttfb}ms</strong> • DOM listo en <strong>${dcl}ms</strong></p>`;
-      termBody.innerHTML += `<p class="term-output">⚡ Peso transferido del documento: <strong>${transferKb}</strong></p>`;
+      termBody.innerHTML += `<p class="term-output">⚡ Transferencia del documento: <strong>${transferKb}</strong></p>`;
       termBody.innerHTML += `
         <p class="term-success">✔ Medición verificada con Navigation Timing API en tu navegador.</p>
-        <p class="term-success">✔ Stack activo: Astro 5 SSR/Static + Cloudflare Edge Runtime</p>
+        <p class="term-success">✔ Infraestructura: Astro 5 + Cloudflare Edge Runtime</p>
         <p class="term-line"><span class="prompt">$</span> echo $VERDICT</p>
-        <p class="term-output">[OK]: Sin bloat de plugins • Código propio 100% del cliente.</p>
+        <p class="term-output">[OK]: Software limpio • 100% propiedad del cliente.</p>
       `;
 
-      runBtn.removeAttribute('disabled');
+      runBtn.disabled = false;
       runBtn.textContent = '⚡ MEDIR DE NUEVO';
     });
   }
@@ -440,7 +427,7 @@ const comparisons = [
   }
 
   .man-hero {
-    padding: clamp(48px, 8vw, 96px) var(--gut) clamp(60px, 8vw, 100px);
+    padding: clamp(40px, 7vw, 92px) var(--gut) clamp(48px, 7vw, 88px);
     border-bottom: 1px solid var(--line);
     background: var(--bone);
   }
@@ -450,18 +437,17 @@ const comparisons = [
     margin: 0 auto;
   }
 
-  /* KICKER ROW */
   .hero-kicker-row {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--mute);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     line-height: 1.4;
   }
@@ -471,6 +457,7 @@ const comparisons = [
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
+    border-radius: 3px;
     font-size: 10px;
     letter-spacing: 0.08em;
   }
@@ -485,31 +472,24 @@ const comparisons = [
     font-weight: 700;
   }
 
-  .hero-kicker-loc {
-    color: var(--mute);
-    font-weight: 500;
-  }
-
   .sep {
-    color: var(--line);
     opacity: 0.35;
   }
 
   .man-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(26px, 6.2vw, 92px);
-    line-height: 0.96;
+    font-size: clamp(28px, 6vw, 88px);
+    line-height: 0.95;
     letter-spacing: -0.03em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     overflow-wrap: break-word;
-    word-break: normal;
   }
 
   .man-title em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     text-transform: lowercase;
     font-weight: 400;
@@ -517,30 +497,30 @@ const comparisons = [
   }
 
   .man-lead {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(16px, 1.6vw, 21px);
-    line-height: 1.5;
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.5vw, 20px);
+    line-height: 1.55;
     color: var(--ink);
     opacity: 0.9;
-    max-width: 860px;
-    margin-bottom: 48px;
+    max-width: 72ch;
+    margin-bottom: 36px;
   }
 
-  /* MÉTRICAS DE IDENTIDAD */
   .man-metrics-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
     background: var(--paper);
-    padding: 24px;
+    padding: 22px 24px;
   }
 
   .man-metric-box {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    border-right: 1px solid rgba(0,0,0,0.1);
+    border-right: 1px solid var(--line);
     padding-right: 16px;
   }
 
@@ -550,16 +530,16 @@ const comparisons = [
   }
 
   .m-val {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(24px, 2.8vw, 36px);
+    font-size: clamp(22px, 2.6vw, 34px);
     line-height: 1;
     color: var(--ink);
   }
 
   .m-lbl {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--mute);
@@ -567,7 +547,7 @@ const comparisons = [
 
   /* SECCIÓN 01: MATE PHILOSOPHY */
   .mate-philosophy-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--paper);
   }
@@ -580,9 +560,9 @@ const comparisons = [
     display: flex;
     gap: 12px;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
     font-weight: 600;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
 
   .section-label .num {
@@ -590,6 +570,7 @@ const comparisons = [
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
+    border-radius: 3px;
   }
 
   :global(body.theme-electric) .section-label .num {
@@ -600,30 +581,30 @@ const comparisons = [
   .philosophy-grid {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
-    gap: clamp(36px, 5vw, 64px);
+    gap: clamp(28px, 5vw, 60px);
     align-items: start;
   }
 
   .philosophy-headline h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(32px, 4.5vw, 60px);
+    font-size: clamp(28px, 4.3vw, 56px);
     line-height: 0.96;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
 
   .philosophy-headline h2 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--rust);
   }
 
   .big-statement {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(16px, 1.5vw, 20px);
+    font-family: var(--font-body);
+    font-size: clamp(15.5px, 1.45vw, 19px);
     line-height: 1.55;
     color: var(--ink);
     opacity: 0.9;
@@ -632,106 +613,110 @@ const comparisons = [
   .story-card {
     background: var(--bone);
     border: 1px solid var(--line);
-    padding: clamp(28px, 4vw, 44px);
+    border-radius: var(--radius-md);
+    padding: clamp(24px, 3.8vw, 42px);
     display: flex;
     flex-direction: column;
-    gap: 18px;
-    position: relative;
+    gap: 16px;
   }
 
   .story-card h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: clamp(18px, 1.8vw, 22px);
     text-transform: uppercase;
     color: var(--ink);
     line-height: 1.2;
   }
 
   .story-card p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14.5px;
-    line-height: 1.6;
+    line-height: 1.62;
     color: var(--ink);
     opacity: 0.88;
   }
 
   .ritual-quote {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     font-size: clamp(18px, 1.8vw, 23px);
     line-height: 1.4;
     color: var(--rust);
     border-left: 3px solid var(--rust);
-    padding-left: 18px;
-    margin-top: 8px;
+    padding-left: 16px;
+    margin-top: 4px;
   }
 
   /* SECCIÓN 02: MANDAMIENTOS */
   .commandments-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--bone);
   }
 
   .section-heading {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(32px, 4.5vw, 64px);
+    font-size: clamp(28px, 4.4vw, 60px);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 12px;
   }
 
   .section-heading em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--rust);
   }
 
   .section-sub {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(14.5px, 1.3vw, 18px);
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.25vw, 17.5px);
     color: var(--ink);
     opacity: 0.85;
-    margin-bottom: 48px;
-    max-width: 800px;
+    margin-bottom: 36px;
+    max-width: 72ch;
   }
 
   .commandments-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
   }
 
   .commandment-card {
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
     background: var(--paper);
-    padding: 32px 26px;
+    padding: clamp(22px, 3vw, 30px) clamp(20px, 2.5vw, 26px);
     display: flex;
     flex-direction: column;
-    gap: 14px;
-    position: relative;
-    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
+    gap: 12px;
+    transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease), border-color 0.25s var(--ease);
   }
 
-  .commandment-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 4px 4px 0px var(--line);
+  @media (hover: hover) {
+    .commandment-card:hover {
+      transform: translate3d(0, -4px, 0);
+      box-shadow: 0 14px 32px rgba(17, 18, 15, 0.08);
+      border-color: var(--line-strong);
+    }
   }
 
   .cmd-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
   }
 
   .cmd-num {
     font-family: var(--font-display);
     font-weight: 800;
-    font-size: 28px;
+    font-size: 26px;
     letter-spacing: -0.04em;
     color: var(--mate);
     line-height: 1;
@@ -742,32 +727,32 @@ const comparisons = [
   }
 
   .cmd-tag {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    background: #0a0a0a;
+    letter-spacing: 0.08em;
+    background: #11120f;
     color: var(--electric);
-    padding: 3px 8px;
-    border-radius: 2px;
+    padding: 3px 9px;
+    border-radius: 999px;
   }
 
   .cmd-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 20px;
+    font-size: 19px;
     text-transform: uppercase;
     color: var(--ink);
     line-height: 1.2;
   }
 
   .cmd-desc {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--ink);
-    opacity: 0.85;
+    opacity: 0.86;
     margin-bottom: auto;
   }
 
@@ -775,10 +760,11 @@ const comparisons = [
     display: flex;
     align-items: flex-start;
     gap: 8px;
-    background: rgba(0,0,0,0.04);
+    background: rgba(0, 0, 0, 0.04);
     border-left: 2px solid var(--rust);
+    border-radius: 0 8px 8px 0;
     padding: 10px 12px;
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .cmd-benchmark-icon {
@@ -787,22 +773,23 @@ const comparisons = [
   }
 
   .cmd-benchmark-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    line-height: 1.4;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    line-height: 1.45;
     color: var(--mute);
   }
 
   /* SECCIÓN 03: MATRIZ COMPARATIVA */
   .matrix-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--paper);
   }
 
   .table-wrap {
-    overflow-x: auto;
+    overflow: hidden;
     border: 1px solid var(--line);
+    border-radius: var(--radius-md);
     background: var(--bone);
   }
 
@@ -811,22 +798,26 @@ const comparisons = [
     border-collapse: collapse;
     font-size: 13.5px;
     text-align: left;
-    min-width: 680px;
   }
 
   .matrix-table th,
   .matrix-table td {
-    padding: 18px 22px;
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+
+  .matrix-table tr:last-child td {
+    border-bottom: none;
   }
 
   .matrix-table th {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     letter-spacing: 0.08em;
-    background: #0a0a0a;
-    color: #ffffff;
+    background: #11120f;
+    color: #f5f3ec;
     text-transform: uppercase;
   }
 
@@ -841,15 +832,15 @@ const comparisons = [
   }
 
   .col-criterio {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
     text-transform: uppercase;
     color: var(--ink);
-    width: 25%;
+    width: 24%;
   }
 
   .col-amargo {
-    background: rgba(45, 99, 53, 0.08);
+    background: rgba(45, 99, 53, 0.07);
     width: 40%;
   }
 
@@ -858,7 +849,7 @@ const comparisons = [
   }
 
   .col-amargo p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
     color: var(--ink);
     margin-top: 6px;
@@ -866,11 +857,11 @@ const comparisons = [
   }
 
   .col-agencia {
-    width: 35%;
+    width: 36%;
   }
 
   .col-agencia p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     color: var(--mute);
     margin-top: 6px;
     font-size: 13px;
@@ -878,10 +869,11 @@ const comparisons = [
 
   .pill-badge {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 9.5px;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
-    padding: 2px 7px;
+    padding: 2px 8px;
+    border-radius: 999px;
     letter-spacing: 0.05em;
   }
 
@@ -890,14 +882,19 @@ const comparisons = [
     color: #ffffff;
   }
 
+  :global(body.theme-electric) .pill-badge.good {
+    background: var(--electric);
+    color: #0a0a0a;
+  }
+
   .pill-badge.bad {
-    background: #dc2626;
-    color: #ffffff;
+    background: rgba(220, 38, 38, 0.14);
+    color: #dc2626;
   }
 
   /* SECCIÓN 04: ANATOMÍA EN CAPAS */
   .anatomy-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--bone);
   }
@@ -905,7 +902,7 @@ const comparisons = [
   .anatomy-stack {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     max-width: 980px;
     margin: 0 auto;
   }
@@ -913,28 +910,27 @@ const comparisons = [
   .layer-card {
     border: 1px solid var(--line);
     background: var(--paper);
-    padding: clamp(24px, 3vw, 36px);
-    position: relative;
+    padding: clamp(20px, 3vw, 34px);
     display: flex;
     flex-direction: column;
     gap: 8px;
     border-radius: 16px;
-    transition: transform 0.2s var(--ease), box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
+    transition: transform 0.22s var(--ease), box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
   }
 
-  .layer-card:hover {
-    transform: translateX(6px);
-    box-shadow: 4px 4px 0px var(--mate);
-    border-color: var(--mate);
-  }
-
-  :global(body.theme-electric) .layer-card:hover {
-    box-shadow: 4px 4px 0px var(--electric);
-    border-color: var(--electric);
+  @media (hover: hover) {
+    .layer-card:hover {
+      transform: translate3d(6px, 0, 0);
+      box-shadow: 0 12px 28px rgba(17, 18, 15, 0.08);
+      border-color: var(--mate);
+    }
+    :global(body.theme-electric) .layer-card:hover {
+      border-color: var(--electric);
+    }
   }
 
   .layer-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     color: var(--mate);
@@ -946,15 +942,15 @@ const comparisons = [
   }
 
   .layer-card h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(18px, 2.2vw, 24px);
+    font-size: clamp(17px, 2.1vw, 23px);
     text-transform: uppercase;
     color: var(--ink);
   }
 
   .layer-card p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14px;
     line-height: 1.55;
     color: var(--ink);
@@ -962,40 +958,43 @@ const comparisons = [
   }
 
   .layer-stat {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 700;
     color: var(--rust);
     margin-top: 4px;
-    background: rgba(0,0,0,0.03);
-    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.04);
+    padding: 4px 10px;
+    border-radius: 999px;
     width: fit-content;
   }
 
   /* SECCIÓN 06: TERMINAL DE TELEMETRÍA */
   .terminal-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--paper);
   }
 
   .terminal-window {
     border: 1px solid #333330;
+    border-radius: 16px;
+    overflow: hidden;
     background: #0d0d0c;
     color: #f4f1ea;
-    box-shadow: 8px 8px 0px rgba(0,0,0,0.25);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.22);
     max-width: 960px;
     margin: 0 auto;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
   }
 
   .terminal-titlebar {
     background: #1a1a18;
     border-bottom: 1px solid #333330;
-    padding: 10px 16px;
+    padding: 12px 16px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
   }
 
@@ -1016,52 +1015,51 @@ const comparisons = [
 
   .term-title {
     font-size: 11px;
-    color: #888880;
+    color: #9c9c94;
     flex: 1;
+    min-width: 140px;
   }
 
   .term-run-btn {
-    background: var(--mate);
-    color: #ffffff;
-    border: 1px solid var(--mate-light);
-    border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    font-weight: 700;
-    padding: 6px 14px;
-    cursor: pointer;
-    transition: all 0.2s var(--ease);
-  }
-
-  .term-run-btn:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-  }
-
-  :global(body.theme-electric) .term-run-btn {
     background: var(--electric);
     color: #0a0a0a;
-    border: none;
+    border: 1px solid #0a0a0a;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 7px 14px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 0.15s var(--ease), background-color 0.2s;
   }
-  :global(body.theme-electric) .term-run-btn:hover {
-    background: #ffffff;
+
+  .term-run-btn:active {
+    transform: scale(0.95);
+  }
+
+  @media (hover: hover) {
+    .term-run-btn:hover {
+      background: #ffffff;
+    }
   }
 
   .term-run-btn[disabled] {
-    opacity: 0.5;
+    opacity: 0.55;
     cursor: not-allowed;
   }
 
   .terminal-body {
-    padding: 24px;
-    font-size: 12.5px;
+    padding: clamp(16px, 3vw, 24px);
+    font-size: clamp(11px, 1.3vw, 12.5px);
     line-height: 1.7;
-    min-height: 220px;
+    min-height: 200px;
+    overflow-x: auto;
   }
 
   .term-line {
     color: #f4f1ea;
-    margin-top: 12px;
+    margin-top: 10px;
   }
 
   .term-line:first-child {
@@ -1069,23 +1067,19 @@ const comparisons = [
   }
 
   .prompt {
-    color: var(--mate-light);
+    color: var(--electric);
     margin-right: 8px;
     font-weight: 700;
   }
 
-  :global(body.theme-electric) .prompt {
-    color: var(--electric);
-  }
-
   .term-output {
-    color: #9c9c94;
-    padding-left: 18px;
+    color: #b5b5ad;
+    padding-left: 16px;
   }
 
   .term-success {
     color: #4ade80;
-    padding-left: 18px;
+    padding-left: 16px;
     font-weight: 600;
   }
 
@@ -1093,7 +1087,7 @@ const comparisons = [
   .man-cta-section {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
   }
 
   .man-cta-card {
@@ -1102,13 +1096,12 @@ const comparisons = [
     border: 1px solid #244b2c;
     border-radius: 20px;
     box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
-    padding: clamp(36px, 5vw, 64px);
+    padding: clamp(28px, 5vw, 60px);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 32px;
-    position: relative;
+    gap: 28px;
   }
 
   :global(body.theme-electric) .man-cta-card {
@@ -1122,8 +1115,8 @@ const comparisons = [
   }
 
   .cta-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
     color: var(--mate-light);
     letter-spacing: 0.1em;
@@ -1138,20 +1131,18 @@ const comparisons = [
   }
 
   .man-cta-text h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(20px, 3.8vw, 44px);
-    letter-spacing: -0.02em;
+    font-size: clamp(22px, 3.6vw, 44px);
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: #f4f1ea;
     margin-bottom: 12px;
-    line-height: 1.1;
-    overflow-wrap: break-word;
-    word-break: normal;
+    line-height: 1.06;
   }
 
   .man-cta-text p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14.5px;
     line-height: 1.55;
     color: rgba(244, 241, 234, 0.85);
@@ -1160,83 +1151,68 @@ const comparisons = [
   .cta-buttons-wrap {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
-    max-width: 300px;
+    max-width: 290px;
   }
 
-  .man-wa-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--mate);
-    color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 15px 24px;
-    text-decoration: none;
-    border: 1px solid var(--mate-light);
-    border-radius: 999px;
-    box-shadow: 2px 2px 0px rgba(0,0,0,0.4);
-    transition: transform 0.2s, background 0.2s, border-color 0.2s;
-  }
-
-  .man-wa-btn:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-    border-color: #ffffff;
-    transform: translate(-2px, -2px);
-  }
-
-  :global(body.theme-electric) .man-wa-btn {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: #0a0a0a;
-  }
-
-  :global(body.theme-electric) .man-wa-btn:hover {
-    background: #ffffff;
-    color: #000000;
-  }
-
+  .man-wa-btn,
   .man-secondary-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background: transparent;
-    color: #f4f1ea;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    gap: 8px;
+    height: 46px;
+    padding: 0 22px;
     border-radius: 999px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 600;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
     text-transform: uppercase;
-    padding: 12px 18px;
     text-decoration: none;
-    transition: border-color 0.2s, color 0.2s, background 0.2s;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
   }
 
-  .man-secondary-btn:hover {
-    border-color: var(--mate-light);
-    color: var(--mate-light);
-    background: rgba(130, 168, 80, 0.1);
+  .man-wa-btn {
+    --mx-fill-ink: #0a0a0a;
+    background: var(--electric);
+    color: #0a0a0a;
+    border: 1px solid #0a0a0a;
+  }
+
+  @media (hover: hover) {
+    .man-wa-btn:hover {
+      color: var(--electric);
+    }
+  }
+
+  .man-secondary-btn {
+    --mx-fill-ink: #f4f1ea;
+    background: transparent;
+    color: #f4f1ea;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+  }
+
+  @media (hover: hover) {
+    .man-secondary-btn:hover {
+      color: #0c180e;
+    }
   }
 
   /* RESPONSIVE */
   @media (max-width: 900px) {
     .philosophy-grid {
       grid-template-columns: 1fr;
-      gap: 32px;
+      gap: 24px;
     }
     .man-metrics-row {
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
+      gap: 14px;
+      padding: 16px;
     }
     .man-metric-box {
       border-right: none;
+      padding-right: 0;
     }
     .man-cta-card {
       flex-direction: column;
@@ -1245,8 +1221,54 @@ const comparisons = [
     .cta-buttons-wrap {
       max-width: 100%;
     }
-    .man-wa-btn, .man-secondary-btn {
+  }
+
+  /* Matriz comparativa convertida a tarjetas apiladas en Mobile */
+  @media (max-width: 768px) {
+    .commandments-grid {
+      grid-template-columns: 1fr;
+    }
+    .table-wrap {
+      border: none;
+      background: transparent;
+      overflow: visible;
+    }
+    .matrix-table,
+    .matrix-table tbody,
+    .matrix-table tr,
+    .matrix-table td {
+      display: block;
       width: 100%;
+      box-sizing: border-box;
+    }
+    .matrix-table thead {
+      display: none;
+    }
+    .matrix-table tr {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--bone);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .matrix-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .matrix-table td.col-criterio {
+      width: 100%;
+      background: #11120f;
+      color: #f5f3ec;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+    }
+    .matrix-table td.col-amargo,
+    .matrix-table td.col-agencia {
+      width: 100%;
+    }
+    .matrix-table td:last-child {
+      border-bottom: none;
     }
   }
 </style>

@@ -9,6 +9,7 @@ const { sectionNum = "07" } = Astro.props;
 
 interface Step {
   num: string;
+  tag: string;
   title: string;
   desc: string;
 }
@@ -16,28 +17,32 @@ interface Step {
 const steps: Step[] = [
   {
     num: "01",
-    title: "Charla de 15 Minutos",
-    desc: "Nos tomamos un momento (<mark class=\"hl-yellow\">15 minutos</mark>) para entender tu negocio, qué problemas tenés y qué querés lograr con tu nueva web. Sin vueltas ni tecnicismos raros."
+    tag: "DESCUBRIMIENTO",
+    title: "Diagnóstico de 15 Minutos",
+    desc: "Charlamos directo sin intermediarios (<mark class=\"hl-yellow\">15 minutos</mark>) para bajar a tierra la lógica de tu negocio, los cuellos de botella y qué app, plataforma o comercio propio genera retorno primero."
   },
   {
     num: "02",
-    title: "Estructura y Diseño Visual",
-    desc: "Diseñamos las pantallas completas para que veas exactamente cómo va a quedar tu sitio, cómo se va a navegar en celulares y cómo va a <mark class=\"hl-yellow\">recibir a tus clientes</mark>."
+    tag: "DISEÑO & PROTOTIPO",
+    title: "Arquitectura y Pantallas Reales",
+    desc: "Diseñamos la experiencia móvil y de escritorio completa para que valides cada pantalla, flujo de usuario y arquitectura de datos <mark class=\"hl-yellow\">antes de escribir una sola línea</mark>."
   },
   {
     num: "03",
-    title: "Desarrollo y Velocidad",
-    desc: "Construimos el sitio con <mark class=\"hl-yellow\">código ultra veloz</mark>. Integramos WhatsApp directo, mapas, formularios y todo lo necesario para que funcione como un reloj."
+    tag: "INGENIERÍA",
+    title: "Desarrollo, IA e Integraciones",
+    desc: "Construimos el producto con <mark class=\"hl-yellow\">código propio a medida</mark>: apps PWA, buscadores con IA, pagos BROU/Mercado Pago, DGI CFE y flujos directos a WhatsApp."
   },
   {
     num: "04",
-    title: "Lanzamiento y a Rodar",
-    desc: "Probamos todo a fondo, conectamos tu dominio y publicamos tu web en internet. Te entregamos el <mark class=\"hl-yellow\">acceso total</mark> y te enseñamos a usarla."
+    tag: "PRODUCCIÓN",
+    title: "Lanzamiento y Propiedad Total",
+    desc: "Desplegamos en red Edge global, probamos cada caso real en dispositivos físicos y te entregamos el <mark class=\"hl-yellow\">100% del repositorio y accesos</mark> a tu nombre."
   }
 ];
 ---
 <section class="process" id="process">
-  <!-- Marca de Agua Ambiental Decorativa -->
+  <!-- Marca de Agua Ambiental Decorativa con máscara orgánica -->
   <div class="process-ambient-bg ambient-parallax" aria-hidden="true"></div>
 
   <div class="process-head">
@@ -49,7 +54,10 @@ const steps: Step[] = [
     {steps.map(step => (
       <div class="process-item">
         <div class="process-num">{step.num}</div>
-        <div class="process-title">{step.title}</div>
+        <div class="process-title-wrap">
+          <span class="process-tag">{step.tag}</span>
+          <div class="process-title">{step.title}</div>
+        </div>
         <div class="process-desc" set:html={step.desc} />
       </div>
     ))}
@@ -63,40 +71,56 @@ const steps: Step[] = [
   }
   .process-ambient-bg {
     position: absolute;
-    top: 5%;
+    top: 4%;
     right: -4%;
-    width: clamp(320px, 50vw, 750px);
-    height: 90%;
+    width: clamp(320px, 48vw, 720px);
+    height: 92%;
     background-image: url('/backgrounds/bg-ambient-3.webp');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center right;
-    opacity: 0.22;
+    opacity: 0.18;
     mix-blend-mode: multiply;
     pointer-events: none;
     z-index: 0;
-    filter: contrast(1.1) brightness(0.98);
+    filter: contrast(1.08) brightness(0.98);
+    -webkit-mask-image: radial-gradient(ellipse 68% 68% at 62% 50%, #000 35%, transparent 78%);
+    mask-image: radial-gradient(ellipse 68% 68% at 62% 50%, #000 35%, transparent 78%);
     transition: opacity 0.5s var(--ease);
   }
   :global(body.theme-electric) .process-ambient-bg {
-    opacity: 0.20;
+    opacity: 0.16;
     mix-blend-mode: screen;
     filter: grayscale(80%) contrast(1.2) sepia(1) hue-rotate(40deg);
   }
   :global(body.theme-dark) .process-ambient-bg {
-    opacity: 0.18;
+    opacity: 0.14;
     mix-blend-mode: screen;
   }
   :global(body.theme-mate) .process-ambient-bg {
-    opacity: 0.22;
+    opacity: 0.18;
     mix-blend-mode: multiply;
     filter: grayscale(20%) contrast(1.2) sepia(0.3) hue-rotate(85deg);
   }
+  .process-title-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .process-tag {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--rust);
+    text-transform: uppercase;
+  }
+  :global(body.theme-electric) .process-tag {
+    color: var(--electric);
+  }
   @media (max-width: 768px) {
     .process-ambient-bg {
-      width: 75vw;
-      right: -12%;
-      opacity: 0.18;
+      display: none;
     }
   }
 </style>

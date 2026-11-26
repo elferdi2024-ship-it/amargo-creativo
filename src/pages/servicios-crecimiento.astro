@@ -5,132 +5,137 @@ export const prerender = true;
 import Layout from '../layouts/Layout.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from '../components/Footer.astro';
+import RollText from '../components/motion/RollText.astro';
 
-const pageTitle = "Servicios de Producto, Apps, CRO & SEO | Amargo Creativo";
-const pageDescription = "Evolución continua de apps y webs, auditoría CRO, automatización WhatsApp, Landing Pages a medida y SEO local en UY, AR y ES.";
+const pageTitle = "Servicios de Producto, Apps, IA, CRO & SEO | Amargo Creativo";
+const pageDescription = "Evolución continua de apps y plataformas, automatización con IA y WhatsApp, auditoría CRO, landing pages a medida y SEO local en UY, AR y ES.";
 const canonicalUrl = "https://amargo-creativo.pages.dev/servicios-crecimiento/";
 const ogImage = "https://amargo-creativo.pages.dev/og-image-v3.jpg";
 
 const growthServicesSchema = [
   {
     "@type": "Service",
-    "@id": `${canonicalUrl}#plan-crecimiento`,
-    "name": "Plan de Crecimiento Continuo",
-    "serviceType": "Mantenimiento y Optimización Web",
+    "@id": `${canonicalUrl}#evolucion-producto`,
+    "name": "Plan de Evolución Continua de Producto",
+    "serviceType": "Mantenimiento y Evolución de Apps, SaaS y Webs",
     "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
     "areaServed": ["UY", "AR", "ES"],
-    "description": "Plan mensual de mantenimiento técnico, optimización de velocidad (<0.8s), seguridad, CRO y SEO continuo."
+    "description": "Evolución mensual de apps PWA, plataformas SaaS y webs: nuevas features, seguridad, Core Web Vitals en verde y CRO continuo."
+  },
+  {
+    "@type": "Service",
+    "@id": `${canonicalUrl}#ia-whatsapp`,
+    "name": "Automatización IA & WhatsApp que Vende",
+    "serviceType": "Flujos Comerciales, OCR e Integraciones IA",
+    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
+    "areaServed": ["UY", "AR", "ES"],
+    "description": "WhatsApp Business y Cloud API, precalificación automática, asistentes con IA sobre documentos y cierre comercial sin fricción."
   },
   {
     "@type": "Service",
     "@id": `${canonicalUrl}#auditoria-cro`,
-    "name": "Auditoría de Conversión (CRO)",
-    "serviceType": "Optimización de Conversión y UX",
+    "name": "Auditoría de Conversión & UX Mobile (CRO)",
+    "serviceType": "Optimización de Conversión y Producto Digital",
     "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
     "areaServed": ["UY", "AR", "ES"],
-    "description": "Diagnóstico integral de fricción, velocidad LCP y embudos de venta para multiplicar consultas."
-  },
-  {
-    "@type": "Service",
-    "@id": `${canonicalUrl}#whatsapp-commerce`,
-    "name": "WhatsApp que Vende",
-    "serviceType": "Automatización y Flujos Comerciales",
-    "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
-    "areaServed": ["UY", "AR", "ES"],
-    "description": "WhatsApp Business, respuestas inmediatas e integración directa con botones y flujos web."
+    "description": "Diagnóstico integral de fricción en celular, embudos de venta y Core Web Vitals para multiplicar consultas reales."
   },
   {
     "@type": "Service",
     "@id": `${canonicalUrl}#landing-pages`,
-    "name": "Landing Pages de Alta Conversión",
-    "serviceType": "Diseño y Desarrollo de Landing Pages",
+    "name": "Landing Pages & Micro-Apps de Campaña",
+    "serviceType": "Diseño y Desarrollo de Landing Pages a Medida",
     "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
     "areaServed": ["UY", "AR", "ES"],
-    "description": "Páginas ultrarrápidas (<0.8s) enfocadas en un único objetivo comercial para Meta Ads y Google Ads."
+    "description": "Páginas de autor con cotizadores o flujos directos a WhatsApp diseñadas para maximizar el retorno en Meta Ads y Google Ads."
   },
   {
     "@type": "Service",
     "@id": `${canonicalUrl}#seo-local`,
-    "name": "Visibilidad Local & Google Business",
-    "serviceType": "SEO Local y Google Maps",
+    "name": "Visibilidad Local & Google Maps",
+    "serviceType": "SEO Local y Google Business Profile",
     "provider": { "@id": "https://amargo-creativo.pages.dev/#organization" },
     "areaServed": ["UY", "AR", "ES"],
-    "description": "Optimización de Google Business Profile, Schema LocalBusiness y posicionamiento en Maps."
+    "description": "Optimización de Google Business Profile, Schema.org LocalBusiness y posicionamiento en Google Maps."
   }
 ];
 
 const growthServices = [
   {
     num: "01",
-    title: "Plan de Crecimiento Continuo",
-    subtitle: "Mantenimiento técnico proactivo + Optimización mensual",
-    desc: "Tu web no termina cuando se publica. Con este plan nos aseguramos mes a mes de que mantenga su velocidad extrema (<0.8s), seguridad blindada, parches al día y enfoque constante en mejorar la tasa de conversión.",
+    tag: "EVOLUCIÓN MENSUAL",
+    title: "Evolución Continua de Producto",
+    subtitle: "Ingeniería proactiva + nuevas mejoras cada mes para tu app o web",
+    desc: "Un producto digital vivo no se abandona el día del lanzamiento. Nos encargamos mes a mes de evolucionar funciones, cuidar la seguridad, mantener Core Web Vitals en verde y optimizar cada pantalla según datos reales.",
     features: [
-      "Monitoreo semanal de Core Web Vitals y latencia global",
-      "Actualizaciones de dependencias y parches de seguridad",
-      "Micro-optimizaciones continuas de conversión (CRO)",
-      "Ajustes de SEO on-page y arquitectura semántica",
-      "Reporte mensual transparente y accionable",
-      "Soporte prioritario y canal directo por WhatsApp"
+      "Evolución continua de apps PWA, portales SaaS y sitios en producción",
+      "Monitoreo de Core Web Vitals, uptime y latencia en Cloudflare Edge",
+      "Actualizaciones de dependencias, seguridad y backups",
+      "Micro-optimizaciones mensuales de UX móvil y conversión (CRO)",
+      "Ajustes de SEO técnico, Schema.org y metadatos",
+      "Canal directo por WhatsApp con el ingeniero a cargo"
     ],
-    ideal: "Empresas con sitio web en producción que buscan rendimiento y tranquilidad técnica sin contratar un equipo interno.",
+    ideal: "Empresas con una app, tienda o sitio en producción que buscan un equipo técnico senior sin los costos fijos de una plantilla interna.",
     investment: "Desde USD 180 / mes",
     period: "Sin permanencia obligatoria",
     delivery: "Servicio Mensual Continuo",
-    waText: "Hola Amargo Creativo, me interesa el Plan de Crecimiento Continuo para mi sitio web"
+    waText: "Hola Amargo Creativo, me interesa el Plan de Evolución Continua para mi producto digital"
   },
   {
     num: "02",
-    title: "Auditoría de Conversión (CRO)",
-    subtitle: "Identificamos con precisión matemática por qué no estás cerrando ventas",
-    desc: "Muchos sitios reciben tráfico pero fallan en generar consultas calificadas. Analizamos el embudo completo, tiempos de respuesta y puntos de fuga para entregarte una hoja de ruta de impacto inmediato.",
+    tag: "IA & VENTAS",
+    title: "WhatsApp que Vende & Automatización IA",
+    subtitle: "Embudos de respuesta inmediata y flujos inteligentes conectados a tu operación",
+    desc: "WhatsApp es el canal de cierre número 1 en Uruguay, Argentina y España. Lo conectamos con tu web, catálogo o base documental con IA para responder en segundos, precalificar leads y automatizar pedidos o cobranzas.",
     features: [
-      "Análisis heurístico de UX en mobile (85% del tráfico)",
-      "Revisión y reescritura de llamados a la acción (CTAs)",
-      "Detección de puntos de rebote y fugas de tráfico",
-      "Medición de latencia de carga y first contentful paint (FCP)",
-      "Hoja de ruta priorizada por impacto vs esfuerzo técnico",
-      "Propuesta de implementación llave en mano (opcional)"
+      "Configuración profesional de WhatsApp Business / Cloud API",
+      "Flujos de precalificación y derivación automática con mensaje estructurado",
+      "Conexión con constructores de pedidos, cotizadores y pasarelas locales",
+      "Módulos opcionales de IA para lectura de documentos, catálogos o FAQs",
+      "Plantillas de seguimiento comercial para recuperar conversaciones",
+      "Protocolo claro de atención para equipos de venta"
     ],
-    ideal: "Negocios que ya tienen visitas pero sienten que están dejando dinero sobre la mesa por fricción en la web.",
-    investment: "USD 240",
-    period: "Pago único",
-    delivery: "Entrega en 48 Horas Hábiles",
-    waText: "Hola Amargo Creativo, quiero solicitar una Auditoría de Conversión para mi web actual"
+    ideal: "Negocios que reciben consultas o pedidos por WhatsApp y quieren atender más rápido sin perder oportunidades ni depender de apps con comisiones.",
+    investment: "USD 320",
+    period: "Pago único (setup base)",
+    delivery: "Implementación en 3 a 5 Días",
+    waText: "Hola Amargo Creativo, quiero implementar WhatsApp que Vende y automatización en mi negocio"
   },
   {
     num: "03",
-    title: "WhatsApp que Vende",
-    subtitle: "Automatización y embudos de respuesta inmediata",
-    desc: "WhatsApp es el canal de cierre número 1 en Uruguay, Argentina y España. Lo transformamos en una máquina organizada que responde en segundos, precalifica prospectos y no deja conversaciones colgadas.",
+    tag: "DIAGNÓSTICO CRO",
+    title: "Auditoría de Conversión & UX Mobile",
+    subtitle: "Detectamos exactamente dónde se fugan tus clientes en celular y PC",
+    desc: "Muchos productos reciben tráfico de pauta o Google pero fallan en convertirlo en consultas o ventas. Auditamos tu flujo real en dispositivos físicos y te entregamos una hoja de ruta concreta ordenada por impacto.",
     features: [
-      "Configuración profesional de WhatsApp Business y catálogo",
-      "Mensajes de bienvenida y respuestas automáticas inteligentes",
-      "Flujos de calificación previa para filtrar consultas no viables",
-      "Integración directa con botones dinámicos y formularios web",
-      "Plantillas de seguimiento comercial para reenganchar prospectos",
-      "Protocolo de atención para equipos de venta"
+      "Revisión heurística real en móvil (más del 85% del tráfico)",
+      "Reescritura de propuesta de valor y llamados a la acción (CTAs)",
+      "Detección de fricción en formularios, checkout o navegación",
+      "Auditoría técnica de Core Web Vitals, pesos y arquitectura",
+      "Hoja de ruta priorizada: qué arreglar primero para vender más",
+      "Implementación llave en mano opcional con crédito bonificado"
     ],
-    ideal: "Negocios que reciben consultas por chat y necesitan profesionalizar y acelerar el tiempo de cierre comercial.",
-    investment: "USD 320",
+    ideal: "Negocios que ya tienen tráfico o inversión en Ads pero sienten que están dejando ventas sobre la mesa por fricción en su plataforma.",
+    investment: "USD 240",
     period: "Pago único",
-    delivery: "Setup en 3 a 5 Días",
-    waText: "Hola Amargo Creativo, quiero implementar el sistema de WhatsApp que Vende"
+    delivery: "Entrega en 48 Horas Hábiles",
+    waText: "Hola Amargo Creativo, quiero solicitar una Auditoría de Conversión y UX Mobile"
   },
   {
     num: "04",
-    title: "Landing Pages de Alta Conversión",
-    subtitle: "Páginas independientes diseñadas para un solo objetivo: vender",
-    desc: "Para campañas publicitarias en Meta o Google Ads, enviar tráfico a la home general es quemar presupuesto. Diseñamos landing pages ultrarrápidas pensadas exclusivamente para una sola acción: cotizar o comprar.",
+    tag: "CAMPAÑAS & ADS",
+    title: "Landing Pages & Micro-Apps de Conversión",
+    subtitle: "Páginas de autor con cotizadores o flujos interactivos para campañas",
+    desc: "Mandar tráfico pago de Meta Ads o Google Ads a una home genérica quema presupuesto. Construimos landings a medida —con simuladores, selectores o cierre directo a WhatsApp— pensadas para una única meta comercial.",
     features: [
-      "Diseño a medida con enfoque editorial brutalista sin distracciones",
-      "Carga ultrarrápida (<0.8s) que reduce el costo por clic publicitario",
-      "Embudos directos a WhatsApp con mensaje de origen predefinido",
-      "Prioridad Mobile-First con botones fijos de conversión ergonómicos",
-      "Entrega lista para pauta en 7 a 10 días hábiles",
-      "Integración con Píxel de Meta, Google Analytics 4 y Tag Manager"
+      "Diseño editorial propio sin plantillas recicladas ni distracciones",
+      "Componentes interactivos a medida (cotizadores, selectores, reservas)",
+      "Embudos directos a WhatsApp con contexto exacto de la campaña",
+      "Ergonomía Mobile-First diseñada para convertir con el pulgar",
+      "Integración lista con Píxel de Meta, GA4 y eventos de conversión",
+      "100% propiedad del código y despliegue en Cloudflare Pages"
     ],
-    ideal: "Lanzamientos de servicios, productos destacados o campañas activas de Google Ads y Meta Ads.",
+    ideal: "Lanzamientos de servicios, productos D2C, desarrollos inmobiliarios o campañas activas de Google Ads y Meta Ads.",
     investment: "USD 490",
     period: "Pago único",
     delivery: "Entrega en 7 a 10 Días Hábiles",
@@ -138,18 +143,19 @@ const growthServices = [
   },
   {
     num: "05",
+    tag: "SEO LOCAL",
     title: "Visibilidad Local & Google Maps",
-    subtitle: "SEO Local y presencia dominante en el Google Local 3-Pack",
-    desc: "Si tus clientes están en tu radio de influencia, aparecer entre los primeros resultados locales es decisivo. Optimizamos tu ficha de negocio y arquitectura web para captar clientes en tu zona geográfica.",
+    subtitle: "Posicionamiento real en búsquedas de tu ciudad y Google Local 3-Pack",
+    desc: "Si tus clientes te buscan cerca tuyo, aparecer entre los primeros resultados de Google Maps define quién se lleva la llamada. Optimizamos tu ficha, arquitectura semántica y señales locales.",
     features: [
-      "Optimización integral de Google Business Profile (ex GMB)",
-      "Estrategia de recolección y respuesta de reseñas verificadas",
-      "Consistencia estricta de datos NAP (Nombre, Dirección, Teléfono)",
-      "Marcado semántico Schema.org LocalBusiness en tu web",
-      "Páginas de aterrizaje geolocalizadas por zona o barrio",
-      "Monitoreo de posicionamiento en el Google Local 3-Pack"
+      "Optimización completa de Google Business Profile",
+      "Sistema práctico para captar y responder reseñas verificadas",
+      "Consistencia técnica de datos NAP y categorías de negocio",
+      "Marcado estructurado Schema.org LocalBusiness + áreas servidas",
+      "Arquitectura de páginas geolocalizadas por barrio o ciudad",
+      "Seguimiento inicial de visibilidad en el Local 3-Pack"
     ],
-    ideal: "Inmobiliarias, clínicas, servicios profesionales, comercios y empresas con presencia física o radio definido.",
+    ideal: "Comercios, gastronomía, clínicas, inmobiliarias y servicios profesionales con radio de atención geográfico.",
     investment: "USD 220",
     period: "Pago único",
     delivery: "Optimización en 5 Días Hábiles",
@@ -159,75 +165,75 @@ const growthServices = [
 
 const targetAudiences = [
   {
-    kicker: "01 / SITIO ACTIVO",
-    title: "Ya tienes web",
-    desc: "Pero sientes que es un folleto estático que no genera las consultas ni los ingresos que tu negocio necesita."
+    kicker: "01 / PRODUCTO ACTIVO",
+    title: "Ya tenés web o app",
+    desc: "Pero sentís que quedó estancada, cuesta usarla en el celular o no genera las ventas que tu operación necesita."
   },
   {
     kicker: "02 / PAUTA ACTIVA",
-    title: "Inviertes en Ads",
-    desc: "Pagas publicidad en Google o Instagram y necesitas que cada visita se transforme en un contacto real antes de rebotar."
+    title: "Invertís en Ads",
+    desc: "Pagás tráfico en Instagram o Google y necesitás que cada clic aterrice en un flujo claro que convierta sin rebotes."
   },
   {
-    kicker: "03 / TRACCIÓN",
-    title: "Crecimiento predecible",
-    desc: "Buscas mejoras continuas mes a mes sin lidiar con roturas técnicas, caídas de servidor o lentitud crónica."
+    kicker: "03 / COMERCIO PROPIO",
+    title: "Basta de comisiones",
+    desc: "Querés pasar pedidos y clientes a tu propio canal con WhatsApp y pagos locales sin regalar hasta el 30% a terceros."
   },
   {
-    kicker: "04 / EJECUCIÓN",
-    title: "Claridad y velocidad",
-    desc: "Prefieres trabajar con especialistas directos que hablan con números y código limpio, sin vueltas burocráticas."
+    kicker: "04 / EJECUCIÓN SENIOR",
+    title: "Trato directo",
+    desc: "Preferís trabajar mano a mano con quienes diseñan y programan el producto, con entregas rápidas y código propio."
   }
 ];
 
 const steps = [
   {
     num: "01",
-    title: "Contacto directo",
-    desc: "Una charla rápida de 15 minutos por WhatsApp o videollamada para entender tu situación actual y metas comerciales."
+    title: "Charla de 15 min",
+    desc: "Nos contás por WhatsApp o videollamada qué querés resolver y qué métrica comercial importa mover primero."
   },
   {
     num: "02",
-    title: "Diagnóstico técnico",
-    desc: "Auditamos tu web actual, latencia de carga, formularios y embudos para detectar con exactitud dónde se pierde dinero."
+    title: "Diagnóstico real",
+    desc: "Revisamos tu flujo actual en móvil y escritorio para detectar fricciones, cuellos de botella y oportunidades rápidas."
   },
   {
     num: "03",
-    title: "Propuesta de impacto",
-    desc: "Te presentamos una solución puntual con alcance exacto, cronograma de entrega y presupuesto cerrado sin sorpresas."
+    title: "Alcance cerrado",
+    desc: "Recibís una propuesta concreta con entregables claros, plazo exacto e inversión cerrada sin letra chica."
   },
   {
     num: "04",
-    title: "Implementación & Medición",
-    desc: "Ejecutamos los cambios en código de producción, validamos métricas en verde y medimos la subida en conversión."
+    title: "Ejecución & medición",
+    desc: "Implementamos en producción, verificamos en dispositivos reales y medimos el impacto en consultas y ventas."
   }
 ];
 
 const faqs = [
   {
     num: "01",
-    question: "¿Puedo contratar solo uno de estos servicios de forma independiente?",
-    answer: "Sí. Cada servicio funciona de manera modular e independiente. Analizamos tu situación y arrancamos por el punto que genere el impacto más rápido en tus ventas."
+    question: "¿Puedo contratar solo uno de estos servicios de forma modular?",
+    answer: "Sí. Cada módulo funciona de forma independiente. Analizamos tu etapa actual y arrancamos por la pieza que genera retorno comercial más rápido."
   },
   {
     num: "02",
-    question: "¿El Plan de Crecimiento Continuo tiene contrato de permanencia?",
-    answer: "No. El servicio se renueva mes a mes sin ningún tipo de permanencia obligatoria. Si en algún momento decides pausarlo o cancelarlo, lo haces sin penalizaciones ni preguntas."
+    question: "¿El Plan de Evolución Continua tiene contrato de permanencia?",
+    answer: "No. Se renueva mes a mes sin permanencia obligatoria ni penalizaciones. Si en algún momento decidís pausarlo, conservás el 100% del código y accesos."
   },
   {
     num: "03",
-    question: "¿Hacen cambios grandes de diseño dentro del mantenimiento mensual?",
-    answer: "El plan está diseñado para optimizaciones continuas, mejoras de velocidad, parches de seguridad, copywriting y CRO. Nuevos desarrollos de módulos o rediseños de cero se cotizan por separado con precio preferencial."
+    question: "¿También desarrollan apps PWA o plataformas con IA desde cero?",
+    answer: "Sí. Además de estos módulos de crecimiento, construimos productos completos desde cero (como Barrio.uy, DocuBox o Canarios Ya!). Escribinos y cotizamos tu arquitectura a medida."
   },
   {
     num: "04",
-    question: "¿Cómo es el esquema de pago para clientes en Uruguay, Argentina y España?",
-    answer: "Aceptamos pagos en moneda local o divisas: transferencias bancarias en Uruguay (BROU, Santander, Itaú), pagos en Argentina (vía transferencia o Mercado Pago) y pagos internacionales en EUR o USD mediante Stripe o Wise."
+    question: "¿Cómo son los pagos en Uruguay, Argentina y España?",
+    answer: "Aceptamos transferencias bancarias en Uruguay (BROU, Itaú, Santander), pagos en Argentina (transferencia o Mercado Pago) y cobros internacionales en USD/EUR vía Stripe o Wise."
   },
   {
     num: "05",
-    question: "¿Qué garantía técnica ofrecen en los servicios de velocidad?",
-    answer: "Garantizamos tiempos de carga por debajo de 0.8s y Core Web Vitals en verde en Google Lighthouse. Si no alcanzamos el rendimiento pactado, ajustamos el código sin costo adicional."
+    question: "¿Qué garantía técnica ofrecen en cada entrega?",
+    answer: "Todo proyecto se entrega verificado en móvil y PC, con Core Web Vitals en verde y 100% de propiedad del código fuente. Si algo no cumple lo acordado, lo ajustamos sin costo adicional."
   }
 ];
 ---
@@ -250,40 +256,39 @@ const faqs = [
     <header class="growth-hero">
       <div class="hero-inner">
         <div class="breadcrumb">
-          <a href="/">← VOLVER AL INICIO</a>
+          <a href="/">← INICIO</a>
           <span class="breadcrumb-sep">/</span>
-          <span>SERVICIOS DE CRECIMIENTO</span>
+          <span>SERVICIOS &amp; CRECIMIENTO</span>
         </div>
 
         <div class="section-label hero-section-label">
-          <span class="num">CRO &amp; OPS</span>
-          <span>CRECIMIENTO CONTINUO · AUDITORÍA · RENDIMIENTO WEB</span>
+          <span class="num">PRODUCTO &amp; CRO</span>
+          <span>EVOLUCIÓN CONTINUA · IA · WHATSAPP · CONVERSIÓN</span>
         </div>
 
         <h1 class="hero-headline" data-reveal-words>
-          Tu web ya existe.<br />
-          <em>Ahora hacemos que venda más.</em>
+          Escalá tu producto.<br />
+          <em>Convertí más sin fricción.</em>
         </h1>
 
         <p class="hero-sub">
-          No todos los negocios necesitan un sitio web nuevo desde cero. Muchos ya tienen uno que simplemente está estancado, lento o perdiendo prospectos en formularios olvidados. Optimizamos velocidad (<mark class="hl-yellow">&lt;0.8s</mark>), pulimos puntos de fricción y conectamos embudos directos a WhatsApp para transformar visitas en facturación real.
+          Ya sea que necesites evolucionar una app o sitio en producción, automatizar ventas con <mark class="hl-yellow">IA + WhatsApp</mark> o lanzar una landing a medida para pauta, atacamos los cuellos de botella reales con ingeniería propia y precios claros.
         </p>
 
         <div class="hero-ctas">
           <a 
-            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20hacer%20crecer%20las%20ventas%20de%20mi%20web%20actual" 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20mejorar%20las%20ventas%20y%20evolucionar%20mi%20producto%20digital" 
             target="_blank" 
             rel="noopener noreferrer" 
-            class="btn-primary"
+            class="btn-primary ink-fill magnetic-btn"
             data-cursor="WHATSAPP"
           >
-            <span>HABLEMOS POR WHATSAPP DIRECTO</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"></path>
-            </svg>
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="HABLAR POR WHATSAPP" arrow="diag" />
           </a>
-          <a href="#diagnostico" class="btn-ghost">
-            <span>DIAGNÓSTICO EN 30 SEGUNDOS ↓</span>
+          <a href="#diagnostico" class="btn-ghost ink-fill">
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="DIAGNÓSTICO EN 30s" arrow="right" />
           </a>
         </div>
       </div>
@@ -295,66 +300,66 @@ const faqs = [
         <div class="section-label">
           <span class="num">01</span> DIAGNÓSTICO EN 30 SEGUNDOS
         </div>
-        <h2 class="chk-title">¿TIENE TU WEB ALGUNO DE <em>estos 5 síntomas</em>?</h2>
+        <h2 class="chk-title" data-reveal-words>¿TU OPERACIÓN TIENE <em>estos 5 síntomas</em>?</h2>
         <p class="chk-sub">
-          Marca las casillas que aplican a tu web hoy para obtener un diagnóstico técnico instantáneo.
+          Tocá las casillas que aplican hoy a tu negocio para ver dónde se está escapando facturación.
         </p>
 
         <div class="chk-grid">
           <div class="chk-items-list" id="chkList">
             <label class="chk-item">
               <input type="checkbox" class="chk-box" />
-              <span class="chk-custom-mark"></span>
-              <span class="chk-text">Tu web tarda más de 2 segundos en cargar en redes móviles 4G.</span>
+              <span class="chk-custom-mark" aria-hidden="true"></span>
+              <span class="chk-text">Pagás comisiones altas a apps o plataformas intermediarias por cada venta o pedido.</span>
             </label>
             <label class="chk-item">
               <input type="checkbox" class="chk-box" />
-              <span class="chk-custom-mark"></span>
-              <span class="chk-text">Tus prospectos se pierden en formularios de contacto por mail que nadie responde en el día.</span>
+              <span class="chk-custom-mark" aria-hidden="true"></span>
+              <span class="chk-text">Tus consultas se pierden en formularios viejos o chats de WhatsApp desordenados sin seguimiento.</span>
             </label>
             <label class="chk-item">
               <input type="checkbox" class="chk-box" />
-              <span class="chk-custom-mark"></span>
-              <span class="chk-text">Tu sitio depende de plugins de WordPress propensos a caídas o hackeos.</span>
+              <span class="chk-custom-mark" aria-hidden="true"></span>
+              <span class="chk-text">Tu sitio o sistema se ve incómodo en celulares y cuesta completar una acción con una sola mano.</span>
             </label>
             <label class="chk-item">
               <input type="checkbox" class="chk-box" />
-              <span class="chk-custom-mark"></span>
-              <span class="chk-text">No cuentas con un botón fijo ergonómico para iniciar una conversación de WhatsApp.</span>
+              <span class="chk-custom-mark" aria-hidden="true"></span>
+              <span class="chk-text">Invertís en Meta Ads o Google Ads pero mandás todo el tráfico a una home genérica que rebota.</span>
             </label>
             <label class="chk-item">
               <input type="checkbox" class="chk-box" />
-              <span class="chk-custom-mark"></span>
-              <span class="chk-text">Tu negocio no aparece en los primeros 3 puestos de Google Maps en tu ciudad o zona.</span>
+              <span class="chk-custom-mark" aria-hidden="true"></span>
+              <span class="chk-text">Tu negocio no aparece entre los primeros 3 lugares de Google Maps cuando buscan tu rubro.</span>
             </label>
           </div>
 
           <div class="chk-feedback-box tactile-card" id="chkFeedback">
             <div class="chk-badge" id="chkBadge">ESTADO: SALUD ÓPTIMA (0 SÍNTOMAS)</div>
 
-            <!-- Barra de Salud Digital -->
             <div class="health-bar-wrap">
               <div class="health-bar-labels">
-                <span>NIVEL DE SALUD DIGITAL:</span>
-                <strong id="healthScoreText">100%</strong>
+                <span>SALUD DE CONVERSIÓN:</span>
+                <strong id="healthScoreText" class="tabular">100%</strong>
               </div>
               <div class="health-track">
                 <div class="health-fill" id="healthFill" style="width: 100%;"></div>
               </div>
             </div>
 
-            <h3 id="chkFeedbackTitle">Selecciona los síntomas de tu web</h3>
+            <h3 id="chkFeedbackTitle">Marcá tus síntomas actuales</h3>
             <p id="chkFeedbackDesc">
-              Haz clic en las casillas para evaluar la salud técnica y comercial de tu activo digital en este momento.
+              Seleccioná una o más casillas para calcular el impacto comercial y qué módulo conviene activar primero.
             </p>
             <a 
-              href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20hice%20el%20checklist%20y%20quiero%20solicitar%20un%20diagn%C3%B3stico%20de%20mi%20web" 
+              href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20hice%20el%20checklist%20y%20quiero%20un%20diagn%C3%B3stico%20para%20mi%20negocio" 
               target="_blank" 
               rel="noopener noreferrer" 
-              class="chk-cta-link"
+              class="chk-cta-link ink-fill"
               id="chkActionBtn"
             >
-              SOLICITAR DIAGNÓSTICO PROFUNDO →
+              <span class="ink" aria-hidden="true"></span>
+              <span class="chk-cta-label" id="chkActionLabel">SOLICITAR DIAGNÓSTICO PROFUNDO →</span>
             </a>
           </div>
         </div>
@@ -365,16 +370,19 @@ const faqs = [
     <section class="services-section" id="servicios">
       <div class="section-head">
         <div class="section-label">
-          <span class="num">02</span> CATÁLOGO DE SERVICIOS
+          <span class="num">02</span> CATÁLOGO MODULAR
         </div>
-        <h2>Soluciones de <em>alto rendimiento</em> para tu activo digital</h2>
+        <h2 data-reveal-words>Módulos de <em>impacto real</em> y precio transparente</h2>
       </div>
 
       <div class="services-stack">
         {growthServices.map(srv => (
           <article class="service-card tactile-card">
             <div class="service-card-head">
-              <span class="service-num">{srv.num}</span>
+              <div class="service-id-col">
+                <span class="service-num tabular">{srv.num}</span>
+                <span class="service-tag">{srv.tag}</span>
+              </div>
               <div class="service-title-group">
                 <h3>{srv.title}</h3>
                 <p class="service-sub">{srv.subtitle}</p>
@@ -393,7 +401,7 @@ const faqs = [
               <ul>
                 {srv.features.map(feat => (
                   <li>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
                       <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
                     <span>{feat}</span>
@@ -412,14 +420,11 @@ const faqs = [
                 href={`https://wa.me/59898300491?text=${encodeURIComponent(srv.waText)}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
-                class="service-btn"
+                class="service-btn ink-fill"
                 data-cursor="COTIZAR"
               >
-                <span>CONTRATAR ESTE SERVICIO POR WHATSAPP</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
+                <span class="ink" aria-hidden="true"></span>
+                <RollText text="CONTRATAR POR WHATSAPP" arrow="diag" />
               </a>
             </div>
           </article>
@@ -427,21 +432,21 @@ const faqs = [
       </div>
     </section>
 
-    <!-- SELLO DE GARANTÍA AMARGO PERFORMANCE SLA -->
+    <!-- SELLO DE GARANTÍA -->
     <section class="sla-guarantee-section">
       <div class="sla-container">
         <div class="sla-card tactile-card">
           <div class="sla-badge-wrap">
             <div class="sla-seal">
-              <span class="seal-icon">⚡</span>
-              <span class="seal-text">SLA 100% GARANTIZADO</span>
+              <span class="seal-icon" aria-hidden="true">⚡</span>
+              <span class="seal-text">100% CÓDIGO PROPIO</span>
             </div>
           </div>
           <div class="sla-content">
-            <span class="sla-kicker">COMPROMISO TÉCNICO VINCULANTE</span>
-            <h2>GARANTÍA DE VELOCIDAD &lt;0.8s Y CÓDIGO PROPIO</h2>
+            <span class="sla-kicker">COMPROMISO DE INGENIERÍA</span>
+            <h2>PROPIEDAD TOTAL DEL CÓDIGO Y ESTÁNDAR EN VERDE</h2>
             <p>
-              Si optimizamos tu sitio y no logramos una puntuación en verde en Google Lighthouse o una carga sub-segundo en móviles, seguimos ajustando el código sin cobrarte un solo dólar adicional hasta cumplir el estándar. Sin contratos trampa ni dependencias cautivas.
+              Cada entrega sale validada en dispositivos móviles reales, con Core Web Vitals en verde y el 100% del repositorio, infraestructura y dominios a tu nombre. Sin contratos trampa, sin comisiones ocultas y sin dependencias cautivas.
             </p>
           </div>
         </div>
@@ -454,7 +459,7 @@ const faqs = [
         <div class="section-label">
           <span class="num">03</span> CALIFICACIÓN
         </div>
-        <h2>¿Para quién son estos <em>servicios</em>?</h2>
+        <h2 data-reveal-words>¿Para quién son estos <em>módulos</em>?</h2>
       </div>
 
       <div class="audience-grid">
@@ -474,13 +479,13 @@ const faqs = [
         <div class="section-label">
           <span class="num">04</span> METODOLOGÍA
         </div>
-        <h2>Cómo <em>trabajamos</em> juntos</h2>
+        <h2 data-reveal-words>Cómo <em>trabajamos</em> juntos</h2>
       </div>
 
       <div class="process-grid">
         {steps.map(step => (
           <div class="process-step">
-            <div class="step-num">{step.num}</div>
+            <div class="step-num tabular">{step.num}</div>
             <h3>{step.title}</h3>
             <p>{step.desc}</p>
           </div>
@@ -494,14 +499,14 @@ const faqs = [
         <div class="section-label">
           <span class="num">05</span> PREGUNTAS FRECUENTES
         </div>
-        <h2>Dudas <em>claras.</em> Respuestas directas.</h2>
+        <h2 data-reveal-words>Dudas <em>claras.</em> Respuestas directas.</h2>
       </div>
 
       <div class="faq-list">
         {faqs.map((faq, index) => (
           <div class="faq-item" data-index={index}>
-            <button class="faq-trigger" aria-expanded="false">
-              <span class="faq-num">{faq.num}</span>
+            <button type="button" class="faq-trigger" aria-expanded="false">
+              <span class="faq-num tabular">{faq.num}</span>
               <span class="faq-title">{faq.question}</span>
               <span class="faq-icon" aria-hidden="true">+</span>
             </button>
@@ -516,25 +521,23 @@ const faqs = [
     <!-- CTA FINAL -->
     <section class="growth-cta">
       <div class="cta-box tactile-card">
-        <span class="cta-kicker">¿NO SABES POR DÓNDE ARRANCAR?</span>
-        <h2>Charlamos 15 minutos sin compromiso y diagnosticamos tu web.</h2>
+        <span class="cta-kicker">● ¿NO SABÉS POR DÓNDE ARRANCAR?</span>
+        <h2>Charlamos 15 minutos sin compromiso y diagnosticamos tu operación.</h2>
         <p>
-          Te decimos con honestidad qué cuello de botella está frenando tus ventas y cuál de estos módulos te conviene activar primero. Sin rodeos ni tácticas de venta agresivas.
+          Te decimos con honestidad qué cuello de botella está frenando tus ventas y cuál de estos módulos —o un desarrollo a medida— te conviene activar primero.
         </p>
         <div class="cta-actions">
           <a 
-            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20conversar%20sobre%20el%20crecimiento%20de%20mi%20sitio%20web" 
+            href="https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20conversar%20sobre%20c%C3%B3mo%20escalar%20mi%20producto%20digital" 
             target="_blank" 
             rel="noopener noreferrer" 
-            class="cta-btn"
+            class="cta-btn ink-fill magnetic-btn"
             data-cursor="WHATSAPP"
           >
-            <span>HABLAR POR WHATSAPP DIRECTO</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"></path>
-            </svg>
+            <span class="ink" aria-hidden="true"></span>
+            <RollText text="HABLAR POR WHATSAPP DIRECTO" arrow="diag" />
           </a>
-          <span class="cta-note">Respuesta habitual en menos de 2 horas hábiles • Uruguay, Argentina y España</span>
+          <span class="cta-note">Respuesta habitual en menos de 2 horas hábiles • UY · AR · ES</span>
         </div>
       </div>
     </section>
@@ -544,161 +547,120 @@ const faqs = [
 </Layout>
 
 <script>
-  // 1. FAQ Interactivity
-  const faqItems = document.querySelectorAll('.faq-item');
-  faqItems.forEach(item => {
-    const trigger = item.querySelector('.faq-trigger');
-    if (!trigger) return;
-
-    trigger.addEventListener('click', () => {
-      const isActive = item.classList.contains('active');
-      faqItems.forEach(otherItem => {
-        otherItem.classList.remove('active');
-        const otherTrigger = otherItem.querySelector('.faq-trigger');
-        if (otherTrigger) otherTrigger.setAttribute('aria-expanded', 'false');
-      });
-
-      if (!isActive) {
-        item.classList.add('active');
-        trigger.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
-
-  // Checklist Interactivo con Barra de Salud Digital
-  const chkBoxes = document.querySelectorAll('.chk-box') as NodeListOf<HTMLInputElement>;
+  // Checklist Interactivo con Barra de Salud de Conversión
+  // (El acordeón FAQ lo gestiona globalmente Layout.astro para evitar doble toggle)
+  const chkBoxes = document.querySelectorAll<HTMLInputElement>('.chk-box');
   const chkBadge = document.getElementById('chkBadge');
   const chkFeedbackTitle = document.getElementById('chkFeedbackTitle');
   const chkFeedbackDesc = document.getElementById('chkFeedbackDesc');
-  const chkActionBtn = document.getElementById('chkActionBtn') as HTMLAnchorElement;
+  const chkActionBtn = document.getElementById('chkActionBtn') as HTMLAnchorElement | null;
+  const chkActionLabel = document.getElementById('chkActionLabel');
   const healthScoreText = document.getElementById('healthScoreText');
   const healthFill = document.getElementById('healthFill');
 
   function updateChecklist() {
     let checkedCount = 0;
     chkBoxes.forEach(chk => {
+      const parent = chk.closest('.chk-item');
+      parent?.classList.toggle('is-checked', chk.checked);
       if (chk.checked) checkedCount++;
     });
 
     const health = Math.max(15, 100 - (checkedCount * 20));
-
     if (healthScoreText) healthScoreText.textContent = `${health}%`;
     if (healthFill) {
       healthFill.style.width = `${health}%`;
-      if (health > 70) {
-        healthFill.style.background = '#22c55e';
-      } else if (health >= 40) {
-        healthFill.style.background = '#f59e0b';
-      } else {
-        healthFill.style.background = '#dc2626';
-      }
+      if (health > 70) healthFill.style.background = '#22c55e';
+      else if (health >= 40) healthFill.style.background = '#f59e0b';
+      else healthFill.style.background = '#dc2626';
     }
 
     if (checkedCount === 0) {
-      if (chkBadge) {
-        chkBadge.textContent = 'ESTADO: SALUD ÓPTIMA (0 SÍNTOMAS)';
-        chkBadge.className = 'chk-badge';
-      }
-      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Selecciona los síntomas de tu web';
-      if (chkFeedbackDesc) chkFeedbackDesc.textContent = 'Haz clic en las casillas para evaluar la salud técnica y comercial de tu activo digital.';
-      if (chkActionBtn) {
-        chkActionBtn.textContent = 'SOLICITAR DIAGNÓSTICO PROFUNDO →';
-        chkActionBtn.href = 'https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20solicitar%20un%20diagn%C3%B3stico%20de%20mi%20web';
-      }
+      if (chkBadge) { chkBadge.textContent = 'ESTADO: SALUD ÓPTIMA (0 SÍNTOMAS)'; chkBadge.className = 'chk-badge'; }
+      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Marcá tus síntomas actuales';
+      if (chkFeedbackDesc) chkFeedbackDesc.textContent = 'Seleccioná una o más casillas para calcular el impacto comercial y qué módulo conviene activar primero.';
+      if (chkActionLabel) chkActionLabel.textContent = 'SOLICITAR DIAGNÓSTICO PROFUNDO →';
+      if (chkActionBtn) chkActionBtn.href = 'https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20quiero%20solicitar%20un%20diagn%C3%B3stico%20para%20mi%20negocio';
     } else if (checkedCount <= 2) {
-      if (chkBadge) {
-        chkBadge.textContent = 'ESTADO: RIESGO MODERADO';
-        chkBadge.className = 'chk-badge warning';
-      }
-      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Estás perdiendo entre 15% y 30% de tus ventas';
-      if (chkFeedbackDesc) chkFeedbackDesc.textContent = `Has marcado ${checkedCount} síntomas de fuga. Tu tráfico no está convirtiendo al máximo debido a demoras de carga o barreras de contacto.`;
-      if (chkActionBtn) {
-        chkActionBtn.textContent = 'CORREGIR ESTAS FUGAS POR WHATSAPP →';
-        chkActionBtn.href = `https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20marqu%C3%A9%20${checkedCount}%20s%C3%ADntomas%20en%20el%20checklist%20y%20quiero%20corregir%20las%20fugas%20de%20mi%20web`;
-      }
+      if (chkBadge) { chkBadge.textContent = `ESTADO: FUGA MODERADA (${checkedCount} SÍNTOMAS)`; chkBadge.className = 'chk-badge warning'; }
+      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Estás dejando entre 15% y 30% de margen en la mesa';
+      if (chkFeedbackDesc) chkFeedbackDesc.textContent = `Marcaste ${checkedCount} puntos de fricción. Ajustando el flujo móvil y la automatización por WhatsApp podés recuperar esas ventas rápido.`;
+      if (chkActionLabel) chkActionLabel.textContent = 'CORREGIR ESTAS FUGAS POR WHATSAPP →';
+      if (chkActionBtn) chkActionBtn.href = `https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20marqu%C3%A9%20${checkedCount}%20s%C3%ADntomas%20en%20el%20diagn%C3%B3stico%20y%20quiero%20corregir%20fugas`;
     } else {
-      if (chkBadge) {
-        chkBadge.textContent = 'ESTADO: ALERTA CRÍTICA';
-        chkBadge.className = 'chk-badge danger';
-      }
-      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Fuga severa de clientes y presupuesto publicitario';
-      if (chkFeedbackDesc) chkFeedbackDesc.textContent = `Has marcado ${checkedCount} problemas graves. Tu web está quemando dinero de publicidad y alejando a clientes potenciales hacia tus competidores.`;
-      if (chkActionBtn) {
-        chkActionBtn.textContent = 'ACTIVAR RESCATE TÉCNICO INMEDIATO →';
-        chkActionBtn.href = `https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20marqu%C3%A9%20${checkedCount}%20s%C3%ADntomas%20cr%C3%ADticos%20en%20el%20checklist%20y%20necesito%20una%20auditor%C3%ADa%20urgente`;
-      }
+      if (chkBadge) { chkBadge.textContent = `ESTADO: ALERTA CRÍTICA (${checkedCount} SÍNTOMAS)`; chkBadge.className = 'chk-badge danger'; }
+      if (chkFeedbackTitle) chkFeedbackTitle.textContent = 'Fuga severa de clientes y margen operativo';
+      if (chkFeedbackDesc) chkFeedbackDesc.textContent = `Marcaste ${checkedCount} cuellos de botella críticos. Te conviene pasar a un canal propio con automatización y UX móvil de alto impacto.`;
+      if (chkActionLabel) chkActionLabel.textContent = 'ACTIVAR PLAN DE RESCATE POR WHATSAPP →';
+      if (chkActionBtn) chkActionBtn.href = `https://wa.me/59898300491?text=Hola%20Amargo%20Creativo,%20marqu%C3%A9%20${checkedCount}%20s%C3%ADntomas%20cr%C3%ADticos%20y%20necesito%20un%20plan%20de%20mejora`;
     }
   }
 
-  chkBoxes.forEach(chk => {
-    chk.addEventListener('change', updateChecklist);
-  });
+  chkBoxes.forEach(chk => chk.addEventListener('change', updateChecklist));
 </script>
 
 <style>
   .growth-page {
     width: 100%;
     overflow-x: clip;
-    padding-top: calc(60px + env(safe-area-inset-top));
+    padding-top: calc(64px + env(safe-area-inset-top));
     background: var(--paper);
   }
 
   /* HERO SECTION */
   .growth-hero {
+    border-bottom: 1px solid var(--line);
+    background: var(--bone);
+  }
+
+  .hero-inner {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
-    border-bottom: 1px solid var(--line);
-    position: relative;
-    background: var(--bone);
+    padding: clamp(44px, 7vh, 96px) var(--gut) clamp(48px, 7vh, 88px);
   }
 
   .breadcrumb {
     display: flex;
     align-items: center;
-    gap: 12px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--mute);
-    margin-bottom: 28px;
+    margin-bottom: 22px;
   }
+
   .breadcrumb a {
     color: var(--ink);
     text-decoration: none;
+    font-weight: 700;
     transition: color 0.2s var(--ease);
-    font-weight: 600;
-  }
-  .breadcrumb a:hover {
-    color: var(--mate);
-  }
-  :global(body.theme-electric) .breadcrumb a:hover {
-    color: var(--electric);
-  }
-  .breadcrumb-sep {
-    opacity: 0.4;
   }
 
-  .hero-section-label {
-    margin-bottom: 24px;
+  @media (hover: hover) {
+    .breadcrumb a:hover { color: var(--mate); }
+    :global(body.theme-electric) .breadcrumb a:hover { color: var(--electric); }
   }
+
+  .breadcrumb-sep { opacity: 0.4; }
+
+  .hero-section-label { margin-bottom: 20px; }
 
   .hero-headline {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(26px, 5.5vw, 84px);
-    line-height: 0.96;
+    font-size: clamp(28px, 5.4vw, 82px);
+    line-height: 0.95;
     letter-spacing: -0.03em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     text-wrap: balance;
-    overflow-wrap: break-word;
-    word-break: normal;
   }
+
   .hero-headline em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
     color: var(--rust);
@@ -706,153 +668,153 @@ const faqs = [
   }
 
   .hero-sub {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(16px, 1.7vw, 21px);
+    font-family: var(--font-body);
+    font-size: clamp(15px, 1.5vw, 19.5px);
     line-height: 1.55;
     color: var(--ink);
     opacity: 0.88;
-    max-width: 900px;
-    margin-bottom: 40px;
-  }
-  .hero-sub mark.mate-mark {
-    background: var(--mate);
-    color: var(--bone);
-    padding: 2px 8px;
-    font-weight: 600;
-  }
-  :global(body.theme-electric) .hero-sub mark.mate-mark {
-    background: var(--electric);
-    color: #0a0a0a;
+    max-width: 72ch;
+    margin-bottom: 32px;
   }
 
   .hero-ctas {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 12px;
     flex-wrap: wrap;
   }
-  .btn-primary {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    background: var(--ink);
-    color: var(--bone);
-    padding: 16px 30px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    text-transform: uppercase;
-    border: 1px solid var(--ink);
-    transition: all 0.3s var(--ease);
-  }
-  .btn-primary svg {
-    width: 15px;
-    height: 15px;
-    transition: transform 0.3s var(--ease);
-  }
-  .btn-primary:hover {
-    background: var(--mate);
-    border-color: var(--mate);
-    color: #ffffff;
-  }
-  .btn-primary:hover svg {
-    transform: translate(3px, -3px);
-  }
-  :global(body.theme-electric) .btn-primary {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: var(--electric);
-  }
-  :global(body.theme-electric) .btn-primary:hover {
-    background: #ffffff;
-    border-color: #ffffff;
-    color: #0a0a0a;
-  }
 
+  .btn-primary,
   .btn-ghost {
     display: inline-flex;
     align-items: center;
-    padding: 16px 26px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11.5px;
+    justify-content: center;
+    gap: 8px;
+    height: 46px;
+    padding: 0 26px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-decoration: none;
     text-transform: uppercase;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
+  }
+
+  .btn-primary:active,
+  .btn-ghost:active {
+    transform: scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  .btn-primary {
+    --mx-fill-ink: #11120f;
+    background: var(--electric);
+    color: #11120f;
+    border: 1px solid #11120f;
+    box-shadow: 2px 2px 0px #11120f;
+  }
+
+  @media (hover: hover) {
+    .btn-primary:hover {
+      color: var(--electric);
+      transform: translate3d(0, -2px, 0);
+    }
+  }
+
+  .btn-ghost {
+    --mx-fill-ink: var(--ink);
+    background: transparent;
     color: var(--ink);
-    border: 1px solid var(--line);
-    transition: all 0.3s var(--ease);
-  }
-  .btn-ghost:hover {
-    background: var(--ink);
-    color: var(--bone);
+    border: 1px solid var(--line-strong);
   }
 
-
+  @media (hover: hover) {
+    .btn-ghost:hover {
+      color: var(--bone);
+      transform: translate3d(0, -2px, 0);
+    }
+  }
 
   /* CHECKLIST SECTION */
   .checklist-section {
-    padding: clamp(60px, 8vw, 100px) var(--gut);
+    padding: clamp(48px, 7vw, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
-    background: var(--bone);
+    background: var(--paper);
   }
+
   .chk-container {
     max-width: var(--max);
     margin: 0 auto;
   }
+
   .chk-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(30px, 4.5vw, 64px);
+    font-size: clamp(28px, 4.4vw, 60px);
     line-height: 0.96;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 12px;
   }
+
   .chk-title em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     color: var(--rust);
   }
+
   .chk-sub {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(14.5px, 1.3vw, 18px);
+    font-family: var(--font-body);
+    font-size: clamp(14px, 1.25vw, 17.5px);
     color: var(--ink);
     opacity: 0.85;
-    margin-bottom: 40px;
+    margin-bottom: 32px;
   }
 
   .chk-grid {
     display: grid;
-    grid-template-columns: 1.3fr 1fr;
-    gap: clamp(32px, 4vw, 56px);
+    grid-template-columns: 1.25fr 1fr;
+    gap: clamp(24px, 4vw, 48px);
     align-items: stretch;
   }
 
   .chk-items-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
   }
 
   .chk-item {
     display: flex;
     align-items: flex-start;
-    gap: 16px;
+    gap: 14px;
     border: 1px solid var(--line);
-    background: var(--paper);
-    padding: 18px 20px;
+    border-radius: 14px;
+    background: var(--bone);
+    padding: 16px 18px;
     cursor: pointer;
-    transition: all 0.2s var(--ease);
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 0.2s var(--ease), transform 0.18s var(--ease), background-color 0.2s;
   }
 
-  .chk-item:hover {
+  .chk-item:active {
+    transform: scale(0.985);
+  }
+
+  .chk-item.is-checked {
     border-color: var(--rust);
-    transform: translateX(4px);
+    background: rgba(180, 83, 9, 0.05);
+  }
+
+  @media (hover: hover) {
+    .chk-item:hover {
+      border-color: var(--rust);
+      transform: translate3d(4px, 0, 0);
+    }
   }
 
   .chk-box {
@@ -865,13 +827,14 @@ const faqs = [
   .chk-custom-mark {
     width: 22px;
     height: 22px;
-    border: 2px solid var(--line);
-    background: var(--bone);
+    border: 2px solid var(--line-strong);
+    border-radius: 6px;
+    background: var(--paper);
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: background-color 0.2s, border-color 0.2s;
     margin-top: 1px;
   }
 
@@ -879,68 +842,64 @@ const faqs = [
     background: var(--rust);
     border-color: var(--rust);
   }
+
   .chk-box:checked + .chk-custom-mark::after {
     content: "✕";
     color: #ffffff;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
+    font-family: var(--font-mono);
+    font-size: 12px;
     font-weight: 800;
   }
 
   .chk-text {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14.5px;
-    line-height: 1.5;
+    font-family: var(--font-body);
+    font-size: 14px;
+    line-height: 1.48;
     color: var(--ink);
     font-weight: 500;
   }
 
   .chk-feedback-box {
     border: 1px solid var(--line);
-    background: var(--paper);
-    padding: clamp(28px, 4vw, 44px);
+    border-radius: var(--radius-md);
+    background: var(--bone);
+    padding: clamp(24px, 3.8vw, 40px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 16px;
-    position: relative;
   }
 
   .chk-badge {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
     font-weight: 700;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.08em;
     padding: 4px 10px;
-    background: #0a0a0a;
-    color: #ffffff;
+    border-radius: 999px;
+    background: #11120f;
+    color: #f5f3ec;
     width: fit-content;
   }
 
-  .chk-badge.warning {
-    background: #d97706;
-    color: #ffffff;
-  }
-
-  .chk-badge.danger {
-    background: #dc2626;
-    color: #ffffff;
-  }
+  .chk-badge.warning { background: #d97706; color: #ffffff; }
+  .chk-badge.danger { background: #dc2626; color: #ffffff; }
 
   .health-bar-wrap {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    background: rgba(0,0,0,0.03);
-    padding: 12px;
-    border: 1px solid rgba(0,0,0,0.08);
+    background: var(--paper);
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
   }
 
   .health-bar-labels {
     display: flex;
     justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
   }
@@ -948,102 +907,120 @@ const faqs = [
   .health-track {
     width: 100%;
     height: 8px;
-    background: rgba(0,0,0,0.1);
-    border-radius: 4px;
+    background: var(--line);
+    border-radius: 999px;
     overflow: hidden;
   }
 
   .health-fill {
     height: 100%;
     background: #22c55e;
-    transition: width 0.3s var(--ease), background 0.3s;
+    border-radius: 999px;
+    transition: width 0.35s var(--ease), background-color 0.3s;
   }
 
   .chk-feedback-box h3 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(22px, 2.5vw, 32px);
+    font-size: clamp(20px, 2.3vw, 29px);
     line-height: 1.1;
     text-transform: uppercase;
     color: var(--ink);
   }
 
   .chk-feedback-box p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14px;
-    line-height: 1.6;
+    line-height: 1.58;
     color: var(--ink);
-    opacity: 0.85;
+    opacity: 0.86;
   }
 
   .chk-cta-link {
+    --mx-fill-ink: #11120f;
     display: inline-flex;
     align-items: center;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    justify-content: center;
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 999px;
+    background: var(--electric);
+    color: #11120f;
+    border: 1px solid #11120f;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--rust);
     text-decoration: none;
-    margin-top: 8px;
-    transition: transform 0.2s;
+    width: fit-content;
+    transition: color 0.3s var(--ease), transform 0.15s;
   }
-  .chk-cta-link:hover {
-    transform: translateX(4px);
+
+  .chk-cta-label {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (hover: hover) {
+    .chk-cta-link:hover { color: var(--electric); }
   }
 
   /* SERVICIOS SECTION & CARDS */
   .services-section {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
+    padding: clamp(48px, 7vh, 100px) var(--gut);
     border-bottom: 1px solid var(--line);
   }
 
   .section-head {
     display: grid;
     grid-template-columns: 1fr 3fr;
-    gap: 48px;
-    margin-bottom: 64px;
+    gap: 36px;
+    margin-bottom: 48px;
     align-items: start;
-    padding-bottom: 24px;
+    padding-bottom: 20px;
     border-bottom: 1px solid var(--line);
   }
 
   .section-label {
-    font-size: 11px;
+    font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--mute);
     display: flex;
-    gap: 12px;
+    gap: 10px;
     align-items: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
   }
+
   .section-label .num {
     color: var(--bone);
     font-weight: 700;
     background: var(--mate);
     padding: 4px 8px;
+    border-radius: 3px;
   }
+
   :global(body.theme-electric) .section-label .num {
     background: var(--electric);
     color: #0a0a0a;
   }
 
   .section-head h2 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(26px, 4.5vw, 64px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(26px, 4.3vw, 60px);
     line-height: 0.95;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
     color: var(--ink);
   }
+
   .section-head h2 em {
-    font-family: 'Instrument Serif', serif;
+    font-family: var(--font-serif);
     font-style: italic;
     font-weight: 400;
     color: var(--rust);
@@ -1053,66 +1030,91 @@ const faqs = [
   .services-stack {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 28px;
   }
 
   .service-card {
     border: 1px solid var(--line);
-    padding: clamp(28px, 4vw, 52px);
+    border-radius: var(--radius-md);
+    padding: clamp(22px, 3.8vw, 46px);
     background: var(--bone);
-    position: relative;
-    transition: all 0.3s var(--ease);
+    transition: border-color 0.25s var(--ease), box-shadow 0.25s var(--ease), transform 0.25s var(--ease);
   }
-  .service-card:hover {
-    border-color: var(--mate);
-    box-shadow: 4px 4px 0px var(--line);
-  }
-  :global(body.theme-electric) .service-card:hover {
-    border-color: var(--electric);
+
+  @media (hover: hover) {
+    .service-card:hover {
+      border-color: var(--mate);
+      box-shadow: 0 16px 36px rgba(17, 18, 15, 0.08);
+      transform: translate3d(0, -3px, 0);
+    }
+    :global(body.theme-electric) .service-card:hover {
+      border-color: var(--electric);
+    }
   }
 
   .service-card-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 28px;
-    margin-bottom: 24px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-    padding-bottom: 20px;
+    gap: 22px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 18px;
     flex-wrap: wrap;
+  }
+
+  .service-id-col {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .service-num {
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    font-size: clamp(32px, 4.5vw, 50px);
+    font-size: clamp(30px, 4vw, 46px);
     color: var(--mate);
     line-height: 1;
   }
+
   :global(body.theme-electric) .service-num {
     color: var(--electric);
   }
 
+  .service-tag {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #11120f;
+    color: var(--electric);
+    width: fit-content;
+  }
+
   .service-title-group {
     flex: 1;
-    min-width: 260px;
+    min-width: 240px;
   }
+
   .service-title-group h3 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: clamp(22px, 3vw, 34px);
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(20px, 2.8vw, 32px);
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 4px;
+    line-height: 1.08;
   }
+
   .service-sub {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13.5px;
+    font-family: var(--font-body);
+    font-size: 13px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     color: var(--rust);
     font-weight: 600;
   }
@@ -1120,70 +1122,82 @@ const faqs = [
   .service-pricing-badge {
     background: var(--paper);
     border: 1px solid var(--line);
-    padding: 10px 16px;
+    border-radius: 12px;
+    padding: 12px 16px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
   }
+
   .price-val {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
     font-size: 18px;
     color: var(--ink);
   }
+
   .price-period {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     color: var(--mute);
     text-transform: uppercase;
   }
+
   .delivery-stamp {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8.5px;
+    font-family: var(--font-mono);
+    font-size: 9px;
     font-weight: 700;
     color: var(--mate);
-    background: rgba(45, 99, 53, 0.08);
-    padding: 2px 5px;
-    margin-top: 2px;
+    background: rgba(45, 99, 53, 0.1);
+    padding: 2px 7px;
+    border-radius: 999px;
+    margin-top: 3px;
+  }
+
+  :global(body.theme-electric) .delivery-stamp {
+    color: var(--electric);
+    background: rgba(241, 255, 90, 0.12);
   }
 
   .service-desc {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
+    font-family: var(--font-body);
+    font-size: 14.5px;
     line-height: 1.6;
     color: var(--ink);
     opacity: 0.9;
-    max-width: 900px;
-    margin-bottom: 28px;
+    max-width: 78ch;
+    margin-bottom: 22px;
   }
 
-  .service-includes {
-    margin-bottom: 28px;
-  }
+  .service-includes { margin-bottom: 22px; }
+
   .service-includes h4 {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10.5px;
+    font-family: var(--font-mono);
+    font-size: 10px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--mute);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
   }
+
   .service-includes ul {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 10px 24px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 10px 22px;
   }
+
   .service-includes li {
     display: flex;
     align-items: flex-start;
     gap: 10px;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13.5px;
     line-height: 1.45;
     color: var(--ink);
   }
+
   .service-includes li svg {
     width: 15px;
     height: 15px;
@@ -1191,101 +1205,97 @@ const faqs = [
     flex-shrink: 0;
     margin-top: 2px;
   }
+
   :global(body.theme-electric) .service-includes li svg {
     color: var(--electric);
   }
 
   .service-ideal {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--paper);
     border-left: 3px solid var(--mate);
-    padding: 14px 18px;
-    margin-bottom: 28px;
+    border-radius: 0 10px 10px 0;
+    padding: 12px 16px;
+    margin-bottom: 22px;
   }
+
   :global(body.theme-electric) .service-ideal {
     border-left-color: var(--electric);
   }
+
   .service-ideal strong {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9.5px;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: var(--mate);
     margin-bottom: 2px;
   }
+
   :global(body.theme-electric) .service-ideal strong {
     color: var(--electric);
   }
+
   .service-ideal p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13.5px;
-    line-height: 1.45;
+    line-height: 1.48;
     color: var(--ink);
   }
 
   .service-btn {
+    --mx-fill-ink: #11120f;
     display: inline-flex;
     align-items: center;
-    gap: 10px;
-    background: var(--ink);
-    color: var(--bone);
-    padding: 14px 24px;
-    font-family: 'JetBrains Mono', monospace;
+    justify-content: center;
+    gap: 8px;
+    background: var(--electric);
+    color: #11120f;
+    height: 44px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     text-decoration: none;
     text-transform: uppercase;
-    border: 1px solid var(--ink);
-    transition: all 0.3s var(--ease);
+    border: 1px solid #11120f;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
   }
-  .service-btn svg {
-    width: 14px;
-    height: 14px;
-    transition: transform 0.3s var(--ease);
-  }
-  .service-btn:hover {
-    background: var(--mate);
-    border-color: var(--mate);
-    color: #ffffff;
-  }
-  .service-btn:hover svg {
-    transform: translateX(4px);
-  }
-  :global(body.theme-electric) .service-btn {
-    background: var(--electric);
-    color: #0a0a0a;
-    border-color: var(--electric);
-  }
-  :global(body.theme-electric) .service-btn:hover {
-    background: #ffffff;
-    border-color: #ffffff;
-    color: #0a0a0a;
+
+  .service-btn:active { transform: scale(0.97); }
+
+  @media (hover: hover) {
+    .service-btn:hover { color: var(--electric); }
   }
 
   /* SLA GUARANTEE SECTION */
   .sla-guarantee-section {
-    padding: clamp(60px, 8vw, 90px) var(--gut);
+    padding: clamp(44px, 6vw, 80px) var(--gut);
     border-bottom: 1px solid var(--line);
     background: var(--paper);
   }
+
   .sla-container {
     max-width: var(--max);
     margin: 0 auto;
   }
+
   .sla-card {
-    border: 2px dashed var(--line);
-    padding: clamp(32px, 5vw, 60px);
+    border: 1.5px dashed var(--line-strong);
+    border-radius: 20px;
+    padding: clamp(26px, 4.5vw, 52px);
     display: flex;
     align-items: center;
-    gap: clamp(32px, 4vw, 56px);
+    gap: clamp(24px, 4vw, 48px);
     background: var(--bone);
-    position: relative;
   }
+
   .sla-seal {
-    width: 120px;
-    height: 120px;
-    border: 3px solid var(--line);
+    width: 112px;
+    height: 112px;
+    border: 2px solid #11120f;
     border-radius: 50%;
     display: flex;
     flex-direction: column;
@@ -1293,41 +1303,44 @@ const faqs = [
     justify-content: center;
     text-align: center;
     background: var(--electric);
-    color: #0a0a0a;
-    box-shadow: 4px 4px 0px var(--line);
+    color: #11120f;
+    box-shadow: 4px 4px 0px #11120f;
     flex-shrink: 0;
   }
-  .seal-icon {
-    font-size: 28px;
-  }
+
+  .seal-icon { font-size: 26px; }
+
   .seal-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
+    font-family: var(--font-mono);
+    font-size: 8.5px;
     font-weight: 800;
-    line-height: 1.1;
+    line-height: 1.15;
     text-transform: uppercase;
     padding: 0 8px;
   }
+
   .sla-kicker {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.12em;
     color: var(--rust);
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
+
   .sla-content h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(22px, 2.6vw, 36px);
+    font-size: clamp(20px, 2.5vw, 34px);
     letter-spacing: -0.02em;
     text-transform: uppercase;
     color: var(--ink);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
+
   .sla-content p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 14.5px;
     line-height: 1.6;
     color: var(--ink);
@@ -1335,94 +1348,99 @@ const faqs = [
   }
 
   /* AUDIENCE GRID */
-  .audience-section {
+  .audience-section,
+  .process-section,
+  .growth-faq {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
+    padding: clamp(48px, 7vh, 96px) var(--gut);
     border-bottom: 1px solid var(--line);
-  }
-  .audience-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  .audience-card {
-    border: 1px solid var(--line);
-    padding: 32px 26px;
-    background: var(--bone);
-    position: relative;
-    transition: all 0.3s var(--ease);
-  }
-  .audience-card:hover {
-    border-color: var(--rust);
-    transform: translateY(-4px);
-    box-shadow: 4px 4px 0px var(--line);
-  }
-  .audience-kicker {
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    color: var(--rust);
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-  .audience-card h3 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 22px;
-    text-transform: uppercase;
-    color: var(--ink);
-    margin-bottom: 10px;
-  }
-  .audience-card p {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    line-height: 1.55;
-    color: var(--ink);
-    opacity: 0.85;
   }
 
-  /* PROCESS SECTION */
-  .process-section {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
-    border-bottom: 1px solid var(--line);
-  }
-  .process-grid {
+  .audience-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 32px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
   }
-  .process-step {
-    border-top: 2px solid var(--line);
-    padding-top: 24px;
-    position: relative;
+
+  .audience-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 24px 22px;
+    background: var(--bone);
+    transition: border-color 0.25s var(--ease), transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
   }
-  .step-num {
+
+  @media (hover: hover) {
+    .audience-card:hover {
+      border-color: var(--rust);
+      transform: translate3d(0, -4px, 0);
+      box-shadow: 0 14px 32px rgba(17, 18, 15, 0.08);
+    }
+  }
+
+  .audience-kicker {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    color: var(--rust);
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .audience-card h3 {
     font-family: var(--font-display);
     font-weight: 800;
-    letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    font-size: 32px;
-    color: var(--mate);
-    line-height: 1;
-    margin-bottom: 14px;
-  }
-  :global(body.theme-electric) .step-num {
-    color: var(--electric);
-  }
-  .process-step h3 {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
     font-size: 19px;
     text-transform: uppercase;
     color: var(--ink);
     margin-bottom: 8px;
   }
+
+  .audience-card p {
+    font-family: var(--font-body);
+    font-size: 13.5px;
+    line-height: 1.52;
+    color: var(--ink);
+    opacity: 0.85;
+  }
+
+  /* PROCESS SECTION */
+  .process-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .process-step {
+    border-top: 2px solid var(--line-strong);
+    padding-top: 20px;
+  }
+
+  .step-num {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    font-size: 30px;
+    color: var(--mate);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  :global(body.theme-electric) .step-num { color: var(--electric); }
+
+  .process-step h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
   .process-step p {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-body);
     font-size: 13.5px;
     line-height: 1.55;
     color: var(--ink);
@@ -1430,94 +1448,105 @@ const faqs = [
   }
 
   /* FAQ */
-  .growth-faq {
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
-    border-bottom: 1px solid var(--line);
-  }
   .faq-list {
     display: flex;
     flex-direction: column;
   }
+
   .faq-item {
     border-bottom: 1px solid var(--line);
   }
+
+  .faq-item:last-child { border-bottom: none; }
+
   .faq-trigger {
     width: 100%;
     display: grid;
-    grid-template-columns: 80px 1fr 40px;
+    grid-template-columns: 72px 1fr 36px;
+    gap: 16px;
     align-items: center;
-    padding: 30px 0;
+    padding: 24px 0;
     background: none;
     border: none;
     cursor: pointer;
     text-align: left;
     color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
   }
+
   .faq-num {
     font-family: var(--font-display);
     font-weight: 800;
     letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-    font-size: 28px;
+    font-size: 26px;
     color: var(--mute);
     line-height: 1;
   }
+
+  .faq-item.active .faq-num { color: var(--mate); }
+  :global(body.theme-electric) .faq-item.active .faq-num { color: var(--electric); }
+
   .faq-title {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: clamp(17px, 2vw, 24px);
+    font-size: clamp(16px, 1.9vw, 23px);
     text-transform: uppercase;
     letter-spacing: -0.01em;
-    line-height: 1.25;
+    line-height: 1.24;
     color: var(--ink);
   }
+
   .faq-icon {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
+    font-family: var(--font-display);
+    font-size: 26px;
     font-weight: 800;
     text-align: center;
-    transition: transform 0.3s var(--ease);
+    transition: transform 0.32s var(--spring-snap), color 0.25s;
   }
+
   .faq-item.active .faq-icon {
     transform: rotate(45deg);
     color: var(--rust);
   }
+
   .faq-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s var(--ease-emphasis), padding 0.3s var(--ease);
-    padding-left: 80px;
-    padding-right: 40px;
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.35s var(--ease-emphasis), padding-bottom 0.3s var(--ease);
+    padding-left: 88px;
+    padding-right: 36px;
   }
+
   .faq-item.active .faq-content {
-    max-height: 300px;
-    padding-bottom: 30px;
+    grid-template-rows: 1fr;
+    padding-bottom: 24px;
   }
+
   .faq-content p {
-    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    font-family: var(--font-body);
     font-size: 14.5px;
-    line-height: 1.6;
+    line-height: 1.62;
     color: var(--ink);
-    opacity: 0.85;
+    opacity: 0.86;
   }
 
   /* CTA FINAL BOX */
   .growth-cta {
     max-width: var(--max);
     margin: 0 auto;
-    padding: clamp(60px, 9vh, 110px) var(--gut);
+    padding: clamp(48px, 7vh, 96px) var(--gut);
   }
+
   .cta-box {
     background: linear-gradient(145deg, #122416 0%, #0c180e 100%);
     color: #f4f1ea;
-    padding: clamp(40px, 7vw, 84px) clamp(24px, 5vw, 64px);
+    padding: clamp(32px, 6vw, 72px) clamp(22px, 5vw, 60px);
     border: 1px solid #244b2c;
     border-radius: 20px;
     box-shadow: 0 14px 40px rgba(17, 35, 21, 0.25);
-    position: relative;
   }
+
   :global(body.theme-electric) .cta-box {
     background: #000000;
     border-color: var(--electric);
@@ -1528,134 +1557,142 @@ const faqs = [
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
     letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--mate-light);
-    margin-bottom: 18px;
+    margin-bottom: 14px;
     font-weight: 700;
   }
-  :global(body.theme-electric) .cta-kicker {
-    color: var(--electric);
-  }
+
+  :global(body.theme-electric) .cta-kicker { color: var(--electric); }
 
   .cta-box h2 {
-    font-family: 'Syne', sans-serif;
+    font-family: var(--font-display);
     font-weight: 800;
-    font-size: clamp(22px, 3.8vw, 52px);
-    line-height: 1.08;
-    letter-spacing: -0.02em;
+    font-size: clamp(22px, 3.6vw, 48px);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
     text-transform: uppercase;
-    margin-bottom: 18px;
-    max-width: 950px;
+    margin-bottom: 16px;
+    max-width: 24ch;
     color: #f4f1ea;
-  }
-  :global(body.theme-electric) .cta-box h2 {
-    color: var(--electric);
   }
 
   .cta-box p {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: clamp(15px, 1.5vw, 18px);
+    font-family: var(--font-body);
+    font-size: clamp(14.5px, 1.4vw, 17.5px);
     line-height: 1.6;
     color: rgba(244, 241, 234, 0.85);
-    max-width: 800px;
-    margin-bottom: 36px;
+    max-width: 64ch;
+    margin-bottom: 28px;
   }
 
   .cta-actions {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     align-items: flex-start;
   }
 
   .cta-btn {
+    --mx-fill-ink: #0a0a0a;
     display: inline-flex;
     align-items: center;
-    gap: 14px;
-    background: var(--mate);
-    color: #ffffff;
-    padding: 16px 32px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    text-transform: uppercase;
-    border: 1px solid var(--mate-light);
-    border-radius: 999px;
-    box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
-    transition: all 0.3s var(--ease);
-  }
-
-  .cta-btn svg {
-    width: 16px;
-    height: 16px;
-    transition: transform 0.3s var(--ease);
-  }
-
-  .cta-btn:hover {
-    background: var(--mate-light);
-    color: #0c180e;
-    border-color: #ffffff;
-  }
-
-  .cta-btn:hover svg {
-    transform: translateX(4px);
-  }
-
-  :global(body.theme-electric) .cta-btn {
+    justify-content: center;
+    gap: 10px;
     background: var(--electric);
     color: #0a0a0a;
-    border-color: #0a0a0a;
+    height: 48px;
+    padding: 0 28px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid #0a0a0a;
+    border-radius: 999px;
+    transition: transform var(--spring-snap-dur) var(--spring-snap), color 0.35s var(--ease);
   }
 
-  :global(body.theme-electric) .cta-btn:hover {
-    background: #ffffff;
-    color: #000000;
+  @media (hover: hover) {
+    .cta-btn:hover { color: var(--electric); }
   }
 
   .cta-note {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    color: rgba(244, 241, 234, 0.65);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: rgba(244, 241, 234, 0.68);
   }
 
   /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .audience-grid,
+    .process-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
   @media (max-width: 900px) {
     .section-head {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 14px;
+      margin-bottom: 32px;
     }
-    .calc-card, .chk-grid, .sla-card {
+    .chk-grid {
       grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .sla-card {
       flex-direction: column;
-      gap: 28px;
+      align-items: flex-start;
+      gap: 20px;
     }
     .service-card-head {
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       align-items: flex-start;
+    }
+    .service-id-col {
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
     }
     .service-pricing-badge {
       align-items: flex-start;
       width: 100%;
+      box-sizing: border-box;
     }
     .faq-trigger {
-      grid-template-columns: 40px 1fr 30px;
+      grid-template-columns: 42px 1fr 28px;
       gap: 12px;
-      padding: 24px 0;
+      padding: 20px 0;
     }
+    .faq-num { font-size: 20px; }
     .faq-content {
       padding-left: 0;
       padding-right: 0;
     }
-    .btn-primary, .btn-ghost, .service-btn, .cta-btn, .calc-cta-btn {
+    .btn-primary,
+    .btn-ghost,
+    .service-btn,
+    .cta-btn,
+    .chk-cta-link {
       width: 100%;
-      justify-content: center;
+      box-sizing: border-box;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .audience-grid,
+    .process-grid {
+      grid-template-columns: 1fr;
+    }
+    .service-includes ul {
+      grid-template-columns: 1fr;
     }
   }
 </style>
